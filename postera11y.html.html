@@ -157,7 +157,7 @@ body.dark-mode .stage{background-color: #0A0A0A; background-image: linear-gradie
 .lib-load{grid-column: span 3; text-align:center; padding: 20px; color: var(--ink2); font-size: 13px;}
 
 /* ---------- the sheet ---------- */
-.sheet{width:722px;max-width:100%;min-height:1020px;background:#fff;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.05),0 20px 40px -20px rgba(0,0,0,0.15);padding:54px 52px 38px;display:flex;flex-direction:column;transition:width .3s, min-height .3s; --line-gap: 22px; --card-gap: 16px;}
+.sheet{width:722px;max-width:100%;min-height:1020px;background:#fff;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.05),0 20px 40px -20px rgba(0,0,0,0.15);padding:54px 52px 38px;display:flex;flex-direction:column;transition:width .3s, min-height .3s; --line-gap: 22px; --card-gap: 16px; --sym-radius: 8px;}
 .sheet.landscape{width:1020px;min-height:721px}
 .sheet.f-atkinson .lbl,.sheet.f-atkinson .doc-sub{font-family:'Atkinson Hyperlegible',var(--f-doc)}
 .doc-title{font:800 38px/1.12 var(--f-ui);text-align:center;margin:0 0 8px;outline:none;white-space:pre-wrap;letter-spacing:-0.02em}
@@ -180,6 +180,13 @@ body.dark-mode .stage{background-color: #0A0A0A; background-image: linear-gradie
 .sheet.theme-medical .doc-title { color:#115E59; } .sheet.theme-medical .doc-sub { color:#0F766E; } .sheet.theme-medical .line { border-bottom-color:#CCFBF1; }
 .sheet.theme-cafe { background:#FBF7F0; border-top:12px solid #C4A484; }
 .sheet.theme-cafe .doc-title { color:#4A3B2A; } .sheet.theme-cafe .doc-sub { color:#6B5A48; } .sheet.theme-cafe .line { border-bottom-color:#EAE0D5; }
+
+/* Alternating Lines */
+.sheet.alt-lines .line:nth-child(even) { background-color: rgba(20, 30, 50, 0.03); }
+body.dark-mode .sheet.alt-lines .line:nth-child(even) { background-color: rgba(255, 255, 255, 0.03); }
+
+/* Ink Saver Mode */
+.sheet.ink-saver .card .sym img { filter: grayscale(100%) contrast(1.1); }
 
 .lines{display:flex;flex-direction:column;flex:1;padding-top:14px;}
 .line{position:relative;padding:var(--line-gap) 42px var(--line-gap) 0;border-bottom:1px solid #F0F1F3;transition:background .15s; break-inside: avoid; page-break-inside: avoid;}
@@ -207,13 +214,13 @@ body.dark-mode .stage{background-color: #0A0A0A; background-image: linear-gradie
 .card:active{cursor:grabbing}
 .card:hover{transform:translateY(-2px)}
 .card.dragging{opacity:0.35;transform:scale(0.95)}
-.card .sym{display:grid;place-items:center;background:#fff;border-radius:8px;overflow:hidden;border:3px solid transparent;box-sizing:content-box; width: var(--sym-size, 80px); height: var(--sym-size, 80px);}
+.card .sym{display:grid;place-items:center;background:#fff;border-radius:var(--sym-radius, 8px);overflow:hidden;border:3px solid transparent;box-sizing:content-box; width: var(--sym-size, 80px); height: var(--sym-size, 80px);}
 .card .sym img{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none}
-.card .lbl{font:600 14px/1.15 var(--f-doc);text-align:center;max-width:132px;overflow-wrap:break-word;outline:none;cursor:text;border:1px solid transparent;border-radius:4px;padding:0 2px}
+.card .lbl{font:600 14px/1.15 var(--f-doc);text-align:center;max-width:132px;overflow-wrap:break-word;word-break:break-word;outline:none;cursor:text;border:1px solid transparent;border-radius:4px;padding:0 2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .card .lbl:hover{border-color:var(--line)}
 .card .sym.load{background:#F0EADD;animation:pulse 1.2s ease-in-out infinite}
 .card .sym.none{background:#FBF8F1;border:3px dashed #D9D1B9;color:#CDC4AA} .card .sym.none svg{width:24px;height:24px}
-.card.textonly .lbl{border:1.5px solid currentColor;border-radius:9px;padding:5px 10px}
+.card.textonly .lbl{border:1.5px solid currentColor;border-radius:9px;padding:5px 10px;display:block;-webkit-line-clamp:unset;}
 .card.textonly .lbl:hover{border-color:currentColor}
 .card .swap{position:absolute;top:-3px;right:-3px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;opacity:0;transform:scale(.5);transition:.15s;pointer-events:none}
 .card .swap svg{width:12px;height:12px}
@@ -290,12 +297,20 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
 #unlockBtn{display:none;position:fixed;top:20px;right:20px;z-index:100;background:var(--accent);color:#fff;padding:10px 16px;border-radius:8px;box-shadow:0 5px 15px rgba(0,0,0,0.2)}
 body.locked-mode #unlockBtn{display:flex}
 
+/* Interactive Tour */
+.tour-overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.7);transition:background .2s}
+.tour-tooltip{position:fixed;z-index:1001;background:var(--surface);color:var(--ink);padding:20px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.2);max-width:300px;width:90%;top:50%;left:50%;transform:translate(-50%, -50%);}
+.tour-tooltip h4{font:800 16px var(--f-ui);margin:0 0 8px;color:var(--accent)}
+.tour-tooltip p{font:400 14px/1.5 var(--f-doc);margin:0 0 16px}
+.tour-actions{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.tour-progress{font:600 12px var(--f-doc);color:var(--ink2)}
+
 @keyframes pulse{50%{opacity:.45}} @keyframes cardin{from{opacity:0;transform:translateY(6px) scale(.96)}} @keyframes chipin{from{opacity:0;transform:translateY(4px)}} @keyframes pop{from{opacity:0;transform:scale(.7)}} @keyframes tin{from{opacity:0;transform:translateY(10px)}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 @media print{
   @page{size:A4;margin:0} body{background:#fff}
-  .skip-link, .topbar,.rail,.line-tools,.swap,.popover,#toasts,.overlay,.meaning,#pageNav,#unlockBtn,.vis-toggle,.card.is-hidden{display:none!important}
+  .skip-link, .topbar,.rail,.line-tools,.swap,.popover,#toasts,.overlay,.meaning,#pageNav,#unlockBtn,.vis-toggle,.card.is-hidden,.tour-overlay,.tour-tooltip{display:none!important}
   .app{display:block} .stage{display:block;padding:0;background:none;min-height:0}
   .pages-container{display:block;gap:0}
   .paginated-sheet{display:flex !important; page-break-after: always; box-shadow:none; border-radius:0; margin:0; width:210mm; min-height:297mm;}
@@ -357,6 +372,7 @@ body.locked-mode .stage { overflow-y: auto; height: 100vh; padding-top: 20px; }
       <button class="btn ghost" id="lockBtn" title="Lock / Presentation Mode"><i data-lucide="lock"></i></button>
       <button class="btn ghost" id="checkBtn" title="Accessibility Check"><i data-lucide="scan-line"></i></button>
       <button class="btn ghost" id="searchBtn" title="Search & Replace"><i data-lucide="search"></i></button>
+      <button class="btn ghost" id="tourBtn" title="Interactive Tour"><i data-lucide="help-circle"></i></button>
     </div>
     <div class="divider"></div>
     <label class="lang" title="Symbol search language"><i data-lucide="globe"></i><select id="langSel" aria-label="Symbol search language"></select></label>
@@ -413,6 +429,14 @@ body.locked-mode .stage { overflow-y: auto; height: 100vh; padding-top: 20px; }
         <div class="slider-row"><label>Image scale</label><input type="range" id="symSizeSlider" min="50" max="180" value="80"><span id="ssVal">80px</span></div>
       </div>
       <div class="field">
+        <label for="symStyleSel">Symbol Shape</label>
+        <select id="symStyleSel">
+          <option value="8px">Rounded Square</option>
+          <option value="0px">Sharp Square</option>
+          <option value="50%">Circle</option>
+        </select>
+      </div>
+      <div class="field">
         <label for="fontSel">Reading font</label>
         <select id="fontSel"><option value="lexend">Lexend</option><option value="atkinson">Atkinson Hyperlegible</option></select>
       </div>
@@ -460,6 +484,8 @@ body.locked-mode .stage { overflow-y: auto; height: 100vh; padding-top: 20px; }
       <label class="tog"><span>Color-coded grammar</span><input type="checkbox" id="grammarTog"></label>
       <label class="tog"><span>Show symbol meanings (editor only)</span><input type="checkbox" id="meanTog"></label>
       <label class="tog"><span>Strict grid layout</span><input type="checkbox" id="gridTog"></label>
+      <label class="tog"><span>Alternating line backgrounds</span><input type="checkbox" id="altLineTog"></label>
+      <label class="tog"><span>Ink-saver mode (B&W symbols)</span><input type="checkbox" id="inkSaverTog"></label>
       <label class="tog"><span>High-contrast sheet</span><input type="checkbox" id="hcTog"></label>
     </section>
 
@@ -520,6 +546,20 @@ body.locked-mode .stage { overflow-y: auto; height: 100vh; padding-top: 20px; }
   </div>
 </div>
 
+<!-- Interactive Tour Elements -->
+<div class="tour-overlay" id="tourOverlay" hidden></div>
+<div class="tour-tooltip" id="tourTooltip" hidden>
+  <h4 id="tourTitle">Welcome to PosterA11y!</h4>
+  <p id="tourText">Let's take a quick look at how to create accessible posters.</p>
+  <div class="tour-actions">
+    <span class="tour-progress" id="tourProgress">Step 1 of 4</span>
+    <div>
+      <button class="btn small" id="tourSkip">Skip</button>
+      <button class="btn accent small" id="tourNext">Next</button>
+    </div>
+  </div>
+</div>
+
 <div id="toasts" aria-live="polite"></div>
 
 <!-- QR Code Library -->
@@ -541,7 +581,7 @@ const dragAttr = isTouchDevice ? '' : 'draggable="true"';
 
 const API_BASES=['https://api.arasaac.org/api','https://api.arasaac.org/api/v1'];
 const STATIC='https://static.arasaac.org/pictograms';
-const LS_KEY='postera11y.doc.v12'; 
+const LS_KEY='postera11y.doc.v13'; 
 const LS_DRAFTS='postera11y.drafts';
 const LS_DARK='postera11y.dark';
 const LANGS={en:'English',es:'Español',fr:'Français',de:'Deutsch',it:'Italiano',pt:'Português',nl:'Nederlands',pl:'Polski',ru:'Русский',ar:'العربية',ca:'Català',gl:'Galego'};
@@ -581,7 +621,7 @@ const THEME_STYLES = {
 
 let uidSeq=1;
 const uid=()=>'w'+(uidSeq++)+Date.now().toString(36);
-function newDoc(){return{title:'',subtitle:'',lang:'en',symSize:80,font:'lexend',format:'portrait',theme:'default',listStyle:'none',logo:'',showText:true,skipSmall:true,grammarColors:false,showMeanings:false,strictGrid:false,lineSpacing:22,cardSpacing:16,useQR:false,qrUrl:'',hc:false,locked:false,lines:[]}}
+function newDoc(){return{title:'',subtitle:'',lang:'en',symSize:80,symStyle:'8px',font:'lexend',format:'portrait',theme:'default',listStyle:'none',logo:'',showText:true,skipSmall:true,grammarColors:false,showMeanings:false,strictGrid:false,altLines:false,inkSaver:false,lineSpacing:22,cardSpacing:16,useQR:false,qrUrl:'',hc:false,locked:false,lines:[]}}
 let doc=newDoc();
 
 const pagesContainer=$('#pagesContainer'),linesEl=$('#lines'),composeInput=$('#composeInput'),previewEl=$('#preview'),
@@ -812,7 +852,12 @@ function removeWord(item){
 }
 
 function applyLineClasses(){
-    $$('.sheet').forEach(el => el.style.setProperty('--sym-size', (doc.symSize || 80) + 'px'));
+    $$('.sheet').forEach(el => {
+        el.style.setProperty('--sym-size', (doc.symSize || 80) + 'px');
+        el.style.setProperty('--sym-radius', doc.symStyle || '8px');
+        el.classList.toggle('alt-lines', !!doc.altLines);
+        el.classList.toggle('ink-saver', !!doc.inkSaver);
+    });
     $$('.sheet .lines').forEach(el => {
         el.className = 'lines' + (doc.showText ? '' : ' hideLbl') + (doc.strictGrid ? ' strict-grid' : '');
     });
@@ -874,6 +919,7 @@ function repaginate() {
     p1.style.setProperty('--line-gap', (doc.lineSpacing||22) + 'px');
     p1.style.setProperty('--card-gap', (doc.cardSpacing||16) + 'px');
     p1.style.setProperty('--sym-size', (doc.symSize||80) + 'px');
+    p1.style.setProperty('--sym-radius', doc.symStyle || '8px');
     
     const isLandscape = doc.format === 'landscape';
     const sheetHeight = isLandscape ? 721 : 1020;
@@ -902,7 +948,8 @@ function repaginate() {
             newPage.style.setProperty('--line-gap', (doc.lineSpacing||22) + 'px');
             newPage.style.setProperty('--card-gap', (doc.cardSpacing||16) + 'px');
             newPage.style.setProperty('--sym-size', (doc.symSize||80) + 'px');
-            newPage.innerHTML = `<div class="lines ${doc.showText?'':'hideLbl'} ${doc.strictGrid?'strict-grid':''}"></div>`;
+            newPage.style.setProperty('--sym-radius', doc.symStyle || '8px');
+            newPage.innerHTML = `<div class="lines ${doc.showText?'':'hideLbl'} ${doc.strictGrid?'strict-grid':''} ${doc.altLines?'alt-lines':''} ${doc.inkSaver?'ink-saver':''}"></div>`;
             pagesContainer.appendChild(newPage);
             newPage.appendChild(footer);
             currentPage = newPage;
@@ -996,12 +1043,15 @@ function syncStyleControls(){
   $('#fontSel').value=doc.font;
   $('#sheetFormat').value=doc.format;
   $('#themeSel').value=doc.theme;
+  $('#symStyleSel').value = doc.symStyle || '8px';
   $$('#listSeg button').forEach(b=>b.classList.toggle('on',b.dataset.list===doc.listStyle));
   $('#showTextTog').checked=doc.showText;
   $('#skipTog').checked=!doc.skipSmall; 
   $('#grammarTog').checked=doc.grammarColors;
   $('#meanTog').checked=doc.showMeanings;
   $('#gridTog').checked=doc.strictGrid;
+  $('#altLineTog').checked=doc.altLines;
+  $('#inkSaverTog').checked=doc.inkSaver;
   $('#hcTog').checked=doc.hc;
   langSel.value=doc.lang;
   $('#symSizeSlider').value = doc.symSize || 80;
@@ -1604,7 +1654,7 @@ document.addEventListener('click',e=>{
 });
 function applyTpl(k){
   const t=TEMPLATES[k];
-  const keep={lang:doc.lang,symSize:doc.symSize,font:doc.font,format:doc.format,theme:doc.theme,listStyle:doc.listStyle,logo:doc.logo,showText:doc.showText,skipSmall:doc.skipSmall,grammarColors:doc.grammarColors,showMeanings:doc.showMeanings,strictGrid:doc.strictGrid,lineSpacing:doc.lineSpacing,cardSpacing:doc.cardSpacing,hc:doc.hc,useQR:doc.useQR,qrUrl:doc.qrUrl};
+  const keep={lang:doc.lang,symSize:doc.symSize,symStyle:doc.symStyle,font:doc.font,format:doc.format,theme:doc.theme,listStyle:doc.listStyle,logo:doc.logo,showText:doc.showText,skipSmall:doc.skipSmall,grammarColors:doc.grammarColors,showMeanings:doc.showMeanings,strictGrid:doc.strictGrid,altLines:doc.altLines,inkSaver:doc.inkSaver,lineSpacing:doc.lineSpacing,cardSpacing:doc.cardSpacing,hc:doc.hc,useQR:doc.useQR,qrUrl:doc.qrUrl};
   pushHistory();
   doc=Object.assign(newDoc(),keep,{title:t.title,subtitle:t.subtitle,lines:[]});
   renderAll();save();
@@ -1628,6 +1678,10 @@ function applyTpl(k){
   const b = e.target.closest('button'); if(!b) return;
   pushHistory(); doc.listStyle = b.dataset.list; renderLines(); syncStyleControls(); save();
 });
+ $('#symStyleSel').onchange=()=>{
+  pushHistory(); doc.symStyle = $('#symStyleSel').value;
+  applyLineClasses(); save();
+};
  $('#logoUploadBtn').onclick = () => {
     const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*';
     input.onchange = e => {
@@ -1644,6 +1698,8 @@ function applyTpl(k){
  $('#grammarTog').onchange=e=>{pushHistory();doc.grammarColors=e.target.checked;renderLines();save();};
  $('#meanTog').onchange=e=>{pushHistory();doc.showMeanings=e.target.checked;renderLines();save();};
  $('#gridTog').onchange=e=>{pushHistory();doc.strictGrid=e.target.checked;renderAll();scheduleRepaginate();save();};
+ $('#altLineTog').onchange=e=>{pushHistory();doc.altLines=e.target.checked;renderAll();save();};
+ $('#inkSaverTog').onchange=e=>{pushHistory();doc.inkSaver=e.target.checked;renderAll();save();};
  $('#hcTog').onchange=e=>{pushHistory();doc.hc=e.target.checked;renderAll();save();};
  $('#symSizeSlider').oninput = e => {
     pushHistory(); doc.symSize = +e.target.value; $('#ssVal').textContent = doc.symSize + 'px';
@@ -1684,6 +1740,88 @@ langSel.onchange=()=>{
  $('#undoBtn').onclick=undo;
  $('#redoBtn').onclick=redo;
 
+/* ============ Interactive Tour Logic ============ */
+const tourSteps = [
+  { el: '#composeInput', title: 'Step 1: Write a Line', text: 'Type a sentence here. The app will automatically find symbols for the key words.' },
+  { el: '#addBtn', title: 'Step 2: Add to Poster', text: 'Click here to add your line to the poster. You can also just press Enter.' },
+  { el: '.panel:nth-child(4)', title: 'Step 3: Customize', text: 'Change the symbol size, shape, spacing, and themes here to make your poster perfect.' },
+  { el: '.actions', title: 'Step 4: Export', text: 'When you\'re done, export your poster as a PDF, Word document, or PowerPoint!' }
+];
+let currentStep = 0;
+const tourOverlay = $('#tourOverlay');
+const tourTooltip = $('#tourTooltip');
+
+function showTourStep(index) {
+  if (index >= tourSteps.length) {
+    endTour();
+    return;
+  }
+  currentStep = index;
+  const step = tourSteps[index];
+  const targetEl = $(step.el);
+  
+  if (!targetEl) {
+    showTourStep(index + 1);
+    return;
+  }
+
+  $('#tourTitle').textContent = step.title;
+  $('#tourText').textContent = step.text;
+  $('#tourProgress').textContent = `Step ${index + 1} of ${tourSteps.length}`;
+  
+  tourTooltip.hidden = false;
+  tourOverlay.hidden = false;
+
+  const rect = targetEl.getBoundingClientRect();
+  
+  // Position tooltip
+  const ttRect = tourTooltip.getBoundingClientRect();
+  let top = rect.bottom + 10;
+  let left = rect.left + (rect.width / 2) - (ttRect.width / 2);
+
+  // Keep it on screen
+  if (left < 10) left = 10;
+  if (left + ttRect.width > window.innerWidth - 10) left = window.innerWidth - ttRect.width - 10;
+  
+  if (top + ttRect.height > window.innerHeight - 10) {
+    top = rect.top - ttRect.height - 10;
+  }
+  
+  tourTooltip.style.top = `${top}px`;
+  tourTooltip.style.left = `${left}px`;
+  tourTooltip.style.transform = 'none';
+
+  // Highlight element
+  targetEl.style.position = 'relative';
+  targetEl.style.zIndex = '1001';
+  targetEl.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
+  
+  // Clear previous highlights
+  if (index > 0) {
+    const prevEl = $(tourSteps[index-1].el);
+    if(prevEl) {
+        prevEl.style.zIndex = '';
+        prevEl.style.boxShadow = '';
+    }
+  }
+}
+
+function endTour() {
+  tourOverlay.hidden = true;
+  tourTooltip.hidden = true;
+  if (currentStep > 0) {
+    const prevEl = $(tourSteps[currentStep-1].el);
+    if(prevEl) {
+        prevEl.style.zIndex = '';
+        prevEl.style.boxShadow = '';
+    }
+  }
+}
+
+ $('#tourBtn').onclick = () => showTourStep(0);
+ $('#tourNext').onclick = () => showTourStep(currentStep + 1);
+ $('#tourSkip').onclick = endTour;
+
 /* ============ title / subtitle ============ */
 function ce(el,key){
   let typingTimer;
@@ -1708,6 +1846,7 @@ function sanitize(o){
   d.title=String(o.title||'').slice(0,150); d.subtitle=String(o.subtitle||'').slice(0,200);
   d.lang=LANGS[o.lang]?o.lang:'en';
   d.symSize = (typeof o.symSize === 'number') ? o.symSize : (o.size === 's' ? 56 : (o.size === 'l' ? 106 : 80));
+  d.symStyle = o.symStyle || '8px';
   d.font=['lexend','atkinson'].indexOf(o.font)>-1?o.font:'lexend';
   d.format=o.format === 'landscape' ? 'landscape' : 'portrait';
   const validThemes = ['default', 'spring', 'summer', 'autumn', 'winter', 'medical', 'cafe'];
@@ -1716,6 +1855,7 @@ function sanitize(o){
   d.listStyle = validLists.indexOf(o.listStyle) > -1 ? o.listStyle : 'none';
   d.logo = typeof o.logo === 'string' ? o.logo.slice(0, 500000) : ''; 
   d.showText=!!o.showText;d.skipSmall=o.skipSmall!==false;d.grammarColors=!!o.grammarColors;d.showMeanings=!!o.showMeanings;d.strictGrid=!!o.strictGrid;
+  d.altLines=!!o.altLines;d.inkSaver=!!o.inkSaver;
   d.lineSpacing = o.lineSpacing || 22; d.cardSpacing = o.cardSpacing || 16;
   d.hc=!!o.hc;d.locked=!!o.locked;
   d.useQR=!!o.useQR;d.qrUrl=String(o.qrUrl||'').slice(0,500);
@@ -1957,6 +2097,7 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
     if(!pop.hidden)closePopover();
     else if(!$('#overlay').hidden){$('#overlay').hidden=true;$('#confirmModal').hidden=true;$('#searchModal').hidden=true;}
+    else if(!tourTooltip.hidden) endTour();
   }
   const isTyping = e.target.matches('input, [contenteditable="true"], select');
   if ((e.ctrlKey || e.metaKey) && !isTyping) {
