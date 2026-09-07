@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="description" content="PosterD45h — a rapid, accessible poster designer for care homes and learning disability support.">
+<meta name="theme-color" content="#F2F6FB">
+<title>PosterD45h — Rapid Poster Designer</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='26' fill='%23F2F6FB'/%3E%3Crect x='32' y='38' width='56' height='64' rx='10' fill='%23FFFFFF'/%3E%3Ccircle cx='60' cy='62' r='16' fill='%23F1F5F9'/%3E%3Cpath d='M53 62 L58 68 L68 56' fill='none' stroke='%23D14C1E' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='42' y='86' width='36' height='5' rx='2.5' fill='%231A1D21'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Lexend:wght@400;500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+/* ---------- foundations ---------- */
+:root{
+  --paper:#F8F9FA;
+  --surface:#FFFFFF;
+  --ink:#1A1D21;
+  --ink2:#50545C;
+  --line:#E3E5E8;
+  --line2:#F0F1F3;
+  --accent:#D14C1E;
+  --accent-d:#B23E17;
+  --accent-soft:rgba(209,76,30,.1);
+  --focus:#2563EB;
+  --tb:61px;
+  --f-ui:'Bricolage Grotesque','Lexend',sans-serif;
+  --f-doc:'Lexend',sans-serif;
+}
+
+body.dark-mode{
+  --paper:#121212; --surface:#1E1E1E; --ink:#E8E8E8; --ink2:#A0A0A0;
+  --line:#333333; --line2:#262626; --accent-soft:rgba(209,76,30,.25);
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-doc);-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .2s,color .2s}
+button,input,select{font-family:inherit;color:inherit}
+a{color:var(--accent)}
+::selection{background:rgba(37,99,235,.2)}
+
+:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px;border-radius:4px}
+button:focus-visible, .btn:focus-visible{outline-offset:1px}
+.skip-link{position:absolute;top:-50px;left:0;background:var(--focus);color:#fff;padding:12px 20px;z-index:1000;border-radius:0 0 8px 0;font-weight:700;text-decoration:none}
+.skip-link:focus{top:0}
+
+/* ---------- top bar ---------- */
+.topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:11px 24px;background:var(--surface);border-bottom:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,0.02)}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{width:38px;height:38px;flex:none}
+.brand-text{display:flex;flex-direction:column;line-height:1.1}
+.brand-name{font:800 19px var(--f-ui);letter-spacing:-0.02em}
+.brand-sub{font:600 10px var(--f-doc);letter-spacing:.1em;text-transform:uppercase;color:var(--ink2)}
+.actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.btn-group{display:flex;align-items:center;gap:6px}
+.divider{width:1px;height:28px;background:var(--line)}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:600 13.5px var(--f-ui);padding:8px 14px;border-radius:8px;border:1px solid transparent;background:transparent;cursor:pointer;color:var(--ink);transition:background .15s,color .15s,border-color .15s, opacity .15s}
+.btn svg{width:16px;height:16px}
+.btn:hover{background:var(--line2)}
+.btn.accent{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.accent:hover{background:var(--accent-d);border-color:var(--accent-d)}
+.btn.ghost{border-color:var(--line);background:var(--surface)}
+.btn.ghost:hover{background:var(--line2);border-color:var(--ink2)}
+.btn.big{width:100%;padding:14px;font-size:15px;background:var(--ink);color:var(--surface);border-radius:10px}
+.btn.big:hover{background:var(--accent)}
+.btn.big kbd{font:600 11px var(--f-doc);border:1px solid rgba(255,255,255,.2);border-radius:5px;padding:1px 7px;margin-left:4px}
+.btn.danger{color:var(--accent);border-color:transparent;background:var(--accent-soft)}
+.btn.danger:hover{background:var(--accent);color:#fff}
+.btn.small{font-size:13px;padding:8px 12px}
+.btn:disabled{opacity:0.4;cursor:not-allowed}
+.btn:disabled:hover{background:transparent;border-color:var(--line)}
+.ibtn{display:grid;place-items:center;width:32px;height:32px;border-radius:8px;border:1px solid transparent;background:transparent;cursor:pointer;color:var(--ink2);transition:background .15s,color .15s}
+.ibtn:hover{background:var(--line2);color:var(--ink)}
+.ibtn.danger:hover{color:var(--accent);background:var(--accent-soft)}
+.ibtn svg{width:16px;height:16px}
+
+/* ---------- text format toolbar ---------- */
+.format-bar{display:flex;gap:4px;flex-wrap:wrap;background:var(--paper);padding:8px;border-radius:8px;border:1px solid var(--line);margin-bottom:12px;align-items:center;position:relative}
+.fmt-btn{width:32px;height:32px;display:grid;place-items:center;background:transparent;border:1px solid transparent;border-radius:4px;font-weight:bold;color:var(--ink);font-size:14px;cursor:pointer}
+.fmt-btn:hover{background:var(--line2);color:var(--accent)}
+.fmt-btn svg{width:16px;height:16px;stroke:var(--ink)}
+.fmt-btn:hover svg{stroke:var(--accent)}
+.fmt-select{background:var(--surface);border:1px solid var(--line);color:var(--ink);padding:6px 8px;border-radius:4px;font-size:13px;cursor:pointer}
+.fmt-color{width:32px;height:32px;padding:0;border:1px solid var(--line);background:transparent;cursor:pointer;}
+.apply-all-wrapper{display:flex;align-items:center;gap:6px;margin-bottom:12px;padding:8px;background:var(--paper);border:1px solid var(--line);border-radius:6px}
+.apply-all-wrapper input{cursor:pointer}
+.apply-all-wrapper label{font-size:12px;color:var(--ink);cursor:pointer;font-weight:600}
+
+/* Emoji Picker */
+.emoji-picker{position:absolute;top:48px;left:8px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);z-index:20;display:grid;grid-template-columns:repeat(8, 1fr);gap:4px;width:280px;max-height:200px;overflow-y:auto;}
+.emoji-btn{font-size:20px;width:28px;height:28px;display:grid;place-items:center;background:transparent;border:none;border-radius:4px;cursor:pointer}
+.emoji-btn:hover{background:var(--line2)}
+
+/* ---------- layout ---------- */
+.app{display:grid;grid-template-columns:340px minmax(0,1fr);align-items:start}
+.rail{border-right:1px solid var(--line);padding:28px 24px 48px;position:sticky;top:var(--tb);height:calc(100vh - var(--tb));overflow-y:auto;background:var(--surface)}
+.stage{padding:48px 48px 96px;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:calc(100vh - var(--tb));background-color: #FDFDFD; background-image: linear-gradient(#EEEFEF 1px, transparent 1px), linear-gradient(90deg, #EEEFEF 1px, transparent 1px); background-size: 32px 32px;}
+body.dark-mode .stage{background-color: #0A0A0A; background-image: linear-gradient(#222 1px, transparent 1px), linear-gradient(90deg, #222 1px, transparent 1px); background-size: 32px 32px;}
+
+/* Presentation Mode */
+body.presenting { overflow: hidden; background: #000; }
+body.presenting .topbar, body.presenting .rail { display: none !important; }
+body.presenting .app { display: block; height: 100vh; }
+body.presenting .stage { padding: 0; background: #000; overflow: auto; display: grid; place-items: center; height: 100vh; }
+body.presenting .sheet { box-shadow: none; margin: 0; }
+#exitPresentBtn { position: fixed; top: 20px; right: 20px; z-index: 100; display: none; }
+body.presenting #exitPresentBtn { display: inline-flex; }
+
+/* ---------- rail panels ---------- */
+.panel{margin-bottom:32px}
+.k{display:flex;align-items:center;gap:10px;margin:0 0 16px;font:700 11px var(--f-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink2)}
+.k b{font:800 11px var(--f-ui);color:var(--accent);letter-spacing:0;background:var(--accent-soft);padding:3px 6px;border-radius:4px}
+.k::after{content:"";flex:1;height:1px;background:var(--line)}
+
+.hint{margin:12px 2px 0;font:400 13px/1.55 var(--f-doc);color:var(--ink2)}
+.hint b{font-weight:600;color:var(--ink)}
+.about{font:400 13px/1.6 var(--f-doc);color:var(--ink2);margin:0 0 12px}
+
+/* templates / fields / toggles */
+.tpl{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tpl button{font:600 13px var(--f-ui);padding:12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);cursor:pointer;color:var(--ink);transition:all .15s;text-align:left;display:flex;align-items:center;gap:8px}
+.tpl button:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.tpl button svg{width:16px;height:16px;stroke:currentColor}
+
+.field{margin:18px 0 0}
+.field>label{display:block;font:700 11px var(--f-ui);letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin-bottom:8px}
+.field select, .field input[type="text"]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font:400 14px var(--f-doc);cursor:pointer;outline:none;color:var(--ink)}
+.field select:focus, .field input[type="text"]:focus{border-color:var(--ink)}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--paper)}
+.seg button{flex:1;padding:9px 0;font:600 13px var(--f-ui);background:transparent;border:0;cursor:pointer;color:var(--ink2);transition:background .15s,color .15s}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.on{background:var(--ink);color:var(--surface)}
+
+.tog{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font:500 14px var(--f-doc);cursor:pointer}
+.tog:last-of-type{border-bottom:0}
+.tog input{appearance:none;-webkit-appearance:none;width:38px;height:22px;border-radius:999px;background:#D1D5DB;border:0;position:relative;cursor:pointer;flex:none;transition:background .18s}
+.tog input::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .18s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tog input:checked{background:var(--accent)}
+.tog input:checked::after{left:19px}
+
+/* Drafts */
+.draft-item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;background:var(--paper);transition:border-color .15s}
+.draft-item:hover{border-color:var(--accent)}
+.draft-item span{font:600 13px var(--f-doc);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;flex:1}
+.draft-item span:hover{color:var(--accent)}
+
+/* Block Grid */
+.block-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.block-btn{padding:12px;background:var(--paper);border:1px solid var(--line);border-radius:8px;font:600 12px var(--f-ui);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--ink2);transition:all .15s}
+.block-btn:hover{color:var(--accent);border-color:var(--accent);transform:translateY(-2px)}
+.block-btn svg{width:20px;height:20px;stroke:var(--ink2)}
+
+/* ---------- the sheet ---------- */
+.sheet{width:210mm;max-width:100%;min-height:297mm;background:#fff;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.05),0 20px 40px -20px rgba(0,0,0,0.15);padding:16mm 15mm 10mm;display:flex;flex-direction:column;transition:width .3s, min-height .3s; position:relative; overflow: hidden;}
+.sheet.landscape{width:297mm;min-height:210mm}
+
+[contenteditable]:empty::before{content:attr(data-ph);color:#D1D5DB;pointer-events:none}
+[contenteditable]:focus{background:rgba(255,255,255,0.8);border-radius:6px}
+
+/* Themed Sheets */
+.sheet[data-theme="spring"] { background-color:#F0FFF4 !important; border-top:12px solid #10B981 !important; }
+.sheet[data-theme="summer"] { background-color:#FFFDE7 !important; border-top:12px solid #F59E0B !important; }
+.sheet[data-theme="autumn"] { background-color:#FFF3E0 !important; border-top:12px solid #D14C1E !important; }
+.sheet[data-theme="winter"] { background-color:#F0F9FF !important; border-top:12px solid #3B82F6 !important; }
+.sheet[data-theme="medical"] { background-color:#F0FDFA !important; border-top:12px solid #14B8A6 !important; }
+.sheet[data-theme="cafe"] { background-color:#FBF7F0 !important; border-top:12px solid #C4A484 !important; }
+
+/* Accessibility Overrides */
+.sheet.large-print .block[data-type="body"] { font-size: 24px !important; line-height: 1.8 !important; }
+.sheet.large-print .block[data-type="image"] { min-height: 250px !important; }
+
+.sheet.high-contrast { background-color:#000000 !important; border-top: none !important; }
+.sheet.high-contrast .block[data-type="h1"] { color: #FFE14D !important; }
+.sheet.high-contrast .block[data-type="h2"] { color: #FFFFFF !important; }
+.sheet.high-contrast .block[data-type="body"] { color: #FFFFFF !important; }
+.sheet.high-contrast .block[data-type="panel"] { background-color: #1A1A1A !important; color: #FFFFFF !important; border: 1px solid #FFE14D !important; }
+.sheet.high-contrast .block[data-type="shape"] { background-color: #FFE14D !important; border-color: #FFE14D !important; }
+.sheet.high-contrast .block[data-type="task"] .task-checkbox { border-color: #FFE14D !important; }
+.sheet.high-contrast .block[data-type="task"] .task-checkbox.checked { background-color: #FFE14D !important; color: #000 !important; }
+.sheet.high-contrast .attr { color: #888 !important; background: transparent !important; }
+
+/* Block Styling */
+.lines{display:flex;flex-direction:column;flex:1;padding-top:14px; gap:16px; position: relative; z-index: 2;}
+.lines.two-col{display:grid;grid-template-columns:1fr 1fr;align-items:start;}
+.lines.two-col > .block[data-type="shape"] { grid-column: 1 / -1; width: 100%; }
+
+.block{position:relative;outline:none;transition:all .15s; padding: 4px; border: 1px dashed transparent;}
+.block:hover{border-color:rgba(0,0,0,0.15)}
+.block:focus-within{border-color:var(--accent); border-style: solid; border-width: 1px;} 
+.block.tools-visible .block-tools{opacity:1; pointer-events:auto}
+.block.easy-read-warning{border:2px solid #ef4444 !important; background:rgba(239, 68, 68, 0.05) !important; border-radius:6px;}
+
+.block-tools{position:absolute;top:-12px;right:4px;display:flex;gap:2px;background:#fff;border:1px solid var(--line);border-radius:4px;padding:2px;opacity:0;pointer-events:none;transition:.15s;z-index:10; box-shadow:0 2px 5px rgba(0,0,0,0.1)}
+.block-tools button{background:transparent;border:0;padding:4px;display:grid;place-items:center;width:24px;height:24px;border-radius:3px}
+.block-tools button:hover{background:#eee}
+.block-tools svg{width:14px;height:14px;stroke:#555}
+
+.block[data-type="h1"]{font:800 38px/1.12 'Bricolage Grotesque','Lexend',sans-serif; letter-spacing:-0.02em;}
+.block[data-type="h2"]{font:700 24px/1.2 'Bricolage Grotesque','Lexend',sans-serif; letter-spacing:-0.01em;}
+.block[data-type="body"]{font:400 16px/1.6 'Lexend',sans-serif; color:#444;}
+.block[data-type="date"]{font:600 16px/1.2 'Lexend',sans-serif; color:#64748b; text-align:center; margin-top:10px; padding:8px 12px; background:#F1F5F9; border-radius:6px; align-self:center;}
+.block[data-type="shape"]{height:12px; background:#000; border-radius:6px; margin: 10px 0; align-self: flex-start; width: 60px;}
+.block[data-type="shape"].dotted { height:0; background:transparent; border-top: 4px dotted #000; border-radius:0; width:100%; }
+.block[data-type="shape"].dashed { height:0; background:transparent; border-top: 4px dashed #000; border-radius:0; width:100%; }
+.block[data-type="panel"]{padding:24px; border-radius:12px; background:#f0f0f0; margin:10px 0; font:400 16px/1.6 'Lexend',sans-serif;}
+
+/* Task / Checklist Block */
+.block[data-type="task"]{display:flex; align-items:center; gap:12px; padding:10px; background:#F8FAFC; border-radius:8px; border:1px solid #E2E8F0; font:400 18px/1.5 'Lexend',sans-serif;}
+.task-checkbox{width:24px; height:24px; border:2px solid #64748b; border-radius:6px; cursor:pointer; display:grid; place-items:center; flex:none; background:#fff; transition:all .15s}
+.task-checkbox:hover{border-color:var(--accent)}
+.task-checkbox.checked{background:#10B981; border-color:#10B981; color:white;}
+.task-checkbox.checked::after{content:'✓'; font-size:18px; font-weight:bold;}
+.task-text{flex:1; outline:none; cursor:text;}
+.task-text.done{text-decoration:line-through; opacity:0.6;}
+
+.block[data-type="image"]{min-height:150px; background:#eee; display:grid;place-items:center; color:#999; font-size:14px; background-size:contain; background-position:center; background-repeat:no-repeat; border-radius:8px; width:100%;}
+.block[data-type="image"].img-50{width:50%; margin:0 auto;}
+.block[data-type="image"].img-25{width:25%; margin:0 auto;}
+
+/* Badges */
+.block[data-type="badge"]{display:inline-block; padding:6px 14px; border-radius:999px; font:700 14px/1 'Lexend',sans-serif; align-self:flex-start; color:#fff; margin:0;}
+
+.empty{margin-top:14px;border:2px dashed var(--line);border-radius:12px;padding:48px 26px;text-align:center;break-inside:avoid;page-break-inside:avoid; z-index: 2;}
+.empty h3{font:800 22px 'Bricolage Grotesque','Lexend',sans-serif;margin:0 0 8px}
+.empty p{font:400 14px/1.6 'Lexend',sans-serif;color:var(--ink2);margin:0 0 18px}
+.empty .tpl{justify-content:center;display:flex;flex-wrap:wrap}
+
+.bottom-attr{display:flex;flex-direction:column;align-items:center;gap:15px;margin-top:40px;break-inside:avoid;page-break-inside:avoid; z-index: 2;}
+.attr{text-align:center;font:400 10.5px var(--f-doc);color:#B9B097;margin:0; background: rgba(255,255,255,0.8); padding: 5px 10px; border-radius: 8px;}
+#qrcode{display:none; padding:10px; border:1px solid var(--line); border-radius:8px; background:#fff;}
+#qrcode img, #qrcode canvas{margin:0 auto;display:block}
+
+#toasts{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:80;pointer-events:none;width:max-content;max-width:calc(100vw - 32px)}
+.toast{display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--surface);padding:12px 18px;border-radius:10px;font:600 13.5px var(--f-doc);box-shadow:0 10px 25px -5px rgba(0,0,0,0.3);animation:tin .22s both;transition:opacity .3s,transform .3s}
+.toast svg{width:16px;height:16px;color:#F0A183;flex:none}
+.toast.out{opacity:0;transform:translateY(8px)}
+body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast svg{color:var(--accent)}
+
+@keyframes tin{from{opacity:0;transform:translateY(10px)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+@media print{
+  @page{size:A4;margin:0} body{background:#fff}
+  .skip-link, .topbar,.rail,.block-tools,#toasts,.presenting{display:none!important}
+  .app{display:block} .stage{display:block;padding:0;background:none;min-height:0}
+  .sheet{width:210mm;min-height:297mm;margin:0;border-radius:0;box-shadow:none;padding:16mm 15mm 10mm}
+  .sheet.landscape{width:297mm;min-height:210mm} @page landscape{size: A4 landscape; margin: 0;} .sheet.landscape{page: landscape;}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+@media(max-width: 980px){
+  .app{display:flex;flex-direction:column;} .stage{order:1;padding:24px 16px 40px;background-image:none;background-color:var(--paper);}
+  .rail{order:2;position:static;height:auto;max-height:none;border-right:0;border-top:1px solid var(--line);padding:24px 20px 60px;width:100%;}
+}
+@media(max-width: 700px){
+  .topbar{padding:10px 12px;justify-content:center;gap:8px;} .brand-name{font-size:17px;} .brand-sub{display:none;}
+  .actions{width:100%;justify-content:center;flex-wrap:wrap;gap:8px;} .actions .btn span{display:none;} .actions .btn{padding:10px;}
+  .actions .divider{display:none;} .actions .btn-group{gap:4px;}
+  .sheet{padding:30px 20px;min-height:auto;} .sheet.landscape{width:100%;min-height:auto;}
+}
+</style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header class="topbar">
+  <div class="brand">
+    <!-- NEW ORIGINAL LOGO: Blue strings, orange pin, checkmark inside poster -->
+    <svg class="mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="PosterD45h Logo">
+      <defs>
+        <linearGradient id="bgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F8FAFC"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient>
+        <radialGradient id="pinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FF8A65"/><stop offset="1" stop-color="#D14C1E"/></radialGradient>
+        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter>
+      </defs>
+      <rect width="120" height="120" rx="28" fill="url(#bgGrad)"/>
+      <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
+      
+      <path d="M38 42 L60 24" fill="none" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/>
+      <path d="M82 42 L60 24" fill="none" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/>
+      
+      <circle cx="38" cy="42" r="2.5" fill="#3B82F6"/>
+      <circle cx="82" cy="42" r="2.5" fill="#3B82F6"/>
+      
+      <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#shadow)"/>
+      
+      <circle cx="60" cy="62" r="16" fill="#F1F5F9"/>
+      <path d="M53 62 L58 68 L68 56" fill="none" stroke="#D14C1E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      
+      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/>
+      <rect x="48" y="94" width="24" height="5" rx="2.5" fill="#64748B"/>
+      
+      <circle cx="60" cy="20" r="7" fill="url(#pinGrad)" filter="url(#shadow)"/>
+      <circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
+    </svg>
+    <div class="brand-text"><span class="brand-name">PosterD45h</span><span class="brand-sub">rapid · accessible · care home tools</span></div>
+  </div>
+  <div class="actions">
+    <div class="btn-group">
+      <button class="btn ghost" id="undoBtn" title="Undo (Ctrl+Z)" disabled>Undo</button>
+      <button class="btn ghost" id="redoBtn" title="Redo (Ctrl+Y)" disabled>Redo</button>
+      <button class="btn ghost" id="checkBtn" title="Check Easy Read">Easy Read Check</button>
+    </div>
+    <div class="divider"></div>
+    <div class="btn-group">
+      <button class="btn ghost" id="newBtn">New</button>
+      <button class="btn ghost" id="shareBtn">Share Link</button>
+      <button class="btn ghost" id="pngBtn">Export PNG</button>
+      <button class="btn ghost" id="presentBtn">Present</button>
+      <button class="btn accent" id="printBtn">Print / PDF</button>
+      <button class="btn ghost" id="darkToggleBtn" title="Toggle Dark Mode">Dark Mode</button>
+    </div>
+  </div>
+</header>
+
+<main class="app" id="main-content">
+  <aside class="rail">
+    
+    <section class="panel">
+      <h2 class="k"><b>F</b>Text Format</h2>
+      <div class="apply-all-wrapper">
+        <input type="checkbox" id="applyAllChk">
+        <label for="applyAllChk">Apply to ALL text blocks</label>
+      </div>
+      <div class="format-bar">
+        <select class="fmt-select" id="fontSel" title="Font Family">
+          <option value="Lexend">Lexend</option>
+          <option value="Atkinson Hyperlegible">Atkinson</option>
+          <option value="Arial">Arial</option>
+        </select>
+        <select class="fmt-select" id="sizeSel" title="Font Size">
+          <option value="2">Small</option>
+          <option value="3" selected>Normal</option>
+          <option value="5">Large</option>
+          <option value="7">X-Large</option>
+        </select>
+        <input type="color" class="fmt-color" id="textColor" value="#1A1D21" title="Text Color">
+        <input type="color" class="fmt-color" id="bgColor" value="#FFFF00" title="Highlight Color">
+        <button class="fmt-btn" id="emojiBtn" title="Insert Emoji">😀</button>
+        <div class="emoji-picker" id="emojiPicker" hidden></div>
+      </div>
+      <div class="format-bar">
+        <button class="fmt-btn" data-cmd="bold" title="Bold"><b>B</b></button>
+        <button class="fmt-btn" data-cmd="italic" title="Italic"><i>I</i></button>
+        <button class="fmt-btn" data-cmd="underline" title="Underline"><u>U</u></button>
+        <button class="fmt-btn" data-cmd="insertUnorderedList" title="Bullet List">•</button>
+        <button class="fmt-btn" data-cmd="insertOrderedList" title="Number List">1.</button>
+      </div>
+      <div class="format-bar">
+        <button class="fmt-btn" data-cmd="justifyLeft" title="Align Left"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg></button>
+        <button class="fmt-btn" data-cmd="justifyCenter" title="Align Center"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="5" y1="18" x2="19" y2="18"/></svg></button>
+        <button class="fmt-btn" data-cmd="justifyRight" title="Align Right"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/></svg></button>
+        <button class="fmt-btn" data-cmd="justifyFull" title="Justify"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="k"><b>01</b>Quick Starts</h2>
+      <div class="tpl" id="tpls"></div>
+    </section>
+
+    <section class="panel">
+      <h2 class="k"><b>02</b>Add Blocks</h2>
+      <div class="block-grid">
+        <button class="block-btn" data-add="h1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16M4 6h16M4 18h16"/></svg>Heading</button>
+        <button class="block-btn" data-add="h2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 12h12M6 8h12M6 16h12"/></svg>Subhead</button>
+        <button class="block-btn" data-add="body"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/></svg>Text</button>
+        <button class="block-btn" data-add="panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>Colored Box</button>
+        <button class="block-btn" data-add="task"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Task / Check</button>
+        <button class="block-btn" data-add="shape"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"/></svg>Divider</button>
+        <button class="block-btn" data-add="image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Image</button>
+        <button class="block-btn" data-add="date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Auto Date</button>
+      </div>
+      <div class="field" style="margin-top:16px;">
+        <select id="snippetSel">
+          <option value="">Insert Quick Phrase...</option>
+          <option value="Please sign in at reception.">Please sign in at reception.</option>
+          <option value="Back in 10 minutes.">Back in 10 minutes.</option>
+          <option value="Please wash your hands.">Please wash your hands.</option>
+          <option value="Choice 1\nChoice 2\nChoice 3">Choice 1, 2, 3</option>
+          <option value="Swimming at 10:00 AM.">Swimming at 10:00 AM.</option>
+          <option value="Please knock before entering.">Please knock before entering.</option>
+        </select>
+      </div>
+      <div class="field">
+        <select id="badgeSel">
+          <option value="">Insert Badge...</option>
+          <option value="Vegan">Vegan</option>
+          <option value="Gluten Free">Gluten Free</option>
+          <option value="Dairy Free">Dairy Free</option>
+          <option value="Hot">Hot</option>
+          <option value="Cold">Cold</option>
+          <option value="Wet Floor">Wet Floor</option>
+          <option value="Updated">Updated</option>
+        </select>
+      </div>
+      <div class="field">
+        <select id="iconSel">
+          <option value="">Insert Quick Icon...</option>
+          <option value="bus">Bus</option>
+          <option value="utensils">Food / Meal</option>
+          <option value="stethoscope">Doctor</option>
+          <option value="bath">Bath</option>
+          <option value="bed">Sleep</option>
+          <option value="footprints">Walk</option>
+          <option value="washing-machine">Wash Clothes</option>
+          <option value="phone">Phone</option>
+          <option value="pill">Medicine</option>
+          <option value="coffee">Tea / Coffee</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="k"><b>03</b>Sheet Settings</h2>
+      <div class="field">
+        <label for="sheetFormat">Sheet format</label>
+        <select id="sheetFormat"><option value="portrait">A4 Portrait</option><option value="landscape">A4 Landscape</option></select>
+      </div>
+      <div class="field">
+        <label>Layout Columns</label>
+        <div class="seg" id="layoutSeg">
+          <button type="button" data-cols="1" class="on">1 Column</button>
+          <button type="button" data-cols="2">2 Columns</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="themeSel">Poster theme</label>
+        <select id="themeSel">
+          <option value="default">Plain White</option>
+          <option value="spring">Spring (Green)</option>
+          <option value="summer">Summer (Yellow)</option>
+          <option value="autumn">Autumn (Orange)</option>
+          <option value="winter">Winter (Blue)</option>
+          <option value="medical">Medical (Teal)</option>
+          <option value="cafe">Cafe / Menu (Cream)</option>
+        </select>
+      </div>
+      
+      <label class="tog"><span>Large Print Mode</span><input type="checkbox" id="largePrintTog"></label>
+      <label class="tog"><span>High-Contrast Sheet</span><input type="checkbox" id="hcTog"></label>
+    </section>
+
+    <section class="panel">
+      <h2 class="k"><b>04</b>Background Designer</h2>
+      <div class="field">
+        <label for="bgColorPicker">Base Color</label>
+        <input type="color" id="bgColorPicker" value="#FFFFFF" style="width:100%; height:36px; border:1px solid var(--line); border-radius:6px; cursor:pointer; background:none;">
+      </div>
+      <div class="field">
+        <label for="patternSel">Pattern Style</label>
+        <select id="patternSel">
+          <option value="none">None</option>
+          <option value="dots">Subtle Dots</option>
+          <option value="grid">Engineering Grid</option>
+          <option value="diag">Diagonal Lines</option>
+          <option value="waves">Soft Waves</option>
+          <option value="clouds">Clouds</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="patternColorPicker">Pattern Color</label>
+        <input type="color" id="patternColorPicker" value="#F1F5F9" style="width:100%; height:36px; border:1px solid var(--line); border-radius:6px; cursor:pointer; background:none;">
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="k"><b>05</b>QR Code & Links</h2>
+      <div class="field" style="display:flex; gap:8px; align-items:center;">
+        <input type="checkbox" id="qrToggle" style="width:20px; height:20px; cursor:pointer; accent-color: var(--accent);">
+        <label for="qrToggle" style="margin:0; text-transform:none; font-weight:600; color:var(--ink);">Include QR Code</label>
+      </div>
+      <div class="field" id="qrUrlField" hidden>
+        <input type="text" id="qrUrl" placeholder="https://your-link.com">
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="k"><b>06</b>My Drafts</h2>
+      <div style="display:flex; gap:8px; margin-bottom:10px;">
+        <button class="btn small" id="saveDraftBtn" style="flex:1; background:var(--paper); border-color:var(--line);">Save Draft</button>
+        <button class="btn small" id="dupTomorrowBtn" style="flex:1; background:var(--paper); border-color:var(--line);">Dup for Tomorrow</button>
+      </div>
+      <div id="draftList"></div>
+    </section>
+
+    <section class="panel">
+      <h2 class="k"><b>07</b>About</h2>
+      <p class="about">Everything runs in your browser — no account, no tracking, nothing uploaded. Your poster saves automatically on this device.</p>
+      <p class="about">This tool is designed to help care home staff and support workers create accessible, Easy Read materials in seconds.</p>
+    </section>
+  </aside>
+
+  <section class="stage">
+    <div class="sheet portrait" id="sheet" data-theme="default">
+      <div class="lines" id="lines"></div>
+      <div class="empty" id="empty" hidden>
+        <h3>Nothing on the sheet yet</h3>
+        <p>Use the panel on the left to add text blocks, images, and shapes.<br>Or start from a quick template:</p>
+        <div class="tpl" id="tplsEmpty"></div>
+      </div>
+      <div class="bottom-attr">
+        <div id="qrcode"></div>
+        <p class="attr">PosterD45h by Lee Williams</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<button id="exitPresentBtn" class="btn accent" hidden>Exit Presentation</button>
+<input type="file" id="imageUpload" class="hidden" accept="image/*" style="display:none;">
+<div id="toasts" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+(function(){
+'use strict';
+
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const toKebab = (str) => str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
+
+const LS_KEY='posterd45h.doc.carehome.v5';
+const LS_DRAFTS='posterd45h.drafts';
+const LS_DARK='posterd45h.dark';
+
+const BADGES = {
+  'Vegan': { bg: '#10B981', color: '#FFFFFF' },
+  'Gluten Free': { bg: '#F59E0B', color: '#FFFFFF' },
+  'Dairy Free': { bg: '#3B82F6', color: '#FFFFFF' },
+  'Hot': { bg: '#EF4444', color: '#FFFFFF' },
+  'Cold': { bg: '#06B6D4', color: '#FFFFFF' },
+  'Wet Floor': { bg: '#EAB308', color: '#000000' },
+  'Updated': { bg: '#64748B', color: '#FFFFFF' }
+};
+
+const TEMPLATES = {
+  dailyMenu: { name:'Daily Menu', theme:'cafe', bgColor:'#FBF7F0', pattern:'none', patternColor:'#EAE0D5', blocks:[
+    { type:'h1', text:'Today’s Menu', align:'center', style:{ color:'#4A3B2A', fontFamily:'Lexend', fontSize:'42px', marginBottom:'20px' } },
+    { type:'date' },
+    { type:'panel', text:'Breakfast (8:00 AM)', align:'left', style:{ backgroundColor:'#C4A484', color:'#FFFFFF', padding:'10px 15px', borderRadius:'6px', fontSize:'18px', fontWeight:'bold', fontFamily:'Lexend' } },
+    { type:'body', text:'Porridge with honey\nToast with butter\nTea or Coffee', align:'left', style:{ color:'#4A3B2A', fontSize:'16px', marginTop:'10px', lineHeight:'1.8' } },
+    { type:'badge', text:'Vegan' },
+    { type:'badge', text:'Hot' },
+    { type:'panel', text:'Lunch (12:30 PM)', align:'left', style:{ backgroundColor:'#C4A484', color:'#FFFFFF', padding:'10px 15px', borderRadius:'6px', fontSize:'18px', fontWeight:'bold', fontFamily:'Lexend', marginTop:'20px' } },
+    { type:'body', text:'Beef stew with dumplings\nVegetable soup with bread roll\nFresh fruit', align:'left', style:{ color:'#4A3B2A', fontSize:'16px', marginTop:'10px', lineHeight:'1.8' } },
+    { type:'panel', text:'Tea / Supper (5:00 PM)', align:'left', style:{ backgroundColor:'#C4A484', color:'#FFFFFF', padding:'10px 15px', borderRadius:'6px', fontSize:'18px', fontWeight:'bold', fontFamily:'Lexend', marginTop:'20px' } },
+    { type:'body', text:'Cheese and crackers\nHam sandwiches\nCup of tea', align:'left', style:{ color:'#4A3B2A', fontSize:'16px', marginTop:'10px', lineHeight:'1.8' } }
+  ]},
+  nowNext: { name:'Now & Next Board', theme:'summer', bgColor:'#FFFDE7', pattern:'none', patternColor:'#FEF3C7', blocks:[
+    { type:'h1', text:'Now and Next', align:'center', style:{ color:'#92400E', fontFamily:'Lexend', fontSize:'42px', marginBottom:'20px' } },
+    { type:'panel', text:'NOW', align:'center', style:{ backgroundColor:'#F59E0B', color:'#FFFFFF', padding:'15px', borderRadius:'8px 8px 0 0', fontSize:'28px', fontWeight:'bold', fontFamily:'Lexend' } },
+    { type:'task', text:'Tidy up the toys.' },
+    { type:'panel', text:'NEXT', align:'center', style:{ backgroundColor:'#10B981', color:'#FFFFFF', padding:'15px', borderRadius:'8px 8px 0 0', fontSize:'28px', fontWeight:'bold', fontFamily:'Lexend', marginTop:'20px' } },
+    { type:'task', text:'Choose a game to play.' }
+  ]},
+  timetable: { name:'Visual Timetable', theme:'spring', bgColor:'#F0FFF4', pattern:'grid', patternColor:'#D1FAE5', blocks:[
+    { type:'h1', text:'My Day', align:'left', style:{ color:'#065F46', fontFamily:'Lexend', fontSize:'36px', marginBottom:'20px' } },
+    { type:'date' },
+    { type:'task', text:'Morning: Reading time' },
+    { type:'task', text:'Midday: Play outside' },
+    { type:'task', text:'Lunch at 12:00' },
+    { type:'task', text:'Afternoon: Art and music' }
+  ]},
+  event: { name:'Activity Poster', theme:'autumn', bgColor:'#FFF3E0', pattern:'dots', patternColor:'#FFEDD5', blocks:[
+    { type:'h1', text:'Coffee Morning', align:'center', style:{ color:'#7C2D12', fontFamily:'Lexend', fontSize:'48px' } },
+    { type:'h2', text:'Saturday, 10am – 12pm', align:'center', style:{ color:'#9A3412', fontFamily:'Lexend', fontSize:'24px' } },
+    { type:'shape', style:{ width:'100px', height:'4px', backgroundColor:'#D14C1E', borderRadius:'2px', margin:'20px auto' } },
+    { type:'panel', text:'Join us for free tea, coffee, and cake at the community hall. Everyone is welcome!', align:'center', style:{ backgroundColor:'#FFFFFF', border:'2px solid #D14C1E', padding:'25px', borderRadius:'12px', fontSize:'20px', color:'#7C2D12' } }
+  ]},
+  social: { name:'Social Story', theme:'medical', bgColor:'#F0FDFA', pattern:'dots', patternColor:'#CCFBF1', blocks:[
+    { type:'panel', text:'Going to the Doctor', align:'left', style:{ backgroundColor:'#14B8A6', color:'#FFFFFF', padding:'20px', borderRadius:'12px 12px 0 0', fontSize:'28px', fontWeight:'bold', fontFamily:'Lexend' } },
+    { type:'panel', text:'I feel sick. I go to the doctor with Mum. I sit in the big chair. The doctor looks at my teeth. I am brave. I get a sticker.', align:'left', style:{ backgroundColor:'#FFFFFF', color:'#115E59', padding:'25px', borderRadius:'0 0 12px 12px', fontSize:'18px', border:'2px solid #14B8A6', borderTop:'none', lineHeight:'1.8' } }
+  ]},
+  notice: { name:'Visitor Notice', theme:'winter', bgColor:'#F0F9FF', pattern:'grid', patternColor:'#DBEAFE', blocks:[
+    { type:'h1', text:'Important Notice', align:'center', style:{ color:'#1E3A8A', fontFamily:'Lexend', fontSize:'40px' } },
+    { type:'shape', style:{ width:'100%', height:'4px', backgroundColor:'#3B82F6', borderRadius:'2px', margin:'10px 0 20px 0' } },
+    { type:'date' },
+    { type:'panel', text:'Family visiting hours are from 2:00 PM to 4:00 PM. Please sign in at the front desk.', align:'center', style:{ backgroundColor:'#FFFFFF', border:'2px solid #3B82F6', padding:'25px', borderRadius:'12px', fontSize:'20px', color:'#1E3A8A' } }
+  ]}
+};
+
+let uidSeq=1;
+const uid=()=>'b'+(uidSeq++)+Date.now().toString(36);
+
+function newDoc(){
+  return {
+    format:'portrait',
+    cols:1,
+    theme:'default',
+    bgColor:'#FFFFFF',
+    pattern:'none',
+    patternColor:'#F1F5F9',
+    largePrint:false,
+    highContrast:false,
+    useQR:false,
+    qrUrl:'',
+    blocks:[
+      { uid: uid(), type: 'h1', text: 'Main Headline', align: 'center' },
+      { uid: uid(), type: 'h2', text: 'Sub Heading', align: 'center' },
+      { uid: uid(), type: 'body', text: 'Click to edit text. You can type anything here. Make it long, make it short, make it punchy.', align: 'center' }
+    ]
+  };
+}
+let doc=newDoc();
+
+const sheet=$('#sheet'), linesEl=$('#lines'), imageUpload=$('#imageUpload'), applyAllChk=$('#applyAllChk');
+
+let history = [];
+let hIndex = -1;
+function pushHistory() {
+    history = history.slice(0, hIndex + 1);
+    history.push(JSON.stringify(doc));
+    if (history.length > 50) history.shift();
+    else hIndex++;
+    updateUndoRedoBtns();
+}
+function undo() { if (hIndex > 0) { hIndex--; doc = JSON.parse(history[hIndex]); renderAll(); updateUndoRedoBtns(); } }
+function redo() { if (hIndex < history.length - 1) { hIndex++; doc = JSON.parse(history[hIndex]); renderAll(); updateUndoRedoBtns(); } }
+function updateUndoRedoBtns() {
+    $('#undoBtn').disabled = hIndex <= 0;
+    $('#redoBtn').disabled = hIndex >= history.length - 1;
+}
+
+let saveT=null;
+function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(LS_KEY,JSON.stringify(doc))}catch(e){}},350);}
+
+function applyBackground() {
+  if(doc.highContrast) {
+    sheet.style.backgroundColor = '#000000';
+    sheet.style.backgroundImage = 'none';
+    return;
+  }
+  sheet.style.backgroundColor = doc.bgColor || '#FFFFFF';
+  if (doc.pattern === 'dots') {
+    sheet.style.backgroundImage = `radial-gradient(${doc.patternColor} 2px, transparent 2px)`;
+    sheet.style.backgroundSize = '24px 24px';
+  } else if (doc.pattern === 'grid') {
+    sheet.style.backgroundImage = `linear-gradient(${doc.patternColor} 1px, transparent 1px), linear-gradient(90deg, ${doc.patternColor} 1px, transparent 1px)`;
+    sheet.style.backgroundSize = '24px 24px';
+  } else if (doc.pattern === 'diag') {
+    sheet.style.backgroundImage = `repeating-linear-gradient(45deg, ${doc.patternColor} 0, ${doc.patternColor} 1px, transparent 1px, transparent 12px)`;
+  } else if (doc.pattern === 'waves') {
+    sheet.style.backgroundImage = `radial-gradient(circle at 50% 50%, transparent 9px, ${doc.patternColor} 10px, transparent 11px)`;
+    sheet.style.backgroundSize = '30px 30px';
+  } else if (doc.pattern === 'clouds') {
+    sheet.style.backgroundImage = `radial-gradient(${doc.patternColor} 20%, transparent 0), radial-gradient(${doc.patternColor} 20%, transparent 0)`;
+    sheet.style.backgroundSize = '60px 60px';
+    sheet.style.backgroundPosition = '0 0, 30px 30px';
+  } else {
+    sheet.style.backgroundImage = 'none';
+  }
+}
+
+function applyQR() {
+  const qrEl = $('#qrcode');
+  qrEl.innerHTML = '';
+  if(doc.useQR) {
+    qrEl.style.display = 'block';
+    if(doc.qrUrl) {
+      new QRCode(qrEl, { text: doc.qrUrl, width: 80, height: 80, colorDark: doc.highContrast ? "#FFE14D" : "#000000", colorLight: doc.highContrast ? "#000000" : "#FFFFFF", correctLevel: QRCode.CorrectLevel.M });
+    } else {
+      qrEl.innerHTML = '<div style="width:80px;height:80px;border:1px dashed #ccc;display:grid;place-items:center;color:#ccc;font-size:10px;">URL?</div>';
+    }
+  } else {
+    qrEl.style.display = 'none';
+  }
+}
+
+function renderAll(){
+  sheet.classList.toggle('landscape', doc.format === 'landscape');
+  sheet.classList.toggle('portrait', doc.format === 'portrait');
+  sheet.setAttribute('data-theme', doc.theme);
+  sheet.classList.toggle('large-print', !!doc.largePrint);
+  sheet.classList.toggle('high-contrast', !!doc.highContrast);
+  
+  applyBackground();
+  applyQR();
+  
+  $('#sheetFormat').value=doc.format;
+  $('#themeSel').value=doc.theme;
+  $('#bgColorPicker').value=doc.bgColor || '#FFFFFF';
+  $('#patternSel').value=doc.pattern || 'none';
+  $('#patternColorPicker').value=doc.patternColor || '#E3E5E8';
+  
+  $$('#layoutSeg button').forEach(b => b.classList.toggle('on', parseInt(b.dataset.cols) === (doc.cols || 1)));
+  $('#largePrintTog').checked = !!doc.largePrint;
+  $('#hcTog').checked = !!doc.highContrast;
+  
+  $('#qrToggle').checked = doc.useQR;
+  $('#qrUrlField').hidden = !doc.useQR;
+  $('#qrUrl').value = doc.qrUrl || '';
+  
+  renderBlocks();
+}
+
+function renderBlocks(){
+  linesEl.className = 'lines' + (doc.cols === 2 ? ' two-col' : '');
+  linesEl.innerHTML = doc.blocks.map(blockHTML).join('');
+  $('#empty').hidden = doc.blocks.length > 0;
+  attachBlockListeners();
+}
+
+function blockHTML(b){
+  let styleStr = '';
+  if (b.style) {
+    styleStr = Object.entries(b.style).map(([k, v]) => `${toKebab(k)}:${v}`).join(';');
+  }
+  const alignStyle = b.align ? `text-align:${b.align};` : '';
+  const fullStyle = `style="${alignStyle}${styleStr}"`;
+  const ph = b.type === 'h1' ? 'Heading' : (b.type === 'h2' ? 'Subhead' : (b.type === 'panel' ? 'Panel Text' : 'Text'));
+  
+  if(b.type === 'date'){
+    const offset = b.dateOffset || 0;
+    const d = new Date();
+    d.setDate(d.getDate() + offset);
+    const dateStr = d.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    return `<div class="block" data-type="date" data-uid="${b.uid}">Updated: ${dateStr}</div>` + getToolsHTML(b.uid, b.type);
+  }
+  
+  if(b.type === 'badge'){
+    const badgeStyle = BADGES[b.text] || { bg: '#64748b', color: '#fff' };
+    return `<div class="block" data-type="badge" data-uid="${b.uid}" style="background-color:${badgeStyle.bg}; color:${badgeStyle.color};" contenteditable="true">${esc(b.text || 'Badge')}</div>` + getToolsHTML(b.uid, b.type);
+  }
+
+  if(b.type === 'task'){
+    const checked = b.checked ? 'checked' : '';
+    const done = b.checked ? 'done' : '';
+    return `<div class="block" data-type="task" data-uid="${b.uid}">
+              <div class="task-checkbox ${checked}"></div>
+              <span class="task-text ${done}" contenteditable="true" data-ph="Task text">${esc(b.text || 'Task')}</span>
+            </div>` + getToolsHTML(b.uid, b.type);
+  }
+  
+  // Convert \n to <br>
+  const textContent = esc(b.text || '').replace(/\n/g, '<br>');
+  
+  let classes = 'block';
+  if (b.easyReadWarning) classes += ' easy-read-warning';
+  if (b.type === 'image' && b.imgSize) classes += ` img-${b.imgSize}`;
+  if (b.type === 'shape' && b.dividerType) classes += ` ${b.dividerType}`;
+  
+  if(b.type === 'shape'){
+    return `<div class="${classes}" data-type="shape" data-uid="${b.uid}" ${fullStyle}></div>` + getToolsHTML(b.uid, b.type);
+  } else if(b.type === 'image'){
+    const imgSrc = b.imgSrc ? `background-image:url('${b.imgSrc}');` : '';
+    return `<div class="${classes}" data-type="image" data-uid="${b.uid}" style="${imgSrc}${styleStr}"></div>` + getToolsHTML(b.uid, b.type);
+  } else {
+    return `<div class="${classes}" data-type="${b.type}" contenteditable="true" data-uid="${b.uid}" data-ph="${ph}" ${fullStyle}>${textContent}</div>` + getToolsHTML(b.uid, b.type);
+  }
+}
+
+function getToolsHTML(uidVal, type) {
+  let extraBtns = '';
+  if(type === 'image') {
+    extraBtns += `<button data-act="resize" title="Resize Image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>`;
+  }
+  if(type === 'shape') {
+    extraBtns += `<button data-act="dividerStyle" title="Cycle Divider Style"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"/></svg></button>`;
+  }
+  return `
+    <div class="block-tools" data-uid="${uidVal}">
+      <button data-act="up" title="Move Up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></button>
+      <button data-act="down" title="Move Down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <button data-act="dup" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+      ${extraBtns}
+      <button data-act="del" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+    </div>
+  `;
+}
+
+function attachBlockListeners() {
+  document.querySelectorAll('.block-tools').forEach(tools => {
+    if(tools.dataset.attached) return;
+    tools.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if(!btn) return;
+      const act = btn.dataset.act;
+      const uidVal = tools.dataset.uid;
+      const index = doc.blocks.findIndex(b => b.uid === uidVal);
+      if(index === -1) return;
+      
+      if(act === 'up' && index > 0) {
+        [doc.blocks[index], doc.blocks[index-1]] = [doc.blocks[index-1], doc.blocks[index]];
+      } else if(act === 'down' && index < doc.blocks.length - 1) {
+        [doc.blocks[index], doc.blocks[index+1]] = [doc.blocks[index+1], doc.blocks[index]];
+      } else if(act === 'del') {
+        doc.blocks.splice(index, 1);
+      } else if(act === 'dup') {
+        const b = doc.blocks[index];
+        const newBlock = JSON.parse(JSON.stringify(b));
+        newBlock.uid = uid();
+        doc.blocks.splice(index + 1, 0, newBlock);
+      } else if(act === 'resize') {
+        const b = doc.blocks[index];
+        const sizes = ['100', '50', '25'];
+        const current = b.imgSize || '100';
+        const nextIndex = (sizes.indexOf(current) + 1) % sizes.length;
+        b.imgSize = sizes[nextIndex];
+      } else if(act === 'dividerStyle') {
+        const b = doc.blocks[index];
+        const styles = ['solid', 'dotted', 'dashed'];
+        const current = b.dividerType || 'solid';
+        const nextIndex = (styles.indexOf(current) + 1) % styles.length;
+        b.dividerType = styles[nextIndex];
+      }
+      pushHistory(); renderBlocks(); save();
+    });
+    tools.dataset.attached = "true";
+  });
+}
+
+// Click listener for Task Checkboxes
+linesEl.addEventListener('click', (e) => {
+  const checkbox = e.target.closest('.task-checkbox');
+  if (checkbox) {
+    const block = checkbox.closest('.block');
+    const uidVal = block.dataset.uid;
+    const b = doc.blocks.find(x => x.uid === uidVal);
+    if(b) {
+      b.checked = !b.checked;
+      pushHistory(); renderBlocks(); save();
+    }
+  }
+});
+
+// Add Block
+document.querySelectorAll('[data-add]').forEach(btn => {
+  btn.onclick = () => {
+    const type = btn.dataset.add;
+    if(type === 'image') {
+      imageUpload.click();
+      return;
+    }
+    const newBlock = { uid: uid(), type: type, text: type === 'h1' ? 'Main Headline' : (type === 'h2' ? 'Sub Heading' : 'Enter text here...') };
+    if(type === 'panel') newBlock.text = 'Enter text here...';
+    if(type === 'task') newBlock.text = 'New task';
+    doc.blocks.push(newBlock);
+    pushHistory(); renderBlocks(); save();
+  };
+});
+
+// Quick Badges
+ $('#badgeSel').onchange = (e) => {
+  if(!e.target.value) return;
+  const newBlock = { uid: uid(), type: 'badge', text: e.target.value };
+  doc.blocks.push(newBlock);
+  pushHistory(); renderBlocks(); save();
+  e.target.value = '';
+};
+
+// Quick Phrases
+ $('#snippetSel').onchange = (e) => {
+  if(!e.target.value) return;
+  const newBlock = { uid: uid(), type: 'body', text: e.target.value, align: 'left' };
+  doc.blocks.push(newBlock);
+  pushHistory(); renderBlocks(); save();
+  e.target.value = '';
+};
+
+// Quick Icons
+ $('#iconSel').onchange = (e) => {
+  if(!e.target.value) return;
+  const iconUrl = `https://api.iconify.design/lucide/${e.target.value}.svg?color=%23222`;
+  const newBlock = { uid: uid(), type: 'image', imgSrc: iconUrl, imgSize: '25', align: 'center' };
+  doc.blocks.push(newBlock);
+  pushHistory(); renderBlocks(); save();
+  e.target.value = '';
+};
+
+// Image Upload
+imageUpload.onchange = (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const newBlock = { uid: uid(), type: 'image', imgSrc: ev.target.result, imgSize: '100' };
+    doc.blocks.push(newBlock);
+    pushHistory(); renderBlocks(); save();
+    imageUpload.value = '';
+  };
+  reader.readAsDataURL(file);
+};
+
+// Apply Templates
+['tpls','tplsEmpty'].forEach(id => { 
+  $('#'+id).innerHTML = Object.keys(TEMPLATES).map(k => `<button data-tpl="${k}">${esc(TEMPLATES[k].name)}</button>`).join(''); 
+});
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-tpl]'); 
+  if(!b) return;
+  const tpl = TEMPLATES[b.dataset.tpl];
+  doc.theme = tpl.theme;
+  doc.bgColor = tpl.bgColor;
+  doc.pattern = tpl.pattern;
+  doc.patternColor = tpl.patternColor;
+  doc.blocks = tpl.blocks.map(bl => ({ ...bl, uid: uid() }));
+  pushHistory(); renderAll(); save();
+  toast('Template loaded!');
+});
+
+// Text Formatting
+document.execCommand('styleWithCSS', false, true);
+
+function formatAllBlocks(cmd, value) {
+  document.querySelectorAll('.block[contenteditable="true"]').forEach(b => {
+    b.focus();
+    if(cmd === 'fontName') b.style.fontFamily = value;
+    else if(cmd === 'fontSize') {
+      const sizeMap = {'2': '12px', '3': '16px', '5': '24px', '7': '32px'};
+      b.style.fontSize = sizeMap[value] || '16px';
+    }
+    else if(cmd === 'foreColor') b.style.color = value;
+    else if(cmd === 'hiliteColor') b.style.backgroundColor = value;
+    else if(cmd.startsWith('justify')) b.style.textAlign = cmd.replace('justify','').toLowerCase();
+    else if(cmd === 'bold') b.style.fontWeight = (b.style.fontWeight === 'bold') ? 'normal' : 'bold';
+    else if(cmd === 'italic') b.style.fontStyle = (b.style.fontStyle === 'italic') ? 'normal' : 'italic';
+    else if(cmd === 'underline') b.style.textDecoration = (b.style.textDecoration === 'underline') ? 'none' : 'underline';
+  });
+}
+
+document.querySelectorAll('.fmt-btn[data-cmd]').forEach(btn => {
+  btn.addEventListener('mousedown', (e) => { e.preventDefault(); });
+  btn.onclick = () => {
+    const cmd = btn.dataset.cmd;
+    if(applyAllChk.checked) formatAllBlocks(cmd, null);
+    else document.execCommand(cmd, false, null);
+    pushHistory();
+  };
+});
+
+// Emoji Picker
+const emojis = ['😀','😃','😄','😁','😆','😅','🤣','😂','🙂','🙃','😉','😊','😇','🥰','😍','🤩','😘','😗','😚','😙','😋','😛','😜','🤪','😝','🤑','🤗','🤭','🤫','🤔','🤐','🤨','😐','😑','😶','😏','😒','🙄','😬','🤥','😌','😔','😪','🤤','😴','😷','🤒','🤕','🤢','🤮','🤧','🥵','🥶','😵','🤯','🤠','🥳','😎','🤓','🧐','😕','😟','🙁','😮','😯','😲','😳','🥺','😦','😧','😨','😰','😥','😢','😭','😱','😖','😣','😞','😓','😩','😫','🥱','😤','😡','😠','🤬','😈','👿','💀','☠','💩','🤡','👹','👺','👻','👽','👾','🤖','😺','😸','😹','😻','😼','😽','🙀','😿','😾','🍔','🍟','🍕','🌭','🥪','🌮','🌯','🥙','🥚','🍳','🥘','🍲','🥣','🥗','🍿','🧂','🥫','🍱','🍘','🍙','🍚','🍛','🍜','🍝','🍠','🍢','🍣','🍤','🍥','🥮','🍡','🥟','🥠','🥡','🦀','🦞','🦐','🦑','🦛','🍦','🍨','🍧','🍩','🍪','🎂','🍰','🧁','🥧','🍫','🍬','🍭','🍮','🍯','🍼','🥛','☕','🍵','🍶','🍾','🍷','🍸','🍹','🍺','🍻','🥂','🥃','🥤','🧃','🧉','🧊','🚗','🚕','🚙','🚌','🚎','🏎','🚓','🚑','🚒','🚐','🚚','🚛','🚜','🛴','🚲','🛵','🏍','🚨','🚔','🚍','🚘','🚖','🚡','🚠','🚟','🚃','🚋','🚞','🚝','🚄','🚅','🚈','🚂','🚆','🚇','🚊','🚉','✈','🛫','🛬','🛩','💺','🛰','🚀','🛸','🚁','🛶','⛵','🚤','🛥','🛳','⛴','🚢','⚓','⛽','🚧','🚦','🚥','🚏','🗺','🗿','🗽','🗼','🏰','🏯','🏟','🎡','🎢','🎠','⛲','⛱','🏖','🏝','🏜','🌋','⛰','🏔','🗻','🏕','⛺','🏠','🏡','🏘','🏚','🏗','🏭','🏢','🏬','🏣','🏤','🏥','🏦','🏨','🏪','🏫','💰','💴','💵','💶','💷','💸','💳','🧾','💱','💲','✉','📧','📨','📩','📤','📥','📦','📫','📪','📬','📭','📮','🗳','✏','✒','🖋','🖊','🖌','🖍','📝','💼','📁','📂','🗂','📅','📆','🗒','🗓','📇','📈','📉','📊','📋','📌','📍','📎','🖇','📏','📐','✂','🗃','🗄','🗑','🔒','🔓','🔏','🔐','🔑','🗝','🔨','⛏','⚒','🛠','🗡','⚔','🔫','🏹','🛡','🔧','🔩','⚙','🗜','⚖','🔗','⛓','🧰','🧲','🧪','🧫','🧬','🔬','🔭','📡','💉','💊','🚪','🛏','🛋','🚽','🚿','🛁','🧴','🧷','🧹','🧺','🧻','🛒','⚰','⚱'];
+const emojiBtn = $('#emojiBtn');
+const emojiPicker = $('#emojiPicker');
+let activeBlock = null;
+
+document.addEventListener('selectionchange', () => {
+  if (document.activeElement.classList.contains('block') || document.activeElement.classList.contains('task-text')) {
+    activeBlock = document.activeElement;
+  }
+});
+
+emojiBtn.onclick = (e) => {
+  e.stopPropagation();
+  if(emojiPicker.hidden) {
+    emojiPicker.innerHTML = emojis.map(em => `<button class="emoji-btn">${em}</button>`).join('');
+    emojiPicker.hidden = false;
+  } else {
+    emojiPicker.hidden = true;
+  }
+};
+
+emojiPicker.addEventListener('click', (e) => {
+  const btn = e.target.closest('.emoji-btn');
+  if(!btn) return;
+  if(activeBlock) {
+    activeBlock.focus();
+    document.execCommand('insertText', false, btn.textContent);
+  }
+  pushHistory(); save();
+});
+
+document.addEventListener('click', (e) => {
+  if(!emojiPicker.hidden && !e.target.closest('#emojiPicker') && !e.target.closest('#emojiBtn')) {
+    emojiPicker.hidden = true;
+  }
+});
+
+ $('#fontSel').onchange = (e) => {
+  if(applyAllChk.checked) formatAllBlocks('fontName', e.target.value);
+  else document.execCommand('fontName', false, e.target.value);
+  pushHistory();
+};
+ $('#sizeSel').onchange = (e) => {
+  if(applyAllChk.checked) formatAllBlocks('fontSize', e.target.value);
+  else document.execCommand('fontSize', false, e.target.value);
+  pushHistory();
+};
+ $('#textColor').addEventListener('input', (e) => {
+  if(applyAllChk.checked) formatAllBlocks('foreColor', e.target.value);
+  else document.execCommand('foreColor', false, e.target.value);
+});
+ $('#bgColor').addEventListener('input', (e) => {
+  if(applyAllChk.checked) formatAllBlocks('hiliteColor', e.target.value);
+  else document.execCommand('hiliteColor', false, e.target.value);
+});
+
+// Settings Listeners
+ $('#sheetFormat').onchange = (e) => { doc.format = e.target.value; pushHistory(); renderAll(); save(); };
+
+ $('#layoutSeg').addEventListener('click', (e) => {
+  const b = e.target.closest('button'); if(!b) return;
+  doc.cols = parseInt(b.dataset.cols);
+  pushHistory(); renderAll(); save();
+});
+
+ $('#themeSel').onchange = (e) => { 
+  doc.theme = e.target.value; 
+  doc.bgColor = '#FFFFFF'; 
+  doc.pattern = 'none'; 
+  pushHistory(); renderAll(); save(); 
+};
+
+ $('#largePrintTog').onchange = (e) => { doc.largePrint = e.target.checked; pushHistory(); renderAll(); save(); };
+ $('#hcTog').onchange = (e) => { doc.highContrast = e.target.checked; pushHistory(); renderAll(); save(); };
+
+ $('#bgColorPicker').addEventListener('input', (e) => { doc.bgColor = e.target.value; applyBackground(); save(); });
+ $('#patternSel').onchange = (e) => { doc.pattern = e.target.value; applyBackground(); pushHistory(); save(); };
+ $('#patternColorPicker').addEventListener('input', (e) => { doc.patternColor = e.target.value; applyBackground(); save(); });
+
+ $('#qrToggle').onchange = (e) => { doc.useQR = e.target.checked; $('#qrUrlField').hidden = !doc.useQR; pushHistory(); renderAll(); save(); };
+ $('#qrUrl').addEventListener('input', (e) => { doc.qrUrl = e.target.value.trim(); applyQR(); save(); });
+
+ $('#undoBtn').onclick = undo;
+ $('#redoBtn').onclick = redo;
+
+// Block Text Edits
+linesEl.addEventListener('focusin', (e) => {
+  const block = e.target.closest('[contenteditable="true"]');
+  if(block) {
+    const uidVal = block.dataset.uid;
+    block.oninput = () => {
+      const b = doc.blocks.find(x => x.uid === uidVal);
+      if(b) {
+        b.text = block.innerText; 
+        if(b.easyReadWarning) { b.easyReadWarning = false; block.classList.remove('easy-read-warning'); }
+      }
+      save();
+    };
+    block.onblur = () => pushHistory();
+  }
+});
+
+// Top Bar Actions
+ $('#newBtn').onclick = () => {
+  if(confirm('Start a new poster? This will clear the current sheet.')) {
+    doc = newDoc(); pushHistory(); renderAll(); save(); toast('Fresh sheet ready.');
+  }
+};
+
+ $('#shareBtn').onclick = async () => {
+  try {
+    const str = JSON.stringify(doc);
+    const hash = btoa(unescape(encodeURIComponent(str)));
+    history.replaceState(null, '', '#' + hash);
+    await navigator.clipboard.writeText(location.href);
+    toast('Share link copied to clipboard!');
+  } catch(e) {
+    toast('Failed to copy link. Copy from address bar.', 'alert');
+  }
+};
+
+ $('#checkBtn').onclick = () => {
+  let issues = 0;
+  doc.blocks.forEach(b => {
+    if(b.text) {
+      const words = b.text.trim().split(/\s+/);
+      if(words.length > 15) {
+        b.easyReadWarning = true;
+        issues++;
+      } else {
+        b.easyReadWarning = false;
+      }
+    }
+  });
+  pushHistory(); renderBlocks(); save();
+  if(issues > 0) toast(`Found ${issues} blocks with over 15 words. Keep it short!`, 'alert');
+  else toast('All text blocks pass the Easy Read check!', 'check');
+};
+
+ $('#presentBtn').onclick = () => {
+  document.body.classList.add('presenting');
+};
+ $('#exitPresentBtn').onclick = () => {
+  document.body.classList.remove('presenting');
+};
+
+ $('#pngBtn').onclick = async () => {
+  document.querySelectorAll('.block-tools').forEach(t => t.style.display = 'none');
+  document.querySelectorAll('.block').forEach(b => b.style.border = 'none');
+  toast('Rendering PNG…');
+  try {
+    const canvas = await html2canvas(sheet, { scale: 2, backgroundColor: null, logging: false });
+    const link = document.createElement('a');
+    link.download = 'posterd45h.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    toast('PNG Exported!');
+  } catch(e) { toast('PNG export failed.', 'alert'); }
+  document.querySelectorAll('.block-tools').forEach(t => t.style.removeProperty('display'));
+};
+
+ $('#printBtn').onclick = () => {
+  document.querySelectorAll('.block-tools').forEach(t => t.style.display = 'none');
+  setTimeout(() => window.print(), 100);
+};
+
+// Drafts Logic
+function getDrafts() { try { return JSON.parse(localStorage.getItem(LS_DRAFTS) || '[]'); } catch(e) { return []; } }
+function saveDrafts(drafts) { localStorage.setItem(LS_DRAFTS, JSON.stringify(drafts)); }
+function renderDrafts() {
+  const list = getDrafts();
+  const c = $('#draftList');
+  if(!list.length) { c.innerHTML = '<p class="hint" style="margin-top:0;">No saved drafts yet.</p>'; return; }
+  c.innerHTML = list.map(d => `<div class="draft-item"><span data-load-draft="${d.id}">${esc(d.name)}</span><button class="ibtn danger" data-del-draft="${d.id}" aria-label="Delete draft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div>`).join('');
+}
+ $('#saveDraftBtn').onclick = () => {
+  const name = prompt('Name this draft:', doc.blocks[0] && doc.blocks[0].text ? doc.blocks[0].text.substring(0, 20) : 'Untitled');
+  if(name === null) return;
+  const drafts = getDrafts();
+  drafts.push({ id: uid(), name: name.trim() || 'Untitled', doc: JSON.parse(JSON.stringify(doc)) });
+  saveDrafts(drafts); renderDrafts(); toast('Draft saved!', 'check');
+};
+ $('#dupTomorrowBtn').onclick = () => {
+  const drafts = getDrafts();
+  const clonedDoc = JSON.parse(JSON.stringify(doc));
+  clonedDoc.blocks.forEach(b => {
+    if(b.type === 'date') {
+      b.dateOffset = (b.dateOffset || 0) + 1;
+    }
+  });
+  const name = prompt('Name this draft:', (doc.blocks[0] && doc.blocks[0].text ? doc.blocks[0].text.substring(0, 20) : 'Untitled') + ' (Tomorrow)');
+  if(name === null) return;
+  drafts.push({ id: uid(), name: name.trim() || 'Untitled', doc: clonedDoc });
+  saveDrafts(drafts); renderDrafts(); toast('Duplicated for tomorrow!', 'check');
+};
+document.addEventListener('click', e => {
+  const loadBtn = e.target.closest('[data-load-draft]');
+  const delBtn = e.target.closest('[data-del-draft]');
+  if(loadBtn) {
+    const drafts = getDrafts();
+    const d = drafts.find(x => x.id === loadBtn.dataset.load_draft);
+    if(d) { doc = JSON.parse(JSON.stringify(d.doc)); pushHistory(); renderAll(); save(); toast('Draft loaded!', 'check'); }
+  }
+  if(delBtn) {
+    if(confirm('Delete this draft permanently?')) {
+      let drafts = getDrafts();
+      drafts = drafts.filter(x => x.id !== delBtn.dataset.del_draft);
+      saveDrafts(drafts); renderDrafts(); toast('Draft deleted.', 'check');
+    }
+  }
+});
+
+// Dark Mode
+const darkToggleBtn = $('#darkToggleBtn');
+function applyDarkMode(isDark) {
+  document.body.classList.toggle('dark-mode', isDark);
+  localStorage.setItem(LS_DARK, isDark ? '1' : '0');
+}
+darkToggleBtn.onclick = () => applyDarkMode(!document.body.classList.contains('dark-mode'));
+
+// Toasts
+function toast(msg, kind='info') {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  $('#toasts').append(t);
+  setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 320); }, 3400);
+}
+
+// Boot
+function boot(){
+  const isDark = localStorage.getItem(LS_DARK) === '1';
+  applyDarkMode(isDark);
+  
+  // Check for Share Link in URL
+  if(location.hash.length > 1) {
+    try {
+      const hash = location.hash.substring(1);
+      const str = decodeURIComponent(escape(atob(hash)));
+      const obj = JSON.parse(str);
+      doc = Object.assign(newDoc(), obj);
+      if(!doc.blocks) doc.blocks = [];
+      history.replaceState(null, '', window.location.pathname); // clear hash
+      setTimeout(() => toast('Loaded from share link!', 'check'), 300);
+    } catch(e) { 
+      console.error("Failed to load share link", e);
+    }
+  } else {
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if(raw) {
+        const o = JSON.parse(raw);
+        doc = Object.assign(newDoc(), o);
+        if(!doc.blocks) doc.blocks = [];
+      }
+    } catch(e) {}
+  }
+  
+  history = [JSON.stringify(doc)]; hIndex = 0; updateUndoRedoBtns();
+  renderAll();
+  renderDrafts();
+}
+boot();
+
+})();
+</script>
+</body>
+</html>
