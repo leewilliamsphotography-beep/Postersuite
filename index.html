@@ -18,8 +18,33 @@
             --accent-a11y: #D14C1E; /* PosterA11y Orange */
             --accent-design: #2563EB; /* PosterD45h Blue */
             --focus: #2563EB;
+            --hero-glow: rgba(209, 76, 30, 0.05);
         }
         
+        /* Dark Mode Variables */
+        body.dark-mode {
+            --paper: #121212;
+            --surface: #1E1E1E;
+            --ink: #E8E8E8;
+            --ink2: #A0A0A0;
+            --line: #333333;
+            --line2: #262626;
+            --hero-glow: rgba(209, 76, 30, 0.15);
+        }
+
+        /* Calm Mode Variables (Soft, muted, low-contrast) */
+        body.calm-mode {
+            --paper: #F7F7F2; /* Soft off-white */
+            --surface: #FFFFFF; 
+            --ink: #595959; /* Soft dark grey instead of harsh black */
+            --ink2: #8c8c8c;
+            --line: #ECECE6;
+            --line2: #F4F4F0;
+            --accent-a11y: #C8825E; /* Muted terracotta */
+            --accent-design: #7C9CB8; /* Muted soft blue */
+            --hero-glow: transparent; /* Remove glowing gradient */
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Lexend', sans-serif; }
         
         body {
@@ -29,6 +54,18 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        /* Calm Mode Global Overrides */
+        body.calm-mode * {
+            animation: none !important;
+            transition: none !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+        body.calm-mode .card:hover {
+            transform: none !important; /* Stop cards from lifting up */
         }
 
         header {
@@ -41,6 +78,7 @@
             position: sticky;
             top: 0;
             z-index: 10;
+            transition: background 0.2s, border-color 0.2s;
         }
         
         .logo {
@@ -60,12 +98,19 @@
             color: var(--accent-a11y);
         }
 
-        nav {
+        .nav-actions {
             display: flex;
-            gap: 24px;
+            align-items: center;
+            gap: 16px;
         }
 
-        nav a {
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        nav a, nav button {
             text-decoration: none;
             color: var(--ink2);
             font-weight: 600;
@@ -73,12 +118,67 @@
             background: none;
             border: none;
             font-family: inherit;
-            font-size: 1rem;
+            font-size: 0.95rem;
             transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            position: relative;
         }
 
-        nav a:hover {
+        nav a:hover, nav button:hover {
             color: var(--ink);
+        }
+
+        nav svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Glowing dot for What's New */
+        .new-dot {
+            position: absolute;
+            top: -2px;
+            right: -6px;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-a11y);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-a11y);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(209, 76, 30, 0.5); }
+            70% { box-shadow: 0 0 0 6px rgba(209, 76, 30, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(209, 76, 30, 0); }
+        }
+
+        /* Toggle Buttons (Dark Mode & Calm Mode) */
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--line);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--ink2);
+            display: grid;
+            place-items: center;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+        }
+        .theme-toggle:hover {
+            background: var(--line2);
+            color: var(--ink);
+            border-color: var(--ink2);
+        }
+        .theme-toggle.active {
+            background: var(--line2);
+            color: var(--ink);
+            border-color: var(--ink);
+        }
+        .theme-toggle svg {
+            width: 18px;
+            height: 18px;
         }
 
         /* Hero Section */
@@ -87,7 +187,7 @@
             padding: 60px 20px 40px;
             max-width: 800px;
             margin: 0 auto;
-            background: radial-gradient(circle at 50% 0%, rgba(209, 76, 30, 0.05) 0%, transparent 60%);
+            background: radial-gradient(circle at 50% 0%, var(--hero-glow) 0%, transparent 60%);
         }
         
         .hero h1 {
@@ -127,7 +227,7 @@
             max-width: 460px;
             display: flex;
             flex-direction: column;
-            transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+            transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s, background 0.2s;
             cursor: pointer;
             position: relative;
         }
@@ -136,6 +236,9 @@
             transform: translateY(-4px);
             box-shadow: 0 12px 24px rgba(0,0,0,0.06);
             border-color: var(--ink2);
+        }
+        body.dark-mode .card:hover {
+            box-shadow: 0 12px 24px rgba(0,0,0,0.3);
         }
 
         .card:focus-visible {
@@ -161,7 +264,6 @@
             overflow: hidden;
         }
 
-        /* Custom tweak for logos so their built-in backgrounds shine */
         .icon-a11y, .icon-design { background: transparent; padding: 0; }
 
         .card h2 {
@@ -179,8 +281,8 @@
             margin-bottom: 16px;
             width: fit-content;
         }
-        .tag-a11y { background: rgba(209, 76, 30, 0.1); color: var(--accent-a11y); }
-        .tag-design { background: rgba(37, 99, 235, 0.1); color: var(--accent-design); }
+        .tag-a11y { background: rgba(209, 76, 30, 0.15); color: var(--accent-a11y); }
+        .tag-design { background: rgba(37, 99, 235, 0.15); color: var(--accent-design); }
         
         .card p {
             color: var(--ink2);
@@ -220,6 +322,7 @@
             border-top: 1px solid var(--line);
             color: var(--ink2);
             font-size: 0.9rem;
+            transition: background 0.2s, border-color 0.2s;
         }
 
         footer b {
@@ -240,8 +343,8 @@
             border: 1px solid var(--line);
         }
 
-        /* About Modal */
-        .about-overlay {
+        /* Modals */
+        .modal-overlay {
             display: none;
             position: fixed;
             top: 0;
@@ -255,10 +358,8 @@
             align-items: center;
             padding: 20px;
         }
-        .about-overlay.active {
-            display: flex;
-        }
-        .about-modal {
+        .modal-overlay.active { display: flex; }
+        .modal-box {
             background: var(--surface);
             border: 1px solid var(--line);
             border-radius: 16px;
@@ -268,23 +369,37 @@
             position: relative;
             box-shadow: 0 20px 50px -10px rgba(0,0,0,0.2);
             animation: pop 0.2s ease-out;
+            max-height: 85vh;
+            overflow-y: auto;
         }
         @keyframes pop {
             from { transform: scale(0.95); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
-        .about-modal h2 {
+        .modal-box h2 {
             font-family: 'Bricolage Grotesque', sans-serif;
             font-size: 1.75rem;
             margin-bottom: 16px;
             color: var(--ink);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .about-modal p {
+        .modal-box p {
             color: var(--ink2);
             line-height: 1.6;
             margin-bottom: 16px;
         }
-        .about-close {
+        .modal-box ul {
+            margin-bottom: 16px;
+            padding-left: 20px;
+            color: var(--ink2);
+            line-height: 1.8;
+        }
+        .modal-box ul li b {
+            color: var(--ink);
+        }
+        .modal-close {
             position: absolute;
             top: 16px;
             right: 16px;
@@ -298,7 +413,7 @@
             border-radius: 8px;
             transition: background 0.2s;
         }
-        .about-close:hover {
+        .modal-close:hover {
             background: var(--line2);
             color: var(--ink);
         }
@@ -348,6 +463,40 @@
             transform: translateY(-2px); 
             box-shadow: 0 6px 16px rgba(0,0,0,0.15);
         }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--ink);
+            color: var(--paper);
+            padding: 12px 24px;
+            border-radius: 999px;
+            font-weight: 600;
+            z-index: 300;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 12px 16px;
+            }
+            .logo span {
+                display: none; /* Hide logo text on very small screens to save space */
+            }
+            nav a, nav button {
+                font-size: 0.85rem;
+            }
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -360,11 +509,45 @@
                 <rect x="14" y="14" width="7" height="7"></rect>
                 <rect x="3" y="14" width="7" height="7"></rect>
             </svg>
-            Poster Suite
+            <span>Poster Suite</span>
         </div>
-        <nav>
-            <a onclick="openAbout()">About</a>
-        </nav>
+        <div class="nav-actions">
+            <nav>
+                <button onclick="openModal('tipsOverlay')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a7 7 0 0 0-4 12.7c.5.4 1 1 1 1.6v.7h6v-.7c0-.6.5-1.2 1-1.6A7 7 0 0 0 12 2z"></path></svg>
+                    Tips
+                </button>
+                <button onclick="openWhatsNew()">
+                    What's New
+                    <span id="newDot" class="new-dot" style="display: none;"></span>
+                </button>
+                <button onclick="shareSuite()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                    Share
+                </button>
+                <a href="mailto:leewilliamswork2029@gmail.com?subject=Poster%20Suite%20Feedback&body=Hi%20Lee%2C%0A%0AI%27ve%20been%20using%20Poster%20Suite%20and%20I%20wanted%20to%20share%20some%20feedback%3A%0A%0A">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    Feedback
+                </a>
+                <button onclick="openModal('aboutOverlay')">About</button>
+            </nav>
+            <div style="display: flex; gap: 8px;">
+                <!-- Calm Mode Toggle -->
+                <button id="calmToggle" class="theme-toggle" aria-label="Toggle sensory-friendly calm mode" onclick="toggleCalmMode()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
+                        <line x1="16" y1="8" x2="2" y2="22"></line>
+                        <line x1="17.5" y1="15" x2="9" y2="15"></line>
+                    </svg>
+                </button>
+                <!-- Dark Mode Toggle -->
+                <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode" onclick="toggleTheme()">
+                    <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
     </header>
 
     <div class="hero">
@@ -484,15 +667,46 @@
         </div>
     </footer>
 
-    <!-- About Modal -->
-    <div id="aboutOverlay" class="about-overlay" onclick="closeAbout(event)">
-        <div class="about-modal" onclick="event.stopPropagation()">
-            <button class="about-close" onclick="closeAbout()">&times;</button>
+    <!-- Generic Modal Overlay (used for About & Tips) -->
+    <div id="aboutOverlay" class="modal-overlay" onclick="closeModal(event, 'aboutOverlay')">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(false, 'aboutOverlay')">&times;</button>
             <h2>About Poster Suite</h2>
             <p>Poster Suite is born from a personal passion for creating free, open-source tools that make communication more accessible and design simpler for everyone.</p>
             <p>Both PosterA11y and PosterD45h are designed to run entirely in your browser—no accounts, no subscriptions, and no data tracking. It's just pure, accessible tech built to help care homes, support workers, and families communicate better.</p>
             <p>If you find these tools helpful, feel free to explore the code, fork it, and share it with anyone who might benefit.</p>
-            <button class="btn btn-a11y" style="margin-top: 10px;" onclick="closeAbout()">Close</button>
+            <button class="btn btn-a11y" style="margin-top: 10px;" onclick="closeModal(false, 'aboutOverlay')">Close</button>
+        </div>
+    </div>
+
+    <div id="tipsOverlay" class="modal-overlay" onclick="closeModal(event, 'tipsOverlay')">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(false, 'tipsOverlay')">&times;</button>
+            <h2>Quick Tips for Accessible Design</h2>
+            <p>Want to make sure your posters are easy for everyone to read? Follow these 5 golden rules:</p>
+            <ul>
+                <li><b>Keep it short:</b> Aim for no more than 15 words per line or block.</li>
+                <li><b>Use clear fonts:</b> Stick to sans-serif fonts like Lexend or Atkinson Hyperlegible.</li>
+                <li><b>Left-align text:</b> Centered text is hard for the eye to track. Left-align whenever possible.</li>
+                <li><b>High contrast:</b> Ensure dark text sits on a light background, or vice versa.</li>
+                <li><b>Support with images:</b> Use symbols or simple icons to explain key words.</li>
+            </ul>
+            <button class="btn btn-design" style="margin-top: 10px;" onclick="closeModal(false, 'tipsOverlay')">Got it!</button>
+        </div>
+    </div>
+
+    <div id="whatsNewOverlay" class="modal-overlay" onclick="closeModal(event, 'whatsNewOverlay')">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(false, 'whatsNewOverlay')">&times;</button>
+            <h2>What's New? 🚀</h2>
+            <p>Here are the latest updates and improvements to Poster Suite:</p>
+            <ul>
+                <li><b>Hub Launch:</b> Welcome to the new Poster Suite Hub! You can now access both tools from one place.</li>
+                <li><b>Dark & Calm Modes:</b> The Hub now supports Dark Mode and a Sensory-Friendly Calm Mode.</li>
+                <li><b>PosterA11y v1.2:</b> Added auto-pagination and compound word splitting.</li>
+                <li><b>PosterD45h v1.5:</b> Added new themes (Cafe, Medical) and quick-insert icons.</li>
+            </ul>
+            <button class="btn btn-a11y" style="margin-top: 10px;" onclick="closeModal(false, 'whatsNewOverlay')">Close</button>
         </div>
     </div>
 
@@ -505,7 +719,11 @@
         <iframe id="appFrame" src=""></iframe>
     </div>
 
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">Link copied to clipboard!</div>
+
     <script>
+        // --- App Launcher Logic ---
         function openApp(url) {
             document.getElementById('appFrame').src = url;
             document.getElementById('appOverlay').style.display = 'block';
@@ -518,25 +736,113 @@
             document.body.style.overflow = 'auto';
         }
 
-        function openAbout() {
-            document.getElementById('aboutOverlay').classList.add('active');
+        // --- Generic Modal Logic ---
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
-        function closeAbout(event) {
-            if (!event || event.target.id === 'aboutOverlay') {
-                document.getElementById('aboutOverlay').classList.remove('active');
+        function closeModal(event, id) {
+            if (!event || event.target.id === id) {
+                document.getElementById(id).classList.remove('active');
                 document.body.style.overflow = 'auto';
             }
         }
 
         document.addEventListener('keydown', function(e) {
             if(e.key === "Escape") {
-                if(document.getElementById('aboutOverlay').classList.contains('active')) {
-                    closeAbout();
-                }
+                document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                });
             }
         });
+
+        // --- What's New Logic ---
+        const CURRENT_VERSION = '1.1'; // Change this string when you add a new update
+        function openWhatsNew() {
+            openModal('whatsNewOverlay');
+            localStorage.setItem('postersuite-seen-version', CURRENT_VERSION);
+            document.getElementById('newDot').style.display = 'none';
+        }
+        // Check if user has seen the current version
+        if (localStorage.getItem('postersuite-seen-version') !== CURRENT_VERSION) {
+            document.getElementById('newDot').style.display = 'block';
+        }
+
+        // --- Share Logic ---
+        async function shareSuite() {
+            const shareData = {
+                title: 'Poster Suite',
+                text: 'Check out these free, accessible poster making tools!',
+                url: window.location.href
+            };
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                } else {
+                    await navigator.clipboard.writeText(window.location.href);
+                    showToast();
+                }
+            } catch(err) {
+                console.log("Share cancelled or failed");
+            }
+        }
+
+        function showToast() {
+            const toast = document.getElementById("toast");
+            toast.classList.add("show");
+            setTimeout(() => { toast.classList.remove("show"); }, 3000);
+        }
+
+        // --- Dark Mode Logic ---
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const sunIcon = `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
+        const moonIcon = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
+
+        function applyTheme(isDark) {
+            if(isDark) {
+                document.body.classList.add('dark-mode');
+                themeIcon.innerHTML = sunIcon;
+                themeToggleBtn.classList.add('active');
+                localStorage.setItem('postersuite-theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-mode');
+                themeIcon.innerHTML = moonIcon;
+                themeToggleBtn.classList.remove('active');
+                localStorage.setItem('postersuite-theme', 'light');
+            }
+        }
+
+        function toggleTheme() {
+            applyTheme(!document.body.classList.contains('dark-mode'));
+        }
+
+        // --- Calm Mode Logic ---
+        const calmToggleBtn = document.getElementById('calmToggle');
+        function applyCalmMode(isCalm) {
+            if(isCalm) {
+                document.body.classList.add('calm-mode');
+                calmToggleBtn.classList.add('active');
+                localStorage.setItem('postersuite-calm', 'true');
+            } else {
+                document.body.classList.remove('calm-mode');
+                calmToggleBtn.classList.remove('active');
+                localStorage.setItem('postersuite-calm', 'false');
+            }
+        }
+        function toggleCalmMode() {
+            applyCalmMode(!document.body.classList.contains('calm-mode'));
+        }
+
+        // --- Apply Saved Settings on Load ---
+        const savedTheme = localStorage.getItem('postersuite-theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        applyTheme(savedTheme ? savedTheme === 'dark' : prefersDark);
+
+        const savedCalm = localStorage.getItem('postersuite-calm') === 'true';
+        applyCalmMode(savedCalm);
     </script>
 </body>
 </html>
