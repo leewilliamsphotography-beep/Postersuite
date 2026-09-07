@@ -283,16 +283,18 @@
             border: none;
         }
 
+        /* Floating Back to Suite Button */
         .close-btn {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            bottom: 24px; /* Moved to bottom */
+            right: 24px;
+            top: auto;     /* Override top positioning */
             z-index: 101;
             background: var(--surface);
             border: 1px solid var(--line);
             color: var(--ink);
-            padding: 10px 20px;
-            border-radius: 8px;
+            padding: 12px 24px;
+            border-radius: 999px; /* Pill shape */
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -300,6 +302,14 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            opacity: 0.75; /* Slightly transparent until hovered */
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        
+        .close-btn:hover {
+            opacity: 1;
+            transform: translateY(-2px); /* Slight lift on hover */
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
         }
     </style>
 </head>
