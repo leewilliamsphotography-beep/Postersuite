@@ -26,6 +26,9 @@
             background: var(--paper);
             color: var(--ink);
             -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         header {
@@ -55,6 +58,27 @@
             width: 28px;
             height: 28px;
             color: var(--accent-a11y);
+        }
+
+        nav {
+            display: flex;
+            gap: 24px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--ink2);
+            font-weight: 600;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--ink);
         }
 
         .hero {
@@ -88,6 +112,7 @@
             margin: 0 auto;
             flex-wrap: wrap;
             justify-content: center;
+            flex: 1;
         }
         
         .card {
@@ -162,6 +187,84 @@
         .btn-design { background: var(--accent-design); color: #fff; }
         .btn-design:hover { background: #1d4ed8; }
 
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 24px;
+            background: var(--surface);
+            border-top: 1px solid var(--line);
+            color: var(--ink2);
+            font-size: 0.9rem;
+        }
+
+        footer b {
+            color: var(--ink);
+            font-weight: 600;
+        }
+
+        /* About Modal */
+        .about-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .about-overlay.active {
+            display: flex;
+        }
+        .about-modal {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.2);
+            animation: pop 0.2s ease-out;
+        }
+        @keyframes pop {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .about-modal h2 {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1.75rem;
+            margin-bottom: 16px;
+            color: var(--ink);
+        }
+        .about-modal p {
+            color: var(--ink2);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        .about-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: transparent;
+            border: none;
+            font-size: 24px;
+            color: var(--ink2);
+            cursor: pointer;
+            line-height: 1;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .about-close:hover {
+            background: var(--line2);
+            color: var(--ink);
+        }
+
         /* Iframe Overlay */
         .app-overlay {
             display: none;
@@ -212,9 +315,9 @@
             </svg>
             Poster Suite
         </div>
-        <nav style="display:flex; gap:24px;">
-            <a href="#" style="text-decoration:none; color:var(--ink2); font-weight:600;">Tools</a>
-            <a href="#" style="text-decoration:none; color:var(--ink2); font-weight:600;">About</a>
+        <nav>
+            <a onclick="openApp('postera11y.html')">Tools</a>
+            <a onclick="openAbout()">About</a>
         </nav>
     </header>
 
@@ -249,6 +352,22 @@
         </div>
     </div>
 
+    <footer>
+        <p>PosterSuite by <b>Lee Williams</b></p>
+    </footer>
+
+    <!-- About Modal -->
+    <div id="aboutOverlay" class="about-overlay" onclick="closeAbout(event)">
+        <div class="about-modal" onclick="event.stopPropagation()">
+            <button class="about-close" onclick="closeAbout()">&times;</button>
+            <h2>About Poster Suite</h2>
+            <p>Poster Suite is born from a personal passion for creating free, open-source tools that make communication more accessible and design simpler for everyone.</p>
+            <p>Both PosterA11y and PosterD45h are designed to run entirely in your browser—no accounts, no subscriptions, and no data tracking. It's just pure, accessible tech built to help care homes, support workers, and families communicate better.</p>
+            <p>If you find these tools helpful, feel free to explore the code, fork it, and share it with anyone who might benefit.</p>
+            <button class="btn btn-a11y" style="margin-top: 10px;" onclick="closeAbout()">Close</button>
+        </div>
+    </div>
+
     <!-- Full Screen Iframe Overlay -->
     <div id="appOverlay" class="app-overlay">
         <button class="close-btn" onclick="closeApp()">
@@ -270,6 +389,28 @@
             document.getElementById('appOverlay').style.display = 'none';
             document.body.style.overflow = 'auto';
         }
+
+        function openAbout() {
+            document.getElementById('aboutOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAbout(event) {
+            // If event is passed (clicking the background), close it. Otherwise, close it directly.
+            if (!event || event.target.id === 'aboutOverlay') {
+                document.getElementById('aboutOverlay').classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Close modal if Escape key is pressed
+        document.addEventListener('keydown', function(e) {
+            if(e.key === "Escape") {
+                if(document.getElementById('aboutOverlay').classList.contains('active')) {
+                    closeAbout();
+                }
+            }
+        });
     </script>
 </body>
 </html>
