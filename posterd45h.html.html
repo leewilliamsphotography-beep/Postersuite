@@ -170,6 +170,14 @@ body.presenting #exitPresentBtn { display: inline-flex; }
 .sheet[data-theme="medical"] { background-color:#F0FDFA !important; border-top:12px solid #14B8A6 !important; }
 .sheet[data-theme="cafe"] { background-color:#FBF7F0 !important; border-top:12px solid #C4A484 !important; }
 
+/* Sensory Friendly Theme (Low Arousal) */
+.sheet[data-theme="sensory"] { background-color:#F1F5F9 !important; border-top:none !important; background-image:none !important; }
+.sheet[data-theme="sensory"] .block[data-type="h1"] { color:#475569 !important; font-family:'Lexend',sans-serif !important; font-weight:600 !important; letter-spacing:0 !important; }
+.sheet[data-theme="sensory"] .block[data-type="h2"] { color:#64748B !important; font-family:'Lexend',sans-serif !important; font-weight:600 !important; }
+.sheet[data-theme="sensory"] .block[data-type="body"] { color:#64748B !important; font-family:'Lexend',sans-serif !important; }
+.sheet[data-theme="sensory"] .block[data-type="panel"] { background-color:#FFFFFF !important; color:#475569 !important; border:1px solid #E2E8F0 !important; box-shadow:none !important; font-weight:400 !important; }
+.sheet[data-theme="sensory"] .block[data-type="shape"] { background-color:#94A3B8 !important; border-color:#94A3B8 !important; }
+
 /* Accessibility Overrides */
 .sheet.large-print .block[data-type="body"] { font-size: 24px !important; line-height: 1.8 !important; }
 .sheet.large-print .block[data-type="image"] { min-height: 250px !important; }
@@ -186,8 +194,11 @@ body.presenting #exitPresentBtn { display: inline-flex; }
 
 /* Block Styling */
 .lines{display:flex;flex-direction:column;flex:1;padding-top:14px; gap:16px; position: relative; z-index: 2;}
-.lines.two-col{display:grid;grid-template-columns:1fr 1fr;align-items:start;}
+.lines.two-col{display:grid;grid-template-columns:1fr 1fr;align-items:start;gap:20px;}
 .lines.two-col > .block[data-type="shape"] { grid-column: 1 / -1; width: 100%; }
+.lines.two-col > .block[data-type="h1"] { grid-column: 1 / -1; }
+.lines.two-col > .block[data-type="h2"] { grid-column: 1 / -1; }
+.lines.two-col > .block[data-type="date"] { grid-column: 1 / -1; }
 
 .block{position:relative;outline:none;transition:all .15s; padding: 4px; border: 1px dashed transparent;}
 .block:hover{border-color:rgba(0,0,0,0.15)}
@@ -207,10 +218,10 @@ body.presenting #exitPresentBtn { display: inline-flex; }
 .block[data-type="shape"]{height:12px; background:#000; border-radius:6px; margin: 10px 0; align-self: flex-start; width: 60px;}
 .block[data-type="shape"].dotted { height:0; background:transparent; border-top: 4px dotted #000; border-radius:0; width:100%; }
 .block[data-type="shape"].dashed { height:0; background:transparent; border-top: 4px dashed #000; border-radius:0; width:100%; }
-.block[data-type="panel"]{padding:24px; border-radius:12px; background:#f0f0f0; margin:10px 0; font:400 16px/1.6 'Lexend',sans-serif;}
+.block[data-type="panel"]{padding:24px; border-radius:12px; background:#f0f0f0; margin:10px 0; font:400 16px/1.6 'Lexend',sans-serif; text-align:center;}
 
 /* Task / Checklist Block */
-.block[data-type="task"]{display:flex; align-items:center; gap:12px; padding:10px; background:#F8FAFC; border-radius:8px; border:1px solid #E2E8F0; font:400 18px/1.5 'Lexend',sans-serif;}
+.block[data-type="task"]{display:flex; align-items:center; gap:12px; padding:10px; background:#F8FAFC; border-radius:8px; border:1px solid #E2E8F0; font:400 18px/1.5 'Lexend',sans-serif; text-align:left;}
 .task-checkbox{width:24px; height:24px; border:2px solid #64748b; border-radius:6px; cursor:pointer; display:grid; place-items:center; flex:none; background:#fff; transition:all .15s}
 .task-checkbox:hover{border-color:var(--accent)}
 .task-checkbox.checked{background:#10B981; border-color:#10B981; color:white;}
@@ -224,6 +235,11 @@ body.presenting #exitPresentBtn { display: inline-flex; }
 
 /* Badges */
 .block[data-type="badge"]{display:inline-block; padding:6px 14px; border-radius:999px; font:700 14px/1 'Lexend',sans-serif; align-self:flex-start; color:#fff; margin:0;}
+
+/* Interactive Choice Board Panels */
+.block.is-choice { cursor:pointer; transition:transform 0.2s, box-shadow 0.2s, border 0.2s; border: 3px solid transparent; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:24px; }
+body.presenting .block.is-choice:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+.block.is-choice.choice-selected { border-color: #10B981 !important; background-color: #F0FDF4 !important; color: #064E3B !important; transform: scale(1.05); }
 
 .empty{margin-top:14px;border:2px dashed var(--line);border-radius:12px;padding:48px 26px;text-align:center;break-inside:avoid;page-break-inside:avoid; z-index: 2;}
 .empty h3{font:800 22px 'Bricolage Grotesque','Lexend',sans-serif;margin:0 0 8px}
@@ -271,7 +287,6 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
 
 <header class="topbar">
   <div class="brand">
-    <!-- NEW ORIGINAL LOGO: Blue strings, orange pin, checkmark inside poster -->
     <svg class="mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="PosterD45h Logo">
       <defs>
         <linearGradient id="bgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F8FAFC"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient>
@@ -280,21 +295,15 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
       </defs>
       <rect width="120" height="120" rx="28" fill="url(#bgGrad)"/>
       <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
-      
       <path d="M38 42 L60 24" fill="none" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/>
       <path d="M82 42 L60 24" fill="none" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/>
-      
       <circle cx="38" cy="42" r="2.5" fill="#3B82F6"/>
       <circle cx="82" cy="42" r="2.5" fill="#3B82F6"/>
-      
       <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#shadow)"/>
-      
       <circle cx="60" cy="62" r="16" fill="#F1F5F9"/>
       <path d="M53 62 L58 68 L68 56" fill="none" stroke="#D14C1E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-      
       <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/>
       <rect x="48" y="94" width="24" height="5" rx="2.5" fill="#64748B"/>
-      
       <circle cx="60" cy="20" r="7" fill="url(#pinGrad)" filter="url(#shadow)"/>
       <circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
     </svg>
@@ -433,6 +442,7 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
         <label for="themeSel">Poster theme</label>
         <select id="themeSel">
           <option value="default">Plain White</option>
+          <option value="sensory">Sensory Friendly (Low Arousal)</option>
           <option value="spring">Spring (Green)</option>
           <option value="summer">Summer (Yellow)</option>
           <option value="autumn">Autumn (Orange)</option>
@@ -526,7 +536,7 @@ const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const toKebab = (str) => str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
 
-const LS_KEY='posterd45h.doc.carehome.v5';
+const LS_KEY='posterd45h.doc.carehome.v6';
 const LS_DRAFTS='posterd45h.drafts';
 const LS_DARK='posterd45h.dark';
 
@@ -541,7 +551,14 @@ const BADGES = {
 };
 
 const TEMPLATES = {
-  dailyMenu: { name:'Daily Menu', theme:'cafe', bgColor:'#FBF7F0', pattern:'none', patternColor:'#EAE0D5', blocks:[
+  choiceBoard: { name:'Choice Board', theme:'sensory', cols:2, bgColor:'#F1F5F9', pattern:'none', patternColor:'#E2E8F0', blocks:[
+    { type:'h1', text:'What would you like to drink?', align:'center', style:{ color:'#475569', fontFamily:'Lexend', fontSize:'32px', marginBottom:'20px' } },
+    { type:'panel', text:'☕ Tea', isChoice:true, style:{ backgroundColor:'#FFFFFF', color:'#475569', padding:'40px', borderRadius:'12px', border:'1px solid #E2E8F0', fontSize:'28px' } },
+    { type:'panel', text:'🥤 Juice', isChoice:true, style:{ backgroundColor:'#FFFFFF', color:'#475569', padding:'40px', borderRadius:'12px', border:'1px solid #E2E8F0', fontSize:'28px' } },
+    { type:'panel', text:'🥛 Milk', isChoice:true, style:{ backgroundColor:'#FFFFFF', color:'#475569', padding:'40px', borderRadius:'12px', border:'1px solid #E2E8F0', fontSize:'28px' } },
+    { type:'panel', text:'🍫 Hot Chocolate', isChoice:true, style:{ backgroundColor:'#FFFFFF', color:'#475569', padding:'40px', borderRadius:'12px', border:'1px solid #E2E8F0', fontSize:'28px' } }
+  ]},
+  dailyMenu: { name:'Daily Menu', theme:'cafe', cols:1, bgColor:'#FBF7F0', pattern:'none', patternColor:'#EAE0D5', blocks:[
     { type:'h1', text:'Today’s Menu', align:'center', style:{ color:'#4A3B2A', fontFamily:'Lexend', fontSize:'42px', marginBottom:'20px' } },
     { type:'date' },
     { type:'panel', text:'Breakfast (8:00 AM)', align:'left', style:{ backgroundColor:'#C4A484', color:'#FFFFFF', padding:'10px 15px', borderRadius:'6px', fontSize:'18px', fontWeight:'bold', fontFamily:'Lexend' } },
@@ -553,14 +570,14 @@ const TEMPLATES = {
     { type:'panel', text:'Tea / Supper (5:00 PM)', align:'left', style:{ backgroundColor:'#C4A484', color:'#FFFFFF', padding:'10px 15px', borderRadius:'6px', fontSize:'18px', fontWeight:'bold', fontFamily:'Lexend', marginTop:'20px' } },
     { type:'body', text:'Cheese and crackers\nHam sandwiches\nCup of tea', align:'left', style:{ color:'#4A3B2A', fontSize:'16px', marginTop:'10px', lineHeight:'1.8' } }
   ]},
-  nowNext: { name:'Now & Next Board', theme:'summer', bgColor:'#FFFDE7', pattern:'none', patternColor:'#FEF3C7', blocks:[
+  nowNext: { name:'Now & Next Board', theme:'summer', cols:1, bgColor:'#FFFDE7', pattern:'none', patternColor:'#FEF3C7', blocks:[
     { type:'h1', text:'Now and Next', align:'center', style:{ color:'#92400E', fontFamily:'Lexend', fontSize:'42px', marginBottom:'20px' } },
     { type:'panel', text:'NOW', align:'center', style:{ backgroundColor:'#F59E0B', color:'#FFFFFF', padding:'15px', borderRadius:'8px 8px 0 0', fontSize:'28px', fontWeight:'bold', fontFamily:'Lexend' } },
     { type:'task', text:'Tidy up the toys.' },
     { type:'panel', text:'NEXT', align:'center', style:{ backgroundColor:'#10B981', color:'#FFFFFF', padding:'15px', borderRadius:'8px 8px 0 0', fontSize:'28px', fontWeight:'bold', fontFamily:'Lexend', marginTop:'20px' } },
     { type:'task', text:'Choose a game to play.' }
   ]},
-  timetable: { name:'Visual Timetable', theme:'spring', bgColor:'#F0FFF4', pattern:'grid', patternColor:'#D1FAE5', blocks:[
+  timetable: { name:'Visual Timetable', theme:'spring', cols:1, bgColor:'#F0FFF4', pattern:'grid', patternColor:'#D1FAE5', blocks:[
     { type:'h1', text:'My Day', align:'left', style:{ color:'#065F46', fontFamily:'Lexend', fontSize:'36px', marginBottom:'20px' } },
     { type:'date' },
     { type:'task', text:'Morning: Reading time' },
@@ -568,17 +585,17 @@ const TEMPLATES = {
     { type:'task', text:'Lunch at 12:00' },
     { type:'task', text:'Afternoon: Art and music' }
   ]},
-  event: { name:'Activity Poster', theme:'autumn', bgColor:'#FFF3E0', pattern:'dots', patternColor:'#FFEDD5', blocks:[
+  event: { name:'Activity Poster', theme:'autumn', cols:1, bgColor:'#FFF3E0', pattern:'dots', patternColor:'#FFEDD5', blocks:[
     { type:'h1', text:'Coffee Morning', align:'center', style:{ color:'#7C2D12', fontFamily:'Lexend', fontSize:'48px' } },
     { type:'h2', text:'Saturday, 10am – 12pm', align:'center', style:{ color:'#9A3412', fontFamily:'Lexend', fontSize:'24px' } },
     { type:'shape', style:{ width:'100px', height:'4px', backgroundColor:'#D14C1E', borderRadius:'2px', margin:'20px auto' } },
     { type:'panel', text:'Join us for free tea, coffee, and cake at the community hall. Everyone is welcome!', align:'center', style:{ backgroundColor:'#FFFFFF', border:'2px solid #D14C1E', padding:'25px', borderRadius:'12px', fontSize:'20px', color:'#7C2D12' } }
   ]},
-  social: { name:'Social Story', theme:'medical', bgColor:'#F0FDFA', pattern:'dots', patternColor:'#CCFBF1', blocks:[
+  social: { name:'Social Story', theme:'medical', cols:1, bgColor:'#F0FDFA', pattern:'dots', patternColor:'#CCFBF1', blocks:[
     { type:'panel', text:'Going to the Doctor', align:'left', style:{ backgroundColor:'#14B8A6', color:'#FFFFFF', padding:'20px', borderRadius:'12px 12px 0 0', fontSize:'28px', fontWeight:'bold', fontFamily:'Lexend' } },
     { type:'panel', text:'I feel sick. I go to the doctor with Mum. I sit in the big chair. The doctor looks at my teeth. I am brave. I get a sticker.', align:'left', style:{ backgroundColor:'#FFFFFF', color:'#115E59', padding:'25px', borderRadius:'0 0 12px 12px', fontSize:'18px', border:'2px solid #14B8A6', borderTop:'none', lineHeight:'1.8' } }
   ]},
-  notice: { name:'Visitor Notice', theme:'winter', bgColor:'#F0F9FF', pattern:'grid', patternColor:'#DBEAFE', blocks:[
+  notice: { name:'Visitor Notice', theme:'winter', cols:1, bgColor:'#F0F9FF', pattern:'grid', patternColor:'#DBEAFE', blocks:[
     { type:'h1', text:'Important Notice', align:'center', style:{ color:'#1E3A8A', fontFamily:'Lexend', fontSize:'40px' } },
     { type:'shape', style:{ width:'100%', height:'4px', backgroundColor:'#3B82F6', borderRadius:'2px', margin:'10px 0 20px 0' } },
     { type:'date' },
@@ -630,6 +647,24 @@ function updateUndoRedoBtns() {
 
 let saveT=null;
 function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(LS_KEY,JSON.stringify(doc))}catch(e){}},350);}
+
+// Web Audio API for Choice Board Chime
+let audioCtx = null;
+function playChime() {
+    try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.type = 'sine';
+        oscillator.frequency.value = 880; // A5 note
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+        oscillator.start(audioCtx.currentTime);
+        oscillator.stop(audioCtx.currentTime + 0.5);
+    } catch(e) { console.warn('Audio not supported'); }
+}
 
 function applyBackground() {
   if(doc.highContrast) {
@@ -742,6 +777,7 @@ function blockHTML(b){
   const textContent = esc(b.text || '').replace(/\n/g, '<br>');
   
   let classes = 'block';
+  if (b.isChoice) classes += ' is-choice';
   if (b.easyReadWarning) classes += ' easy-read-warning';
   if (b.type === 'image' && b.imgSize) classes += ` img-${b.imgSize}`;
   if (b.type === 'shape' && b.dividerType) classes += ` ${b.dividerType}`;
@@ -816,8 +852,21 @@ function attachBlockListeners() {
   });
 }
 
-// Click listener for Task Checkboxes
+// Click listener for Task Checkboxes & Interactive Choice Boards
 linesEl.addEventListener('click', (e) => {
+  // Interactive Choice Board Logic (Only in Presentation Mode)
+  if (document.body.classList.contains('presenting')) {
+    const choiceEl = e.target.closest('.block.is-choice');
+    if (choiceEl) {
+      e.stopPropagation();
+      document.querySelectorAll('.block.is-choice.choice-selected').forEach(el => el.classList.remove('choice-selected'));
+      choiceEl.classList.add('choice-selected');
+      playChime();
+      return;
+    }
+  }
+
+  // Task Checkbox Logic
   const checkbox = e.target.closest('.task-checkbox');
   if (checkbox) {
     const block = checkbox.closest('.block');
@@ -897,6 +946,7 @@ document.addEventListener('click', e => {
   if(!b) return;
   const tpl = TEMPLATES[b.dataset.tpl];
   doc.theme = tpl.theme;
+  doc.cols = tpl.cols || 1;
   doc.bgColor = tpl.bgColor;
   doc.pattern = tpl.pattern;
   doc.patternColor = tpl.patternColor;
