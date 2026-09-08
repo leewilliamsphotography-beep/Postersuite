@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Poster Suite | Free & Accessible Poster Makers</title>
+    <!-- Inline Branded Favicon -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D14C1E' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='7' height='7'/%3E%3Crect x='14' y='3' width='7' height='7'/%3E%3Crect x='14' y='14' width='7' height='7'/%3E%3Crect x='3' y='14' width='7' height='7'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Lexend:wght@400;500;600;700&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
@@ -65,6 +67,13 @@
         }
         body.calm-mode .card:hover { transform: none !important; }
 
+        /* Global Focus Outline for Accessibility */
+        a:focus-visible, button:focus-visible, .card:focus-visible {
+            outline: 2px solid var(--focus);
+            outline-offset: 2px;
+            border-radius: 8px;
+        }
+
         header {
             display: flex;
             justify-content: space-between;
@@ -88,7 +97,6 @@
             align-items: center;
             gap: 10px;
         }
-
         .logo svg { width: 28px; height: 28px; color: var(--accent-a11y); }
 
         .nav-actions { display: flex; align-items: center; gap: 16px; }
@@ -113,13 +121,9 @@
         nav svg { width: 16px; height: 16px; }
 
         .new-dot {
-            position: absolute;
-            top: -2px;
-            right: -6px;
-            width: 8px;
-            height: 8px;
-            background: var(--accent-a11y);
-            border-radius: 50%;
+            position: absolute; top: -2px; right: -6px;
+            width: 8px; height: 8px;
+            background: var(--accent-a11y); border-radius: 50%;
             box-shadow: 0 0 8px var(--accent-a11y);
             animation: pulse 2s infinite;
         }
@@ -130,15 +134,10 @@
         }
 
         .theme-toggle {
-            background: transparent;
-            border: 1px solid var(--line);
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            cursor: pointer;
-            color: var(--ink2);
-            display: grid;
-            place-items: center;
+            background: transparent; border: 1px solid var(--line);
+            width: 36px; height: 36px; border-radius: 8px;
+            cursor: pointer; color: var(--ink2);
+            display: grid; place-items: center;
             transition: background 0.2s, color 0.2s, border-color 0.2s;
         }
         .theme-toggle:hover { background: var(--line2); color: var(--ink); border-color: var(--ink2); }
@@ -146,85 +145,51 @@
         .theme-toggle svg { width: 18px; height: 18px; }
 
         .hero {
-            text-align: center;
-            padding: 60px 20px 40px;
-            max-width: 800px;
-            margin: 0 auto;
+            text-align: center; padding: 60px 20px 40px;
+            max-width: 800px; margin: 0 auto;
             background: radial-gradient(circle at 50% 0%, var(--hero-glow) 0%, transparent 60%);
         }
         .hero h1 {
             font-family: 'Bricolage Grotesque', sans-serif;
-            font-size: 3rem;
-            line-height: 1.1;
-            letter-spacing: -0.03em;
-            margin-bottom: 20px;
-            color: var(--ink);
+            font-size: 3rem; line-height: 1.1; letter-spacing: -0.03em;
+            margin-bottom: 20px; color: var(--ink);
         }
         .hero p { font-size: 1.15rem; line-height: 1.6; color: var(--ink2); }
 
         .container {
-            display: flex;
-            gap: 24px;
+            display: flex; gap: 24px;
             padding: 0 32px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            flex-wrap: wrap;
-            justify-content: center;
-            flex: 1;
+            max-width: 1200px; margin: 0 auto;
+            flex-wrap: wrap; justify-content: center; flex: 1;
         }
         
         .card {
-            background: var(--surface);
-            border: 1px solid var(--line);
-            border-radius: 16px;
-            padding: 32px;
-            flex: 1;
-            min-width: 340px;
-            max-width: 460px;
-            display: flex;
-            flex-direction: column;
+            background: var(--surface); border: 1px solid var(--line);
+            border-radius: 16px; padding: 32px;
+            flex: 1; min-width: 340px; max-width: 460px;
+            display: flex; flex-direction: column;
             transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s, background 0.2s;
-            cursor: pointer;
-            position: relative;
+            cursor: pointer; position: relative;
         }
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.06);
-            border-color: var(--ink2);
-        }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.06); border-color: var(--ink2); }
         body.dark-mode .card:hover { box-shadow: 0 12px 24px rgba(0,0,0,0.3); }
-        .card:focus-visible { outline: none; border-color: var(--focus); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2); }
 
         .popout-btn {
-            position: absolute;
-            top: 24px;
-            right: 24px;
-            background: transparent;
-            border: 1px solid transparent;
-            color: var(--ink2);
-            padding: 6px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s, color 0.2s;
-            display: grid;
-            place-items: center;
+            position: absolute; top: 24px; right: 24px;
+            background: transparent; border: 1px solid transparent;
+            color: var(--ink2); padding: 6px; border-radius: 8px;
+            cursor: pointer; transition: background 0.2s, color 0.2s;
+            display: grid; place-items: center;
         }
         .popout-btn:hover { background: var(--line2); color: var(--ink); }
         .popout-btn svg { width: 16px; height: 16px; }
 
         .resume-badge {
-            position: absolute;
-            top: 24px;
-            left: 24px;
-            background: var(--accent-quick);
-            color: #fff;
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 999px;
-            display: none;
-            align-items: center;
-            gap: 6px;
+            position: absolute; top: 24px; left: 24px;
+            background: var(--accent-quick); color: #fff;
+            font-size: 0.75rem; font-weight: 700;
+            padding: 4px 10px; border-radius: 999px;
+            display: none; align-items: center; gap: 6px;
         }
         .resume-badge svg { width: 12px; height: 12px; }
 
@@ -233,15 +198,7 @@
         .icon-a11y, .icon-design, .icon-quick { background: transparent; padding: 0; }
         .card h2 { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.75rem; color: var(--ink); }
 
-        .tag {
-            display: inline-block;
-            font-size: 0.8rem;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 999px;
-            margin-bottom: 16px;
-            width: fit-content;
-        }
+        .tag { display: inline-block; font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; margin-bottom: 16px; width: fit-content; }
         .tag-a11y { background: rgba(209, 76, 30, 0.15); color: var(--accent-a11y); }
         .tag-design { background: rgba(37, 99, 235, 0.15); color: var(--accent-design); }
         .tag-quick { background: rgba(16, 185, 129, 0.15); color: var(--accent-quick); }
@@ -249,20 +206,10 @@
         .card p { color: var(--ink2); line-height: 1.6; margin-bottom: 24px; flex-grow: 1; }
 
         .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-family: 'Bricolage Grotesque', sans-serif;
-            font-weight: 600;
-            font-size: 1.1rem;
-            padding: 16px 24px;
-            border-radius: 12px;
-            text-decoration: none;
-            transition: background 0.2s;
-            cursor: pointer;
-            border: none;
-            width: 100%;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 1.1rem;
+            padding: 16px 24px; border-radius: 12px; text-decoration: none;
+            transition: background 0.2s; cursor: pointer; border: none; width: 100%;
         }
         .btn-a11y { background: var(--accent-a11y); color: #fff; }
         .card:hover .btn-a11y { background: #B23E17; }
@@ -275,228 +222,125 @@
         .quick-print-card .card-header { margin-top: 0; }
 
         .kb-hint {
-            text-align: center;
-            color: var(--ink2);
-            font-size: 0.85rem;
-            margin-bottom: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
+            text-align: center; color: var(--ink2); font-size: 0.85rem;
+            margin-bottom: 40px; display: flex; align-items: center;
+            justify-content: center; gap: 12px; flex-wrap: wrap;
         }
         kbd {
-            background: var(--surface);
-            border: 1px solid var(--line);
-            border-bottom-width: 2px;
-            border-radius: 6px;
-            padding: 2px 8px;
-            font-family: monospace;
-            font-size: 0.9rem;
-            color: var(--ink);
+            background: var(--surface); border: 1px solid var(--line);
+            border-bottom-width: 2px; border-radius: 6px; padding: 2px 8px;
+            font-family: monospace; font-size: 0.9rem; color: var(--ink);
         }
 
         footer {
-            text-align: center;
-            padding: 24px;
-            background: var(--surface);
-            border-top: 1px solid var(--line);
-            color: var(--ink2);
-            font-size: 0.9rem;
+            text-align: center; padding: 24px; background: var(--surface);
+            border-top: 1px solid var(--line); color: var(--ink2); font-size: 0.9rem;
         }
         footer b { color: var(--ink); font-weight: 600; }
-        .trust-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 8px;
-            font-size: 0.85rem;
-            color: var(--ink2);
-            background: var(--paper);
-            padding: 6px 12px;
-            border-radius: 20px;
-            border: 1px solid var(--line);
-        }
+        .footer-links { margin-top: 8px; display: flex; gap: 16px; justify-content: center; }
+        .footer-links a { color: var(--ink2); text-decoration: underline; cursor: pointer; }
+        .footer-links a:hover { color: var(--ink); }
 
         .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            z-index: 200;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh; background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px); z-index: 200;
+            justify-content: center; align-items: center; padding: 20px;
         }
         .modal-overlay.active { display: flex; }
         .modal-box {
-            background: var(--surface);
-            border: 1px solid var(--line);
-            border-radius: 16px;
-            padding: 40px;
-            max-width: 500px;
-            width: 100%;
-            position: relative;
-            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.2);
-            animation: pop 0.2s ease-out;
-            max-height: 85vh;
-            overflow-y: auto;
+            background: var(--surface); border: 1px solid var(--line);
+            border-radius: 16px; padding: 40px; max-width: 500px; width: 100%;
+            position: relative; box-shadow: 0 20px 50px -10px rgba(0,0,0,0.2);
+            animation: pop 0.2s ease-out; max-height: 85vh; overflow-y: auto;
         }
-        @keyframes pop {
-            from { transform: scale(0.95); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
+        @keyframes pop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .modal-box h2 { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.75rem; margin-bottom: 16px; color: var(--ink); display: flex; align-items: center; gap: 10px; }
         .modal-box p { color: var(--ink2); line-height: 1.6; margin-bottom: 16px; }
         .modal-box ul { margin-bottom: 16px; padding-left: 20px; color: var(--ink2); line-height: 1.8; }
         .modal-box ul li b { color: var(--ink); }
         .modal-close {
-            position: absolute;
-            top: 16px; right: 16px;
-            background: transparent;
-            border: none;
-            font-size: 24px;
-            color: var(--ink2);
-            cursor: pointer;
-            line-height: 1;
-            padding: 4px 8px;
-            border-radius: 8px;
+            position: absolute; top: 16px; right: 16px;
+            background: transparent; border: none; font-size: 24px;
+            color: var(--ink2); cursor: pointer; line-height: 1;
+            padding: 4px 8px; border-radius: 8px;
         }
         .modal-close:hover { background: var(--line2); color: var(--ink); }
 
         .app-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            z-index: 100;
-            background: var(--paper);
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh; z-index: 100; background: var(--paper);
         }
         .app-overlay iframe { width: 100%; height: 100%; border: none; }
 
+        /* Loading Spinner */
+        .loader {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px; height: 50px;
+            border: 5px solid var(--line);
+            border-bottom-color: var(--accent-a11y);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+        @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
         .close-btn {
-            position: fixed;
-            bottom: 24px; right: 24px;
-            z-index: 101;
-            background: var(--surface);
-            border: 1px solid var(--line);
-            color: var(--ink);
-            padding: 12px 24px;
-            border-radius: 999px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: fixed; bottom: 24px; right: 24px; z-index: 101;
+            background: var(--surface); border: 1px solid var(--line);
+            color: var(--ink); padding: 12px 24px; border-radius: 999px;
+            font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             font-family: 'Bricolage Grotesque', sans-serif;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            opacity: 0.75;
+            display: flex; align-items: center; gap: 8px; opacity: 0.75;
+            transition: opacity 0.2s ease, transform 0.2s ease;
         }
         .close-btn:hover { opacity: 1; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
 
         .toast {
-            position: fixed;
-            bottom: 24px; left: 50%;
+            position: fixed; bottom: 24px; left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: var(--ink);
-            color: var(--paper);
-            padding: 12px 24px;
-            border-radius: 999px;
-            font-weight: 600;
-            z-index: 300;
-            transition: transform 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            background: var(--ink); color: var(--paper);
+            padding: 12px 24px; border-radius: 999px;
+            font-weight: 600; z-index: 300;
+            transition: transform 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
         /* --- Unique Blank Print Template Design --- */
         #blankPrintArea {
-            display: none;
-            flex-direction: column;
-            width: 210mm;
-            height: 297mm;
-            padding: 15mm;
-            background: #fff;
-            box-sizing: border-box;
-            color: #1A1D21;
+            display: none; flex-direction: column;
+            width: 210mm; height: 297mm; padding: 15mm;
+            background: #fff; box-sizing: border-box; color: #1A1D21;
         }
-        .print-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 3px solid #1A1D21;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
+        .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #1A1D21; padding-bottom: 15px; margin-bottom: 20px; }
         .print-logo-group { display: flex; gap: 12px; align-items: center; }
         .print-logo-group svg { width: 40px; height: 40px; }
-        .print-title-box {
-            flex: 1;
-            margin-left: 20px;
-            border: 2px dashed #50545C;
-            border-radius: 8px;
-            height: 50px;
-        }
-        .print-sub-box {
-            width: 40%;
-            border: 2px dashed #50545C;
-            border-radius: 8px;
-            height: 35px;
-            margin-bottom: 25px;
-            align-self: flex-end;
-        }
-        .print-img-box {
-            width: 100%;
-            height: 100px;
-            border: 2px dashed #50545C;
-            border-radius: 8px;
-            margin-bottom: 30px;
-        }
-        .print-lines {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .p-line {
-            border-bottom: 2px solid #1A1D21;
-            height: 40px;
-            position: relative;
-        }
-        .p-line::after {
-            content: '';
-            position: absolute;
-            left: 0; right: 0; top: 20px;
-            border-bottom: 1.5px dotted #94a3b8;
-        }
-        .print-footer {
-            margin-top: 30px;
-            border-top: 2px solid #1A1D21;
-            height: 20px;
-        }
+        .print-title-box { flex: 1; margin-left: 20px; border: 2px dashed #50545C; border-radius: 8px; height: 50px; }
+        .print-sub-box { width: 40%; border: 2px dashed #50545C; border-radius: 8px; height: 35px; margin-bottom: 25px; align-self: flex-end; }
+        .print-img-box { width: 100%; height: 100px; border: 2px dashed #50545C; border-radius: 8px; margin-bottom: 30px; }
+        .print-lines { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .p-line { border-bottom: 2px solid #1A1D21; height: 40px; position: relative; }
+        .p-line::after { content: ''; position: absolute; left: 0; right: 0; top: 20px; border-bottom: 1.5px dotted #94a3b8; }
+        .print-footer { margin-top: 30px; border-top: 2px solid #1A1D21; height: 20px; }
 
-        /* Fixed Print Rules to prevent overflow */
         @media print {
             @page { size: A4 portrait; margin: 0; }
             body * { visibility: hidden; }
             #blankPrintArea, #blankPrintArea * { visibility: visible; }
-            #blankPrintArea { 
-                display: flex !important; 
-                position: absolute; 
-                left: 0; top: 0; 
-                width: 210mm; 
-                height: 297mm; 
-            }
+            #blankPrintArea { display: flex !important; position: absolute; left: 0; top: 0; width: 210mm; height: 297mm; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
 
+        /* Mobile Nav Optimization */
         @media (max-width: 600px) {
             header { padding: 12px 16px; }
             .logo span { display: none; }
+            nav { gap: 12px; }
             nav a, nav button { font-size: 0.85rem; }
+            .nav-text { display: none; } /* Hide text labels on mobile */
             .hero h1 { font-size: 2.2rem; }
+            .footer-links { flex-direction: column; gap: 8px; }
         }
     </style>
 </head>
@@ -516,21 +360,21 @@
             <nav>
                 <button onclick="openModal('tipsOverlay')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a7 7 0 0 0-4 12.7c.5.4 1 1 1 1.6v.7h6v-.7c0-.6.5-1.2 1-1.6A7 7 0 0 0 12 2z"></path></svg>
-                    Tips
+                    <span class="nav-text">Tips</span>
                 </button>
                 <button onclick="openWhatsNew()">
-                    What's New
+                    <span class="nav-text">What's New</span>
                     <span id="newDot" class="new-dot" style="display: none;"></span>
                 </button>
                 <button onclick="shareSuite()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-                    Share
+                    <span class="nav-text">Share</span>
                 </button>
                 <a href="mailto:leewilliamswork2029@gmail.com?subject=Poster%20Suite%20Feedback&body=Hi%20Lee%2C%0A%0AI%27ve%20been%20using%20Poster%20Suite%20and%20I%20wanted%20to%20share%20some%20feedback%3A%0A%0A">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                    Feedback
+                    <span class="nav-text">Feedback</span>
                 </a>
-                <button onclick="openModal('aboutOverlay')">About</button>
+                <button onclick="openModal('aboutOverlay')"><span class="nav-text">About</span></button>
             </nav>
             <div style="display: flex; gap: 8px;">
                 <button id="calmToggle" class="theme-toggle" aria-label="Toggle sensory-friendly calm mode" onclick="toggleCalmMode()">
@@ -570,18 +414,10 @@
                       <title id="pi-title-l">PosterA11y icon (light)</title>
                       <desc id="pi-desc-l">A white poster hangs from a pink pushpin on amber strings. On the poster, a navy figure stands with open arms inside a pale blue circle, above two short grey text lines.</desc>
                       <defs>
-                        <linearGradient id="bgGradL" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
-                          <stop offset="0" stop-color="#FFFFFF"/><stop offset="0.55" stop-color="#F2F6FB"/><stop offset="1" stop-color="#E3EAF4"/>
-                        </linearGradient>
-                        <radialGradient id="pinGradL" cx="0.35" cy="0.3" r="0.8">
-                          <stop offset="0" stop-color="#FF9BB5"/><stop offset="1" stop-color="#E13A66"/>
-                        </radialGradient>
-                        <filter id="posterShadowL" x="-30%" y="-30%" width="160%" height="160%">
-                          <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1B2A4A" flood-opacity="0.16"/>
-                        </filter>
-                        <filter id="pinShadowL" x="-60%" y="-60%" width="220%" height="220%">
-                          <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#1B2A4A" flood-opacity="0.25"/>
-                        </filter>
+                        <linearGradient id="bgGradL" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.55" stop-color="#F2F6FB"/><stop offset="1" stop-color="#E3EAF4"/></linearGradient>
+                        <radialGradient id="pinGradL" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FF9BB5"/><stop offset="1" stop-color="#E13A66"/></radialGradient>
+                        <filter id="posterShadowL" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1B2A4A" flood-opacity="0.16"/></filter>
+                        <filter id="pinShadowL" x="-60%" y="-60%" width="220%" height="220%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#1B2A4A" flood-opacity="0.25"/></filter>
                       </defs>
                       <rect width="120" height="120" rx="26" fill="url(#bgGradL)"/>
                       <rect x="1.5" y="1.5" width="117" height="117" rx="24.5" fill="none" stroke="#1B2A4A" stroke-opacity="0.1"/>
@@ -591,9 +427,7 @@
                       <circle cx="34.3" cy="43.3" r="2.4" fill="url(#pinGradL)"/>
                       <circle cx="85.7" cy="43.3" r="2.4" fill="url(#pinGradL)"/>
                       <circle cx="60" cy="69" r="19" fill="#EAF1FA"/>
-                      <g fill="none" stroke="#1B2A4A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M51.5 61 L60 68 L68.5 61"/><path d="M60 63.5 L60 74.5"/><path d="M54 84 L60 74.5 L66 84"/>
-                      </g>
+                      <g fill="none" stroke="#1B2A4A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M51.5 61 L60 68 L68.5 61"/><path d="M60 63.5 L60 74.5"/><path d="M54 84 L60 74.5 L66 84"/></g>
                       <circle cx="60" cy="57.5" r="5" fill="#1B2A4A"/>
                       <rect x="40" y="91" width="40" height="4" rx="2" fill="#C5D1E5"/>
                       <rect x="48" y="97" width="24" height="4" rx="2" fill="#C5D1E5"/>
@@ -621,15 +455,9 @@
                 <div class="card-icon icon-design">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterD45h Logo">
                       <defs>
-                        <linearGradient id="bgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
-                          <stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F8FAFC"/><stop offset="1" stop-color="#E2E8F0"/>
-                        </linearGradient>
-                        <radialGradient id="pinGrad" cx="0.35" cy="0.3" r="0.8">
-                          <stop offset="0" stop-color="#FF8A65"/><stop offset="1" stop-color="#D14C1E"/>
-                        </radialGradient>
-                        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-                          <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/>
-                        </filter>
+                        <linearGradient id="bgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F8FAFC"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient>
+                        <radialGradient id="pinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FF8A65"/><stop offset="1" stop-color="#D14C1E"/></radialGradient>
+                        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter>
                       </defs>
                       <rect width="120" height="120" rx="28" fill="url(#bgGrad)"/>
                       <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
@@ -676,9 +504,9 @@
 
     <footer>
         <p>PosterSuite by <b>Lee Williams</b></p>
-        <div class="trust-badge">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-            No sign-up. No tracking. 100% free.
+        <div class="footer-links">
+            <a onclick="openModal('accessibilityOverlay')">Accessibility Statement</a>
+            <a href="mailto:leewilliamswork2029@gmail.com?subject=Poster%20Suite%20Feedback&body=Hi%20Lee%2C%0A%0AI%27ve%20been%20using%20Poster%20Suite%20and%20I%20wanted%20to%20share%20some%20feedback%3A%0A%0A">Contact & Feedback</a>
         </div>
     </footer>
 
@@ -686,51 +514,16 @@
     <div id="blankPrintArea">
         <div class="print-header">
             <div class="print-logo-group">
-                <!-- Mini PosterA11y Logo -->
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="40" height="40">
-                  <defs>
-                    <linearGradient id="pbg" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.55" stop-color="#F2F6FB"/><stop offset="1" stop-color="#E3EAF4"/></linearGradient>
-                    <radialGradient id="ppin" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FF9BB5"/><stop offset="1" stop-color="#E13A66"/></radialGradient>
-                  </defs>
-                  <rect width="120" height="120" rx="26" fill="url(#pbg)"/>
-                  <rect x="32" y="41" width="56" height="64" rx="8" fill="#FFFFFF" stroke="#1B2A4A" stroke-width="2"/>
-                  <circle cx="60" cy="69" r="19" fill="#EAF1FA"/>
-                  <g fill="none" stroke="#1B2A4A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M51.5 61 L60 68 L68.5 61"/><path d="M60 63.5 L60 74.5"/><path d="M54 84 L60 74.5 L66 84"/></g>
-                  <circle cx="60" cy="57.5" r="5" fill="#1B2A4A"/>
-                  <circle cx="60" cy="21" r="6.5" fill="url(#ppin)"/>
-                </svg>
-                <!-- Mini PosterD45h Logo -->
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="40" height="40">
-                  <defs>
-                    <linearGradient id="dbg" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F8FAFC"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient>
-                    <radialGradient id="dpin" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FF8A65"/><stop offset="1" stop-color="#D14C1E"/></radialGradient>
-                  </defs>
-                  <rect width="120" height="120" rx="28" fill="url(#dbg)"/>
-                  <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" stroke="#1A1D21" stroke-width="2"/>
-                  <circle cx="60" cy="62" r="16" fill="#F1F5F9"/>
-                  <path d="M53 62 L58 68 L68 56" fill="none" stroke="#D14C1E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                  <circle cx="60" cy="20" r="7" fill="url(#dpin)"/>
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="40" height="40"><defs><linearGradient id="pbg" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.55" stop-color="#F2F6FB"/><stop offset="1" stop-color="#E3EAF4"/></linearGradient><radialGradient id="ppin" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FF9BB5"/><stop offset="1" stop-color="#E13A66"/></radialGradient></defs><rect width="120" height="120" rx="26" fill="url(#pbg)"/><rect x="32" y="41" width="56" height="64" rx="8" fill="#FFFFFF" stroke="#1B2A4A" stroke-width="2"/><circle cx="60" cy="69" r="19" fill="#EAF1FA"/><g fill="none" stroke="#1B2A4A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M51.5 61 L60 68 L68.5 61"/><path d="M60 63.5 L60 74.5"/><path d="M54 84 L60 74.5 L66 84"/></g><circle cx="60" cy="57.5" r="5" fill="#1B2A4A"/><circle cx="60" cy="21" r="6.5" fill="url(#ppin)"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="40" height="40"><defs><linearGradient id="dbg" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F8FAFC"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient><radialGradient id="dpin" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FF8A65"/><stop offset="1" stop-color="#D14C1E"/></radialGradient></defs><rect width="120" height="120" rx="28" fill="url(#dbg)"/><rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" stroke="#1A1D21" stroke-width="2"/><circle cx="60" cy="62" r="16" fill="#F1F5F9"/><path d="M53 62 L58 68 L68 56" fill="none" stroke="#D14C1E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="60" cy="20" r="7" fill="url(#dpin)"/></svg>
             </div>
-            <!-- Empty Title Box -->
             <div class="print-title-box"></div>
         </div>
-        
-        <!-- Empty Subtitle Box -->
         <div class="print-sub-box"></div>
-        
-        <!-- Empty Image Box -->
         <div class="print-img-box"></div>
-        
         <div class="print-lines">
-            <div class="p-line"></div><div class="p-line"></div><div class="p-line"></div>
-            <div class="p-line"></div><div class="p-line"></div><div class="p-line"></div>
-            <div class="p-line"></div><div class="p-line"></div><div class="p-line"></div>
-            <div class="p-line"></div><div class="p-line"></div><div class="p-line"></div>
-            <div class="p-line"></div><div class="p-line"></div><div class="p-line"></div>
+            <div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div>
         </div>
-        
-        <!-- Empty Footer -->
         <div class="print-footer"></div>
     </div>
 
@@ -750,7 +543,23 @@
         </div>
     </div>
 
-    <!-- Generic Modal Overlay -->
+    <!-- Accessibility Statement Modal -->
+    <div id="accessibilityOverlay" class="modal-overlay" onclick="closeModal(event, 'accessibilityOverlay')">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(false, 'accessibilityOverlay')">&times;</button>
+            <h2>Accessibility Statement</h2>
+            <p>Poster Suite is committed to making communication accessible for everyone. Both our tools and this Hub are built with the following standards in mind:</p>
+            <ul>
+                <li><b>Keyboard Navigable:</b> Every feature can be accessed using `Tab`, `Enter`, and `Escape` without a mouse.</li>
+                <li><b>Screen-Reader Optimized:</b> Interactive elements use proper ARIA roles and labels.</li>
+                <li><b>Sensory-Friendly:</b> A built-in "Calm Mode" reduces visual noise, animations, and harsh contrasts.</li>
+                <li><b>No Tracking:</b> We do not use cookies or external analytics that might slow down assistive technologies.</li>
+            </ul>
+            <button class="btn btn-design" style="margin-top: 10px;" onclick="closeModal(false, 'accessibilityOverlay')">Close</button>
+        </div>
+    </div>
+
+    <!-- About Modal -->
     <div id="aboutOverlay" class="modal-overlay" onclick="closeModal(event, 'aboutOverlay')">
         <div class="modal-box" onclick="event.stopPropagation()">
             <button class="modal-close" onclick="closeModal(false, 'aboutOverlay')">&times;</button>
@@ -762,6 +571,7 @@
         </div>
     </div>
 
+    <!-- Tips Modal -->
     <div id="tipsOverlay" class="modal-overlay" onclick="closeModal(event, 'tipsOverlay')">
         <div class="modal-box" onclick="event.stopPropagation()">
             <button class="modal-close" onclick="closeModal(false, 'tipsOverlay')">&times;</button>
@@ -778,6 +588,7 @@
         </div>
     </div>
 
+    <!-- What's New Modal -->
     <div id="whatsNewOverlay" class="modal-overlay" onclick="closeModal(event, 'whatsNewOverlay')">
         <div class="modal-box" onclick="event.stopPropagation()">
             <button class="modal-close" onclick="closeModal(false, 'whatsNewOverlay')">&times;</button>
@@ -797,6 +608,7 @@
 
     <!-- Full Screen Iframe Overlay -->
     <div id="appOverlay" class="app-overlay">
+        <div id="loader" class="loader"></div>
         <button class="close-btn" onclick="closeApp()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="6"></line></svg>
             Back to Suite
@@ -808,15 +620,16 @@
     <div id="toast" class="toast">Link copied to clipboard!</div>
 
     <script>
-        // --- App Launcher Logic with Resume State ---
+        // --- App Launcher Logic with Resume State & Loader ---
         let currentApp = null;
+        const appFrame = document.getElementById('appFrame');
+        const loader = document.getElementById('loader');
 
         function openApp(url, appId) {
-            const frame = document.getElementById('appFrame');
-            
-            // If opening a different app, update the iframe source
+            // If opening a different app, update the iframe source and show loader
             if (currentApp !== url) {
-                frame.src = url;
+                loader.style.display = 'block';
+                appFrame.src = url;
                 currentApp = url;
                 
                 // Hide all resume badges, then show the correct one
@@ -829,10 +642,13 @@
             document.getElementById('appOverlay').style.display = 'block';
             document.body.style.overflow = 'hidden';
         }
+
+        // Hide loader when iframe finishes loading
+        appFrame.onload = function() {
+            loader.style.display = 'none';
+        };
         
         function closeApp() {
-            // We DON'T clear the iframe src here anymore! 
-            // This allows the user to resume exactly where they left off.
             document.getElementById('appOverlay').style.display = 'none';
             document.body.style.overflow = 'auto';
         }
@@ -856,7 +672,6 @@
         }
 
         document.addEventListener('keydown', function(e) {
-            // Close modals on Escape
             if(e.key === "Escape") {
                 document.querySelectorAll('.modal-overlay.active').forEach(modal => {
                     modal.classList.remove('active');
@@ -864,8 +679,6 @@
                 });
             }
 
-            // Keyboard Shortcuts (1, 2, 3)
-            // Ignore if user is typing in an input/textarea or modal is open
             const isTyping = e.target.matches('input, textarea, [contenteditable="true"]');
             const modalOpen = document.querySelector('.modal-overlay.active');
             if (isTyping || modalOpen) return;
@@ -876,7 +689,7 @@
         });
 
         // --- What's New Logic ---
-        const CURRENT_VERSION = '1.1'; // Change this string when you add a new update
+        const CURRENT_VERSION = '1.1';
         function openWhatsNew() {
             openModal('whatsNewOverlay');
             localStorage.setItem('postersuite-seen-version', CURRENT_VERSION);
@@ -900,9 +713,7 @@
                     await navigator.clipboard.writeText(window.location.href);
                     showToast();
                 }
-            } catch(err) {
-                console.log("Share cancelled or failed");
-            }
+            } catch(err) { console.log("Share cancelled or failed"); }
         }
 
         function showToast() {
@@ -930,10 +741,7 @@
                 localStorage.setItem('postersuite-theme', 'light');
             }
         }
-
-        function toggleTheme() {
-            applyTheme(!document.body.classList.contains('dark-mode'));
-        }
+        function toggleTheme() { applyTheme(!document.body.classList.contains('dark-mode')); }
 
         // --- Calm Mode Logic ---
         const calmToggleBtn = document.getElementById('calmToggle');
@@ -948,9 +756,7 @@
                 localStorage.setItem('postersuite-calm', 'false');
             }
         }
-        function toggleCalmMode() {
-            applyCalmMode(!document.body.classList.contains('calm-mode'));
-        }
+        function toggleCalmMode() { applyCalmMode(!document.body.classList.contains('calm-mode')); }
 
         // --- Apply Saved Settings on Load ---
         const savedTheme = localStorage.getItem('postersuite-theme');
