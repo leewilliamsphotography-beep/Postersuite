@@ -67,7 +67,6 @@
         }
         body.calm-mode .card:hover { transform: none !important; }
 
-        /* Global Focus Outline for Accessibility */
         a:focus-visible, button:focus-visible, .card:focus-visible {
             outline: 2px solid var(--focus);
             outline-offset: 2px;
@@ -196,7 +195,19 @@
         .card-header { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; margin-top: 20px; }
         .card-icon { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center; flex-shrink: 0; overflow: hidden; }
         .icon-a11y, .icon-design, .icon-quick { background: transparent; padding: 0; }
+        
+        .title-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .card h2 { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.75rem; color: var(--ink); }
+        .version-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--ink2);
+            background: var(--line2);
+            padding: 3px 8px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            line-height: 1;
+        }
 
         .tag { display: inline-block; font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; margin-bottom: 16px; width: fit-content; }
         .tag-a11y { background: rgba(209, 76, 30, 0.15); color: var(--accent-a11y); }
@@ -237,7 +248,7 @@
             border-top: 1px solid var(--line); color: var(--ink2); font-size: 0.9rem;
         }
         footer b { color: var(--ink); font-weight: 600; }
-        .footer-links { margin-top: 8px; display: flex; gap: 16px; justify-content: center; }
+        .footer-links { margin-top: 8px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
         .footer-links a { color: var(--ink2); text-decoration: underline; cursor: pointer; }
         .footer-links a:hover { color: var(--ink); }
 
@@ -273,7 +284,6 @@
         }
         .app-overlay iframe { width: 100%; height: 100%; border: none; }
 
-        /* Loading Spinner */
         .loader {
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
@@ -307,7 +317,6 @@
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
-        /* --- Unique Blank Print Template Design --- */
         #blankPrintArea {
             display: none; flex-direction: column;
             width: 210mm; height: 297mm; padding: 15mm;
@@ -332,13 +341,12 @@
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
 
-        /* Mobile Nav Optimization */
         @media (max-width: 600px) {
             header { padding: 12px 16px; }
             .logo span { display: none; }
             nav { gap: 12px; }
             nav a, nav button { font-size: 0.85rem; }
-            .nav-text { display: none; } /* Hide text labels on mobile */
+            .nav-text { display: none; } 
             .hero h1 { font-size: 2.2rem; }
             .footer-links { flex-direction: column; gap: 8px; }
         }
@@ -435,7 +443,10 @@
                       <circle cx="57.9" cy="19.1" r="1.7" fill="#FFFFFF" opacity="0.85"/>
                     </svg>
                 </div>
-                <h2>PosterA11y</h2>
+                <div class="title-group">
+                    <h2>PosterA11y</h2>
+                    <span id="versionA11y" class="version-badge">v1.0</span>
+                </div>
             </div>
             <span class="tag tag-a11y">Best for: Easy Read & Symbols</span>
             <p>An accessibility-first poster maker. Featuring ARASAAC symbol support, high-contrast modes, dyslexia-friendly fonts, screen-reader optimization, and auto-pagination for printing. Perfect for Easy Read documents.</p>
@@ -474,7 +485,10 @@
                       <circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
                     </svg>
                 </div>
-                <h2>PosterD45h</h2>
+                <div class="title-group">
+                    <h2>PosterD45h</h2>
+                    <span id="versionD45h" class="version-badge">v1.0</span>
+                </div>
             </div>
             <span class="tag tag-design">Best for: Quick Notices & Menus</span>
             <p>A rapid, block-based poster designer for care homes and learning disability support. Offering visual timetables, task boards, quick templates, and layered design elements.</p>
@@ -487,7 +501,9 @@
                 <div class="card-icon icon-quick">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent-quick)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
                 </div>
-                <h2>Quick Print Blank Template</h2>
+                <div class="title-group">
+                    <h2>Quick Print Blank Template</h2>
+                </div>
             </div>
             <span class="tag tag-quick">Best for: Handwritten Rush Notices</span>
             <p>Need to handwrite a notice right now? Click here to instantly print a beautifully structured A4 worksheet with handwriting guidelines, title boxes, and image areas. No designer needed.</p>
@@ -626,24 +642,20 @@
         const loader = document.getElementById('loader');
 
         function openApp(url, appId) {
-            // If opening a different app, update the iframe source and show loader
             if (currentApp !== url) {
                 loader.style.display = 'block';
                 appFrame.src = url;
                 currentApp = url;
                 
-                // Hide all resume badges, then show the correct one
                 document.querySelectorAll('.resume-badge').forEach(b => b.style.display = 'none');
                 if (appId === 'a11y') document.getElementById('resumeBadge_a11y').style.display = 'flex';
                 if (appId === 'd45h') document.getElementById('resumeBadge_d45h').style.display = 'flex';
             }
             
-            // Show overlay (this works for both opening and resuming)
             document.getElementById('appOverlay').style.display = 'block';
             document.body.style.overflow = 'hidden';
         }
 
-        // Hide loader when iframe finishes loading
         appFrame.onload = function() {
             loader.style.display = 'none';
         };
@@ -653,12 +665,10 @@
             document.body.style.overflow = 'auto';
         }
 
-        // --- Quick Print Logic ---
         function quickPrintBlank() {
             window.print();
         }
 
-        // --- Generic Modal Logic ---
         function openModal(id) {
             document.getElementById(id).classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -688,7 +698,6 @@
             if (e.key === '3') quickPrintBlank();
         });
 
-        // --- What's New Logic ---
         const CURRENT_VERSION = '1.1';
         function openWhatsNew() {
             openModal('whatsNewOverlay');
@@ -699,7 +708,6 @@
             document.getElementById('newDot').style.display = 'block';
         }
 
-        // --- Share Logic ---
         async function shareSuite() {
             const shareData = {
                 title: 'Poster Suite',
@@ -722,7 +730,6 @@
             setTimeout(() => { toast.classList.remove("show"); }, 3000);
         }
 
-        // --- Dark Mode Logic ---
         const themeToggleBtn = document.getElementById('themeToggle');
         const themeIcon = document.getElementById('themeIcon');
         const sunIcon = `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
@@ -743,7 +750,6 @@
         }
         function toggleTheme() { applyTheme(!document.body.classList.contains('dark-mode')); }
 
-        // --- Calm Mode Logic ---
         const calmToggleBtn = document.getElementById('calmToggle');
         function applyCalmMode(isCalm) {
             if(isCalm) {
@@ -758,7 +764,6 @@
         }
         function toggleCalmMode() { applyCalmMode(!document.body.classList.contains('calm-mode')); }
 
-        // --- Apply Saved Settings on Load ---
         const savedTheme = localStorage.getItem('postersuite-theme');
         const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         applyTheme(savedTheme ? savedTheme === 'dark' : prefersDark);
@@ -766,11 +771,30 @@
         const savedCalm = localStorage.getItem('postersuite-calm') === 'true';
         applyCalmMode(savedCalm);
 
-        // --- First Time Welcome Logic ---
         if (!localStorage.getItem('postersuite-welcomed')) {
             openModal('welcomeOverlay');
             localStorage.setItem('postersuite-welcomed', 'true');
         }
+
+        // --- Auto-Fetch App Versions ---
+        async function fetchAppVersions() {
+            try {
+                // Fetch PosterA11y version
+                const resA11y = await fetch('postera11y.html?v=' + Date.now()); // Cache-buster
+                const textA11y = await resA11y.text();
+                const matchA11y = textA11y.match(/<meta name="version" content="([^"]+)">/);
+                if (matchA11y) document.getElementById('versionA11y').textContent = `v${matchA11y[1]}`;
+
+                // Fetch PosterD45h version
+                const resD45h = await fetch('posterd45h.html?v=' + Date.now()); // Cache-buster
+                const textD45h = await resD45h.text();
+                const matchD45h = textD45h.match(/<meta name="version" content="([^"]+)">/);
+                if (matchD45h) document.getElementById('versionD45h').textContent = `v${matchD45h[1]}`;
+            } catch (e) {
+                console.log("Could not fetch app versions automatically. Ensure meta tags are added.");
+            }
+        }
+        fetchAppVersions();
     </script>
 </body>
 </html>
