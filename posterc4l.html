@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="version" content="4.3">
+<meta name="version" content="5.0">
 <title>PosterC4l — Visual Calendar</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -16,6 +16,7 @@
 
 * { box-sizing:border-box; margin:0; padding:0; font-family:'Lexend',sans-serif; }
 body { background:var(--paper); color:var(--ink); height:100vh; display:flex; flex-direction:column; transition:background .4s, color .4s; overflow:hidden; }
+.hidden { display: none !important; }
 
 /* Header */
 header { display:flex; justify-content:space-between; align-items:center; padding:16px 24px; background:var(--surface); border-bottom:1px solid var(--line); box-shadow:var(--shadow); z-index:10; transition:background .4s, border-color .4s; }
@@ -28,6 +29,8 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
 .btn:hover { opacity:0.9; } .btn:active { transform:scale(0.96); }
 .btn.secondary { background:transparent; border:1px solid var(--line); color:var(--ink); }
 .btn.secondary:hover { background:var(--accent-light); }
+.hamburger-btn { background:transparent; border:1px solid var(--line); color:var(--ink); border-radius:8px; width:40px; height:40px; cursor:pointer; font-size:20px; display:flex; align-items:center; justify-content:center; transition:background .2s; }
+.hamburger-btn:hover { background:var(--accent-light); }
 
 /* CSS Grid Calendar */
 .cal-area { flex:1; padding:24px 24px 100px 24px; overflow:auto; }
@@ -68,7 +71,7 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
 .checklist-item.done label { text-decoration:line-through; opacity:0.6; }
 
 /* Focus Mode Modal */
-.modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:1000; opacity:0; transition:opacity .2s; }
+.modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:1100; opacity:0; transition:opacity .2s; }
 .modal-backdrop.show { display:flex; opacity:1; }
 .modal { background:var(--surface); border-radius:16px; width:90%; max-width:600px; max-height:80vh; display:flex; flex-direction:column; box-shadow:0 20px 25px -5px rgba(0,0,0,0.3); transform:scale(0.95); transition:transform .2s cubic-bezier(0.34, 1.56, 0.64, 1); }
 .modal-backdrop.show .modal { transform:scale(1); }
@@ -98,28 +101,33 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
 .year-day.cat-habit { background:var(--cat-habit); opacity:0.8; border:none; }
 .year-day.today { outline:2px solid var(--accent); outline-offset:2px; }
 
-/* Emoji Dock */
-.dock { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--glass); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid var(--line); border-radius:24px; padding:10px 16px; display:flex; gap:8px; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); z-index:50; transition:background .4s, border-color .4s; }
-.dock-btn { width:40px; height:40px; border-radius:12px; border:none; background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:20px; transition:background .2s, transform .1s; position:relative; }
-.dock-btn:hover { background:var(--accent-light); transform:translateY(-2px); }
-.dock-btn:active { transform:scale(0.9); }
+/* Hamburger Drawer */
+.drawer-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.4); backdrop-filter:blur(4px); display:none; z-index:1000; opacity:0; transition:opacity .2s; }
+.drawer-backdrop.show { display:block; opacity:1; }
+.drawer { position:fixed; top:0; right:0; width:320px; max-width:90vw; height:100vh; background:var(--surface); box-shadow:-4px 0 20px rgba(0,0,0,0.1); z-index:1001; transform:translateX(100%); transition:transform .3s cubic-bezier(.4,0,.2,1); display:flex; flex-direction:column; }
+.drawer.show { transform:translateX(0); }
+.drawer-header { padding:20px 24px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; }
+.drawer-title { font-family:'Bricolage Grotesque'; font-weight:700; font-size:20px; }
+.drawer-body { padding:24px; overflow-y:auto; flex:1; }
+.drawer-section { margin-bottom:32px; }
+.drawer-section h3 { font-size:14px; text-transform:uppercase; letter-spacing:1px; color:var(--ink2); margin-bottom:16px; }
 
-/* Floating Emoji Toolbar */
-.emoji-toolbar { position:absolute; background:var(--glass); backdrop-filter:blur(8px); border:1px solid var(--line); border-radius:20px; padding:4px; display:flex; gap:2px; z-index:50; box-shadow:var(--shadow); display:none; }
-.emoji-toolbar.show { display:flex; animation: dropIn .15s ease-out; }
-@keyframes dropIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
-.emoji-btn { width:28px; height:28px; border:none; background:transparent; cursor:pointer; border-radius:12px; font-size:14px; display:flex; align-items:center; justify-content:center; }
-.emoji-btn:hover { background:var(--accent-light); }
+/* Drawer UI Elements */
+.drawer-colors { display:grid; grid-template-columns:repeat(6, 1fr); gap:12px; }
+.drawer-swatch { width:100%; aspect-ratio:1; border-radius:50%; cursor:pointer; border:2px solid transparent; display:flex; align-items:center; justify-content:center; font-size:14px; transition:transform .1s; }
+.drawer-swatch:hover { transform:scale(1.1); }
+.drawer-swatch.clear { background:transparent; border:2px dashed var(--line); color:var(--ink2); }
 
-/* Floating Color Picker & Emoji Picker */
-.color-picker-popup, .emoji-picker-popup { position:fixed; background:var(--glass); backdrop-filter:blur(8px); border:1px solid var(--line); border-radius:16px; padding:8px; display:none; gap:6px; box-shadow:var(--shadow); z-index:51; flex-wrap:wrap; max-width:220px; }
-.color-picker-popup.show, .emoji-picker-popup.show { display:flex; animation: dropIn .15s ease-out; }
-.popup-swatch, .popup-emoji { width:28px; height:28px; border-radius:50%; cursor:pointer; border:2px solid transparent; display:flex; align-items:center; justify-content:center; font-size:16px; transition:transform .1s; }
-.popup-swatch:hover { transform:scale(1.15); border-color:#fff; }
-.popup-emoji:hover { transform:scale(1.15); background:var(--accent-light); }
+.drawer-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; }
+.drawer-btn { padding:12px; border:1px solid var(--line); background:var(--paper); color:var(--ink); border-radius:8px; cursor:pointer; font-weight:600; font-size:14px; text-align:left; transition:background .2s; }
+.drawer-btn:hover { background:var(--accent-light); }
+
+.drawer-emojis { display:grid; grid-template-columns:repeat(6, 1fr); gap:8px; }
+.emoji-pick { width:100%; aspect-ratio:1; border:none; background:transparent; cursor:pointer; font-size:20px; border-radius:8px; transition:background .1s; }
+.emoji-pick:hover { background:var(--accent-light); }
 
 /* Search Modal */
-.search-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.4); backdrop-filter:blur(4px); display:none; align-items:flex-start; justify-content:center; padding-top:15vh; z-index:1000; }
+.search-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.4); backdrop-filter:blur(4px); display:none; align-items:flex-start; justify-content:center; padding-top:15vh; z-index:1200; }
 .search-backdrop.show { display:flex; }
 .search-palette { background:var(--surface); border:1px solid var(--line); border-radius:12px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.2); width:90%; max-width:500px; overflow:hidden; }
 .search-input { width:100%; padding:16px 20px; border:none; border-bottom:1px solid var(--line); background:transparent; color:var(--ink); font-size:16px; outline:none; }
@@ -127,15 +135,8 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
 .search-result { padding:12px 20px; cursor:pointer; display:flex; align-items:center; gap:12px; }
 .search-result:hover { background:var(--accent-light); }
 
-/* Theme Popover */
-.popover { position:absolute; bottom:120%; left:50%; transform:translateX(-50%); background:var(--surface); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); z-index:60; min-width:140px; overflow:hidden; display:none; }
-.popover.show { display:block; animation: dropIn .15s ease-out; }
-.popover-item { padding:10px 16px; cursor:pointer; display:flex; align-items:center; gap:10px; font-weight:500; font-size:14px; }
-.popover-item:hover { background:var(--accent-light); }
-.theme-swatch { width:16px; height:16px; border-radius:50%; border:1px solid var(--line); }
-
 /* Toast */
-.toast { position:fixed; bottom:90px; left:50%; transform:translateX(-50%) translateY(100px); background:var(--ink); color:var(--surface); padding:12px 24px; border-radius:8px; font-weight:500; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); transition:transform .3s cubic-bezier(0.34, 1.56, 0.64, 1); z-index:100; }
+.toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(100px); background:var(--ink); color:var(--surface); padding:12px 24px; border-radius:8px; font-weight:500; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); transition:transform .3s cubic-bezier(0.34, 1.56, 0.64, 1); z-index:100; }
 .toast.show { transform:translateX(-50%) translateY(0); }
 
 ::-webkit-scrollbar { width:8px; height:8px; }
@@ -143,7 +144,7 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
 
 /* Clean Print Styles */
 @media print {
-    header, .dock, .toast, .modal-backdrop, .search-backdrop, .emoji-toolbar, .color-picker-popup, .emoji-picker-popup { display:none !important; }
+    header, .toast, .modal-backdrop, .search-backdrop, .drawer, .drawer-backdrop { display:none !important; }
     body { height:auto; overflow:visible; background:#fff; color:#000; }
     .cal-area { padding:0; }
     .cal-grid { box-shadow:none; border-radius:0; page-break-inside:avoid; border:1px solid #ccc; }
@@ -173,14 +174,12 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
         <div class="month-display" id="monthDisplay"></div>
         <button class="btn secondary" onclick="changeMonth(1)">→</button>
     </div>
-    <div style="width:100px; text-align:right;">
-        <span style="color:var(--ink2); font-size:12px;">v4.3</span>
-    </div>
+    <button class="hamburger-btn" onclick="toggleDrawer()">☰</button>
 </header>
 
 <div class="cal-area">
     <div class="cal-grid" id="calGrid"></div>
-    <div id="yearContainer" style="display:none;"></div>
+    <div id="yearContainer" class="hidden"></div>
 </div>
 
 <!-- Focus Mode Modal -->
@@ -211,53 +210,66 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
     </div>
 </div>
 
-<!-- Floating Emoji Toolbar -->
-<div class="emoji-toolbar" id="emojiToolbar">
-    <button class="emoji-btn" onmousedown="event.preventDefault()" onclick="insertTextAtCursor(' #work ')" title="Work">💼</button>
-    <button class="emoji-btn" onmousedown="event.preventDefault()" onclick="insertTextAtCursor(' #important ')" title="Important">⚠️</button>
-    <button class="emoji-btn" onmousedown="event.preventDefault()" onclick="insertTextAtCursor(' #bday ')" title="Birthday">🎉</button>
-    <button class="emoji-btn" onmousedown="event.preventDefault()" onclick="insertTextAtCursor(' #habit ')" title="Habit">✅</button>
-    <button class="emoji-btn" onmousedown="event.preventDefault()" onclick="insertTextAtCursor('\n- [ ] ')" title="Checklist">☑️</button>
-    <div style="width:1px; background:var(--line); margin:4px 2px;"></div>
-    <button class="emoji-btn" id="emojiPickerBtn" title="Add Emoji">😊</button>
-    <button class="emoji-btn" id="paintBrushBtn" title="Paint Day">🎨</button>
-</div>
+<!-- Hamburger Drawer -->
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleDrawer()"></div>
+<div class="drawer" id="appDrawer">
+    <div class="drawer-header">
+        <div class="drawer-title">Menu & Tools</div>
+        <button class="modal-close" onclick="toggleDrawer()">&times;</button>
+    </div>
+    <div class="drawer-body">
+        <div class="drawer-section">
+            <h3>Paint Day Color</h3>
+            <div class="drawer-colors" id="drawerColors"></div>
+        </div>
+        
+        <div class="drawer-section">
+            <h3>Insert Quick Tags</h3>
+            <div class="drawer-grid">
+                <button class="drawer-btn" onmousedown="event.preventDefault()" onclick="insertTextAtCursor(' #work ')">💼 Work</button>
+                <button class="drawer-btn" onmousedown="event.preventDefault()" onclick="insertTextAtCursor(' #important ')">⚠️ Important</button>
+                <button class="drawer-btn" onmousedown="event.preventDefault()" onclick="insertTextAtCursor(' #bday ')">🎉 Birthday</button>
+                <button class="drawer-btn" onmousedown="event.preventDefault()" onclick="insertTextAtCursor(' #habit ')">✅ Habit</button>
+                <button class="drawer-btn" onmousedown="event.preventDefault()" onclick="insertTextAtCursor('\n- [ ] ')" style="grid-column: span 2;">☑️ Insert Checklist</button>
+            </div>
+        </div>
+        
+        <div class="drawer-section">
+            <h3>Insert Emoji</h3>
+            <div class="drawer-emojis" id="drawerEmojis"></div>
+        </div>
+        
+        <div class="drawer-section">
+            <h3>App Theme</h3>
+            <div class="drawer-grid">
+                <button class="drawer-btn" onclick="applyTheme('light')">Light</button>
+                <button class="drawer-btn" onclick="applyTheme('dark')">Dark</button>
+                <button class="drawer-btn" onclick="applyTheme('ocean')">Ocean</button>
+                <button class="drawer-btn" onclick="applyTheme('forest')">Forest</button>
+                <button class="drawer-btn" onclick="applyTheme('sunset')" style="grid-column: span 2;">Sunset</button>
+            </div>
+        </div>
+        
+        <div class="drawer-section">
+            <h3>Calendar Tools</h3>
+            <div class="drawer-grid">
+                <button class="drawer-btn" onclick="goToToday(); toggleDrawer();">📍 Jump to Today</button>
+                <button class="drawer-btn" onclick="toggleView(); toggleDrawer();">🗓️ Toggle Year View</button>
+                <button class="drawer-btn" onclick="openSearch(); toggleDrawer();">🔍 Search Calendar</button>
+                <button class="drawer-btn" onclick="window.print();">🖨️ Print Calendar</button>
+            </div>
+        </div>
 
-<!-- Floating Emoji Picker -->
-<div class="emoji-picker-popup" id="emojiPickerPopup"></div>
-
-<!-- Floating Color Picker -->
-<div class="color-picker-popup" id="colorPickerPopup">
-    <div class="popup-swatch" data-color="none" title="Clear">🚫</div>
-</div>
-
-<!-- Emoji Dock -->
-<div class="dock">
-    <button class="dock-btn" onclick="goToToday()" title="Jump to Today">📍</button>
-    <button class="dock-btn" onclick="toggleView()" title="Toggle Year View">🗓️</button>
-    <button class="dock-btn" onclick="openSearch()" title="Search">🔍</button>
-    
-    <div style="position:relative;">
-        <button class="dock-btn" id="themeDockBtn" title="Themes">🎨</button>
-        <div class="popover" id="themePopover">
-            <div class="popover-item" onclick="applyTheme('light')"><div class="theme-swatch" style="background:#06B6D4;"></div> Light</div>
-            <div class="popover-item" onclick="applyTheme('dark')"><div class="theme-swatch" style="background:#22D3EE;"></div> Dark</div>
-            <div class="popover-item" onclick="applyTheme('ocean')"><div class="theme-swatch" style="background:#0284C7;"></div> Ocean</div>
-            <div class="popover-item" onclick="applyTheme('forest')"><div class="theme-swatch" style="background:#16A34A;"></div> Forest</div>
-            <div class="popover-item" onclick="applyTheme('sunset')"><div class="theme-swatch" style="background:#9333EA;"></div> Sunset</div>
+        <div class="drawer-section">
+            <h3>Data Backup</h3>
+            <div class="drawer-grid">
+                <button class="drawer-btn" onclick="exportData()">📤 Export JSON</button>
+                <button class="drawer-btn" onclick="exportICS()">📅 Export .ICS</button>
+                <button class="drawer-btn" onclick="document.getElementById('importFile').click()" style="grid-column: span 2;">📥 Import JSON</button>
+            </div>
+            <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importData(event)">
         </div>
     </div>
-
-    <div style="position:relative;">
-        <button class="dock-btn" id="exportDockBtn" title="Export/Import">💾</button>
-        <div class="popover" id="exportPopover">
-            <div class="popover-item" onclick="exportData()">📤 Export JSON</div>
-            <div class="popover-item" onclick="exportICS()">📅 Export .ICS</div>
-            <div class="popover-item" onclick="document.getElementById('importFile').click()">📥 Import JSON</div>
-            <div class="popover-item" onclick="window.print()">🖨️ Print</div>
-        </div>
-    </div>
-    <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importData(event)">
 </div>
 
 <div class="toast" id="toast">Saved!</div>
@@ -268,14 +280,12 @@ let currentDate = new Date();
 let calData = JSON.parse(localStorage.getItem('posterc4l-cal-data')) || {};
 let currentView = 'month';
 let activeFocusDate = null;
+let activeEditable = null; // Tracks the contenteditable div or textarea
 
 const calGrid = document.getElementById('calGrid');
 const yearContainer = document.getElementById('yearContainer');
 const monthDisplay = document.getElementById('monthDisplay');
 const toast = document.getElementById('toast');
-const emojiToolbar = document.getElementById('emojiToolbar');
-const colorPickerPopup = document.getElementById('colorPickerPopup');
-const emojiPickerPopup = document.getElementById('emojiPickerPopup');
 const focusModal = document.getElementById('focusModal');
 
 // --- Emma's Calendar Color Palette ---
@@ -294,49 +304,24 @@ const dayColors = [
     { id: 'slate', name: 'Slate', g: 'linear-gradient(135deg,#546e7a,#78909c)' }
 ];
 
-// Inject colors into Floating Picker
+// Inject colors into Hamburger Drawer
+const drawerColors = document.getElementById('drawerColors');
 dayColors.forEach(c => {
     const sw = document.createElement('div');
-    sw.className = 'popup-swatch';
+    sw.className = 'drawer-swatch';
     sw.style.background = c.g;
     sw.title = c.name;
-    sw.setAttribute('data-color', c.id);
     sw.onmousedown = (e) => e.preventDefault(); 
-    sw.onclick = (e) => { e.stopPropagation(); paintDay(c.id); colorPickerPopup.classList.remove('show'); };
-    colorPickerPopup.appendChild(sw);
+    sw.onclick = (e) => { e.stopPropagation(); paintDay(c.id); };
+    drawerColors.appendChild(sw);
 });
-
-document.getElementById('paintBrushBtn').addEventListener('click', (e) => {
-    e.stopPropagation();
-    const rect = e.target.getBoundingClientRect();
-    colorPickerPopup.style.top = `${rect.bottom + window.scrollY + 4}px`;
-    colorPickerPopup.style.left = `${rect.left + window.scrollX - 100}px`;
-    colorPickerPopup.classList.toggle('show');
-    emojiPickerPopup.classList.remove('show');
-});
-
-document.querySelector('.popup-swatch[data-color="none"]').onmousedown = (e) => e.preventDefault();
-document.querySelector('.popup-swatch[data-color="none"]').onclick = (e) => { e.stopPropagation(); paintDay('none'); colorPickerPopup.classList.remove('show'); };
-
-// --- Emoji Picker ---
-const emojis = ['😀','😂','😍','😎','😢','😡','👍','👎','❤️','🔥','🎉','✅','⚠️','💼','🚀','☕','🍔','🛒','⚽','🎮'];
-emojis.forEach(em => {
-    const btn = document.createElement('div');
-    btn.className = 'popup-emoji';
-    btn.textContent = em;
-    btn.onmousedown = (e) => e.preventDefault();
-    btn.onclick = (e) => { e.stopPropagation(); insertTextAtCursor(em); emojiPickerPopup.classList.remove('show'); };
-    emojiPickerPopup.appendChild(btn);
-});
-
-document.getElementById('emojiPickerBtn').addEventListener('click', (e) => {
-    e.stopPropagation();
-    const rect = e.target.getBoundingClientRect();
-    emojiPickerPopup.style.top = `${rect.bottom + window.scrollY + 4}px`;
-    emojiPickerPopup.style.left = `${rect.left + window.scrollX - 60}px`;
-    emojiPickerPopup.classList.toggle('show');
-    colorPickerPopup.classList.remove('show');
-});
+const clearSw = document.createElement('div');
+clearSw.className = 'drawer-swatch clear';
+clearSw.textContent = '🚫';
+clearSw.title = 'Clear Color';
+clearSw.onmousedown = (e) => e.preventDefault();
+clearSw.onclick = (e) => { e.stopPropagation(); paintDay('none'); };
+drawerColors.appendChild(clearSw);
 
 // Inject colors into Modal Picker
 const modalColorRow = document.getElementById('modalColorRow');
@@ -367,32 +352,38 @@ document.querySelector('.modal-color-swatch[data-color="none"]').onclick = funct
     }
 };
 
+// --- Emoji Picker Setup ---
+const emojis = ['😀','😂','😍','😎','😢','😡','👍','👎','❤️','🔥','🎉','✅','⚠️','💼','🚀','☕','🍔','🛒','⚽','🎮','✈️','💰'];
+const drawerEmojis = document.getElementById('drawerEmojis');
+emojis.forEach(em => {
+    const btn = document.createElement('button');
+    btn.className = 'emoji-pick';
+    btn.textContent = em;
+    btn.onmousedown = (e) => e.preventDefault();
+    btn.onclick = (e) => { e.stopPropagation(); insertTextAtCursor(em); };
+    drawerEmojis.appendChild(btn);
+});
+
+// --- Drawer Logic ---
+function toggleDrawer() {
+    document.getElementById('appDrawer').classList.toggle('show');
+    document.getElementById('drawerBackdrop').classList.toggle('show');
+}
+
+// --- Track Active Editable Element ---
+document.addEventListener('focusin', (e) => {
+    if(e.target.classList.contains('cell-content') || e.target.classList.contains('modal-textarea')) {
+        activeEditable = e.target;
+    }
+});
+
 // --- Theme Management ---
 function applyTheme(theme) {
     document.body.setAttribute('data-theme', theme);
     localStorage.setItem('pc4-theme', theme);
-    document.getElementById('themePopover').classList.remove('show');
 }
 const savedTheme = localStorage.getItem('pc4-theme') || 'light';
 applyTheme(savedTheme);
-
-document.getElementById('themeDockBtn').addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.getElementById('exportPopover').classList.remove('show');
-    document.getElementById('themePopover').classList.toggle('show');
-});
-document.getElementById('exportDockBtn').addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.getElementById('themePopover').classList.remove('show');
-    document.getElementById('exportPopover').classList.toggle('show');
-});
-document.addEventListener('click', () => {
-    document.getElementById('themePopover').classList.remove('show');
-    document.getElementById('exportPopover').classList.remove('show');
-    emojiToolbar.classList.remove('show');
-    colorPickerPopup.classList.remove('show');
-    emojiPickerPopup.classList.remove('show');
-});
 
 // --- Data Helpers ---
 function getDayData(dateKey) {
@@ -412,21 +403,34 @@ function saveDayData(dateKey, text, color) {
 }
 
 function paintDay(colorId) {
-    const activeCell = document.activeElement.closest('.cal-cell');
+    if(!activeEditable || !activeEditable.classList.contains('cell-content')) {
+        showToast('Click inside a day first to paint it.');
+        return;
+    }
+    const activeCell = activeEditable.closest('.cal-cell');
     if(!activeCell) return;
     
     const dateKey = activeCell.getAttribute('data-date');
     const dayData = getDayData(dateKey);
     saveDayData(dateKey, dayData.text, colorId === 'none' ? null : colorId);
-    renderCal(); // re-render to apply color wash
+    renderCal();
 }
 
-// --- Robust Text Insertion (Fixes emoji/tag insertion) ---
+// --- Robust Text Insertion (Fixes emoji/tag flashing) ---
 function insertTextAtCursor(textToInsert) {
-    const activeEl = document.activeElement;
+    if (!activeEditable) {
+        showToast('Click inside a day or text area first.');
+        return;
+    }
     
-    if (activeEl && activeEl.classList.contains('cell-content')) {
-        activeEl.focus();
+    if (activeEditable.classList.contains('modal-textarea')) {
+        const start = activeEditable.selectionStart;
+        const end = activeEditable.selectionEnd;
+        activeEditable.value = activeEditable.value.substring(0, start) + textToInsert + activeEditable.value.substring(end);
+        activeEditable.focus();
+        activeEditable.setSelectionRange(start + textToInsert.length, start + textToInsert.length);
+    } else if (activeEditable.classList.contains('cell-content')) {
+        activeEditable.focus();
         const sel = window.getSelection();
         if (sel.rangeCount > 0) {
             const range = sel.getRangeAt(0);
@@ -436,19 +440,13 @@ function insertTextAtCursor(textToInsert) {
             sel.removeAllRanges();
             sel.addRange(range);
         } else {
-            activeEl.innerText += textToInsert;
+            activeEditable.innerText += textToInsert;
         }
-        // Trigger save without full re-render to preserve cursor
-        const dateKey = activeEl.getAttribute('data-date');
+        
+        // Save data silently without triggering a full re-render that destroys focus
+        const dateKey = activeEditable.getAttribute('data-date');
         const dayData = getDayData(dateKey);
-        saveDayData(dateKey, activeEl.innerText, dayData.color);
-    } else if (activeFocusDate) {
-        const textArea = document.getElementById('modalText');
-        const start = textArea.selectionStart;
-        const end = textArea.selectionEnd;
-        textArea.value = textArea.value.substring(0, start) + textToInsert + textArea.value.substring(end);
-        textArea.focus();
-        textArea.setSelectionRange(start + textToInsert.length, start + textToInsert.length);
+        saveDayData(dateKey, activeEditable.innerText, dayData.color);
     }
 }
 
@@ -499,8 +497,8 @@ function renderCal() {
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     
     if(currentView === 'month') {
-        calGrid.style.display = 'grid';
-        yearContainer.style.display = 'none';
+        calGrid.classList.remove('hidden');
+        yearContainer.classList.add('hidden');
         
         monthDisplay.innerHTML = `${monthNames[month]} <span style="color:var(--ink2)">${year}</span>`;
         monthDisplay.style.animation = 'none'; monthDisplay.offsetHeight; monthDisplay.style.animation = '';
@@ -537,7 +535,6 @@ function renderCal() {
                 if(colorObj) styleAttr = `style="--cell-gradient: ${colorObj.g};"`;
             }
             
-            // Removed "Type here..." placeholder
             html += `
                 <div class="${classes}" data-date="${dateKey}" draggable="true" ${styleAttr}>
                     <div class="day-num" onclick="openFocusMode('${dateKey}')">${d}</div>
@@ -549,8 +546,8 @@ function renderCal() {
         attachCellListeners();
         calculateStreak();
     } else {
-        calGrid.style.display = 'none';
-        yearContainer.style.display = 'block';
+        calGrid.classList.add('hidden');
+        yearContainer.classList.remove('hidden');
         monthDisplay.innerHTML = `${year}`;
         renderYearView(year);
     }
@@ -615,7 +612,11 @@ function openFocusMode(dateKey) {
     }
     
     focusModal.classList.add('show');
-    setTimeout(() => document.getElementById('modalText').focus(), 100);
+    setTimeout(() => {
+        const ta = document.getElementById('modalText');
+        ta.focus();
+        activeEditable = ta;
+    }, 100);
 }
 
 function closeFocusMode() {
@@ -633,7 +634,7 @@ function saveFocusMode() {
     closeFocusMode();
 }
 
-// --- Floating Toolbars Logic ---
+// --- Cell Listeners ---
 function attachCellListeners() {
     document.querySelectorAll('.cell-content').forEach(div => {
         div.addEventListener('blur', (e) => {
@@ -642,13 +643,6 @@ function attachCellListeners() {
             let content = e.target.innerText.trim();
             saveDayData(dateKey, content, dayData.color);
             renderCal();
-        });
-
-        div.addEventListener('focus', (e) => {
-            const rect = div.getBoundingClientRect();
-            emojiToolbar.style.top = `${rect.top + window.scrollY - 40}px`;
-            emojiToolbar.style.left = `${rect.left + window.scrollX}px`;
-            emojiToolbar.classList.add('show');
         });
     });
 
@@ -763,9 +757,7 @@ document.addEventListener('keydown', (e) => {
     if(e.key === 'Escape') {
         searchBackdrop.classList.remove('show');
         if(focusModal.classList.contains('show')) closeFocusMode();
-        emojiToolbar.classList.remove('show');
-        colorPickerPopup.classList.remove('show');
-        emojiPickerPopup.classList.remove('show');
+        if(document.getElementById('appDrawer').classList.contains('show')) toggleDrawer();
     }
     if(!e.target.classList.contains('cell-content') && !e.target.classList.contains('search-input') && !e.target.classList.contains('modal-textarea')) {
         if(e.key === 'ArrowLeft') changeMonth(-1);
