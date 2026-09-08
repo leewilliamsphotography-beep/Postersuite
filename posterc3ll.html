@@ -53,6 +53,7 @@
         .row > div { flex: 1; }
         .btn-icon { flex: 1; padding: 8px; border: 1px solid var(--border); background: var(--surface); border-radius: 4px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
         .btn-icon:hover { background: var(--highlight); border-color: var(--primary); color: var(--primary-dark); }
+        .btn-icon.active { background: var(--highlight); border-color: var(--primary); color: var(--primary-dark); }
         .delete-btn { background: #fee2e2; color: #ef4444; border-color: #fecaca; }
         .delete-btn:hover { background: #fecaca; color: #dc2626; border-color: #fca5a5; }
     </style>
@@ -67,12 +68,12 @@
         </div>
         <div style="display: flex; gap: 8px; align-items: center;">
             <div class="btn-group">
-                <button class="btn" onclick="undo()" title="Undo (Ctrl+Z)">↶</button>
-                <button class="btn" onclick="redo()" title="Redo (Ctrl+Y)">↷</button>
+                <button class="btn" data-action="undo" title="Undo (Ctrl+Z)">↶</button>
+                <button class="btn" data-action="redo" title="Redo (Ctrl+Y)">↷</button>
             </div>
-            <button class="btn" onclick="clearCanvas()">Clear All</button>
-            <button class="btn" onclick="exportPNG()">Export PNG</button>
-            <button class="btn btn-primary" onclick="exportSVG()">Export SVG</button>
+            <button class="btn" data-action="clear">Clear All</button>
+            <button class="btn" data-action="exportPNG">Export PNG</button>
+            <button class="btn btn-primary" data-action="exportSVG">Export SVG</button>
         </div>
     </nav>
 
@@ -80,24 +81,24 @@
         <!-- Left Panel -->
         <div class="left-panel">
             <div class="panel-title">Shapes</div>
-            <button class="element-btn" onclick="addShape('rect')">⬛ Square</button>
-            <button class="element-btn" onclick="addShape('circle')">⭕ Circle</button>
-            <button class="element-btn" onclick="addShape('triangle')">🔺 Triangle</button>
-            <button class="element-btn" onclick="addShape('star')">⭐ Star</button>
-            <button class="element-btn" onclick="addShape('line')">➖ Line</button>
+            <button class="element-btn" data-action="addRect">⬛ Square</button>
+            <button class="element-btn" data-action="addCircle">⭕ Circle</button>
+            <button class="element-btn" data-action="addTriangle">🔺 Triangle</button>
+            <button class="element-btn" data-action="addStar">⭐ Star</button>
+            <button class="element-btn" data-action="addLine">➖ Line</button>
             
             <div class="panel-title" style="margin-top: 20px;">Text & Actions</div>
-            <button class="element-btn" onclick="addText()">📝 Add Text</button>
-            <button class="element-btn" onclick="duplicateElement(getElById(selectedId))">📃 Duplicate (Ctrl+D)</button>
+            <button class="element-btn" data-action="addText">📝 Add Text</button>
+            <button class="element-btn" data-action="duplicate">📃 Duplicate (Ctrl+D)</button>
 
             <div class="panel-title" style="margin-top: 20px;">Artboard</div>
             <div class="prop-group">
                 <label>Canvas BG</label>
-                <input type="color" id="canvasBgPicker" value="#ffffff" onchange="setCanvasBg(this.value)">
+                <input type="color" id="canvasBgPicker" value="#ffffff" data-action="canvasBg">
             </div>
 
             <div class="panel-title" style="margin-top: 20px;">Templates</div>
-            <button class="element-btn" onclick="loadTemplate()">✨ Load Demo Logo</button>
+            <button class="element-btn" data-action="loadTemplate">✨ Load Demo Logo</button>
         </div>
 
         <!-- Center Canvas -->
@@ -125,7 +126,7 @@
         var elements = [];
         var selectedId = null;
         var isDragging = false;
-        var isDuplicating = false; // Alt+Drag state
+        var isDuplicating = false; 
         var dragOffset = { x: 0, y: 0 };
 
         var history = [];
@@ -182,7 +183,6 @@
             var cx = d.x + d.w / 2;
             var cy = d.y + d.h / 2;
             
-            // Pro Transform: translate to center, rotate, scale(flip), translate back
             var flipX = d.flipX ? -1 : 1;
             var flipY = d.flipY ? -1 : 1;
             var transform = 'translate(' + cx + ',' + cy + ') rotate(' + (d.rotation || 0) + ') scale(' + flipX + ',' + flipY + ') translate(' + (-cx) + ',' + (-cy) + ')';
@@ -231,7 +231,6 @@
                 }
             }
 
-            // Lock/Hide States
             if (d.hidden) node.style.display = 'none';
             if (d.locked) node.style.pointerEvents = 'none';
         }
@@ -274,12 +273,13 @@
             if (!el) return;
             var newData = JSON.parse(JSON.stringify(el.data));
             newData.x += 20; newData.y += 20;
-            newData.locked = false; newData.hidden = false; // Ensure clone is visible/editable
+            newData.locked = false; newData.hidden = false; 
             var newEl = { id: genId(), type: el.type, data: newData };
             elements.push(newEl);
             createSvgNode(newEl);
             selectElement(newEl.id);
             saveLocal(); saveHistory();
+            return newEl;
         }
 
         // --- Dragging & Pro Alt+Drag ---
@@ -386,59 +386,59 @@
             var el = getElById(selectedId);
             var d = el.data;
             var html = '';
+            var activeStyle = 'background:var(--highlight);border-color:var(--primary);color:var(--primary-dark);';
 
             if (el.type === 'text') {
-                html += '<div class="prop-group"><label>Text</label><input type="text" value="' + d.text + '" oninput="updateProp(\'text\', this.value)"></div>';
-                html += '<div class="row"><button class="btn-icon" onclick="toggleBoolProp(\'italic\')" style="' + (d.italic ? 'background:var(--highlight);border-color:var(--primary);color:var(--primary-dark);' : '') + '">𝐼 Italic</button></div>';
+                html += '<div class="prop-group"><label>Text</label><input type="text" class="prop-input" data-prop="text" value="' + d.text + '"></div>';
+                html += '<div class="row"><button class="btn-icon ' + (d.italic ? 'active' : '') + '" data-toggle="italic">𝐼 Italic</button></div>';
             }
 
-            html += '<div class="prop-group"><label>Color</label><input type="color" value="' + d.color + '" oninput="updateProp(\'color\', this.value)"></div>';
+            html += '<div class="prop-group"><label>Color</label><input type="color" class="prop-input" data-prop="color" value="' + d.color + '"></div>';
             
             html += '<div class="row">';
-            html += '<div class="prop-group"><label>X</label><input type="number" value="' + Math.round(d.x) + '" oninput="updateProp(\'x\', parseFloat(this.value))"></div>';
-            html += '<div class="prop-group"><label>Y</label><input type="number" value="' + Math.round(d.y) + '" oninput="updateProp(\'y\', parseFloat(this.value))"></div>';
+            html += '<div class="prop-group"><label>X</label><input type="number" class="prop-input" data-prop="x" value="' + Math.round(d.x) + '"></div>';
+            html += '<div class="prop-group"><label>Y</label><input type="number" class="prop-input" data-prop="y" value="' + Math.round(d.y) + '"></div>';
             html += '</div>';
 
             html += '<div class="row">';
-            html += '<div class="prop-group"><label>Width</label><input type="number" value="' + Math.round(d.w) + '" oninput="updateProp(\'w\', Math.max(10, parseFloat(this.value)))"></div>';
-            html += '<div class="prop-group"><label>Height</label><input type="number" value="' + Math.round(d.h) + '" oninput="updateProp(\'h\', Math.max(10, parseFloat(this.value)))"></div>';
+            html += '<div class="prop-group"><label>Width</label><input type="number" class="prop-input" data-prop="w" value="' + Math.round(d.w) + '"></div>';
+            html += '<div class="prop-group"><label>Height</label><input type="number" class="prop-input" data-prop="h" value="' + Math.round(d.h) + '"></div>';
             html += '</div>';
 
             if (el.type === 'rect') {
-                html += '<div class="prop-group"><label>Corner Radius (' + (d.radius || 0) + 'px)</label><input type="range" min="0" max="50" value="' + (d.radius || 0) + '" oninput="updateProp(\'radius\', parseFloat(this.value))"></div>';
+                html += '<div class="prop-group"><label>Corner Radius (' + (d.radius || 0) + 'px)</label><input type="range" min="0" max="50" class="prop-input" data-prop="radius" value="' + (d.radius || 0) + '"></div>';
             }
 
-            html += '<div class="prop-group"><label>Rotation (' + Math.round(d.rotation || 0) + '°)</label><input type="range" min="0" max="360" value="' + (d.rotation || 0) + '" oninput="updateProp(\'rotation\', parseFloat(this.value))"></div>';
-            html += '<div class="prop-group"><label>Opacity (' + Math.round((d.opacity !== undefined ? d.opacity : 1) * 100) + '%)</label><input type="range" min="0" max="1" step="0.1" value="' + (d.opacity !== undefined ? d.opacity : 1) + '" oninput="updateProp(\'opacity\', parseFloat(this.value))"></div>';
+            html += '<div class="prop-group"><label>Rotation (' + Math.round(d.rotation || 0) + '°)</label><input type="range" min="0" max="360" class="prop-input" data-prop="rotation" value="' + (d.rotation || 0) + '"></div>';
+            html += '<div class="prop-group"><label>Opacity (' + Math.round((d.opacity !== undefined ? d.opacity : 1) * 100) + '%)</label><input type="range" min="0" max="1" step="0.1" class="prop-input" data-prop="opacity" value="' + (d.opacity !== undefined ? d.opacity : 1) + '"></div>';
 
             if (el.type !== 'text' && el.type !== 'line') {
                 html += '<div class="row">';
-                html += '<div class="prop-group"><label>Border Color</label><input type="color" value="' + (d.strokeColor || '#000000') + '" oninput="updateProp(\'strokeColor\', this.value)"></div>';
-                html += '<div class="prop-group"><label>Border Width</label><input type="number" value="' + (d.strokeWidth || 0) + '" oninput="updateProp(\'strokeWidth\', Math.max(0, parseFloat(this.value)))"></div>';
+                html += '<div class="prop-group"><label>Border Color</label><input type="color" class="prop-input" data-prop="strokeColor" value="' + (d.strokeColor || '#000000') + '"></div>';
+                html += '<div class="prop-group"><label>Border Width</label><input type="number" class="prop-input" data-prop="strokeWidth" value="' + (d.strokeWidth || 0) + '"></div>';
                 html += '</div>';
             }
 
-            // Pro Transform Buttons
             html += '<div class="prop-group"><label>Transform</label><div class="row">';
-            html += '<button class="btn-icon" onclick="rotate90()" title="Rotate 90°">⟳</button>';
-            html += '<button class="btn-icon" onclick="toggleBoolProp(\'flipX\')" title="Flip Horizontal" style="' + (d.flipX ? 'background:var(--highlight);border-color:var(--primary);color:var(--primary-dark);' : '') + '">⇋</button>';
-            html += '<button class="btn-icon" onclick="toggleBoolProp(\'flipY\')" title="Flip Vertical" style="' + (d.flipY ? 'background:var(--highlight);border-color:var(--primary);color:var(--primary-dark);' : '') + '">⇵</button>';
+            html += '<button class="btn-icon" data-action="rotate90" title="Rotate 90°">⟳</button>';
+            html += '<button class="btn-icon ' + (d.flipX ? 'active' : '') + '" data-toggle="flipX" title="Flip Horizontal">⇋</button>';
+            html += '<button class="btn-icon ' + (d.flipY ? 'active' : '') + '" data-toggle="flipY" title="Flip Vertical">⇵</button>';
             html += '</div></div>';
 
             html += '<div class="prop-group"><label>Align to Canvas</label><div class="row">';
-            html += '<button class="btn-icon" onclick="alignElement(\'left')" title="Align Left">⬅</button>';
-            html += '<button class="btn-icon" onclick="alignElement(\'center_h\')" title="Center Horizontally">↔</button>';
-            html += '<button class="btn-icon" onclick="alignElement(\'right\')" title="Align Right">➡</button>';
+            html += '<button class="btn-icon" data-align="left" title="Align Left">⬅</button>';
+            html += '<button class="btn-icon" data-align="center_h" title="Center Horizontally">↔</button>';
+            html += '<button class="btn-icon" data-align="right" title="Align Right">➡</button>';
             html += '</div></div>';
             
             html += '<div class="prop-group"><label>Layers & Visibility</label><div class="row">';
-            html += '<button class="btn-icon" onclick="toggleBoolProp(\'hidden\')" title="Hide Element" style="' + (d.hidden ? 'background:var(--highlight);border-color:var(--primary);color:var(--primary-dark);' : '') + '">👁</button>';
-            html += '<button class="btn-icon" onclick="toggleBoolProp(\'locked\')" title="Lock Element" style="' + (d.locked ? 'background:var(--highlight);border-color:var(--primary);color:var(--primary-dark);' : '') + '">🔒</button>';
+            html += '<button class="btn-icon ' + (d.hidden ? 'active' : '') + '" data-toggle="hidden" title="Hide Element">👁</button>';
+            html += '<button class="btn-icon ' + (d.locked ? 'active' : '') + '" data-toggle="locked" title="Lock Element">🔒</button>';
             html += '</div></div>';
 
-            html += '<div class="row"><button class="btn-icon" onclick="moveLayer(1)">Forwards</button><button class="btn-icon" onclick="moveLayer(-1)">Backwards</button></div>';
-
-            html += '<button class="btn delete-btn" onclick="deleteElement()">Delete Element</button>';
+            html += '<div class="row"><button class="btn-icon" data-action="forward">Forwards</button><button class="btn-icon" data-action="backward">Backwards</button></div>';
+            html += '<button class="btn delete-btn" data-action="delete">Delete Element</button>';
+            
             panel.innerHTML = html;
         }
 
@@ -518,9 +518,7 @@
             document.getElementById('canvasWrapper').style.background = color;
             document.getElementById('svgCanvas').style.backgroundImage = 'none';
             document.getElementById('canvasBgPicker').value = color;
-            var data = elements.map(function(el) { return { id: el.id, type: el.type, data: el.data }; });
-            data.canvasBg = color;
-            localStorage.setItem('posterC3llLogoPro', JSON.stringify(data));
+            saveLocal();
         }
 
         function clearCanvas() {
@@ -552,7 +550,6 @@
             var bb = clone.querySelector('#boundingBox');
             if (bb) clone.removeChild(bb);
             
-            // Add background rect if set
             var bg = document.getElementById('canvasWrapper').style.background;
             if (bg && bg !== '#ffffff' && bg !== 'white') {
                 var bgRect = document.createElementNS(svgNS, 'rect');
@@ -641,6 +638,57 @@
             cleanData.canvasBg = document.getElementById('canvasBgPicker').value;
             localStorage.setItem('posterC3llLogoPro', JSON.stringify(cleanData));
         }
+
+        // --- Event Delegation (Bulletproof UI Logic) ---
+        document.addEventListener('click', function(e) {
+            var actionEl = e.target.closest('[data-action]');
+            if (actionEl) {
+                var action = actionEl.dataset.action;
+                if (action === 'addRect') addShape('rect');
+                else if (action === 'addCircle') addShape('circle');
+                else if (action === 'addTriangle') addShape('triangle');
+                else if (action === 'addStar') addShape('star');
+                else if (action === 'addLine') addShape('line');
+                else if (action === 'addText') addText();
+                else if (action === 'duplicate') { if (selectedId) duplicateElement(getElById(selectedId)); }
+                else if (action === 'loadTemplate') loadTemplate();
+                else if (action === 'undo') undo();
+                else if (action === 'redo') redo();
+                else if (action === 'clear') clearCanvas();
+                else if (action === 'exportPNG') exportPNG();
+                else if (action === 'exportSVG') exportSVG();
+                else if (action === 'delete') deleteElement();
+                else if (action === 'rotate90') rotate90();
+                else if (action === 'forward') moveLayer(1);
+                else if (action === 'backward') moveLayer(-1);
+            }
+
+            var toggleEl = e.target.closest('[data-toggle]');
+            if (toggleEl) {
+                toggleBoolProp(toggleEl.dataset.toggle);
+            }
+
+            var alignEl = e.target.closest('[data-align]');
+            if (alignEl) {
+                alignElement(alignEl.dataset.align);
+            }
+        });
+
+        document.addEventListener('input', function(e) {
+            if (e.target.classList.contains('prop-input')) {
+                var prop = e.target.dataset.prop;
+                var val = e.target.value;
+                if (e.target.type === 'number' || e.target.type === 'range') {
+                    if (prop === 'w' || prop === 'h') val = Math.max(10, parseFloat(val));
+                    else if (prop === 'strokeWidth') val = Math.max(0, parseFloat(val));
+                    else val = parseFloat(val);
+                }
+                updateProp(prop, val);
+            }
+            if (e.target.dataset.action === 'canvasBg') {
+                setCanvasBg(e.target.value);
+            }
+        });
 
         // --- Pro Keyboard Shortcuts ---
         document.addEventListener('keydown', function(e) {
