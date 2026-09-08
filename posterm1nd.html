@@ -3,36 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PosterM1nd - Local-First Mind Map & Flowchart Maker</title>
+    <!-- Version meta tag -->
+    <meta name="version" content="1.5.0">
+    <title>PosterM1nd - Professional Mind Mapping</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #4F46E5;
-            --primary-dark: #312E81;
+            --primary: #6366F1; /* Indigo 500 */
+            --primary-hover: #4F46E5; /* Indigo 600 */
             --primary-light: #EEF2FF;
             --bg: #FFFFFF;
-            --text: #1A1D21;
-            --text-muted: #64748B;
+            --bg-subtle: #F8FAFC;
+            --text: #0F172A; /* Slate 900 */
+            --text-muted: #64748B; /* Slate 500 */
             --border: #E2E8F0;
+            --border-dark: #CBD5E1;
+            --canvas-bg: #FFFFFF;
+            --canvas-dot: #E2E8F0;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            --radius: 8px;
+        }
+
+        body.high-contrast {
+            --primary: #FFD700;
+            --primary-hover: #FFA500;
+            --primary-light: #2A2A2A;
+            --bg: #000000;
+            --bg-subtle: #0A0A0A;
+            --text: #FFFFFF;
+            --text-muted: #CCCCCC;
+            --border: #444444;
+            --border-dark: #666666;
+            --canvas-bg: #111111;
+            --canvas-dot: #333333;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
             color: var(--text);
             background-color: var(--bg);
             line-height: 1.6;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
         /* Navbar */
         nav {
-            padding: 20px 0;
+            padding: 16px 0;
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(12px);
             position: sticky;
@@ -40,128 +65,230 @@
             z-index: 100;
             border-bottom: 1px solid var(--border);
         }
+        body.high-contrast nav { background: rgba(0, 0, 0, 0.9); }
 
         .nav-container { display: flex; justify-content: space-between; align-items: center; }
-        .logo-area { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1.25rem; color: var(--text); }
-        .logo-area svg { width: 40px; height: 40px; }
+        .logo-area { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1.15rem; color: var(--text); letter-spacing: -0.5px; }
+        .logo-area svg { width: 32px; height: 32px; }
         .nav-links { display: flex; gap: 32px; align-items: center; }
-        .nav-links a { text-decoration: none; color: var(--text-muted); font-weight: 500; transition: color 0.2s; }
-        .nav-links a:hover { color: var(--primary); }
+        .nav-links a { text-decoration: none; color: var(--text-muted); font-weight: 500; font-size: 0.9rem; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--text); }
 
         .btn {
-            padding: 10px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;
-            transition: all 0.2s; border: none; font-size: 1rem; font-family: inherit;
+            padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer;
+            transition: all 0.15s; border: 1px solid transparent; font-size: 0.875rem; font-family: inherit;
             text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
         }
-        .btn-primary { background-color: var(--primary); color: white; }
-        .btn-primary:hover { background-color: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3); }
-        .btn-secondary { background-color: var(--primary-light); color: var(--primary); }
-        .btn-secondary:hover { background-color: #e0e7ff; }
-        .btn-sm { padding: 6px 12px; font-size: 0.85rem; }
-        .btn-danger { background-color: #EF4444; color: white; }
-        .btn-danger:hover { background-color: #DC2626; }
+        .btn-primary { background-color: var(--primary); color: white; box-shadow: var(--shadow-sm); }
+        body.high-contrast .btn-primary { color: #000; }
+        .btn-primary:hover { background-color: var(--primary-hover); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        .btn-secondary { background-color: var(--bg); color: var(--text); border-color: var(--border-dark); }
+        .btn-secondary:hover { background-color: var(--bg-subtle); border-color: var(--text-muted); }
+        .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+        .btn-danger { color: #EF4444; background-color: #FEE2E2; border: 1px solid #FECACA; }
+        body.high-contrast .btn-danger { color: #FF0000; background-color: #330000; border-color: #FF0000; }
+        .btn-danger:hover { background-color: #FECACA; }
 
         /* Hero Section */
-        .hero { padding: 80px 0 120px; position: relative; overflow: hidden; }
-        .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-        .hero-content h1 { font-size: 3.5rem; line-height: 1.1; margin-bottom: 24px; font-weight: 800; }
-        .hero-content h1 span { color: var(--primary); }
-        .hero-content p { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 32px; }
-
-        .hero-badges { display: flex; gap: 16px; margin-bottom: 32px; flex-wrap: wrap; }
-        .hero-badge {
-            background: var(--primary-light); color: var(--primary-dark);
-            padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;
-            display: flex; align-items: center; gap: 6px;
+        .hero { padding: 80px 0 120px; position: relative; overflow: hidden; background-color: var(--bg-subtle); border-bottom: 1px solid var(--border); }
+        body.high-contrast .hero { background-color: var(--bg); }
+        
+        .hero::before {
+            content: ''; position: absolute; top: -10%; right: -10%; width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+            border-radius: 50%; z-index: 0;
         }
-        .hero-buttons { display: flex; gap: 16px; }
+
+        .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; position: relative; z-index: 1; }
+        .hero-content h1 { font-size: 3.75rem; line-height: 1.05; margin-bottom: 24px; font-weight: 800; letter-spacing: -1.5px; }
+        .hero-content h1 span { color: var(--primary); }
+        .hero-content p { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 32px; max-width: 520px; }
+
+        .hero-badges { display: flex; gap: 12px; margin-bottom: 32px; flex-wrap: wrap; }
+        .hero-badge {
+            background: var(--bg); color: var(--text); border: 1px solid var(--border);
+            padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+            display: flex; align-items: center; gap: 6px; box-shadow: var(--shadow-sm);
+        }
+        .hero-badge svg { width: 14px; height: 14px; color: var(--primary); }
+        .hero-buttons { display: flex; gap: 12px; }
 
         .hero-visual {
-            position: relative; height: 450px; background: linear-gradient(135deg, #EEF2FF 0%, #FFFFFF 100%);
-            border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+            position: relative; height: 450px; background: var(--bg);
+            border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-lg);
             display: flex; align-items: center; justify-content: center;
+            background-image: radial-gradient(var(--canvas-dot) 1px, transparent 1px); background-size: 20px 20px;
         }
 
         .node {
-            position: absolute; padding: 12px 20px; background: white; border: 2px solid var(--primary);
-            border-radius: 8px; font-weight: 600; color: var(--primary-dark); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            animation: float 4s ease-in-out infinite;
+            position: absolute; padding: 12px 20px; background: white; border: 1px solid var(--border-dark);
+            border-radius: 8px; font-weight: 600; color: var(--text); box-shadow: var(--shadow-md);
+            animation: float 4s ease-in-out infinite; font-size: 0.9rem;
         }
-        .node-center { background: var(--primary); color: white; border-color: var(--primary-dark); z-index: 2; font-size: 1.1rem; }
-        .node-1 { top: 10%; left: 10%; animation-delay: 0s; }
+        .node-center { background: var(--primary); color: white; border-color: var(--primary-hover); z-index: 2; font-size: 1rem; }
+        .node-1 { top: 15%; left: 10%; animation-delay: 0s; }
         .node-2 { top: 20%; right: 10%; animation-delay: 0.5s; }
         .node-3 { bottom: 15%; left: 15%; animation-delay: 1s; }
         .node-4 { bottom: 10%; right: 15%; animation-delay: 1.5s; }
 
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
         .connectors { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         .connector-path {
             stroke: var(--primary); stroke-width: 2; stroke-dasharray: 6;
-            animation: dash 30s linear infinite; fill: none; opacity: 0.6;
+            animation: dash 30s linear infinite; fill: none; opacity: 0.4;
         }
         @keyframes dash { to { stroke-dashoffset: -1000; } }
 
         /* Features Section */
-        .features { padding: 80px 0; background-color: var(--primary-light); }
+        .features { padding: 80px 0; background-color: var(--bg); }
         .section-title { text-align: center; margin-bottom: 64px; }
-        .section-title h2 { font-size: 2.5rem; margin-bottom: 16px; }
-        .section-title p { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
-        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; }
-        .feature-card { background: white; padding: 32px; border-radius: 16px; border: 1px solid var(--border); transition: transform 0.3s, box-shadow 0.3s; }
-        .feature-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(79, 70, 229, 0.1); border-color: var(--primary); }
-        .feature-icon { width: 48px; height: 48px; background: var(--primary-light); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; color: var(--primary); }
-        .feature-card h3 { font-size: 1.25rem; margin-bottom: 12px; }
-        .feature-card p { color: var(--text-muted); }
+        .section-title h2 { font-size: 2.25rem; margin-bottom: 12px; font-weight: 700; letter-spacing: -0.5px; }
+        .section-title p { color: var(--text-muted); font-size: 1.05rem; max-width: 560px; margin: 0 auto; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+        .feature-card { background: var(--bg); padding: 28px; border-radius: 12px; border: 1px solid var(--border); transition: all 0.2s; }
+        .feature-card:hover { border-color: var(--primary); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+        .feature-icon { width: 40px; height: 40px; background: var(--primary-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; color: var(--primary); }
+        body.high-contrast .feature-icon { border: 1px solid var(--primary); }
+        .feature-card h3 { font-size: 1.1rem; margin-bottom: 8px; font-weight: 600; }
+        .feature-card p { color: var(--text-muted); font-size: 0.9rem; }
 
         /* APP SECTION */
-        .app-section { padding: 80px 0; background: #F8FAFC; border-top: 1px solid var(--border); }
-        .app-wrapper { background: white; border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05); overflow: hidden; }
-        .app-toolbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; background: var(--primary-light); border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 16px; }
-        .toolbar-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-        .toolbar-divider { width: 1px; height: 24px; background: var(--border); margin: 0 8px; }
+        .app-section { padding: 80px 0; background-color: var(--bg-subtle); border-top: 1px solid var(--border); }
+        body.high-contrast .app-section { background-color: var(--bg); }
         
-        /* Custom Select for Templates */
-        .template-select {
-            padding: 6px 12px; font-size: 0.85rem; border-radius: 6px; border: 1px solid var(--primary);
-            background: white; color: var(--primary-dark); font-family: inherit; font-weight: 600; cursor: pointer;
+        .app-wrapper { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-lg); overflow: hidden; }
+        
+        .app-toolbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--bg); border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 12px; }
+        .toolbar-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .toolbar-divider { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
+        
+        select.toolbar-select {
+            padding: 6px 28px 6px 12px; font-size: 0.85rem; border-radius: 6px; border: 1px solid var(--border-dark);
+            background-color: var(--bg); color: var(--text); font-family: inherit; font-weight: 500; cursor: pointer;
+            appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 8px center;
         }
+        select.toolbar-select:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .color-palette { display: flex; gap: 6px; align-items: center; }
-        .color-swatch { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.2s; }
+        .color-palette { display: flex; gap: 4px; align-items: center; padding: 4px 8px; border: 1px solid var(--border-dark); border-radius: 6px; }
+        .color-swatch { width: 18px; height: 18px; border-radius: 4px; cursor: pointer; border: 2px solid transparent; transition: transform 0.1s; position: relative; }
         .color-swatch:hover { transform: scale(1.1); }
-        .color-swatch.active { border-color: var(--text); }
+        .color-swatch.active { border-color: var(--text); box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--primary); }
+        
+        .custom-color-btn {
+            width: 18px; height: 18px; border-radius: 4px; border: 1px solid var(--border-dark);
+            cursor: pointer; background: conic-gradient(from 0deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+            display: flex; align-items: center; justify-content: center; position: relative;
+        }
+        .custom-color-btn input { opacity: 0; position: absolute; width: 100%; height: 100%; cursor: pointer; }
 
         .canvas-container {
-            position: relative; width: 100%; height: 600px; background-color: #FFFFFF;
-            background-image: radial-gradient(#E2E8F0 1px, transparent 1px); background-size: 24px 24px;
-            overflow: hidden; cursor: crosshair;
+            position: relative; width: 100%; height: 650px; background-color: var(--canvas-bg);
+            background-image: radial-gradient(var(--canvas-dot) 1px, transparent 1px); background-size: 24px 24px;
+            overflow: hidden; cursor: default;
         }
-        .canvas-container.connect-mode { cursor: copy; }
+        .canvas-container.panning { cursor: grab !important; }
+        .canvas-container.panning:active { cursor: grabbing !important; }
+        .canvas-container.marquee-mode { cursor: default; }
+        
+        .canvas-viewport {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            transform-origin: 0 0; transition: transform 0.1s ease-out;
+        }
         
         .canvas-node {
-            position: absolute; background: white; border: 2px solid var(--primary); color: var(--primary-dark);
-            padding: 10px 16px; border-radius: 8px; cursor: grab; user-select: none; z-index: 2;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); min-width: 100px; text-align: center; font-weight: 600;
-            transition: box-shadow 0.2s, border-color 0.2s;
+            position: absolute; background: white; color: var(--text);
+            padding: 12px 16px; cursor: grab; user-select: none; z-index: 2;
+            box-shadow: var(--shadow-sm); min-width: 100px; min-height: 40px;
+            display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 500; font-size: 0.875rem;
+            transition: box-shadow 0.15s, filter 0.1s, outline 0.1s;
         }
-        .canvas-node.dragging { cursor: grabbing; z-index: 10; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); }
-        .canvas-node.selected { box-shadow: 0 0 0 3px var(--primary-light), 0 4px 6px -1px rgba(0,0,0,0.1); border-color: var(--primary-dark) !important; }
-        .canvas-node.connecting { background: var(--primary) !important; color: white !important; }
-        .canvas-node[contenteditable="true"] { cursor: text; outline: none; box-shadow: 0 0 0 3px var(--primary-light); }
+        body.high-contrast .canvas-node { background: #000; color: #fff; }
         
-        #svg-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-        #svg-canvas path { stroke: var(--primary); stroke-width: 2; fill: none; transition: stroke-width 0.2s; }
+        .canvas-node.dragging { cursor: grabbing; z-index: 10; box-shadow: var(--shadow-lg); }
         
+        /* Base Selection Style */
+        .canvas-node.selected { 
+            outline: 2px solid var(--primary); 
+            outline-offset: 3px; 
+            box-shadow: none; 
+        }
+        body.high-contrast .canvas-node.selected { outline-color: var(--primary); }
+
+        .canvas-node.connecting { background: var(--primary) !important; color: white !important; border-color: var(--primary-hover) !important; }
+        .canvas-node[contenteditable="true"] { cursor: text; outline: 2px solid var(--primary); outline-offset: 3px; box-shadow: none; }
+        
+        /* --- SHAPES --- */
+        /* Standard Shapes (use border/outline) */
+        .canvas-node.shape-rect { border: 1px solid var(--border-dark); border-radius: 8px; }
+        .canvas-node.shape-pill { border: 1px solid var(--border-dark); border-radius: 50px; padding: 12px 24px; }
+        .canvas-node.shape-circle { border: 1px solid var(--border-dark); border-radius: 50%; min-width: 120px; min-height: 120px; padding: 10px; }
+
+        /* Complex Shapes (use clip-path) */
+        /* Drop-shadow filter acts as the border for clipped shapes */
+        .canvas-node.shape-diamond,
+        .canvas-node.shape-parallelogram,
+        .canvas-node.shape-hexagon,
+        .canvas-node.shape-document {
+            border: none;
+            filter: drop-shadow(0 1px 1px rgba(0,0,0,0.1)) drop-shadow(0 1px 2px rgba(0,0,0,0.05));
+        }
+        
+        body.high-contrast .canvas-node.shape-diamond,
+        body.high-contrast .canvas-node.shape-parallelogram,
+        body.high-contrast .canvas-node.shape-hexagon,
+        body.high-contrast .canvas-node.shape-document {
+            filter: drop-shadow(0 0 1px #fff); /* Force visibility in high contrast */
+        }
+
+        /* Clip Paths */
+        .canvas-node.shape-diamond { clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); padding: 24px 32px; min-width: 120px; min-height: 120px; }
+        .canvas-node.shape-parallelogram { clip-path: polygon(20% 0%, 100% 0%, 80% 100%, 0% 100%); padding: 12px 32px; min-width: 140px; }
+        .canvas-node.shape-hexagon { clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); padding: 12px 32px; min-width: 140px; }
+        .canvas-node.shape-document { clip-path: polygon(0% 0%, 100% 0%, 100% 75%, 87.5% 100%, 75% 75%, 62.5% 100%, 50% 75%, 37.5% 100%, 25% 75%, 12.5% 100%, 0% 75%); padding: 16px; min-width: 140px; }
+
+        /* Selection Overrides for Clip-Paths (Outline doesn't follow clip-path, so we use drop-shadow) */
+        .canvas-node.selected.shape-diamond,
+        .canvas-node.selected.shape-parallelogram,
+        .canvas-node.selected.shape-hexagon,
+        .canvas-node.selected.shape-document {
+            outline: none;
+            filter: drop-shadow(0 0 0 2px var(--primary)) drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+        }
+        body.high-contrast .canvas-node.selected.shape-diamond,
+        body.high-contrast .canvas-node.selected.shape-parallelogram,
+        body.high-contrast .canvas-node.selected.shape-hexagon,
+        body.high-contrast .canvas-node.selected.shape-document {
+            filter: drop-shadow(0 0 0 2px var(--primary));
+        }
+
+        .node-icon { margin-right: 6px; font-size: 1rem; }
+        
+        #svg-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: visible; }
+        #svg-canvas path { stroke: var(--primary); stroke-width: 1.5; fill: none; opacity: 0.8; }
+        
+        /* Marquee Box */
+        #marquee-box {
+            position: absolute; border: 1px solid var(--primary); background-color: rgba(99, 102, 241, 0.1);
+            display: none; z-index: 5; pointer-events: none; border-radius: 4px;
+        }
+
         .toast {
             position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px);
-            background: var(--text); color: white; padding: 12px 24px; border-radius: 8px;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); z-index: 1000; transition: transform 0.3s ease-out; font-weight: 600;
+            background: var(--text); color: var(--bg); padding: 10px 20px; border-radius: 6px;
+            box-shadow: var(--shadow-lg); z-index: 1000; transition: transform 0.3s ease-out; font-weight: 500; font-size: 0.875rem;
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
-        /* Footer */
-        footer { padding: 48px 0; border-top: 1px solid var(--border); color: var(--text-muted); text-align: center; }
+        footer { padding: 48px 0; border-top: 1px solid var(--border); color: var(--text-muted); text-align: center; font-size: 0.875rem; }
+
+        /* Focus Mode */
+        body.focus-mode nav, body.focus-mode .hero, body.focus-mode .features, body.focus-mode footer { display: none !important; }
+        body.focus-mode .app-section { padding: 0; background: var(--canvas-bg); }
+        body.focus-mode .app-wrapper { border: none; border-radius: 0; height: 100vh; display: flex; flex-direction: column; box-shadow: none; }
+        body.focus-mode .canvas-container { flex-grow: 1; height: auto; }
 
         @media (max-width: 768px) {
             .hero-grid { grid-template-columns: 1fr; }
@@ -170,6 +297,18 @@
             .nav-links a:not(.btn) { display: none; }
             .canvas-container { height: 400px; }
             .toolbar-divider { display: none; }
+        }
+
+        /* Print Styles */
+        @media print {
+            body * { visibility: hidden; }
+            .canvas-container, .canvas-container * { visibility: visible; }
+            .canvas-container { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; border: none; background-image: none; }
+            .canvas-viewport { transform: none !important; }
+            .app-wrapper { border: none; box-shadow: none; border-radius: 0; }
+            .app-toolbar, nav, .hero, .features, footer { display: none !important; }
+            .canvas-node { box-shadow: none; border: 1px solid #000; filter: none !important; }
+            #svg-canvas path { stroke: #000 !important; }
         }
     </style>
 </head>
@@ -214,7 +353,7 @@
             </div>
             <div class="nav-links">
                 <a href="#features">Features</a>
-                <a href="#app">Launch App</a>
+                <button class="btn btn-secondary btn-sm" id="contrast-toggle">High Contrast</button>
             </div>
         </div>
     </nav>
@@ -224,15 +363,14 @@
         <div class="container hero-grid">
             <div class="hero-content">
                 <div class="hero-badges">
-                    <span class="hero-badge">✓ 100% Free</span>
-                    <span class="hero-badge">✓ Open Source</span>
-                    <span class="hero-badge">✓ No Account Needed</span>
+                    <span class="hero-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> 100% Free</span>
+                    <span class="hero-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Open Source</span>
+                    <span class="hero-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> No Account Needed</span>
                 </div>
                 <h1>Visualize <span>Complexity</span><br>Simply.</h1>
                 <p>The accessible, drag-and-drop mind map and flowchart maker. Build emergency procedures, plan activities, and map out care steps without the steep learning curve of Miro or Visio. All data is stored locally on your computer—completely private, completely yours.</p>
                 <div class="hero-buttons">
-                    <a href="#app" class="btn btn-primary">Launch App</a>
-                    <a href="https://github.com" target="_blank" class="btn btn-secondary">View Source</a>
+                    <a href="#app" class="btn btn-primary">Launch App &rarr;</a>
                 </div>
             </div>
             <div class="hero-visual">
@@ -261,24 +399,24 @@
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                     </div>
                     <h3>Intuitive Drag & Drop</h3>
                     <p>No manuals required. Connect nodes, move elements, and build structures naturally. If you can think it, you can map it.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                     </div>
-                    <h3>Ready-to-Use Templates</h3>
-                    <p>Start in seconds with built-in presets for Care Plans, Emergency Protocols, and Activity Scheduling. Just select, edit, and go.</p>
+                    <h3>Care Home Ready</h3>
+                    <p>Start in seconds with built-in presets for UK Care Plans, Emergency Protocols, Shift Handovers, and Infection Control.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                     </div>
                     <h3>Local & Private by Design</h3>
-                    <p>No cloud syncs, no logins, no tracking. Your diagrams are saved directly to your PC. As an open-source tool, your data never leaves your device.</p>
+                    <p>No cloud syncs, no logins, no tracking. Your diagrams are saved directly to your PC. Your data never leaves the device.</p>
                 </div>
             </div>
         </div>
@@ -288,17 +426,25 @@
     <section class="app-section" id="app">
         <div class="container">
             <div class="section-title">
-                <h2>The PosterM1nd Workspace</h2>
-                <p>Double-click canvas to add nodes. Drag to move. Toggle Connect Mode to link ideas. Auto-saves locally.</p>
+                <h2>The Workspace</h2>
+                <p>Double-click to add nodes. Drag to move. Shift-click for multi-select. Scroll to zoom.</p>
             </div>
             
             <div class="app-wrapper">
                 <div class="app-toolbar">
                     <div class="toolbar-actions">
-                        <select class="template-select" id="template-select">
-                            <option value="blank">Blank Canvas</option>
-                            <option value="care">Care Plan Template</option>
-                            <option value="emergency">Emergency Protocol</option>
+                        <select class="toolbar-select" id="map-selector" title="Switch Saved Maps"></select>
+                        <button class="btn btn-secondary btn-sm" id="new-map-btn">+ New</button>
+
+                        <div class="toolbar-divider"></div>
+
+                        <select class="toolbar-select" id="template-select">
+                            <option value="blank">Load Template...</option>
+                            <option value="care">Care Plan</option>
+                            <option value="emergency">Emergency Protocol (UK)</option>
+                            <option value="handover">Shift Handover</option>
+                            <option value="admission">Resident Admission</option>
+                            <option value="infection">Infection Control</option>
                             <option value="activity">Activity Planner</option>
                         </select>
 
@@ -306,32 +452,73 @@
 
                         <button class="btn btn-primary btn-sm" id="add-node-btn">+ Add Node</button>
                         <button class="btn btn-secondary btn-sm" id="connect-mode-btn">Connect: Off</button>
-                        <button class="btn btn-secondary btn-sm" id="edit-node-btn">Edit Text</button>
                         <button class="btn btn-danger btn-sm" id="delete-mode-btn">Delete</button>
                         
                         <div class="toolbar-divider"></div>
                         
+                        <select class="toolbar-select" id="shape-select" title="Change Shape">
+                            <option value="rect">Rectangle</option>
+                            <option value="pill">Pill / Rounded</option>
+                            <option value="circle">Circle</option>
+                            <option value="diamond">Diamond (Decision)</option>
+                            <option value="parallelogram">Parallelogram (I/O)</option>
+                            <option value="hexagon">Hexagon (Process)</option>
+                            <option value="document">Document (Report)</option>
+                        </select>
+
+                        <select class="toolbar-select" id="icon-select" title="Add Icon">
+                            <option value="">No Icon</option>
+                            <option value="⚠️">⚠️ Warning</option>
+                            <option value="💊">💊 Medication</option>
+                            <option value="📞">📞 Contact</option>
+                            <option value="🩺">🩺 Health</option>
+                            <option value="🍽️">🍽️ Food</option>
+                            <option value="🚪">🚪 Exit</option>
+                        </select>
+
                         <div class="color-palette" title="Change selected node color">
-                            <div class="color-swatch" style="background: #FFFFFF; border: 1px solid #CBD5E1;" data-color="#FFFFFF" data-text="#312E81"></div>
-                            <div class="color-swatch" style="background: #FEE2E2;" data-color="#FEE2E2" data-text="#991B1B"></div>
-                            <div class="color-swatch" style="background: #DCFCE7;" data-color="#DCFCE7" data-text="#166534"></div>
-                            <div class="color-swatch" style="background: #DBEAFE;" data-color="#DBEAFE" data-text="#1E40AF"></div>
-                            <div class="color-swatch" style="background: #FEF3C7;" data-color="#FEF3C7" data-text="#92400E"></div>
+                            <div class="color-swatch" style="background: #FFFFFF;" data-color="#FFFFFF"></div>
+                            <div class="color-swatch" style="background: #F8FAFC;" data-color="#F8FAFC"></div>
+                            <div class="color-swatch" style="background: #FEE2E2;" data-color="#FEE2E2"></div>
+                            <div class="color-swatch" style="background: #FED7AA;" data-color="#FED7AA"></div>
+                            <div class="color-swatch" style="background: #FEF3C7;" data-color="#FEF3C7"></div>
+                            <div class="color-swatch" style="background: #DCFCE7;" data-color="#DCFCE7"></div>
+                            <div class="color-swatch" style="background: #CCFBF1;" data-color="#CCFBF1"></div>
+                            <div class="color-swatch" style="background: #DBEAFE;" data-color="#DBEAFE"></div>
+                            <div class="color-swatch" style="background: #E0E7FF;" data-color="#E0E7FF"></div>
+                            <div class="color-swatch" style="background: #F3E8FF;" data-color="#F3E8FF"></div>
+                            <div class="color-swatch" style="background: #FCE7F3;" data-color="#FCE7F3"></div>
+                            <label class="custom-color-btn" title="Custom Color">
+                                <input type="color" id="custom-color-input" value="#6366F1">
+                            </label>
                         </div>
                     </div>
 
                     <div class="toolbar-actions">
-                        <button class="btn btn-secondary btn-sm" id="export-btn">Export JSON</button>
-                        <button class="btn btn-secondary btn-sm" id="import-btn">Import JSON</button>
-                        <input type="file" id="file-input" accept=".json" style="display: none;">
-                        
+                        <button class="btn btn-secondary btn-sm" id="undo-btn" title="Undo (Ctrl+Z)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"></path><path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13"></path></svg></button>
+                        <button class="btn btn-secondary btn-sm" id="redo-btn" title="Redo (Ctrl+Y)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"></path><path d="M3 17a9 9 0 019-9 9 9 0 016 2.3l3 2.7"></path></svg></button>
                         <div class="toolbar-divider"></div>
-
-                        <button class="btn btn-secondary btn-sm" id="clear-btn">Clear All</button>
+                        <button class="btn btn-secondary btn-sm" id="focus-btn">Focus Mode</button>
+                        <button class="btn btn-primary btn-sm" id="print-btn">Print</button>
+                        <button class="btn btn-secondary btn-sm" id="export-btn">Export</button>
+                        <button class="btn btn-secondary btn-sm" id="import-btn">Import</button>
+                        <input type="file" id="file-input" accept=".json" style="display: none;">
                     </div>
                 </div>
                 <div class="canvas-container" id="canvas-container">
-                    <svg id="svg-canvas"></svg>
+                    <div class="canvas-viewport" id="canvas-viewport">
+                        <svg id="svg-canvas">
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#6366F1" />
+                                </marker>
+                                <marker id="arrowhead-hc" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#FFD700" />
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div id="marquee-box"></div>
                 </div>
             </div>
         </div>
@@ -340,7 +527,7 @@
     <!-- Footer -->
     <footer>
         <div class="container">
-            <p>&copy; 2023 PosterM1nd. Open-source. Local-first.</p>
+            <p>PosterM1nd - Open-source & Local-First Mind Mapping</p>
         </div>
     </footer>
 
@@ -352,18 +539,46 @@
         let state = {
             nodes: [],
             edges: [],
-            selectedNode: null,
+            selectedNodes: [],
             connectMode: false,
             connectingFrom: null
         };
 
-        // Drag globals to fix the clunky listener bug
+        let zoom = 1;
+        let panX = 0;
+        let panY = 0;
+        let isSpaceDown = false;
+        let isPanning = false;
+        let panStartX = 0;
+        let panStartY = 0;
+
         let activeDragNode = null;
         let dragOffsetX = 0;
         let dragOffsetY = 0;
         let hasMoved = false;
+        let multiDragStartPositions = {};
 
-        const STORAGE_KEY = 'posterm1nd_data_v2';
+        let history = [];
+        let historyIndex = -1;
+
+        let isMarqueeing = false;
+        let marqueeStartX = 0;
+        let marqueeStartY = 0;
+
+        const STORAGE_KEY = 'posterm1nd_maps_v1';
+        const GRID_SIZE = 24;
+
+        // --- Auto Text Contrast Calculator ---
+        function getContrastYIQ(hexcolor) {
+            if (!hexcolor.startsWith('#')) return '#0F172A';
+            hexcolor = hexcolor.replace('#', '');
+            if (hexcolor.length === 3) hexcolor = hexcolor.split('').map(c => c + c).join('');
+            const r = parseInt(hexcolor.substr(0, 2), 16);
+            const g = parseInt(hexcolor.substr(2, 2), 16);
+            const b = parseInt(hexcolor.substr(4, 2), 16);
+            const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+            return (yiq >= 140) ? '#0F172A' : '#FFFFFF';
+        }
 
         // --- Templates ---
         const tID = (name) => 'tpl-' + name + '-' + Math.random().toString(36).substr(2, 5);
@@ -373,11 +588,11 @@
                 const center = tID('c'), med = tID('m'), diet = tID('d'), emerg = tID('e'), act = tID('a');
                 return {
                     nodes: [
-                        { id: center, x: 350, y: 250, text: "Patient Care Plan", color: "#EEF2FF", textColor: "#312E81" },
-                        { id: med, x: 100, y: 100, text: "Medications", color: "#DBEAFE", textColor: "#1E40AF" },
-                        { id: diet, x: 600, y: 100, text: "Diet & Nutrition", color: "#DCFCE7", textColor: "#166534" },
-                        { id: emerg, x: 100, y: 400, text: "Emergency Contacts", color: "#FEE2E2", textColor: "#991B1B" },
-                        { id: act, x: 600, y: 400, text: "Mobility & Activities", color: "#FEF3C7", textColor: "#92400E" }
+                        { id: center, x: 350, y: 250, text: "Patient Care Plan", color: "#E0E7FF", shape: "hexagon", icon: "🩺" },
+                        { id: med, x: 100, y: 100, text: "Medications", color: "#DBEAFE", shape: "rect", icon: "💊" },
+                        { id: diet, x: 600, y: 100, text: "Diet & Nutrition", color: "#DCFCE7", shape: "rect", icon: "🍽️" },
+                        { id: emerg, x: 100, y: 400, text: "Emergency Contacts", color: "#FEE2E2", shape: "document", icon: "📞" },
+                        { id: act, x: 600, y: 400, text: "Mobility & Activities", color: "#FEF3C7", shape: "rect", icon: "" }
                     ],
                     edges: [
                         { from: center, to: med }, { from: center, to: diet }, 
@@ -389,11 +604,11 @@
                 const start = tID('s'), assess = tID('a'), safe = tID('sa'), call = tID('c'), cpr = tID('cp');
                 return {
                     nodes: [
-                        { id: start, x: 350, y: 50, text: "Emergency Occurs", color: "#FEE2E2", textColor: "#991B1B" },
-                        { id: assess, x: 350, y: 180, text: "Assess Situation", color: "#FFFFFF", textColor: "#312E81" },
-                        { id: safe, x: 350, y: 310, text: "Ensure Scene Safety", color: "#FFFFFF", textColor: "#312E81" },
-                        { id: call, x: 150, y: 440, text: "Call 911", color: "#FEE2E2", textColor: "#991B1B" },
-                        { id: cpr, x: 550, y: 440, text: "Administer First Aid", color: "#FEF3C7", textColor: "#92400E" }
+                        { id: start, x: 350, y: 50, text: "Emergency Occurs", color: "#FEE2E2", shape: "pill", icon: "⚠️" },
+                        { id: assess, x: 350, y: 180, text: "Assess Situation", color: "#FFFFFF", shape: "diamond", icon: "" },
+                        { id: safe, x: 350, y: 310, text: "Ensure Scene Safety", color: "#FFFFFF", shape: "rect", icon: "" },
+                        { id: call, x: 150, y: 440, text: "Call 999 / 112", color: "#FEE2E2", shape: "pill", icon: "📞" },
+                        { id: cpr, x: 550, y: 440, text: "Administer First Aid", color: "#FEF3C7", shape: "parallelogram", icon: "🩺" }
                     ],
                     edges: [
                         { from: start, to: assess }, { from: assess, to: safe }, 
@@ -401,15 +616,67 @@
                     ]
                 };
             }
+            if (type === 'handover') {
+                const center = tID('c'), tasks = tID('t'), inc = tID('i'), med = tID('m'), well = tID('w');
+                return {
+                    nodes: [
+                        { id: center, x: 350, y: 250, text: "Shift Handover", color: "#E0E7FF", shape: "hexagon", icon: "" },
+                        { id: tasks, x: 100, y: 100, text: "Outstanding Tasks", color: "#FEF3C7", shape: "rect", icon: "" },
+                        { id: inc, x: 600, y: 100, text: "Incidents Logged", color: "#FEE2E2", shape: "document", icon: "⚠️" },
+                        { id: med, x: 100, y: 400, text: "Medication Changes", color: "#DBEAFE", shape: "rect", icon: "💊" },
+                        { id: well, x: 600, y: 400, text: "Resident Wellbeing", color: "#DCFCE7", shape: "rect", icon: "" }
+                    ],
+                    edges: [
+                        { from: center, to: tasks }, { from: center, to: inc }, 
+                        { from: center, to: med }, { from: center, to: well }
+                    ]
+                };
+            }
+            if (type === 'admission') {
+                const start = tID('s'), assess = tID('a'), fund = tID('f'), room = tID('r'), welcome = tID('w'), move = tID('m');
+                return {
+                    nodes: [
+                        { id: start, x: 350, y: 50, text: "Referral Received", color: "#FFFFFF", shape: "pill", icon: "" },
+                        { id: assess, x: 350, y: 150, text: "Assess Care Needs", color: "#FFFFFF", shape: "rect", icon: "🩺" },
+                        { id: fund, x: 350, y: 250, text: "Funding Approved?", color: "#FFFFFF", shape: "diamond", icon: "" },
+                        { id: room, x: 200, y: 350, text: "Allocate Room", color: "#FFFFFF", shape: "rect", icon: "🚪" },
+                        { id: welcome, x: 500, y: 350, text: "Prepare Welcome Pack", color: "#FFFFFF", shape: "rect", icon: "" },
+                        { id: move, x: 350, y: 450, text: "Move-In Day", color: "#E0E7FF", shape: "document", icon: "" }
+                    ],
+                    edges: [
+                        { from: start, to: assess }, { from: assess, to: fund }, 
+                        { from: fund, to: room }, { from: fund, to: welcome },
+                        { from: room, to: move }, { from: welcome, to: move }
+                    ]
+                };
+            }
+            if (type === 'infection') {
+                const center = tID('c'), iso = tID('i'), ppe = tID('p'), gp = tID('g'), clean = tID('cl'), staff = tID('s');
+                return {
+                    nodes: [
+                        { id: center, x: 350, y: 250, text: "Outbreak Identified", color: "#FEE2E2", shape: "diamond", icon: "⚠️" },
+                        { id: iso, x: 100, y: 100, text: "Isolate Resident", color: "#FFFFFF", shape: "rect", icon: "🚪" },
+                        { id: ppe, x: 600, y: 100, text: "Strict PPE Protocol", color: "#FFFFFF", shape: "hexagon", icon: "" },
+                        { id: gp, x: 100, y: 400, text: "Inform GP / PHE", color: "#DBEAFE", shape: "pill", icon: "📞" },
+                        { id: clean, x: 600, y: 400, text: "Deep Clean Room", color: "#FEF3C7", shape: "parallelogram", icon: "" },
+                        { id: staff, x: 350, y: 450, text: "Monitor Staff Health", color: "#FFFFFF", shape: "rect", icon: "🩺" }
+                    ],
+                    edges: [
+                        { from: center, to: iso }, { from: center, to: ppe }, 
+                        { from: center, to: gp }, { from: center, to: clean },
+                        { from: center, to: staff }
+                    ]
+                };
+            }
             if (type === 'activity') {
                 const event = tID('e'), venue = tID('v'), budget = tID('b'), guests = tID('g'), date = tID('dt');
                 return {
                     nodes: [
-                        { id: event, x: 350, y: 250, text: "Group Activity", color: "#EEF2FF", textColor: "#312E81" },
-                        { id: venue, x: 100, y: 100, text: "Venue Booked", color: "#DCFCE7", textColor: "#166534" },
-                        { id: budget, x: 600, y: 100, text: "Budget Approved", color: "#DCFCE7", textColor: "#166534" },
-                        { id: guests, x: 100, y: 400, text: "Guest List", color: "#FFFFFF", textColor: "#312E81" },
-                        { id: date, x: 600, y: 400, text: "Set Date & Time", color: "#DBEAFE", textColor: "#1E40AF" }
+                        { id: event, x: 350, y: 250, text: "Group Activity", color: "#E0E7FF", shape: "hexagon", icon: "" },
+                        { id: venue, x: 100, y: 100, text: "Venue Booked", color: "#DCFCE7", shape: "rect", icon: "🚪" },
+                        { id: budget, x: 600, y: 100, text: "Budget Approved?", color: "#FFFFFF", shape: "diamond", icon: "" },
+                        { id: guests, x: 100, y: 400, text: "Guest List", color: "#FFFFFF", shape: "document", icon: "" },
+                        { id: date, x: 600, y: 400, text: "Set Date & Time", color: "#DBEAFE", shape: "rect", icon: "" }
                     ],
                     edges: [
                         { from: event, to: venue }, { from: event, to: budget }, 
@@ -422,17 +689,27 @@
 
         // --- DOM Elements ---
         const canvasContainer = document.getElementById('canvas-container');
+        const canvasViewport = document.getElementById('canvas-viewport');
         const svgCanvas = document.getElementById('svg-canvas');
+        const marqueeBox = document.getElementById('marquee-box');
         const addNodeBtn = document.getElementById('add-node-btn');
         const connectModeBtn = document.getElementById('connect-mode-btn');
-        const editNodeBtn = document.getElementById('edit-node-btn');
         const deleteModeBtn = document.getElementById('delete-mode-btn');
-        const clearBtn = document.getElementById('clear-btn');
+        const printBtn = document.getElementById('print-btn');
         const exportBtn = document.getElementById('export-btn');
         const importBtn = document.getElementById('import-btn');
         const fileInput = document.getElementById('file-input');
         const colorSwatches = document.querySelectorAll('.color-swatch');
+        const customColorInput = document.getElementById('custom-color-input');
         const templateSelect = document.getElementById('template-select');
+        const shapeSelect = document.getElementById('shape-select');
+        const iconSelect = document.getElementById('icon-select');
+        const undoBtn = document.getElementById('undo-btn');
+        const redoBtn = document.getElementById('redo-btn');
+        const mapSelector = document.getElementById('map-selector');
+        const newMapBtn = document.getElementById('new-map-btn');
+        const focusBtn = document.getElementById('focus-btn');
+        const contrastToggle = document.getElementById('contrast-toggle');
         const toast = document.getElementById('toast');
 
         // --- Core Functions ---
@@ -446,46 +723,145 @@
             setTimeout(() => toast.classList.remove('show'), 2000);
         }
 
-        function autoSave() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                nodes: state.nodes,
-                edges: state.edges
-            }));
+        function snapToGrid(val) {
+            return Math.round(val / GRID_SIZE) * GRID_SIZE;
         }
 
-        function createNode(x, y, text = "New Node", color = "#FFFFFF", textColor = "#312E81") {
-            const node = {
-                id: generateId(),
-                x: x,
-                y: y,
-                text: text,
-                color: color,
-                textColor: textColor
+        // --- History ---
+        function commitHistory() {
+            history = history.slice(0, historyIndex + 1);
+            history.push(JSON.parse(JSON.stringify({ nodes: state.nodes, edges: state.edges })));
+            historyIndex++;
+            if (history.length > 50) {
+                history.shift();
+                historyIndex--;
+            }
+        }
+
+        function undo() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                const pastState = JSON.parse(JSON.stringify(history[historyIndex]));
+                state.nodes = pastState.nodes;
+                state.edges = pastState.edges;
+                state.selectedNodes = [];
+                renderAll();
+                autoSave();
+                showToast('Undone');
+            }
+        }
+
+        function redo() {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                const futureState = JSON.parse(JSON.stringify(history[historyIndex]));
+                state.nodes = futureState.nodes;
+                state.edges = futureState.edges;
+                state.selectedNodes = [];
+                renderAll();
+                autoSave();
+                showToast('Redone');
+            }
+        }
+
+        // --- Maps Management ---
+        function getMaps() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : { activeMap: "map-1", maps: { "map-1": { name: "Default Map", nodes: [], edges: [] } } };
+        }
+
+        function saveMapsToStorage(mapsObj) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(mapsObj));
+        }
+
+        function loadMapSelector() {
+            const mapsData = getMaps();
+            mapSelector.innerHTML = "";
+            Object.keys(mapsData.maps).forEach(id => {
+                const option = document.createElement('option');
+                option.value = id;
+                option.innerText = mapsData.maps[id].name;
+                if (id === mapsData.activeMap) option.selected = true;
+                mapSelector.appendChild(option);
+            });
+        }
+
+        function switchMap(mapId) {
+            const mapsData = getMaps();
+            mapsData.activeMap = mapId;
+            saveMapsToStorage(mapsData);
+
+            const map = mapsData.maps[mapId];
+            state.nodes = map.nodes || [];
+            state.edges = map.edges || [];
+            state.selectedNodes = [];
+            
+            history = [];
+            historyIndex = -1;
+            commitHistory();
+            renderAll();
+        }
+
+        function saveCurrentMap() {
+            const mapsData = getMaps();
+            const activeId = mapsData.activeMap;
+            mapsData.maps[activeId].nodes = state.nodes;
+            mapsData.maps[activeId].edges = state.edges;
+            saveMapsToStorage(mapsData);
+        }
+
+        function autoSave() {
+            saveCurrentMap();
+        }
+
+        function createNewMap() {
+            const mapsData = getMaps();
+            const newId = 'map-' + Date.now();
+            const name = prompt("Enter name for new map:", "New Map");
+            if (name) {
+                mapsData.maps[newId] = { name: name, nodes: [], edges: [] };
+                mapsData.activeMap = newId;
+                saveMapsToStorage(mapsData);
+                loadMapSelector();
+                switchMap(newId);
+                showToast('New map created');
+            }
+        }
+
+        // --- Node & Edge Manipulation ---
+        function createNode(x, y, text = "New Node", color = "#FFFFFF", shape = "rect", icon = "") {
+            const node = { 
+                id: generateId(), 
+                x: snapToGrid(x), 
+                y: snapToGrid(y), 
+                text, color, shape, icon 
             };
             state.nodes.push(node);
-            renderNodes();
-            renderEdges();
+            state.selectedNodes = [node.id];
+            renderAll();
+            commitHistory();
             autoSave(); 
             return node;
         }
 
-        function deleteNode(id) {
-            state.nodes = state.nodes.filter(n => n.id !== id);
-            state.edges = state.edges.filter(e => e.from !== id && e.to !== id);
-            if (state.selectedNode === id) state.selectedNode = null;
-            renderNodes();
-            renderEdges();
+        function deleteSelectedNodes() {
+            if (state.selectedNodes.length === 0) return;
+            state.nodes = state.nodes.filter(n => !state.selectedNodes.includes(n.id));
+            state.edges = state.edges.filter(e => !state.selectedNodes.includes(e.from) && !state.selectedNodes.includes(e.to));
+            state.selectedNodes = [];
+            renderAll();
+            commitHistory();
             autoSave(); 
         }
 
-        function updateNodeColor(id, color, textColor) {
-            const node = state.nodes.find(n => n.id === id);
-            if (node) {
-                node.color = color;
-                node.textColor = textColor;
-                renderNodes();
-                autoSave(); 
-            }
+        function updateNodesProp(ids, prop, value) {
+            ids.forEach(id => {
+                const node = state.nodes.find(n => n.id === id);
+                if (node) node[prop] = value;
+            });
+            renderAll();
+            commitHistory();
+            autoSave(); 
         }
 
         function createEdge(fromId, toId) {
@@ -498,42 +874,70 @@
             
             state.edges.push({ from: fromId, to: toId });
             renderEdges();
+            commitHistory();
             autoSave(); 
         }
 
         // --- Rendering ---
+        function renderAll() {
+            renderNodes();
+            renderEdges();
+        }
+
         function renderNodes() {
-            canvasContainer.querySelectorAll('.canvas-node').forEach(el => el.remove());
+            canvasViewport.querySelectorAll('.canvas-node').forEach(el => el.remove());
 
             state.nodes.forEach(nodeData => {
                 const el = document.createElement('div');
-                el.className = 'canvas-node';
+                el.className = 'canvas-node shape-' + nodeData.shape;
                 el.id = nodeData.id;
                 el.style.left = nodeData.x + 'px';
                 el.style.top = nodeData.y + 'px';
                 el.style.backgroundColor = nodeData.color;
-                el.style.color = nodeData.textColor;
-                el.style.borderColor = nodeData.textColor;
-                el.innerText = nodeData.text;
+                el.style.color = getContrastYIQ(nodeData.color);
+                el.style.borderColor = nodeData.shape === 'diamond' || nodeData.shape === 'parallelogram' || nodeData.shape === 'hexagon' || nodeData.shape === 'document' ? 'transparent' : getContrastYIQ(nodeData.color) + '55';
 
-                if (state.selectedNode === nodeData.id) el.classList.add('selected');
+                el.innerHTML = `<span class="node-icon">${nodeData.icon}</span><span class="node-text">${nodeData.text}</span>`;
+
+                if (state.selectedNodes.includes(nodeData.id)) el.classList.add('selected');
                 if (state.connectingFrom === nodeData.id) el.classList.add('connecting');
 
-                // Mousedown to initiate drag OR click
                 el.addEventListener('mousedown', (e) => {
-                    if (state.connectMode || el.isContentEditable) return;
+                    if (state.connectMode || el.isContentEditable || isSpaceDown) return;
+                    
+                    if (e.shiftKey) {
+                        if (state.selectedNodes.includes(nodeData.id)) {
+                            state.selectedNodes = state.selectedNodes.filter(id => id !== nodeData.id);
+                        } else {
+                            state.selectedNodes.push(nodeData.id);
+                        }
+                        renderNodes();
+                        return;
+                    } else if (!state.selectedNodes.includes(nodeData.id)) {
+                        state.selectedNodes = [nodeData.id];
+                        renderNodes();
+                    }
+
                     activeDragNode = nodeData;
                     hasMoved = false;
                     el.classList.add('dragging');
-                    dragOffsetX = e.clientX - el.getBoundingClientRect().left;
-                    dragOffsetY = e.clientY - el.getBoundingClientRect().top;
+                    
+                    const rect = el.getBoundingClientRect();
+                    dragOffsetX = (e.clientX - rect.left) / zoom;
+                    dragOffsetY = (e.clientY - rect.top) / zoom;
+
+                    multiDragStartPositions = {};
+                    state.selectedNodes.forEach(id => {
+                        const n = state.nodes.find(n => n.id === id);
+                        if (n) multiDragStartPositions[id] = { x: n.x, y: n.y };
+                    });
+
                     e.stopPropagation();
                 });
 
-                // Click for selection or connecting
                 el.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    if (hasMoved) return; // Prevent click if it was a drag
+                    if (hasMoved || isSpaceDown) return; 
 
                     if (state.connectMode) {
                         if (!state.connectingFrom) {
@@ -545,89 +949,156 @@
                             renderNodes(); 
                         }
                     } else {
-                        state.selectedNode = state.selectedNode === nodeData.id ? null : nodeData.id;
-                        renderNodes();
-                        updateColorPaletteSelection();
+                        if (!e.shiftKey) {
+                            state.selectedNodes = [nodeData.id];
+                            renderNodes();
+                            updateToolbarSelections();
+                        }
                     }
                 });
 
-                // Double click to edit
                 el.addEventListener('dblclick', (e) => {
                     e.stopPropagation();
                     enableTextEdit(el, nodeData);
                 });
 
-                canvasContainer.appendChild(el);
+                canvasViewport.appendChild(el);
             });
+            updateToolbarSelections();
         }
 
-        // Global mousemove and mouseup (fixes the clunky multi-listener bug)
         document.addEventListener('mousemove', (e) => {
+            if (isPanning) {
+                panX = panStartX + e.clientX;
+                panY = panStartY + e.clientY;
+                updateViewportTransform();
+                return;
+            }
+
+            if (isMarqueeing) {
+                const currentX = e.clientX;
+                const currentY = e.clientY;
+                const x = Math.min(marqueeStartX, currentX);
+                const y = Math.min(marqueeStartY, currentY);
+                const w = Math.abs(currentX - marqueeStartX);
+                const h = Math.abs(currentY - marqueeStartY);
+                
+                marqueeBox.style.left = x + 'px';
+                marqueeBox.style.top = y + 'px';
+                marqueeBox.style.width = w + 'px';
+                marqueeBox.style.height = h + 'px';
+                marqueeBox.style.display = 'block';
+                return;
+            }
+
             if (!activeDragNode) return;
             hasMoved = true;
             
             const containerRect = canvasContainer.getBoundingClientRect();
-            let x = e.clientX - containerRect.left - dragOffsetX;
-            let y = e.clientY - containerRect.top - dragOffsetY;
+            let rawX = (e.clientX - containerRect.left - panX) / zoom - dragOffsetX;
+            let rawY = (e.clientY - containerRect.top - panY) / zoom - dragOffsetY;
             
-            const el = document.getElementById(activeDragNode.id);
-            if (!el) return;
-            
-            // Clamp within bounds
-            x = Math.max(0, Math.min(x, containerRect.width - el.offsetWidth));
-            y = Math.max(0, Math.min(y, containerRect.height - el.offsetHeight));
+            let snappedX = snapToGrid(rawX);
+            let snappedY = snapToGrid(rawY);
 
-            el.style.left = x + 'px';
-            el.style.top = y + 'px';
-            
-            activeDragNode.x = x;
-            activeDragNode.y = y;
+            const startNode = multiDragStartPositions[activeDragNode.id];
+            const deltaX = snappedX - startNode.x;
+            const deltaY = snappedY - startNode.y;
+
+            state.selectedNodes.forEach(id => {
+                const n = state.nodes.find(n => n.id === id);
+                const el = document.getElementById(id);
+                if (n && el && multiDragStartPositions[id]) {
+                    n.x = snapToGrid(multiDragStartPositions[id].x + deltaX);
+                    n.y = snapToGrid(multiDragStartPositions[id].y + deltaY);
+                    el.style.left = n.x + 'px';
+                    el.style.top = n.y + 'px';
+                }
+            });
+
             renderEdges(); 
         });
 
-        document.addEventListener('mouseup', () => {
+        document.addEventListener('mouseup', (e) => {
+            if (isPanning) {
+                isPanning = false;
+                canvasContainer.classList.remove('panning');
+            }
+
+            if (isMarqueeing) {
+                isMarqueeing = false;
+                marqueeBox.style.display = 'none';
+                
+                const boxRect = marqueeBox.getBoundingClientRect();
+                state.selectedNodes = [];
+                
+                state.nodes.forEach(n => {
+                    const el = document.getElementById(n.id);
+                    if (el) {
+                        const nodeRect = el.getBoundingClientRect();
+                        if (!(boxRect.right < nodeRect.left || 
+                              boxRect.left > nodeRect.right || 
+                              boxRect.bottom < nodeRect.top || 
+                              boxRect.top > nodeRect.bottom)) {
+                            state.selectedNodes.push(n.id);
+                        }
+                    }
+                });
+                renderNodes();
+            }
+
             if (activeDragNode) {
                 const el = document.getElementById(activeDragNode.id);
                 if (el) el.classList.remove('dragging');
-                if (hasMoved) autoSave(); // Only save if it actually moved
+                if (hasMoved) {
+                    commitHistory();
+                    autoSave(); 
+                }
                 activeDragNode = null;
             }
         });
 
         function enableTextEdit(el, nodeData) {
-            el.contentEditable = "true";
-            el.focus();
+            const textSpan = el.querySelector('.node-text');
+            if (!textSpan) return;
+            
+            textSpan.contentEditable = "true";
+            textSpan.focus();
+            
             const range = document.createRange();
-            range.selectNodeContents(el);
+            range.selectNodeContents(textSpan);
             const sel = window.getSelection();
             sel.removeAllRanges();
             sel.addRange(range);
 
             const finishEdit = () => {
-                el.contentEditable = "false";
-                nodeData.text = el.innerText.replace(/\n/g, ' ').trim() || "Untitled";
-                el.innerText = nodeData.text;
+                textSpan.contentEditable = "false";
+                nodeData.text = textSpan.innerText.replace(/\n/g, ' ').trim() || "Untitled";
+                textSpan.innerText = nodeData.text;
                 renderEdges(); 
+                commitHistory();
                 autoSave(); 
-                el.removeEventListener('blur', finishEdit);
-                el.removeEventListener('keydown', handleEditKeys);
+                textSpan.removeEventListener('blur', finishEdit);
+                textSpan.removeEventListener('keydown', handleEditKeys);
             };
 
             const handleEditKeys = (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    el.blur(); 
+                    textSpan.blur(); 
                 } else if (e.key === 'Escape') {
-                    el.blur();
+                    textSpan.blur();
                 }
+                e.stopPropagation();
             };
 
-            el.addEventListener('blur', finishEdit);
-            el.addEventListener('keydown', handleEditKeys);
+            textSpan.addEventListener('blur', finishEdit);
+            textSpan.addEventListener('keydown', handleEditKeys);
         }
 
         function renderEdges() {
-            svgCanvas.innerHTML = '';
+            svgCanvas.querySelectorAll('path').forEach(p => p.remove());
+
             state.edges.forEach(edge => {
                 const fromNode = state.nodes.find(n => n.id === edge.from);
                 const toNode = state.nodes.find(n => n.id === edge.to);
@@ -642,33 +1113,104 @@
                 const x2 = toNode.x + (toEl.offsetWidth / 2);
                 const y2 = toNode.y + (toEl.offsetHeight / 2);
 
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                 const dx = x2 - x1;
                 const dy = y2 - y1;
-                const d = `M ${x1} ${y1} C ${x1 + dx/2} ${y1}, ${x2 - dx/2} ${y2}, ${x2} ${y2}`;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                const offset = 40; 
+                const x2adj = x2 - (dx/dist) * offset;
+                const y2adj = y2 - (dy/dist) * offset;
+
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                const d = `M ${x1} ${y1} C ${x1 + dx/2} ${y1}, ${x2adj - dx/2} ${y2adj}, ${x2adj} ${y2adj}`;
                 path.setAttribute('d', d);
-                path.setAttribute('stroke', '#4F46E5'); 
+                
+                const isHighContrast = document.body.classList.contains('high-contrast');
+                path.setAttribute('stroke', isHighContrast ? '#FFD700' : '#6366F1'); 
+                path.setAttribute('marker-end', isHighContrast ? 'url(#arrowhead-hc)' : 'url(#arrowhead)');
                 
                 svgCanvas.appendChild(path);
             });
         }
 
-        function updateColorPaletteSelection() {
-            const selectedNodeData = state.nodes.find(n => n.id === state.selectedNode);
+        function updateToolbarSelections() {
+            const isSingle = state.selectedNodes.length === 1;
+            const node = isSingle ? state.nodes.find(n => n.id === state.selectedNodes[0]) : null;
+            
+            shapeSelect.disabled = !isSingle;
+            iconSelect.disabled = !isSingle;
+
+            if (node) {
+                shapeSelect.value = node.shape || 'rect';
+                iconSelect.value = node.icon || '';
+            } else {
+                shapeSelect.value = 'rect';
+                iconSelect.value = '';
+            }
+
             colorSwatches.forEach(swatch => {
                 swatch.classList.remove('active');
-                if (selectedNodeData && selectedNodeData.color === swatch.dataset.color) {
-                    swatch.classList.add('active');
-                }
+                if (node && node.color === swatch.dataset.color) swatch.classList.add('active');
             });
+            if (node) customColorInput.value = node.color;
         }
+
+        // --- Pan & Zoom ---
+        function updateViewportTransform() {
+            canvasViewport.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
+        }
+
+        canvasContainer.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? -0.1 : 0.1;
+            const rect = canvasContainer.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            const newZoom = Math.max(0.3, Math.min(2.5, zoom + delta));
+            const zoomFactor = newZoom / zoom;
+            panX = mouseX - (mouseX - panX) * zoomFactor;
+            panY = mouseY - (mouseY - panY) * zoomFactor;
+            zoom = newZoom;
+            updateViewportTransform();
+        }, { passive: false });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'SELECT' && !document.activeElement.isContentEditable) {
+                isSpaceDown = true;
+                canvasContainer.classList.add('panning');
+                e.preventDefault();
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.code === 'Space') {
+                isSpaceDown = false;
+                canvasContainer.classList.remove('panning');
+            }
+        });
+
+        canvasContainer.addEventListener('mousedown', (e) => {
+            if (isSpaceDown) {
+                isPanning = true;
+                panStartX = panX - e.clientX;
+                panStartY = panY - e.clientY;
+                e.preventDefault();
+            } else if (e.target === canvasContainer || e.target === canvasViewport) {
+                isMarqueeing = true;
+                marqueeStartX = e.clientX;
+                marqueeStartY = e.clientY;
+                if (!e.shiftKey) {
+                    state.selectedNodes = [];
+                    renderNodes();
+                }
+            }
+        });
 
         // --- Event Listeners ---
         canvasContainer.addEventListener('dblclick', (e) => {
-            if (e.target !== canvasContainer) return;
+            if (e.target !== canvasContainer && e.target !== canvasViewport) return;
             const rect = canvasContainer.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            let x = (e.clientX - rect.left - panX) / zoom;
+            let y = (e.clientY - rect.top - panY) / zoom;
             const newNode = createNode(x - 50, y - 15);
             setTimeout(() => {
                 const el = document.getElementById(newNode.id);
@@ -676,23 +1218,11 @@
             }, 50);
         });
 
-        canvasContainer.addEventListener('click', (e) => {
-            if (e.target === canvasContainer) {
-                if (state.connectMode && state.connectingFrom) {
-                    state.connectingFrom = null;
-                    renderNodes();
-                }
-                if (state.selectedNode) {
-                    state.selectedNode = null;
-                    renderNodes();
-                    updateColorPaletteSelection();
-                }
-            }
-        });
-
         addNodeBtn.addEventListener('click', () => {
             const rect = canvasContainer.getBoundingClientRect();
-            const newNode = createNode(rect.width / 2 - 50, rect.height / 2 - 15);
+            let x = (rect.width / 2 - panX) / zoom - 50;
+            let y = (rect.height / 2 - panY) / zoom - 15;
+            const newNode = createNode(x, y);
             setTimeout(() => {
                 const el = document.getElementById(newNode.id);
                 if (el) enableTextEdit(el, newNode);
@@ -705,83 +1235,87 @@
             connectModeBtn.innerText = `Connect: ${state.connectMode ? 'On' : 'Off'}`;
             connectModeBtn.classList.toggle('btn-primary', state.connectMode);
             connectModeBtn.classList.toggle('btn-secondary', !state.connectMode);
-            canvasContainer.classList.toggle('connect-mode', state.connectMode);
             renderNodes();
         });
 
-        editNodeBtn.addEventListener('click', () => {
-            if (state.selectedNode) {
-                const el = document.getElementById(state.selectedNode);
-                const nodeData = state.nodes.find(n => n.id === state.selectedNode);
-                if (el && nodeData) enableTextEdit(el, nodeData);
-            } else {
-                showToast('Select a node to edit');
-            }
-        });
-
         deleteModeBtn.addEventListener('click', () => {
-            if (state.selectedNode) {
-                deleteNode(state.selectedNode);
-                showToast('Node deleted');
+            if (state.selectedNodes.length > 0) {
+                deleteSelectedNodes();
+                showToast('Node(s) deleted');
             } else {
-                showToast('Select a node to delete first');
+                showToast('Select a node to delete');
             }
         });
 
-        clearBtn.addEventListener('click', () => {
-            if (state.nodes.length === 0) return;
-            if (confirm('Clear all nodes and connections?')) {
-                state.nodes = [];
-                state.edges = [];
-                state.selectedNode = null;
-                renderNodes();
-                renderEdges();
-                localStorage.removeItem(STORAGE_KEY);
-                templateSelect.value = "blank"; 
-                showToast('Canvas cleared');
+        shapeSelect.addEventListener('change', (e) => {
+            if (state.selectedNodes.length > 0) {
+                updateNodesProp(state.selectedNodes, 'shape', e.target.value);
             }
         });
 
-        // Color Swatches
+        iconSelect.addEventListener('change', (e) => {
+            if (state.selectedNodes.length > 0) {
+                updateNodesProp(state.selectedNodes, 'icon', e.target.value);
+            }
+        });
+
         colorSwatches.forEach(swatch => {
             swatch.addEventListener('click', () => {
-                if (state.selectedNode) {
-                    updateNodeColor(state.selectedNode, swatch.dataset.color, swatch.dataset.text);
-                    updateColorPaletteSelection();
+                if (state.selectedNodes.length > 0) {
+                    updateNodesProp(state.selectedNodes, 'color', swatch.dataset.color);
+                    updateToolbarSelections();
                 } else {
                     showToast('Select a node first');
                 }
             });
         });
 
-        // Templates (Fixed Logic)
-        let previousTemplate = "blank";
-
-        templateSelect.addEventListener('change', (e) => {
-            const type = e.target.value;
-            const templateName = e.target.options[e.target.selectedIndex].text;
-
-            if (confirm(`Load the ${templateName}? Current map will be cleared.`)) {
-                if (type === 'blank') {
-                    state.nodes = [];
-                    state.edges = [];
-                } else {
-                    const data = generateTemplateData(type);
-                    state.nodes = data.nodes;
-                    state.edges = data.edges;
-                }
-                state.selectedNode = null;
-                renderNodes();
-                renderEdges();
-                autoSave();
-                showToast('Template loaded! Edit it as needed.');
-                previousTemplate = type;
-            } else {
-                templateSelect.value = previousTemplate; // Revert if cancelled
+        customColorInput.addEventListener('input', (e) => {
+            if (state.selectedNodes.length > 0) {
+                updateNodesProp(state.selectedNodes, 'color', e.target.value);
+                updateToolbarSelections();
             }
         });
 
-        // Export / Import
+        templateSelect.addEventListener('change', (e) => {
+            const type = e.target.value;
+            if (type === 'blank') return;
+            if (confirm(`Load the ${e.target.options[e.target.selectedIndex].text}? Current map will be cleared.`)) {
+                const data = generateTemplateData(type);
+                state.nodes = data.nodes;
+                state.edges = data.edges;
+                state.selectedNodes = [];
+                state.nodes.forEach(n => { n.x = snapToGrid(n.x); n.y = snapToGrid(n.y); });
+                renderAll();
+                commitHistory();
+                autoSave();
+                showToast('Template loaded!');
+            }
+            templateSelect.value = 'blank';
+        });
+
+        mapSelector.addEventListener('change', (e) => switchMap(e.target.value));
+        newMapBtn.addEventListener('click', createNewMap);
+        undoBtn.addEventListener('click', undo);
+        redoBtn.addEventListener('click', redo);
+
+        printBtn.addEventListener('click', () => window.print());
+
+        contrastToggle.addEventListener('click', () => {
+            document.body.classList.toggle('high-contrast');
+            renderEdges(); 
+        });
+
+        focusBtn.addEventListener('click', () => {
+            document.body.classList.toggle('focus-mode');
+            if (document.body.classList.contains('focus-mode')) {
+                focusBtn.innerText = "Exit Focus";
+            } else {
+                focusBtn.innerText = "Focus Mode";
+            }
+            setTimeout(renderEdges, 300);
+        });
+
         exportBtn.addEventListener('click', () => {
             const dataStr = JSON.stringify({ nodes: state.nodes, edges: state.edges }, null, 2);
             const blob = new Blob([dataStr], { type: "application/json" });
@@ -808,12 +1342,10 @@
                     if (data.nodes && data.edges) {
                         state.nodes = data.nodes;
                         state.edges = data.edges;
-                        renderNodes();
-                        renderEdges();
+                        renderAll();
+                        commitHistory();
                         autoSave();
-                        showToast('Map imported successfully!');
-                        templateSelect.value = "blank"; 
-                        previousTemplate = "blank";
+                        showToast('Map imported!');
                     } else {
                         showToast('Invalid file format');
                     }
@@ -825,63 +1357,49 @@
             fileInput.value = ""; 
         });
 
-        // Keyboard Shortcuts
         document.addEventListener('keydown', (e) => {
             if (document.activeElement.isContentEditable || document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT') return;
 
             if (e.key === 'Delete' || e.key === 'Backspace') {
-                if (state.selectedNode) {
-                    e.preventDefault(); // Prevent browser back navigation
-                    deleteNode(state.selectedNode);
-                    showToast('Node deleted');
+                if (state.selectedNodes.length > 0) {
+                    e.preventDefault();
+                    deleteSelectedNodes();
+                    showToast('Node(s) deleted');
                 }
-            } else if (e.key === 'Enter') {
-                if (state.selectedNode && !state.connectMode) {
-                    const el = document.getElementById(state.selectedNode);
-                    const nodeData = state.nodes.find(n => n.id === state.selectedNode);
-                    if (el && nodeData) enableTextEdit(el, nodeData);
-                }
+            } else if (e.ctrlKey && e.key === 'z') {
+                e.preventDefault();
+                undo();
+            } else if (e.ctrlKey && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {
+                e.preventDefault();
+                redo();
+            } else if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                autoSave();
+                showToast('Saved locally!');
             }
         });
 
         // --- Initialization ---
-        function loadFromStorage() {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (saved) {
-                try {
-                    const data = JSON.parse(saved);
-                    state.nodes = data.nodes || [];
-                    state.edges = data.edges || [];
-                    previousTemplate = "blank"; // Loaded custom map
-                    templateSelect.value = "blank";
-                } catch (e) {
-                    console.error("Failed to load saved data", e);
-                }
-            } else {
-                // Default to Care Plan template for first-time users
-                const data = generateTemplateData('care');
-                state.nodes = data.nodes;
-                state.edges = data.edges;
-                templateSelect.value = "care";
-                previousTemplate = "care";
+        function init() {
+            const mapsData = getMaps();
+            if (Object.keys(mapsData.maps).length === 0) {
+                mapsData.maps["map-1"] = { name: "Default Map", nodes: [], edges: [] };
+                mapsData.activeMap = "map-1";
+                saveMapsToStorage(mapsData);
             }
-            renderNodes();
-            renderEdges();
+            loadMapSelector();
+            switchMap(mapsData.activeMap);
         }
 
-        // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
             });
         });
 
-        // Init app on load
-        window.addEventListener('load', loadFromStorage);
         window.addEventListener('resize', renderEdges);
+        window.addEventListener('load', init);
 
     </script>
 </body>
