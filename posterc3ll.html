@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="version" content="1.1">
+    <meta name="version" content="1.2">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PosterC3ll - Local-First Spreadsheet</title>
@@ -172,6 +172,15 @@
     </nav>
 
     <div class="ribbon">
+        <!-- NEW: History Group -->
+        <div class="ribbon-group">
+            <div class="ribbon-group-content">
+                <button class="btn-ribbon" id="btn-undo" title="Undo (Ctrl+Z)"><i data-lucide="undo-2"></i><span>Undo</span></button>
+                <button class="btn-ribbon" id="btn-redo" title="Redo (Ctrl+Y)"><i data-lucide="redo-2"></i><span>Redo</span></button>
+            </div>
+            <div class="ribbon-group-label">History</div>
+        </div>
+
         <div class="ribbon-group">
             <div class="ribbon-group-content">
                 <button class="btn-ribbon" id="btn-bold"><i data-lucide="bold"></i><span>Bold</span></button>
@@ -273,6 +282,10 @@
         let fileHandle = null, peer = null, conn = null, isApplyingRemoteData = false;
         let isFormulaBarFocused = false;
 
+        // --- Version History State ---
+        let history = [];
+        let historyIndex = -1;
+
         const gridHead = document.getElementById('gridHead');
         const gridBody = document.getElementById('gridBody');
         const gridWrapper = document.getElementById('gridWrapper');
@@ -281,6 +294,8 @@
         const fillHandle = document.getElementById('fillHandle');
 
         const commands = [
+            { title: "Undo", action: undo, shortcut: "Ctrl+Z" },
+            { title: "Redo", action: redo, shortcut: "Ctrl+Y" },
             { title: "Format: Bold", action: () => applyStyle('b', true) },
             { title: "Format: Markdown", action: () => applyStyle('fmt', 'markdown') },
             { title: "Format: Progress Bar", action: () => applyStyle('fmt', 'progress') },
@@ -306,6 +321,35 @@
         }
         document.getElementById('themeSelect').onchange = (e) => changeTheme(e.target.value);
         if (sheetData.settings.theme) changeTheme(sheetData.settings.theme);
+
+        // --- Version History Logic ---
+        function pushHistory() {
+            history = history.slice(0, historyIndex + 1);
+            history.push(JSON.parse(JSON.stringify(sheetData)));
+            if (history.length > 50) history.shift(); // Limit history to 50 states to save memory
+            historyIndex = history.length - 1;
+        }
+
+        function undo() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                sheetData = JSON.parse(JSON.stringify(history[historyIndex]));
+                createGrid();
+                saveLocally();
+            }
+        }
+
+        function redo() {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                sheetData = JSON.parse(JSON.stringify(history[historyIndex]));
+                createGrid();
+                saveLocally();
+            }
+        }
+
+        document.getElementById('btn-undo').onclick = undo;
+        document.getElementById('btn-redo').onclick = redo;
 
         function createGrid() {
             let headHtml = '<tr><th class="gh-corner"></th>';
@@ -397,7 +441,7 @@
                 const res = await fetch(url); const text = await res.text();
                 let val; try { const json = JSON.parse(text); val = JSON.stringify(json[Object.keys(json)[0]] || json); } catch { val = text.substring(0, 100); }
                 if (!sheetData[id]) sheetData[id] = { s: {} };
-                sheetData[id].v = val; saveLocally(); recalculateAndRender();
+                sheetData[id].v = val; saveLocally(); pushHistory(); recalculateAndRender();
             } catch (e) { if (sheetData[id]) sheetData[id].v = "#FETCH_ERROR"; recalculateAndRender(); }
         }
 
@@ -405,7 +449,7 @@
         function attachGridListeners() {
             document.querySelectorAll('.cell').forEach(td => {
                 td.addEventListener('mousedown', (e) => {
-                    if (e.button === 2) return; // Ignore right clicks for selection
+                    if (e.button === 2) return;
                     if (isFormulaBarFocused) { formulaBar.value += td.dataset.id; formulaBar.focus(); return; }
 
                     isSelecting = true;
@@ -413,12 +457,12 @@
                     const newRange = { ...activeCell, endRow: activeCell.row, endCol: activeCell.col };
 
                     if (e.ctrlKey || e.metaKey) {
-                        selectionRanges.push(newRange); // Add new range
+                        selectionRanges.push(newRange);
                     } else if (e.shiftKey) {
                         selectionRanges[selectionRanges.length - 1].endRow = activeCell.row;
                         selectionRanges[selectionRanges.length - 1].endCol = activeCell.col;
                     } else {
-                        selectionRanges = [newRange]; // Reset to single range
+                        selectionRanges = [newRange];
                     }
 
                     updateSelectionUI(); updateActiveCellUI();
@@ -502,7 +546,7 @@
             if (!sheetData[cellId]) sheetData[cellId] = { s: {} };
             sheetData[cellId].v = cellEditor.value;
             cellEditor.style.display = 'none';
-            saveLocally(); recalculateAndRender();
+            saveLocally(); pushHistory(); recalculateAndRender();
         }
 
         function moveActiveCell(rOffset, cOffset) {
@@ -633,7 +677,7 @@
                     }
                 }
             }
-            saveLocally(); recalculateAndRender();
+            saveLocally(); pushHistory(); recalculateAndRender();
         }
 
         // --- Multi-Range Ribbon Actions ---
@@ -650,7 +694,7 @@
                     sheetData[id].s[styleKey] = value;
                 }
             });
-            saveLocally(); recalculateAndRender();
+            saveLocally(); pushHistory(); recalculateAndRender();
         }
 
         document.getElementById('btn-bold').onclick = () => applyStyle('b', true);
@@ -672,7 +716,7 @@
                     if (sheetData[id]) delete sheetData[id].v;
                 }
             });
-            recalculateAndRender(); saveLocally(); document.getElementById('contextMenu').style.display = 'none';
+            recalculateAndRender(); saveLocally(); pushHistory(); document.getElementById('contextMenu').style.display = 'none';
         }
         document.getElementById('ctx-clear-content').onclick = clearContents;
 
@@ -680,7 +724,7 @@
         function toggleFreezePanes() {
             sheetData.settings = sheetData.settings || {};
             sheetData.settings.freeze = !sheetData.settings.freeze;
-            saveLocally(); applyFreezePanels();
+            saveLocally(); pushHistory(); applyFreezePanels();
         }
         document.getElementById('btn-freeze').onclick = toggleFreezePanes;
         function applyFreezePanels() {}
@@ -737,7 +781,7 @@
                 }
                 for (let r = 0; r < ROWS; r++) delete sheetData[`${String.fromCharCode(65 + activeCell.col)}${r + 1}`];
             }
-            saveLocally(); createGrid();
+            saveLocally(); pushHistory(); createGrid();
         }
 
         function startColResize(e) {
@@ -747,7 +791,7 @@
             const th = document.querySelector(`.gh-col[data-col="${colIdx}"]`);
             const startWidth = th.offsetWidth;
             function move(ev) { const w = Math.max(40, startWidth + (ev.clientX - e.clientX)); th.style.width = `${w}px`; th.style.minWidth = `${w}px`; }
-            function up() { handle.classList.remove('active'); document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); if (!sheetData._colWidths) sheetData._colWidths = {}; sheetData._colWidths[colIdx] = th.offsetWidth; saveLocally(); }
+            function up() { handle.classList.remove('active'); document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); if (!sheetData._colWidths) sheetData._colWidths = {}; sheetData._colWidths[colIdx] = th.offsetWidth; saveLocally(); pushHistory(); }
             document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
         }
 
@@ -763,7 +807,7 @@
             if (!window.showOpenFilePicker) { document.getElementById('fileInput').click(); return; }
             try {
                 const [h] = await window.showOpenFilePicker({ types: [{ description: 'PosterC3ll File', accept: { 'application/json': ['.pcl', '.json'] } }] });
-                fileHandle = h; const file = await h.getFile(); sheetData = JSON.parse(await file.text()); saveLocally(); createGrid();
+                fileHandle = h; const file = await h.getFile(); sheetData = JSON.parse(await file.text()); saveLocally(); pushHistory(); createGrid();
             } catch (err) {}
         }
         document.getElementById('btnSaveDirect').onclick = saveDirect;
@@ -795,7 +839,7 @@
             if (p.type === 'full_sync' || p.type === 'partial_update') {
                 isApplyingRemoteData = true;
                 if (p.type === 'full_sync') sheetData = p.data; else Object.assign(sheetData, p.data);
-                recalculateAndRender(); isApplyingRemoteData = false;
+                recalculateAndRender(); pushHistory(); isApplyingRemoteData = false;
             }
         }
 
@@ -807,6 +851,11 @@
         document.addEventListener('keydown', (e) => {
             if (paletteOverlay.style.display === 'flex') return;
             if (cellEditor.style.display === 'block' || document.activeElement === formulaBar) return;
+
+            // Version History Shortcuts
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); undo(); return; }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'y') { e.preventDefault(); redo(); return; }
+            
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openPalette(); return; }
             if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveDirect(); return; }
             if (e.key === 'ArrowRight') moveActiveCell(0, 1);
@@ -824,7 +873,7 @@
             if (e.key === 'Enter') {
                 const id = `${String.fromCharCode(65 + activeCell.col)}${activeCell.row + 1}`;
                 if (!sheetData[id]) sheetData[id] = { s: {} };
-                sheetData[id].v = formulaBar.value; saveLocally(); recalculateAndRender(); moveActiveCell(1, 0);
+                sheetData[id].v = formulaBar.value; saveLocally(); pushHistory(); recalculateAndRender(); moveActiveCell(1, 0);
             }
         });
 
@@ -840,6 +889,7 @@
 
         // --- Init ---
         createGrid();
+        pushHistory(); // Save initial state
         gridWrapper.addEventListener('scroll', updateSelectionUI);
         window.addEventListener('resize', updateSelectionUI);
         
