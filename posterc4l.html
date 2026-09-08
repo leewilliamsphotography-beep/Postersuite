@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="version" content="5.0">
+<meta name="version" content="5.1">
 <title>PosterC4l — Visual Calendar</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -32,40 +32,35 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
 .hamburger-btn { background:transparent; border:1px solid var(--line); color:var(--ink); border-radius:8px; width:40px; height:40px; cursor:pointer; font-size:20px; display:flex; align-items:center; justify-content:center; transition:background .2s; }
 .hamburger-btn:hover { background:var(--accent-light); }
 
-/* CSS Grid Calendar */
-.cal-area { flex:1; padding:24px 24px 100px 24px; overflow:auto; }
-.cal-grid { display:grid; grid-template-columns: repeat(7, 1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:16px; overflow:hidden; box-shadow:var(--shadow); transition:background .4s, border-color .4s; }
-.cal-head { background:var(--paper); font-weight:600; color:var(--ink2); padding:16px 12px; text-transform:uppercase; letter-spacing:1px; font-size:12px; text-align:center; }
-.cal-cell { background:var(--surface); min-height:120px; padding:8px; display:flex; flex-direction:column; transition:background .2s; position:relative; overflow:hidden; }
-.cal-cell.weekend { background:var(--weekend); }
-.cal-cell:hover { background:var(--accent-light); }
-.cal-cell.drag-over { background:var(--accent-light); outline:2px dashed var(--accent); outline-offset:-4px; }
+/* Emma's Calendar System (Grid & Cards) */
+.cw { flex:1; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; position:relative; z-index:1; overscroll-behavior:contain; padding-bottom:100px; }
+.dh { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; padding:24px 8px 8px; margin-bottom:8px; }
+.dht { text-align:center; font-weight:600; font-size:12px; padding:10px 0; border-radius:8px; text-transform:uppercase; letter-spacing:1px; color:var(--ink2); }
+.cg { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; padding:0 8px; contain:layout style; position:relative; z-index:1; }
+.c { border-radius:12px; padding:8px; display:flex; flex-direction:column; justify-content:flex-start; gap:5px; min-height:clamp(64px,14vw,90px); position:relative; overflow:hidden; transition:transform .12s, border-color 0.2s; border:1px solid var(--line); cursor:pointer; background:var(--surface); }
+.c.e { background:transparent!important; border:none!important; min-height:0; padding:0; box-shadow:none!important; cursor:default; }
+.c .n { font-weight:700; font-size:clamp(14px,3.5vw,18px); line-height:1.1; color:var(--ink); cursor:pointer; width:fit-content; padding: 2px 6px; border-radius: 6px; }
+.c:hover { border-color:var(--accent); }
+.c.today .n { color:#fff; background:var(--accent); box-shadow: 0 2px 8px var(--accent-light); }
 
 /* Painted Day Styles */
-.cal-cell.colored { position:relative; }
-.cal-cell.colored::before { content:''; position:absolute; inset:0; background:var(--cell-gradient); opacity:0.12; pointer-events:none; z-index:0; }
-.cal-cell.colored::after { content:''; position:absolute; top:0; left:0; right:0; height:5px; background:var(--cell-gradient); pointer-events:none; z-index:0; }
-.day-num, .cell-content { position:relative; z-index:1; }
+.c.colored { border-color:transparent; }
+.c.colored::before { content:''; position:absolute; inset:0; background:var(--cell-gradient); opacity:0.15; pointer-events:none; z-index:0; }
+.c .n, .c .cell-content { position:relative; z-index:1; }
+.c.colored .n { background: rgba(255,255,255,0.2); backdrop-filter: blur(4px); }
 
-.cal-cell.cat-work { box-shadow: inset 4px 0 0 var(--cat-work); }
-.cal-cell.cat-important { box-shadow: inset 4px 0 0 var(--cat-important); background: rgba(239,68,68,0.05); }
-.cal-cell.cat-bday { box-shadow: inset 4px 0 0 var(--cat-bday); background: rgba(236,72,153,0.05); }
-.cal-cell.cat-habit { box-shadow: inset 4px 0 0 var(--cat-habit); background: rgba(16,185,129,0.05); }
-
-.day-num { font-weight:600; display:inline-block; border-radius:50%; width:28px; height:28px; line-height:28px; text-align:center; color:var(--ink2); font-family:'Bricolage Grotesque'; cursor:pointer; }
-.day-num:hover { background:var(--accent-light); color:var(--accent); }
-.cal-cell.today .day-num { background:var(--accent); color:#fff; animation: pulse 2s infinite; }
-@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(6,182,212, 0.4); } 70% { box-shadow: 0 0 0 12px rgba(6,182,212, 0); } 100% { box-shadow: 0 0 0 0 rgba(6,182,212, 0); } }
+.c.cat-work { box-shadow: inset 4px 0 0 var(--cat-work); }
+.c.cat-important { box-shadow: inset 4px 0 0 var(--cat-important); background: rgba(239,68,68,0.05); }
+.c.cat-bday { box-shadow: inset 4px 0 0 var(--cat-bday); background: rgba(236,72,153,0.05); }
+.c.cat-habit { box-shadow: inset 4px 0 0 var(--cat-habit); background: rgba(16,185,129,0.05); }
 
 .cell-content { flex:1; outline:none; font-size:13px; line-height:1.4; color:var(--ink); cursor:text; white-space:pre-wrap; word-wrap:break-word; overflow:hidden; }
-
-/* Markdown */
-.cell-content strong { font-weight:700; }
 .cell-content .tag { display:inline-block; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:600; margin-right:4px; background:var(--accent-light); color:var(--accent); }
 .cell-content .tag-work { background:rgba(59,130,246,0.15); color:var(--cat-work); }
 .cell-content .tag-important { background:rgba(239,68,68,0.15); color:var(--cat-important); }
 .cell-content .tag-bday { background:rgba(236,72,153,0.15); color:var(--cat-bday); }
 .cell-content .tag-habit { background:rgba(16,185,129,0.15); color:var(--cat-habit); }
+.cell-content strong { font-weight:700; }
 .checklist-item { display:flex; align-items:center; gap:6px; margin:2px 0; }
 .checklist-item input { cursor:pointer; accent-color: var(--accent); }
 .checklist-item.done label { text-decoration:line-through; opacity:0.6; }
@@ -79,27 +74,27 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
 .modal-title { font-family:'Bricolage Grotesque'; font-size:20px; font-weight:700; color:var(--accent); }
 .modal-close { background:none; border:none; font-size:24px; cursor:pointer; color:var(--ink2); line-height:1; }
 .modal-body { padding:24px; overflow-y:auto; flex:1; }
-
-/* Modal Color Picker */
 .modal-color-row { display:flex; gap:10px; margin-bottom:24px; align-items:center; flex-wrap:wrap; padding-bottom:16px; border-bottom:1px solid var(--line); }
 .modal-color-swatch { width:32px; height:32px; border-radius:50%; cursor:pointer; border:2px solid var(--line); transition:transform .1s; display:flex; align-items:center; justify-content:center; font-size:14px; }
 .modal-color-swatch:hover { transform:scale(1.1); }
 .modal-color-swatch.active { border:3px solid var(--accent); box-shadow:0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
-
 .modal-textarea { width:100%; min-height:240px; background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:16px; color:var(--ink); font-family:'Lexend',sans-serif; font-size:15px; line-height:1.6; outline:none; resize:vertical; }
 .modal-textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-light); }
 .modal-footer { padding:16px 24px; border-top:1px solid var(--line); display:flex; justify-content:flex-end; gap:12px; }
 
-/* Year View */
-.year-view { display:grid; grid-template-columns: repeat(7, 1fr); gap:4px; max-width:800px; margin:0 auto; background:var(--surface); padding:24px; border-radius:16px; box-shadow:var(--shadow); }
-.year-day { aspect-ratio:1; border-radius:4px; background:var(--weekend); border:1px solid var(--line); cursor:pointer; transition:transform .1s; }
-.year-day:hover { transform:scale(1.1); border:1px solid var(--accent); }
-.year-day.has-data { background:var(--accent); opacity:0.2; }
-.year-day.cat-work { background:var(--cat-work); opacity:0.6; border:none; }
-.year-day.cat-important { background:var(--cat-important); opacity:0.8; border:none; }
-.year-day.cat-bday { background:var(--cat-bday); opacity:0.8; border:none; }
-.year-day.cat-habit { background:var(--cat-habit); opacity:0.8; border:none; }
-.year-day.today { outline:2px solid var(--accent); outline-offset:2px; }
+/* Year View (12 Mini Months) */
+.year-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:24px; padding: 24px; }
+.year-month { background:var(--surface); padding:16px; border-radius:16px; border:1px solid var(--line); box-shadow:var(--shadow); }
+.year-month-name { text-align:center; font-family:'Bricolage Grotesque'; font-weight:700; font-size:18px; color:var(--accent); margin-bottom:12px; }
+.cg.mini { gap:4px; padding:0; }
+.dh.mini { gap:4px; padding:0; margin-bottom:4px; }
+.c.mini { min-height:32px; padding:2px; border-radius:6px; gap:0; border:1px solid transparent; background:var(--paper); justify-content:center; align-items:center; }
+.c.mini .n { font-size:11px; font-weight:600; color:var(--ink); padding:0; background:transparent !important; box-shadow:none !important; }
+.c.mini.e { background:transparent; }
+.c.mini.colored { border:1px solid transparent; }
+.c.mini.colored::before { opacity:0.3; border-radius:6px; }
+.c.mini.today { background:var(--accent-light); border:1px solid var(--accent); }
+.c.mini.today .n { color:var(--accent); }
 
 /* Hamburger Drawer */
 .drawer-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.4); backdrop-filter:blur(4px); display:none; z-index:1000; opacity:0; transition:opacity .2s; }
@@ -111,17 +106,13 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
 .drawer-body { padding:24px; overflow-y:auto; flex:1; }
 .drawer-section { margin-bottom:32px; }
 .drawer-section h3 { font-size:14px; text-transform:uppercase; letter-spacing:1px; color:var(--ink2); margin-bottom:16px; }
-
-/* Drawer UI Elements */
 .drawer-colors { display:grid; grid-template-columns:repeat(6, 1fr); gap:12px; }
 .drawer-swatch { width:100%; aspect-ratio:1; border-radius:50%; cursor:pointer; border:2px solid transparent; display:flex; align-items:center; justify-content:center; font-size:14px; transition:transform .1s; }
 .drawer-swatch:hover { transform:scale(1.1); }
 .drawer-swatch.clear { background:transparent; border:2px dashed var(--line); color:var(--ink2); }
-
 .drawer-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; }
 .drawer-btn { padding:12px; border:1px solid var(--line); background:var(--paper); color:var(--ink); border-radius:8px; cursor:pointer; font-weight:600; font-size:14px; text-align:left; transition:background .2s; }
 .drawer-btn:hover { background:var(--accent-light); }
-
 .drawer-emojis { display:grid; grid-template-columns:repeat(6, 1fr); gap:8px; }
 .emoji-pick { width:100%; aspect-ratio:1; border:none; background:transparent; cursor:pointer; font-size:20px; border-radius:8px; transition:background .1s; }
 .emoji-pick:hover { background:var(--accent-light); }
@@ -142,25 +133,30 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
 ::-webkit-scrollbar { width:8px; height:8px; }
 ::-webkit-scrollbar-thumb { background:var(--line); border-radius:4px; }
 
+/* Responsive Media Queries from Emma's Calendar */
+@media(min-width:520px){ .c{min-height:clamp(68px,12vw,84px);padding:10px} .c .n{font-size:clamp(16px,2.8vw,20px)} .dh,.cg{gap:8px;padding-left:12px;padding-right:12px} .dht{font-size:14px;padding:12px 0} }
+@media(min-width:640px){ .c{min-height:clamp(80px,11vw,96px);padding:12px;border-radius:14px;gap:6px} .c .n{font-size:clamp(18px,2.4vw,22px)} .dh,.cg{gap:10px;padding-left:16px;padding-right:16px} }
+@media(min-width:900px){ .c{min-height:clamp(96px,10vw,116px);padding:14px;border-radius:16px;gap:7px} .c .n{font-size:clamp(20px,2.2vw,24px)} .dh,.cg{gap:12px;padding-left:20px;padding-right:20px} }
+@media(min-width:1200px){ .c{min-height:clamp(108px,9vw,128px);padding:16px;border-radius:18px;gap:8px} .c .n{font-size:clamp(22px,2vw,26px)} .dh,.cg{gap:14px;padding-left:24px;padding-right:24px} }
+
 /* Clean Print Styles */
 @media print {
     header, .toast, .modal-backdrop, .search-backdrop, .drawer, .drawer-backdrop { display:none !important; }
     body { height:auto; overflow:visible; background:#fff; color:#000; }
-    .cal-area { padding:0; }
-    .cal-grid { box-shadow:none; border-radius:0; page-break-inside:avoid; border:1px solid #ccc; }
-    .cal-cell { height:100px; border:1px solid #ccc; background:#fff !important; box-shadow:none !important; }
-    .cal-cell.colored::before { opacity: 0.08; }
-    .day-num { background: transparent !important; color: #000 !important; cursor: default; box-shadow: none !important; animation: none !important; }
+    .cw { padding:0; }
+    .cg { box-shadow:none; border-radius:0; page-break-inside:avoid; border:1px solid #ccc; }
+    .c { height:100px; border:1px solid #ccc; background:#fff !important; box-shadow:none !important; }
+    .c.colored::before { opacity: 0.08; }
+    .c .n { background: transparent !important; color: #000 !important; box-shadow: none !important; }
     .cell-content { color: #000 !important; }
-    .cell-content .tag { background: #eee !important; color: #000 !important; }
 }
 
 @media (max-width: 768px) {
-    .cal-grid { display:flex; flex-direction:column; gap:8px; background:transparent; border:none; box-shadow:none; }
-    .cal-head { display:none; }
-    .cal-cell { min-height:auto; flex-direction:row; align-items:flex-start; gap:12px; padding:16px; border-radius:12px; border:1px solid var(--line); }
-    .cal-cell.weekend { background:var(--surface); }
-    .day-num { font-size:18px; width:auto; height:auto; line-height:1; padding:4px; }
+    .cg { display:flex; flex-direction:column; gap:8px; background:transparent; border:none; box-shadow:none; }
+    .dh { display:none; }
+    .c { min-height:auto; flex-direction:row; align-items:flex-start; gap:12px; padding:16px; border-radius:12px; border:1px solid var(--line); }
+    .c.e { display:none; }
+    .c .n { font-size:18px; width:auto; height:auto; padding:4px 8px; }
     .cell-content { min-height:40px; font-size:15px; }
     .month-display { font-size:16px; }
 }
@@ -177,8 +173,8 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
     <button class="hamburger-btn" onclick="toggleDrawer()">☰</button>
 </header>
 
-<div class="cal-area">
-    <div class="cal-grid" id="calGrid"></div>
+<div class="cw" id="calArea">
+    <div id="calGrid"></div>
     <div id="yearContainer" class="hidden"></div>
 </div>
 
@@ -254,9 +250,9 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
             <h3>Calendar Tools</h3>
             <div class="drawer-grid">
                 <button class="drawer-btn" onclick="goToToday(); toggleDrawer();">📍 Jump to Today</button>
-                <button class="drawer-btn" onclick="toggleView(); toggleDrawer();">🗓️ Toggle Year View</button>
-                <button class="drawer-btn" onclick="openSearch(); toggleDrawer();">🔍 Search Calendar</button>
-                <button class="drawer-btn" onclick="window.print();">🖨️ Print Calendar</button>
+                <button class="drawer-btn" onclick="toggleView(); toggleDrawer();">🗓️ Year View</button>
+                <button class="drawer-btn" onclick="openSearch(); toggleDrawer();">🔍 Search</button>
+                <button class="drawer-btn" onclick="window.print();">🖨️ Print</button>
             </div>
         </div>
 
@@ -280,8 +276,9 @@ let currentDate = new Date();
 let calData = JSON.parse(localStorage.getItem('posterc4l-cal-data')) || {};
 let currentView = 'month';
 let activeFocusDate = null;
-let activeEditable = null; // Tracks the contenteditable div or textarea
+let activeEditable = null;
 
+const calArea = document.getElementById('calArea');
 const calGrid = document.getElementById('calGrid');
 const yearContainer = document.getElementById('yearContainer');
 const monthDisplay = document.getElementById('monthDisplay');
@@ -407,7 +404,7 @@ function paintDay(colorId) {
         showToast('Click inside a day first to paint it.');
         return;
     }
-    const activeCell = activeEditable.closest('.cal-cell');
+    const activeCell = activeEditable.closest('.c');
     if(!activeCell) return;
     
     const dateKey = activeCell.getAttribute('data-date');
@@ -416,7 +413,7 @@ function paintDay(colorId) {
     renderCal();
 }
 
-// --- Robust Text Insertion (Fixes emoji/tag flashing) ---
+// --- Robust Text Insertion ---
 function insertTextAtCursor(textToInsert) {
     if (!activeEditable) {
         showToast('Click inside a day or text area first.');
@@ -443,7 +440,6 @@ function insertTextAtCursor(textToInsert) {
             activeEditable.innerText += textToInsert;
         }
         
-        // Save data silently without triggering a full re-render that destroys focus
         const dateKey = activeEditable.getAttribute('data-date');
         const dayData = getDayData(dateKey);
         saveDayData(dateKey, activeEditable.innerText, dayData.color);
@@ -469,7 +465,7 @@ function parseMarkdown(text) {
 }
 
 function toggleCheckbox(checkbox, type) {
-    const cell = checkbox.closest('.cal-cell');
+    const cell = checkbox.closest('.c');
     const dateKey = cell.getAttribute('data-date');
     const dayData = getDayData(dateKey);
     let content = dayData.text;
@@ -490,7 +486,7 @@ function toggleCheckbox(checkbox, type) {
     renderCal();
 }
 
-// --- Calendar Rendering ---
+// --- Calendar Rendering (Emma's Grid System) ---
 function renderCal() {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
@@ -507,16 +503,15 @@ function renderCal() {
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         const today = new Date();
         
-        let html = '';
-        ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => html += `<div class="cal-head">${d}</div>`);
+        let html = '<div class="dh"><div class="dht">Sun</div><div class="dht">Mon</div><div class="dht">Tue</div><div class="dht">Wed</div><div class="dht">Thu</div><div class="dht">Fri</div><div class="dht">Sat</div></div>';
+        html += '<div class="cg">';
         
-        for(let i=0; i<firstDay; i++) html += `<div class="cal-cell ${i===0||i===6 ? 'weekend' : ''}"></div>`;
+        for(let i=0; i<firstDay; i++) html += `<div class="c e"></div>`;
         
         for(let d=1; d<=daysInMonth; d++) {
-            let classes = "cal-cell";
+            let classes = "c";
             let styleAttr = '';
             let dayOfWeek = new Date(year, month, d).getDay();
-            if(dayOfWeek === 0 || dayOfWeek === 6) classes += " weekend";
             if(year === today.getFullYear() && month === today.getMonth() && d === today.getDate()) classes += " today";
             
             const dateKey = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
@@ -537,11 +532,12 @@ function renderCal() {
             
             html += `
                 <div class="${classes}" data-date="${dateKey}" draggable="true" ${styleAttr}>
-                    <div class="day-num" onclick="openFocusMode('${dateKey}')">${d}</div>
+                    <div class="n" onclick="openFocusMode('${dateKey}')">${d}</div>
                     <div class="cell-content" contenteditable="true" data-date="${dateKey}">${parseMarkdown(rawContent)}</div>
                 </div>
             `;
         }
+        html += '</div>';
         calGrid.innerHTML = html;
         attachCellListeners();
         calculateStreak();
@@ -553,40 +549,43 @@ function renderCal() {
     }
 }
 
+// --- 12-Month Year View (Shows all dates) ---
 function renderYearView(year) {
     const today = new Date();
-    let html = `<div class="year-view">`;
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    let html = `<div class="year-grid">`;
+    
     for(let m=0; m<12; m++) {
+        html += `<div class="year-month">
+            <div class="year-month-name">${monthNames[m]}</div>
+            <div class="dh mini"><div class="dht">S</div><div class="dht">M</div><div class="dht">T</div><div class="dht">W</div><div class="dht">T</div><div class="dht">F</div><div class="dht">S</div></div>
+            <div class="cg mini">`;
+            
+        const firstDay = new Date(year, m, 1).getDay();
         const daysInMonth = new Date(year, m+1, 0).getDate();
+        
+        for(let i=0; i<firstDay; i++) html += `<div class="c mini e"></div>`;
+        
         for(let d=1; d<=daysInMonth; d++) {
+            let classes = "c mini";
+            let styleAttr = '';
+            if(year === today.getFullYear() && m === today.getMonth() && d === today.getDate()) classes += " today";
+            
             const dateKey = `${year}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
             const dayData = getDayData(dateKey);
-            const content = dayData.text;
-            const color = dayData.color;
+            const dayColor = dayData.color;
             
-            let classes = "year-day";
-            let style = '';
-            
-            if(content || color) {
-                classes += " has-data";
-                if(content.includes('#work')) classes = "year-day cat-work";
-                if(content.includes('#important')) classes = "year-day cat-important";
-                if(content.includes('#bday')) classes = "year-day cat-bday";
-                if(content.includes('#habit')) classes = "year-day cat-habit";
-                
-                if(color) {
-                    const colorObj = dayColors.find(c => c.id === color);
-                    if(colorObj) {
-                        classes = "year-day";
-                        style = `background: ${colorObj.g}; border:none;`;
-                    }
-                }
+            if(dayColor) {
+                classes += " colored";
+                const colorObj = dayColors.find(c => c.id === dayColor);
+                if(colorObj) styleAttr = `style="--cell-gradient: ${colorObj.g};"`;
             }
-            if(year === today.getFullYear() && m === today.getMonth() && d === today.getDate()) classes += " today";
-            html += `<div class="${classes}" style="${style}" onclick="jumpToMonth(${m}, ${year})" title="${dateKey}"></div>`;
+            
+            html += `<div class="${classes}" ${styleAttr} onclick="jumpToMonth(${m}, ${year})"><span class="n">${d}</span></div>`;
         }
+        html += `</div></div>`;
     }
-    html += `</div>`;
+    html += '</div>';
     yearContainer.innerHTML = html;
 }
 
@@ -646,12 +645,12 @@ function attachCellListeners() {
         });
     });
 
-    document.querySelectorAll('.cal-cell').forEach(cell => {
-        cell.addEventListener('dragover', (e) => { e.preventDefault(); cell.classList.add('drag-over'); });
-        cell.addEventListener('dragleave', () => cell.classList.remove('drag-over'));
+    document.querySelectorAll('.cg > .c:not(.e)').forEach(cell => {
+        cell.addEventListener('dragover', (e) => { e.preventDefault(); cell.style.borderColor = 'var(--accent)'; });
+        cell.addEventListener('dragleave', () => cell.style.borderColor = '');
         cell.addEventListener('drop', (e) => {
             e.preventDefault();
-            cell.classList.remove('drag-over');
+            cell.style.borderColor = '';
             const sourceDate = e.dataTransfer.getData('text/plain');
             const targetDate = cell.getAttribute('data-date');
             if(sourceDate && sourceDate !== targetDate) {
