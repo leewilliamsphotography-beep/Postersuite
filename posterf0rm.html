@@ -3,30 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="version" content="1.3">
-<title>PosterF0rm — Form Builder</title>
+<meta name="version" content="2.0">
+<title>PosterF0rm — Local Form Builder</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root { --paper:#F8F9FA; --surface:#FFFFFF; --ink:#1A1D21; --ink2:#50545C; --line:#E3E5E8; --accent:#E11D48; }
-/* Fixed Dark Mode: Changed from body.dark-mode to :root.dark-mode */
 :root.dark-mode { --paper:#121212; --surface:#1E1E1E; --ink:#E8E8E8; --ink2:#A0A0A0; --line:#333333; }
 * { box-sizing:border-box; margin:0; padding:0; font-family:'Lexend',sans-serif; }
-body { background:var(--paper); color:var(--ink); height:100vh; display:flex; flex-direction:column; transition:background .2s; }
+body { background:var(--paper); color:var(--ink); height:100vh; display:flex; flex-direction:column; transition:background .2s; overflow: hidden; }
 
 /* Header */
-header { display:flex; justify-content:space-between; align-items:center; padding:16px 24px; background:var(--surface); border-bottom:1px solid var(--line); gap: 12px; flex-wrap: wrap; }
+header { display:flex; justify-content:space-between; align-items:center; padding:12px 24px; background:var(--surface); border-bottom:1px solid var(--line); gap: 12px; flex-wrap: wrap; z-index: 10; }
 .logo { font-family:'Bricolage Grotesque'; font-weight:800; color:var(--accent); text-decoration:none; font-size: 1.2rem; }
-.header-actions { display: flex; gap: 8px; align-items: center; }
+.header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .icon-btn { background:transparent; border:none; color:var(--ink2); cursor:pointer; padding:8px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition: background .2s; font-size: 1.1rem; }
 .icon-btn:hover { background:var(--paper); color:var(--ink); }
-.btn { background:var(--accent); color:#fff; border:none; padding:8px 16px; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Bricolage Grotesque'; transition: opacity .2s; }
+.btn { background:var(--accent); color:#fff; border:none; padding:8px 16px; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Bricolage Grotesque'; transition: opacity .2s; font-size: 0.9rem; }
 .btn:hover { opacity: 0.9; }
 .btn-secondary { background: transparent; border: 1px solid var(--line); color: var(--ink); }
+.color-picker { width: 32px; height: 32px; border: 1px solid var(--line); border-radius: 50%; cursor: pointer; background: var(--accent); padding: 0; overflow: hidden; }
+.color-picker::-webkit-color-swatch-wrapper { padding: 0; }
+.color-picker::-webkit-color-swatch { border: none; border-radius: 50%; }
 
-/* Builder Area */
-.builder-area { flex:1; padding:40px 20px; overflow-y:auto; max-width:800px; margin:0 auto; width:100%; }
+/* Layout */
+.main-container { flex: 1; display: flex; overflow: hidden; }
+.builder-area { flex:1; padding:40px 20px; overflow-y:auto; max-width:800px; margin:0 auto; width:100%; transition: max-width .3s; }
 .form-field { background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:20px; margin-bottom:16px; display:flex; flex-direction:column; gap:12px; position: relative; transition: border-color .2s; }
 .form-field:hover { border-color: var(--ink2); }
+.form-field.hidden-in-preview { display: none; }
 
 /* Field Structure */
 .field-top { display: flex; justify-content: space-between; gap: 12px; }
@@ -38,14 +42,13 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
 
 .field-actions { display: flex; flex-direction: column; gap: 4px; opacity: 0; transition: opacity .2s; }
 .form-field:hover .field-actions { opacity: 1; }
-.action-btn { background: transparent; border: none; color: var(--ink2); cursor: pointer; padding: 4px; font-size: 0.9rem; border-radius: 4px; }
+.action-btn { background: transparent; border: none; color: var(--ink2); cursor: pointer; padding: 4px; font-size: 0.9rem; border-radius: 4px; text-align: center; }
 .action-btn:hover { background: var(--paper); color: var(--accent); }
 
 .field-input { background:var(--paper); border:1px solid var(--line); border-radius:6px; padding:10px; color:var(--ink); width: 100%; font-family: 'Lexend', sans-serif; }
 .field-input:focus { outline: none; border-color: var(--accent); }
 textarea.field-input { resize: vertical; }
 
-/* Options (for radio/checkboxes) */
 .option-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; color: var(--ink2); }
 .option-text { background: transparent; border: none; border-bottom: 1px dashed var(--line); color: var(--ink); padding: 4px 0; width: 100%; outline: none; }
 .option-text:focus { border-bottom-color: var(--accent); }
@@ -53,94 +56,148 @@ textarea.field-input { resize: vertical; }
 .add-option-btn:hover { color: var(--accent); }
 
 .required-star { color: var(--accent); margin-left: 4px; }
+.logic-text { font-size: 0.8rem; color: var(--accent); font-style: italic; margin-top: -4px; }
 
-/* Add Question Button */
 .add-btn { background:transparent; border:2px dashed var(--line); color:var(--ink2); padding:16px; border-radius:12px; font-weight:600; cursor:pointer; width:100%; margin-top:16px; transition: all .2s; }
 .add-btn:hover { border-color:var(--accent); color:var(--accent); }
 
-/* Preview Mode */
+/* Preview & Kiosk Modes */
 body.preview-mode .field-label { border: none; background: transparent; pointer-events: none; }
 body.preview-mode .field-type-select, body.preview-mode .field-actions, body.preview-mode .add-btn, body.preview-mode .add-option-btn { display: none; }
 body.preview-mode .option-text { border: none; pointer-events: none; }
 body.preview-mode .field-input:disabled { background: var(--surface); opacity: 1; color: var(--ink); border-color: var(--line); }
+body.preview-mode .field-input { pointer-events: all; }
 
-/* Toast Notification */
+body.kiosk-mode header, body.kiosk-mode .add-btn { display: none !important; }
+body.kiosk-mode .builder-area { max-width: 600px; padding-top: 10vh; }
+.submit-btn { background: var(--accent); color: #fff; border: none; padding: 16px; border-radius: 8px; font-weight: 700; font-family: 'Bricolage Grotesque'; font-size: 1.1rem; cursor: pointer; width: 100%; margin-top: 16px; display: none; }
+body.preview-mode .submit-btn { display: block; }
+
+/* Kiosk Thank You */
+#kioskThankYou { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--accent); color: white; z-index: 100; flex-direction: column; justify-content: center; align-items: center; text-align: center; font-family: 'Bricolage Grotesque'; }
+#kioskThankYou h1 { font-size: 3rem; margin-bottom: 10px; }
+#kioskThankYou p { font-size: 1.2rem; opacity: 0.9; }
+
+/* Toast & Modal */
 .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--ink); color: var(--surface); padding: 12px 24px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform .3s; z-index: 1000; }
 .toast.show { transform: translateX(-50%) translateY(0); }
 
+.modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:none; justify-content:center; align-items:center; z-index:1000; }
+.modal { background:var(--surface); padding:24px; border-radius:12px; width:90%; max-width:800px; max-height:80vh; overflow-y:auto; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+.modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid var(--line); padding-bottom:12px; }
+.modal-title { font-family:'Bricolage Grotesque'; font-weight:700; font-size:1.2rem; color:var(--ink); }
+.close-btn { background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--ink2); }
+
+table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--line); font-size: 0.9rem; }
+th { color: var(--ink2); font-weight: 600; }
+
 /* Print Styles */
 @media print {
-    header, .add-btn, .field-actions, .field-type-select, .add-option-btn, .toast { display: none !important; }
+    header, .add-btn, .field-actions, .field-type-select, .add-option-btn, .toast, .submit-btn { display: none !important; }
     body { background: #fff !important; color: #000 !important; height: auto; overflow: visible; }
     .builder-area { padding: 0; max-width: 100%; }
-    .form-field { border: 1px solid #ccc !important; box-shadow: none; page-break-inside: avoid; padding: 12px; }
-    .field-label, .option-text { border: none !important; background: transparent !important; color: #000 !important; }
-    .field-input, .option-item { color: #000 !important; }
-    /* Hide actual input borders for cleaner print, just show text */
-    .field-input { border: none !important; border-bottom: 1px solid #ccc !important; border-radius: 0; background: transparent !important; }
+    .form-field { border: 1px solid #ccc !important; box-shadow: none; page-break-inside: avoid; }
 }
 </style>
 <script>
 const params = new URLSearchParams(window.location.search);
 if (params.get('theme') === 'dark') localStorage.setItem('pf0-theme', 'dark');
 if (localStorage.getItem('pf0-theme') === 'dark') document.documentElement.classList.add('dark-mode');
+if (localStorage.getItem('pf0-accent')) document.documentElement.style.setProperty('--accent', localStorage.getItem('pf0-accent'));
 </script>
 </head>
 <body>
 <header>
     <a href="index.html" class="logo">← PosterF0rm</a>
     <div class="header-actions">
+        <input type="color" class="color-picker" id="colorPicker" onchange="changeAccentColor(this.value)" title="Change Theme Color">
         <button class="icon-btn" onclick="toggleTheme()" title="Toggle Theme">🌙</button>
         <button class="btn btn-secondary" onclick="printForm()">🖨️ Print</button>
+        <button class="btn btn-secondary" onclick="importJSON()">⬆️ Import</button>
+        <button class="btn btn-secondary" onclick="exportJSON()">⬇️ JSON</button>
+        <button class="btn btn-secondary" onclick="exportHTML()">📄 HTML</button>
+        <button class="btn btn-secondary" onclick="viewResponses()">📊 Responses</button>
+        <button class="btn btn-secondary" onclick="toggleKiosk()" title="Fullscreen Kiosk Mode">🖥️ Kiosk</button>
         <button class="btn btn-secondary" onclick="togglePreview()" id="previewBtn">👁️ Preview</button>
         <button class="btn" onclick="saveForm()">Save Form</button>
     </div>
 </header>
-<div class="builder-area" id="builderArea"></div>
+
+<div class="main-container">
+    <div class="builder-area" id="builderArea"></div>
+</div>
+
 <div style="max-width: 800px; margin: 0 auto 40px auto; padding: 0 20px;">
     <button class="add-btn" onclick="addField()">+ Add Question</button>
 </div>
 
-<div class="toast" id="toast">Form saved locally!</div>
+<!-- Kiosk Thank You Screen -->
+<div id="kioskThankYou">
+    <h1>Thank You!</h1>
+    <p>Your response has been recorded locally.</p>
+</div>
+
+<!-- Responses Modal -->
+<div class="modal-overlay" id="responsesModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">Local Form Responses</div>
+            <div style="display:flex; gap:10px;">
+                <button class="btn btn-secondary" onclick="exportCSV()" style="padding: 4px 10px; font-size: 0.8rem;">⬇️ CSV</button>
+                <button class="close-btn" onclick="closeModal('responsesModal')">&times;</button>
+            </div>
+        </div>
+        <div id="responsesContent" style="color:var(--ink2);">No responses yet.</div>
+    </div>
+</div>
+
+<!-- Logic Modal -->
+<div class="modal-overlay" id="logicModal">
+    <div class="modal" style="max-width: 500px;">
+        <div class="modal-header">
+            <div class="modal-title">Conditional Logic</div>
+            <button class="close-btn" onclick="closeModal('logicModal')">&times;</button>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px; color:var(--ink);">
+            <p>Show this question if:</p>
+            <select id="logicFieldSelect" style="padding:8px; border-radius:6px; border:1px solid var(--line); background:var(--surface); color:var(--ink);"></select>
+            <p>has the exact value:</p>
+            <input type="text" id="logicValueInput" placeholder="Type expected answer..." style="padding:8px; border-radius:6px; border:1px solid var(--line); background:var(--surface); color:var(--ink);">
+            <button class="btn" onclick="saveLogic()">Save Logic</button>
+            <button class="btn btn-secondary" onclick="clearLogic()">Clear Logic</button>
+        </div>
+    </div>
+</div>
+
+<input type="file" id="jsonFileInput" accept=".json" style="display: none;">
+
+<div class="toast" id="toast">Saved!</div>
 
 <script>
 const builder = document.getElementById('builderArea');
 let isPreviewMode = false;
+let isKioskMode = false;
+let currentLogicField = null;
 
-// Initialize on load
 window.onload = function() {
     const savedForm = localStorage.getItem('posterf0rm-form');
     if (savedForm) {
         builder.innerHTML = savedForm;
     } else {
         addField('text', 'Name');
-        addField('paragraph', 'Feedback');
+        addField('text', 'Email');
     }
+    document.getElementById('colorPicker').value = localStorage.getItem('pf0-accent') || '#E11D48';
 };
 
+// --- FIELD CREATION & EDITING ---
 function addField(type = 'text', label = 'New Question') {
     const field = document.createElement('div');
     field.className = 'form-field';
     field.dataset.type = type;
     
-    let inputHTML = '';
-    if (type === 'text') {
-        inputHTML = `<input type="text" class="field-input" placeholder="Short answer text...">`;
-    } else if (type === 'paragraph') {
-        inputHTML = `<textarea class="field-input" rows="3" placeholder="Long answer text..."></textarea>`;
-    } else if (type === 'radio' || type === 'checkbox') {
-        const t = type === 'radio' ? 'radio' : 'checkbox';
-        inputHTML = `
-            <div class="options-container">
-                <div class="option-item">
-                    <input type="${t}" disabled>
-                    <input type="text" class="option-text" value="Option 1">
-                </div>
-            </div>
-            <button class="add-option-btn" onclick="addOption(this)">+ Add option</button>
-        `;
-    }
-
+    let inputHTML = getFieldInputHTML(type);
     field.innerHTML = `
         <div class="field-top">
             <div class="field-config">
@@ -153,6 +210,7 @@ function addField(type = 'text', label = 'New Question') {
                 </select>
             </div>
             <div class="field-actions">
+                <button class="action-btn" onclick="openLogicModal(this)" title="Add Logic">🔀</button>
                 <button class="action-btn" onclick="toggleRequired(this)" title="Require Answer">✱</button>
                 <button class="action-btn" onclick="duplicateField(this)" title="Duplicate">⧉</button>
                 <button class="action-btn" onclick="deleteField(this)" title="Delete">🗑</button>
@@ -160,57 +218,43 @@ function addField(type = 'text', label = 'New Question') {
         </div>
         <div class="field-input-container">${inputHTML}</div>
     `;
-    
     builder.appendChild(field);
+}
+
+function getFieldInputHTML(type, options = ["Option 1"]) {
+    if (type === 'text') return `<input type="text" class="field-input" placeholder="Short answer text...">`;
+    if (type === 'paragraph') return `<textarea class="field-input" rows="3" placeholder="Long answer text..."></textarea>`;
+    if (type === 'radio' || type === 'checkbox') {
+        const t = type === 'radio' ? 'radio' : 'checkbox';
+        let opts = options.map(o => `
+            <div class="option-item">
+                <input type="${t}" disabled>
+                <input type="text" class="option-text" value="${o}">
+            </div>
+        `).join('');
+        return `<div class="options-container">${opts}</div><button class="add-option-btn" onclick="addOption(this)">+ Add option</button>`;
+    }
+    return '';
 }
 
 function addOption(btn) {
     const container = btn.previousElementSibling;
     const type = btn.closest('.form-field').dataset.type;
     const inputType = type === 'radio' ? 'radio' : 'checkbox';
-    
     const newOption = document.createElement('div');
     newOption.className = 'option-item';
-    newOption.innerHTML = `
-        <input type="${inputType}" disabled>
-        <input type="text" class="option-text" value="New Option">
-    `;
+    newOption.innerHTML = `<input type="${inputType}" disabled><input type="text" class="option-text" value="New Option">`;
     container.appendChild(newOption);
 }
 
 function changeFieldType(selectEl) {
     const field = selectEl.closest('.form-field');
     const newType = selectEl.value;
-    const label = field.querySelector('.field-label').innerText;
-    
-    // Rebuild the field with the new type
     field.dataset.type = newType;
-    let inputHTML = '';
-    if (newType === 'text') {
-        inputHTML = `<input type="text" class="field-input" placeholder="Short answer text...">`;
-    } else if (newType === 'paragraph') {
-        inputHTML = `<textarea class="field-input" rows="3" placeholder="Long answer text..."></textarea>`;
-    } else if (newType === 'radio' || newType === 'checkbox') {
-        const t = newType === 'radio' ? 'radio' : 'checkbox';
-        inputHTML = `
-            <div class="options-container">
-                <div class="option-item">
-                    <input type="${t}" disabled>
-                    <input type="text" class="option-text" value="Option 1">
-                </div>
-            </div>
-            <button class="add-option-btn" onclick="addOption(this)">+ Add option</button>
-        `;
-    }
-    field.querySelector('.field-input-container').innerHTML = inputHTML;
+    field.querySelector('.field-input-container').innerHTML = getFieldInputHTML(newType);
 }
 
-function deleteField(btn) {
-    if (confirm('Delete this question?')) {
-        btn.closest('.form-field').remove();
-    }
-}
-
+function deleteField(btn) { if (confirm('Delete this question?')) btn.closest('.form-field').remove(); }
 function duplicateField(btn) {
     const field = btn.closest('.form-field');
     const clone = field.cloneNode(true);
@@ -220,13 +264,10 @@ function duplicateField(btn) {
 function toggleRequired(btn) {
     const field = btn.closest('.form-field');
     const label = field.querySelector('.field-label');
-    
     if (field.dataset.required === 'true') {
         field.dataset.required = 'false';
         btn.style.color = 'var(--ink2)';
-        if (label.querySelector('.required-star')) {
-            label.querySelector('.required-star').remove();
-        }
+        if (label.querySelector('.required-star')) label.querySelector('.required-star').remove();
     } else {
         field.dataset.required = 'true';
         btn.style.color = 'var(--accent)';
@@ -237,20 +278,49 @@ function toggleRequired(btn) {
     }
 }
 
+// --- MODES (Preview, Kiosk, Print, Theme) ---
 function togglePreview() {
     isPreviewMode = !isPreviewMode;
     document.body.classList.toggle('preview-mode', isPreviewMode);
     document.getElementById('previewBtn').innerText = isPreviewMode ? '✏️ Edit' : '👁️ Preview';
+    
+    if (isPreviewMode) {
+        // Add submit button if it doesn't exist
+        if (!builder.querySelector('.submit-btn')) {
+            const submitBtn = document.createElement('button');
+            submitBtn.className = 'submit-btn';
+            submitBtn.innerText = 'Submit';
+            submitBtn.onclick = submitForm;
+            builder.appendChild(submitBtn);
+        }
+        // Enable inputs
+        builder.querySelectorAll('.field-input, input[type="text"], input[type="radio"], input[type="checkbox"], textarea').forEach(inp => {
+            if(!inp.classList.contains('option-text')) inp.disabled = false;
+        });
+    } else {
+        let submitBtn = builder.querySelector('.submit-btn');
+        if (submitBtn) submitBtn.remove();
+        builder.querySelectorAll('input, textarea').forEach(inp => {
+            if(!inp.classList.contains('option-text') && !inp.classList.contains('field-label')) inp.disabled = true;
+        });
+    }
+    evaluateLogic();
 }
 
-function saveForm() {
-    if (isPreviewMode) togglePreview();
-    localStorage.setItem('posterf0rm-form', builder.innerHTML);
-    showToast('Form saved locally!');
+function toggleKiosk() {
+    isKioskMode = true;
+    if (!isPreviewMode) togglePreview();
+    document.body.classList.add('kiosk-mode');
+    document.documentElement.requestFullscreen().catch(err => console.log(err));
+}
+
+function exitKiosk() {
+    isKioskMode = false;
+    document.body.classList.remove('kiosk-mode');
+    if (document.fullscreenElement) document.exitFullscreen();
 }
 
 function printForm() {
-    // Ensure we are in edit mode before printing so the CSS hides the right elements
     if (isPreviewMode) togglePreview();
     window.print();
 }
@@ -265,12 +335,346 @@ function toggleTheme() {
     }
 }
 
+function changeAccentColor(color) {
+    document.documentElement.style.setProperty('--accent', color);
+    localStorage.setItem('pf0-accent', color);
+}
+
+// --- LOGIC ---
+function openLogicModal(btn) {
+    currentLogicField = btn.closest('.form-field');
+    const select = document.getElementById('logicFieldSelect');
+    select.innerHTML = '';
+    
+    let currentIndex = 0;
+    builder.querySelectorAll('.form-field').forEach(f => {
+        if (f === currentLogicField) return; // Can't depend on itself
+        const label = f.querySelector('.field-label').innerText.replace(' *', '');
+        const option = document.createElement('option');
+        option.value = currentIndex;
+        option.innerText = label;
+        select.appendChild(option);
+        currentIndex++;
+    });
+
+    // Load existing logic
+    if (currentLogicField.dataset.logic) {
+        const logic = JSON.parse(currentLogicField.dataset.logic);
+        select.value = logic.dependsOn;
+        document.getElementById('logicValueInput').value = logic.value;
+    } else {
+        document.getElementById('logicValueInput').value = '';
+    }
+
+    document.getElementById('logicModal').style.display = 'flex';
+}
+
+function saveLogic() {
+    const dependsOn = document.getElementById('logicFieldSelect').value;
+    const value = document.getElementById('logicValueInput').value;
+    if (dependsOn && value) {
+        currentLogicField.dataset.logic = JSON.stringify({ dependsOn: parseInt(dependsOn), value: value });
+        let logicText = currentLogicField.querySelector('.logic-text');
+        if (!logicText) {
+            logicText = document.createElement('div');
+            logicText.className = 'logic-text';
+            currentLogicField.querySelector('.field-config').appendChild(logicText);
+        }
+        logicText.innerText = `Show if "${builder.querySelectorAll('.form-field')[dependsOn].querySelector('.field-label').innerText}" equals "${value}"`;
+    }
+    closeModal('logicModal');
+}
+
+function clearLogic() {
+    delete currentLogicField.dataset.logic;
+    const logicText = currentLogicField.querySelector('.logic-text');
+    if (logicText) logicText.remove();
+    closeModal('logicModal');
+}
+
+function evaluateLogic() {
+    const fields = builder.querySelectorAll('.form-field');
+    fields.forEach((field, index) => {
+        if (field.dataset.logic) {
+            const logic = JSON.parse(field.dataset.logic);
+            const depField = fields[logic.dependsOn];
+            let depValue = '';
+            
+            // Determine dependent field's current value in preview
+            if (depField.dataset.type === 'text' || depField.dataset.type === 'paragraph') {
+                depValue = depField.querySelector('.field-input').value;
+            } else if (depField.dataset.type === 'radio') {
+                const checked = depField.querySelector('input[type="radio"]:checked');
+                depValue = checked ? checked.parentElement.querySelector('.option-text').value : '';
+            }
+            
+            if (depValue !== logic.value) {
+                field.classList.add('hidden-in-preview');
+            } else {
+                field.classList.remove('hidden-in-preview');
+            }
+        }
+    });
+}
+
+// Listen for inputs in preview mode to trigger logic
+builder.addEventListener('input', (e) => {
+    if (isPreviewMode) evaluateLogic();
+});
+
+// --- DATA COLLECTION (Local) ---
+function submitForm() {
+    const fields = builder.querySelectorAll('.form-field');
+    let response = { date: new Date().toISOString() };
+    let isValid = true;
+
+    fields.forEach(field => {
+        if (field.classList.contains('hidden-in-preview')) return; // Skip hidden fields
+        
+        const label = field.querySelector('.field-label').innerText.replace(' *', '');
+        const type = field.dataset.type;
+        let value = '';
+
+        if (type === 'text' || type === 'paragraph') {
+            value = field.querySelector('.field-input').value;
+        } else if (type === 'radio') {
+            const checked = field.querySelector('input[type="radio"]:checked');
+            value = checked ? checked.parentElement.querySelector('.option-text').value : '';
+        } else if (type === 'checkbox') {
+            let checkedVals = [];
+            field.querySelectorAll('input[type="checkbox"]:checked').forEach(c => {
+                checkedVals.push(c.parentElement.querySelector('.option-text').value);
+            });
+            value = checkedVals.join(', ');
+        }
+
+        // Simple required validation
+        if (field.dataset.required === 'true' && !value) {
+            isValid = false;
+            field.style.border = '2px solid var(--accent)';
+        } else {
+            field.style.border = '1px solid var(--line)';
+        }
+
+        response[label] = value;
+    });
+
+    if (!isValid) {
+        showToast('Please fill in all required fields.');
+        return;
+    }
+
+    let responses = JSON.parse(localStorage.getItem('posterf0rm-responses') || '[]');
+    responses.push(response);
+    localStorage.setItem('posterf0rm-responses', JSON.stringify(responses));
+
+    if (isKioskMode) {
+        document.getElementById('kioskThankYou').style.display = 'flex';
+        setTimeout(() => {
+            document.getElementById('kioskThankYou').style.display = 'none';
+            // reset form
+            builder.querySelectorAll('.field-input, input[type="text"], input[type="radio"], input[type="checkbox"], textarea').forEach(inp => {
+                if(!inp.classList.contains('option-text')) {
+                    inp.value = '';
+                    inp.checked = false;
+                }
+            });
+            evaluateLogic();
+        }, 4000);
+    } else {
+        showToast('Response saved locally!');
+        togglePreview(); // Exit preview
+    }
+}
+
+function viewResponses() {
+    const responses = JSON.parse(localStorage.getItem('posterf0rm-responses') || '[]');
+    const content = document.getElementById('responsesContent');
+    
+    if (responses.length === 0) {
+        content.innerHTML = '<p>No responses yet. Fill out the form in Preview mode to test it!</p>';
+    } else {
+        let headers = Object.keys(responses[0]);
+        let html = '<table><tr>';
+        headers.forEach(h => html += `<th>${h}</th>`);
+        html += '</tr>';
+        
+        responses.forEach(r => {
+            html += '<tr>';
+            headers.forEach(h => html += `<td>${r[h] || ''}</td>`);
+            html += '</tr>';
+        });
+        html += '</table>';
+        content.innerHTML = html;
+    }
+    
+    document.getElementById('responsesModal').style.display = 'flex';
+}
+
+function exportCSV() {
+    const responses = JSON.parse(localStorage.getItem('posterf0rm-responses') || '[]');
+    if (responses.length === 0) return showToast('No responses to export.');
+
+    const headers = Object.keys(responses[0]);
+    let csv = headers.join(',') + '\n';
+    
+    responses.forEach(r => {
+        let row = headers.map(h => {
+            let val = r[h] ? r[h].toString().replace(/"/g, '""') : '';
+            return `"${val}"`;
+        }).join(',');
+        csv += row + '\n';
+    });
+
+    downloadFile(csv, 'posterf0rm-responses.csv', 'text/csv');
+}
+
+// --- IMPORT/EXPORT (JSON & HTML) ---
+function getFormSchema() {
+    let schema = [];
+    builder.querySelectorAll('.form-field').forEach(field => {
+        let options = [];
+        if (field.dataset.type === 'radio' || field.dataset.type === 'checkbox') {
+            field.querySelectorAll('.option-text').forEach(opt => options.push(opt.value));
+        }
+        schema.push({
+            label: field.querySelector('.field-label').innerText.replace(' *', ''),
+            type: field.dataset.type,
+            required: field.dataset.required === 'true',
+            options: options,
+            logic: field.dataset.logic ? JSON.parse(field.dataset.logic) : null
+        });
+    });
+    return schema;
+}
+
+function exportJSON() {
+    const schema = getFormSchema();
+    downloadFile(JSON.stringify(schema, null, 2), 'posterf0rm-form.json', 'application/json');
+    showToast('Form JSON exported!');
+}
+
+function importJSON() {
+    const fileInput = document.getElementById('jsonFileInput');
+    fileInput.click();
+    fileInput.onchange = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            try {
+                const schema = JSON.parse(event.target.result);
+                builder.innerHTML = '';
+                schema.forEach(f => {
+                    addField(f.type, f.label);
+                    const newField = builder.lastChild;
+                    newField.dataset.type = f.type;
+                    newField.querySelector('.field-input-container').innerHTML = getFieldInputHTML(f.type, f.options);
+                    if (f.required) {
+                        newField.dataset.required = 'true';
+                        const btn = newField.querySelector('.action-btn[title="Require Answer"]');
+                        btn.style.color = 'var(--accent)';
+                        const star = document.createElement('span');
+                        star.className = 'required-star';
+                        star.innerText = ' *';
+                        newField.querySelector('.field-label').appendChild(star);
+                    }
+                    if (f.logic) {
+                        newField.dataset.logic = JSON.stringify(f.logic);
+                        const logicText = document.createElement('div');
+                        logicText.className = 'logic-text';
+                        logicText.innerText = `Show if condition is met.`;
+                        newField.querySelector('.field-config').appendChild(logicText);
+                    }
+                });
+                showToast('Form imported successfully!');
+            } catch (err) {
+                showToast('Invalid JSON file.');
+            }
+        };
+        reader.readAsText(file);
+    }
+}
+
+function exportHTML() {
+    const schema = getFormSchema();
+    const accent = localStorage.getItem('pf0-accent') || '#E11D48';
+    
+    let formHTML = schema.map(f => {
+        let input = '';
+        const req = f.required ? 'required' : '';
+        if(f.type === 'text') input = `<input type="text" name="${f.label}" ${req}>`;
+        if(f.type === 'paragraph') input = `<textarea name="${f.label}" ${req}></textarea>`;
+        if(f.type === 'radio' || f.type === 'checkbox') {
+            input = f.options.map(o => `<label><input type="${f.type}" name="${f.label}" value="${o}"> ${o}</label><br>`).join('');
+        }
+        return `<div class="field"><label>${f.label}${f.required?' *':''}</label>${input}</div>`;
+    }).join('');
+
+    const standaloneHTML = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Form: ${schema[0]?.label || 'PosterF0rm'}</title>
+<style>
+body { font-family: sans-serif; background: #f8f9fa; padding: 40px; }
+.form-wrapper { max-width: 600px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.field { margin-bottom: 20px; }
+label { display: block; font-weight: bold; margin-bottom: 8px; }
+input[type="text"], textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+button { background: ${accent}; color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; width: 100%; }
+button:hover { opacity: 0.9; }
+</style>
+</head>
+<body>
+<div class="form-wrapper">
+  <form onsubmit="event.preventDefault(); alert('Form submitted locally!');">
+    ${formHTML}
+    <button type="submit">Submit</button>
+  </form>
+</div>
+</body>
+</html>
+    `;
+    
+    downloadFile(standaloneHTML, 'posterf0rm-standalone.html', 'text/html');
+    showToast('Standalone HTML exported!');
+}
+
+// --- UTILITIES ---
+function downloadFile(content, fileName, type) {
+    const blob = new Blob([content], { type: type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function saveForm() {
+    if (isPreviewMode) togglePreview();
+    localStorage.setItem('posterf0rm-form', builder.innerHTML);
+    showToast('Form saved locally!');
+}
+
+function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+}
+
 function showToast(message) {
     const toast = document.getElementById('toast');
     toast.innerText = message;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 3000);
 }
+
+// Exit kiosk on Esc
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isKioskMode) exitKiosk();
+});
 </script>
 </body>
 </html>
