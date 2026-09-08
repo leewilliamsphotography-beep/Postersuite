@@ -66,33 +66,31 @@
         .formula-bar { flex: 1; border: 1px solid var(--pc-border); padding: 0.35rem; border-radius: 4px; font-family: monospace; font-size: 0.9rem; background: var(--pc-surface); color: var(--pc-text); }
         .formula-bar:focus { outline: none; border-color: var(--pc-primary); box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); }
         
-        /* --- Grid Engine (CSS Grid instead of HTML Table) --- */
+        /* --- Grid Engine (HTML Table) --- */
         .grid-wrapper { flex: 1; overflow: auto; position: relative; background-color: var(--pc-surface); }
         .grid-wrapper::-webkit-scrollbar { width: 12px; height: 12px; }
         .grid-wrapper::-webkit-scrollbar-track { background: var(--pc-ribbon-bg); }
         .grid-wrapper::-webkit-scrollbar-thumb { background: var(--pc-border); border: 3px solid var(--pc-ribbon-bg); border-radius: 6px; }
         
-        .grid-container { display: grid; position: relative; }
+        table { border-collapse: collapse; width: max-content; table-layout: fixed; }
+        thead th { position: sticky; top: 0; z-index: 3; }
+        tbody th { position: sticky; left: 0; z-index: 3; }
+        thead th:first-child { z-index: 5; left: 0; }
+        
+        th, td { border: 1px solid var(--pc-grid-line); padding: 0; margin: 0; background: var(--pc-surface); }
         
         .gh-col, .gh-row, .gh-corner {
             background-color: var(--pc-ribbon-bg); color: var(--pc-text-muted);
-            font-weight: 500; font-size: 0.75rem; display: flex; align-items: center; justify-content: center;
-            position: sticky; z-index: 3; user-select: none;
+            font-weight: 500; font-size: 0.75rem; text-align: center; user-select: none;
+            min-width: 40px; height: 22px; cursor: pointer;
         }
-        .gh-corner { z-index: 5; }
-        .gh-col { top: 0; border-right: 1px solid var(--pc-border); border-bottom: 1px solid var(--pc-border); }
-        .gh-row { left: 0; border-right: 1px solid var(--pc-border); border-bottom: 1px solid var(--pc-border); }
-        
-        .gh-col:hover, .gh-row:hover { background-color: var(--pc-border); cursor: pointer; }
+        .gh-col { min-width: 100px; width: 100px; position: relative; }
+        .gh-col:hover, .gh-row:hover { background-color: var(--pc-border); }
         .gh-col.active, .gh-row.active { background-color: var(--pc-primary) !important; color: white; }
-
-        .cell {
-            background-color: var(--pc-surface); border-right: 1px solid var(--pc-grid-line);
-            border-bottom: 1px solid var(--pc-grid-line); padding: 0 4px; font-size: 0.8rem;
-            white-space: nowrap; overflow: hidden; text-overflow: clip; color: var(--pc-text);
-            display: flex; align-items: center; position: relative;
-        }
-
+        
+        td.cell { height: 24px; overflow: hidden; padding: 0 4px; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: clip; color: var(--pc-text); }
+        .cell-content { width: 100%; height: 24px; line-height: 24px; overflow: hidden; }
+        
         /* Excel-like Selection Box */
         .selected-range { background-color: rgba(16, 185, 129, 0.1) !important; }
         .selection-box { position: absolute; border: 2px solid var(--pc-primary); background: transparent; pointer-events: none; z-index: 4; box-sizing: border-box; }
@@ -101,7 +99,7 @@
         .col-resizer { width: 4px; height: 100%; position: absolute; right: -2px; top: 0; cursor: col-resize; z-index: 4; }
         .col-resizer:hover, .col-resizer.active { background-color: var(--pc-primary); }
         
-        .hidden-input { position: absolute; border: none; outline: 2px solid var(--pc-primary); padding: 0 4px; font-size: 0.8rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: none; z-index: 10; background: var(--pc-surface); color: var(--pc-text); box-sizing: border-box; }
+        .hidden-input { position: absolute; border: none; outline: 2px solid var(--pc-primary); padding: 0 4px; font-size: 0.8rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: none; z-index: 10; background: var(--pc-surface); color: var(--pc-text); box-sizing: border-box; line-height: 24px; }
         #fillHandle { position: absolute; width: 7px; height: 7px; background: var(--pc-fill-handle); border: 1px solid var(--pc-surface); cursor: crosshair; z-index: 20; display: none; }
 
         /* --- Select & Inputs --- */
@@ -135,7 +133,7 @@
         /* Markdown & Rich Cells */
         .md-h1 { font-size: 1.1rem; font-weight: bold; } .md-h2 { font-size: 0.9rem; font-weight: bold; }
         .md-ul { list-style: disc; margin-left: 15px; } .md-strong { font-weight: bold; } .md-em { font-style: italic; }
-        .progress-bar-track { width: 90%; height: 8px; background: var(--pc-border-light); border-radius: 4px; overflow: hidden; }
+        .progress-bar-track { width: 90%; height: 8px; background: var(--pc-border-light); border-radius: 4px; overflow: hidden; margin-top: 8px; }
         .progress-bar-fill { height: 100%; background: var(--pc-primary); border-radius: 4px; }
         .cell-image { max-width: 100%; max-height: 100%; object-fit: contain; }
     </style>
@@ -216,7 +214,10 @@
     </div>
 
     <div class="grid-wrapper" id="gridWrapper">
-        <div class="grid-container" id="spreadsheet"></div>
+        <table id="spreadsheet">
+            <thead id="gridHead"></thead>
+            <tbody id="gridBody"></tbody>
+        </table>
         <input type="text" class="hidden-input" id="cellEditor">
         <div class="selection-box" id="selectionBox"></div>
         <div id="fillHandle"></div>
@@ -256,8 +257,15 @@
         lucide.createIcons();
         
         const ROWS = 100, COLS = 26;
-        let sheetData = JSON.parse(localStorage.getItem('posterC3llData') || '{}');
-        if (!sheetData.settings) sheetData.settings = {};
+        let sheetData = {};
+        try {
+            sheetData = JSON.parse(localStorage.getItem('posterC3llData') || '{}');
+            if (!sheetData.settings) sheetData.settings = {};
+            if (typeof sheetData !== 'object' || sheetData === null) sheetData = {};
+        } catch (e) {
+            console.error("Corrupted local data, resetting.", e);
+            sheetData = { settings: {} };
+        }
         
         let activeCell = { row: 0, col: 0 };
         let selectedRange = { startRow: 0, startCol: 0, endRow: 0, endCol: 0 };
@@ -265,7 +273,8 @@
         let fileHandle = null, peer = null, conn = null, isApplyingRemoteData = false;
         let isFormulaBarFocused = false;
 
-        const grid = document.getElementById('spreadsheet');
+        const gridHead = document.getElementById('gridHead');
+        const gridBody = document.getElementById('gridBody');
         const gridWrapper = document.getElementById('gridWrapper');
         const cellEditor = document.getElementById('cellEditor');
         const formulaBar = document.getElementById('formulaBar');
@@ -302,36 +311,30 @@
 
         // --- Grid Generation ---
         function createGrid() {
-            const colWidths = sheetData._colWidths || [];
-            const rowHeights = sheetData._rowHeights || [];
-            const gridTemplateCols = `40px ${Array.from({length: COLS}, (_, i) => `${colWidths[i] || 100}px`).join(' ')}`;
-            const gridTemplateRows = `22px ${Array.from({length: ROWS}, (_, i) => `${rowHeights[i] || 24}px`).join(' ')}`;
-            
-            grid.style.gridTemplateColumns = gridTemplateCols;
-            grid.style.gridTemplateRows = gridTemplateRows;
-
-            let html = `<div class="gh-corner" style="grid-column: 1; grid-row: 1;"></div>`;
-            
             // Headers
+            let headHtml = '<tr><th class="gh-corner"></th>';
             for (let c = 0; c < COLS; c++) {
-                html += `<div class="gh-col" data-col="${c}" style="grid-column: ${c + 2}; grid-row: 1;">${String.fromCharCode(65 + c)}<div class="col-resizer" data-col="${c}"></div></div>`;
+                const width = sheetData._colWidths?.[c] || 100;
+                headHtml += `<th class="gh-col" data-col="${c}" style="min-width:${width}px; width:${width}px;">${String.fromCharCode(65 + c)}<div class="col-resizer" data-col="${c}"></div></th>`;
             }
-            for (let r = 0; r < ROWS; r++) {
-                html += `<div class="gh-row" data-row="${r}" style="grid-column: 1; grid-row: ${r + 2};">${r + 1}</div>`;
-            }
+            headHtml += '</tr>';
+            gridHead.innerHTML = headHtml;
 
-            // Cells
+            // Body
+            let bodyHtml = '';
             for (let r = 0; r < ROWS; r++) {
+                bodyHtml += `<tr><th class="gh-row" data-row="${r}">${r + 1}</th>`;
                 for (let c = 0; c < COLS; c++) {
                     const cellId = `${String.fromCharCode(65 + c)}${r + 1}`;
                     const cellData = sheetData[cellId] || {};
                     const styleStr = getCellStyleString(cellData.s || {});
                     const displayHtml = getCellDisplayHtml(cellId, cellData);
-                    html += `<div class="cell" data-row="${r}" data-col="${c}" data-id="${cellId}" style="grid-column: ${c + 2}; grid-row: ${r + 2}; ${styleStr}">${displayHtml}</div>`;
+                    bodyHtml += `<td class="cell" data-row="${r}" data-col="${c}" data-id="${cellId}" style="${styleStr}"><div class="cell-content">${displayHtml}</div></td>`;
                 }
+                bodyHtml += '</tr>';
             }
+            gridBody.innerHTML = bodyHtml;
 
-            grid.innerHTML = html;
             attachGridListeners();
             updateActiveCellUI();
         }
@@ -340,7 +343,7 @@
             let str = '';
             if (s.b) str += 'font-weight:bold; ';
             if (s.bg) str += `background-color:${s.bg}; `;
-            if (s.a) str += `justify-content:${s.a}; `;
+            if (s.a) str += `text-align:${s.a}; `;
             return str;
         }
 
@@ -354,7 +357,7 @@
             if (data.s && data.s.fmt === 'currency' && !isNaN(val)) return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
             if (data.s && data.s.fmt === 'percent' && !isNaN(val)) return `${(parseFloat(val) * 100).toFixed(0)}%`;
             if (data.s && data.s.fmt === 'markdown') return parseMarkdown(val);
-            if (data.s && data.s.fmt === 'progress') return `<div class="progress-bar-track" style="width:100%; margin-top:8px;"><div class="progress-bar-fill" style="width:${Math.max(0, Math.min(1, parseFloat(val) || 0))*100}%"></div></div>`;
+            if (data.s && data.s.fmt === 'progress') return `<div class="progress-bar-track"><div class="progress-bar-fill" style="width:${Math.max(0, Math.min(1, parseFloat(val) || 0))*100}%"></div></div>`;
             if (data.s && data.s.fmt === 'image') return `<img src="${val}" class="cell-image" alt="img">`;
             return val;
         }
@@ -434,14 +437,6 @@
                     selectedRange = { startRow: 0, startCol: c, endRow: ROWS - 1, endCol: c };
                     updateSelectionUI(); updateActiveCellUI();
                 });
-                th.addEventListener('contextmenu', (e) => {
-                    e.preventDefault();
-                    const c = parseInt(th.dataset.col);
-                    activeCell = { row: 0, col: c };
-                    selectedRange = { startRow: 0, startCol: c, endRow: ROWS - 1, endCol: c };
-                    updateSelectionUI(); updateActiveCellUI();
-                    showContextMenu(e.clientX, e.clientY);
-                });
             });
             
             document.querySelectorAll('.gh-row').forEach(th => {
@@ -450,14 +445,6 @@
                     activeCell = { row: r, col: 0 };
                     selectedRange = { startRow: r, startCol: 0, endRow: r, endCol: COLS - 1 };
                     updateSelectionUI(); updateActiveCellUI();
-                });
-                th.addEventListener('contextmenu', (e) => {
-                    e.preventDefault();
-                    const r = parseInt(th.dataset.row);
-                    activeCell = { row: r, col: 0 };
-                    selectedRange = { startRow: r, startCol: 0, endRow: r, endCol: COLS - 1 };
-                    updateSelectionUI(); updateActiveCellUI();
-                    showContextMenu(e.clientX, e.clientY);
                 });
             });
 
@@ -560,10 +547,12 @@
         function recalculateAndRender() {
             document.querySelectorAll('.cell').forEach(td => {
                 const id = td.dataset.id; const data = sheetData[id] || {};
-                td.style.cssText = td.style.cssText.split('; ').filter(s => !s.startsWith('font-weight') && !s.startsWith('background-color') && !s.startsWith('justify-content')).join('; ');
+                const contentDiv = td.querySelector('.cell-content');
+                if (!contentDiv) return;
+                td.style.cssText = td.style.cssText.split('; ').filter(s => !s.startsWith('font-weight') && !s.startsWith('background-color') && !s.startsWith('text-align')).join('; ');
                 const styleStr = getCellStyleString(data.s || {});
                 td.style.cssText += styleStr;
-                td.innerHTML = getCellDisplayHtml(id, data);
+                contentDiv.innerHTML = getCellDisplayHtml(id, data);
             });
         }
 
@@ -656,14 +645,7 @@
         document.getElementById('btn-freeze').onclick = toggleFreezePanes;
 
         function applyFreezePanels() {
-            const cols = document.querySelectorAll('.gh-col, .gh-row, .gh-corner');
-            cols.forEach(c => c.classList.remove('freeze-col', 'freeze-row'));
-            
-            if (sheetData.settings?.freeze) {
-                document.querySelectorAll('.gh-col').forEach(c => c.classList.add('freeze-col'));
-                document.querySelectorAll('.gh-row').forEach(c => c.classList.add('freeze-row'));
-                document.querySelector('.gh-corner').classList.add('freeze-col', 'freeze-row');
-            }
+            // CSS handles sticky headers automatically now, so this is mostly a placeholder for future complex freezing
         }
 
         // --- Command Palette ---
@@ -727,7 +709,7 @@
             const colIdx = parseInt(handle.dataset.col);
             const th = document.querySelector(`.gh-col[data-col="${colIdx}"]`);
             const startWidth = th.offsetWidth;
-            function move(ev) { const w = Math.max(40, startWidth + (ev.clientX - e.clientX)); th.style.width = `${w}px`; }
+            function move(ev) { const w = Math.max(40, startWidth + (ev.clientX - e.clientX)); th.style.width = `${w}px`; th.style.minWidth = `${w}px`; }
             function up() { handle.classList.remove('active'); document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); if (!sheetData._colWidths) sheetData._colWidths = {}; sheetData._colWidths[colIdx] = th.offsetWidth; saveLocally(); }
             document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
         }
