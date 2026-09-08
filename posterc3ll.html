@@ -9,21 +9,21 @@
         :root {
             --pc-bg: #F8F9FA; --pc-surface: #FFFFFF; --pc-primary: #10B981;
             --pc-primary-dark: #047857; --pc-border: #D1D5DB; --pc-border-light: #E5E7EB;
-            --pc-grid-line: #E5E7EB; --pc-text: #1A1D21; --pc-text-muted: #6B7280; 
+            --pc-grid-line: #D1D5DB; --pc-text: #1A1D21; --pc-text-muted: #6B7280; 
             --pc-highlight: #ECFDF5; --pc-ribbon-bg: #F3F4F6;
             --pc-fill-handle: #10B981; --color-scheme: light;
         }
         body[data-theme="dark"] {
             --pc-bg: #111827; --pc-surface: #1F2937; --pc-primary: #10B981;
             --pc-primary-dark: #34D399; --pc-border: #374151; --pc-border-light: #4B5563;
-            --pc-grid-line: #374151; --pc-text: #F9FAFB; --pc-text-muted: #9CA3AF; 
+            --pc-grid-line: #4B5563; --pc-text: #F9FAFB; --pc-text-muted: #9CA3AF; 
             --pc-highlight: #064E3B; --pc-ribbon-bg: #111827;
             --pc-fill-handle: #34D399; --color-scheme: dark;
         }
         body[data-theme="midnight"] {
             --pc-bg: #0f172a; --pc-surface: #1e293b; --pc-primary: #10b981;
             --pc-primary-dark: #34d399; --pc-border: #334155; --pc-border-light: #475569;
-            --pc-grid-line: #334155; --pc-text: #e2e8f0; --pc-text-muted: #94a3b8; 
+            --pc-grid-line: #475569; --pc-text: #e2e8f0; --pc-text-muted: #94a3b8; 
             --pc-highlight: #064e3b; --pc-ribbon-bg: #172033;
             --pc-fill-handle: #10b981; --color-scheme: dark;
         }
@@ -86,26 +86,29 @@
         th.col-header:hover, th.row-header:hover { background-color: #e5e7eb; }
         body[data-theme="dark"] th.col-header:hover, body[data-theme="dark"] th.row-header:hover { background-color: #374151; }
 
-        /* Freeze Panes Logic */
-        .freeze-row th.col-header, .freeze-row td { position: sticky; top: 22px; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .freeze-col th.row-header, .freeze-col td { position: sticky; left: 40px; z-index: 2; box-shadow: 2px 0 4px rgba(0,0,0,0.1); }
+        /* Freeze Panes Logic (Fixes disappearing cells) */
+        .freeze-row th.col-header { position: sticky; top: 0; z-index: 3; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .freeze-row td { position: sticky; top: 22px; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.1); background: var(--pc-surface); }
+        .freeze-col th.row-header { position: sticky; left: 0; z-index: 3; box-shadow: 2px 0 4px rgba(0,0,0,0.1); }
+        .freeze-col td { position: sticky; left: 40px; z-index: 2; box-shadow: 2px 0 4px rgba(0,0,0,0.1); background: var(--pc-surface); }
         .freeze-row.freeze-col th.corner { z-index: 5; }
-        .freeze-row.freeze-col td:first-child { z-index: 3; }
+        .freeze-row.freeze-col td { z-index: 3; box-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
         
         .col-resizer { width: 4px; height: 100%; position: absolute; right: -2px; top: 0; cursor: col-resize; z-index: 4; }
         .col-resizer:hover, .col-resizer.active { background-color: var(--pc-primary); }
         
         td.cell { height: 22px; overflow: hidden; }
-        .cell-content { width: 100%; height: 100%; padding: 0 4px; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: clip; display: flex; align-items: center; color: var(--pc-text); }
+        /* Fix: Using line-height instead of flex prevents height collapse */
+        .cell-content { width: 100%; height: 22px; line-height: 22px; padding: 0 4px; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: clip; color: var(--pc-text); }
         
         /* Excel-like Selection Box */
         .selected-range { background-color: rgba(16, 185, 129, 0.1) !important; border-color: transparent !important; }
         .selection-box { position: absolute; border: 2px solid var(--pc-primary); background: transparent; pointer-events: none; z-index: 5; box-sizing: border-box; }
-        .active-cell { outline: 2px solid var(--pc-primary); outline-offset: -2px; z-index: 6; background: var(--pc-surface) !important; }
+        .active-cell { outline: 2px solid var(--pc-primary); outline-offset: -2px; z-index: 6; }
         
         .row-header.active, .col-header.active { background-color: var(--pc-primary) !important; color: white; }
         
-        .hidden-input { position: absolute; border: none; outline: 2px solid var(--pc-primary); padding: 0 4px; font-size: 0.8rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: none; z-index: 10; background: var(--pc-surface); color: var(--pc-text); box-sizing: border-box; }
+        .hidden-input { position: absolute; border: none; outline: 2px solid var(--pc-primary); padding: 0 4px; font-size: 0.8rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: none; z-index: 10; background: var(--pc-surface); color: var(--pc-text); box-sizing: border-box; line-height: 22px; }
         .hidden-input:focus { outline: 2px solid var(--pc-primary); }
         
         #fillHandle { position: absolute; width: 7px; height: 7px; background: var(--pc-fill-handle); border: 1px solid var(--pc-surface); cursor: crosshair; z-index: 20; display: none; box-sizing: content-box; }
@@ -143,7 +146,7 @@
         /* Markdown & Rich Cells */
         .md-h1 { font-size: 1.1rem; font-weight: bold; } .md-h2 { font-size: 0.9rem; font-weight: bold; }
         .md-ul { list-style: disc; margin-left: 15px; } .md-strong { font-weight: bold; } .md-em { font-style: italic; }
-        .progress-bar-track { width: 90%; height: 8px; background: var(--pc-border-light); border-radius: 4px; overflow: hidden; }
+        .progress-bar-track { width: 90%; height: 8px; background: var(--pc-border-light); border-radius: 4px; overflow: hidden; margin-top: 7px; }
         .progress-bar-fill { height: 100%; background: var(--pc-primary); border-radius: 4px; }
         .cell-image { max-width: 100%; max-height: 100%; object-fit: contain; }
     </style>
@@ -337,7 +340,7 @@
             let str = '';
             if (s.b) str += 'font-weight:bold; ';
             if (s.bg) str += `background-color:${s.bg}; `;
-            if (s.a) str += `justify-content:${s.a}; `;
+            if (s.a) str += `text-align:${s.a}; `;
             return str;
         }
 
@@ -659,12 +662,13 @@
 
         function applyFreezePanels() {
             const firstRow = document.querySelector('.header-row');
+            // Remove old classes
+            document.querySelectorAll('.freeze-row, .freeze-col').forEach(el => el.classList.remove('freeze-row', 'freeze-col'));
+            
             if (sheetData.settings?.freeze) {
                 firstRow.classList.add('freeze-row');
+                document.querySelectorAll('th.row-header').forEach(th => th.classList.add('freeze-col'));
                 document.querySelectorAll('td:first-child').forEach(td => td.classList.add('freeze-col'));
-                firstRow.querySelector('th.corner').classList.add('freeze-row', 'freeze-col');
-            } else {
-                document.querySelectorAll('.freeze-row, .freeze-col').forEach(el => el.classList.remove('freeze-row', 'freeze-col'));
             }
         }
 
