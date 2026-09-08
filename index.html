@@ -17,11 +17,17 @@
             --ink2: #50545C;
             --line: #E3E5E8;
             --line2: #F0F1F3;
+            
             --accent-a11y: #D14C1E;
             --accent-design: #2563EB;
             --accent-quick: #10B981;
             --accent-sync: #8B5CF6;
-            --accent-cell: #059669; /* PosterC3ll Green */
+            --accent-cell: #059669;
+            --accent-pr3s: #F59E0B; /* Amber */
+            --accent-c4l: #06B6D4;  /* Teal */
+            --accent-f0rm: #E11D48;  /* Rose */
+            --accent-qr: #475569;    /* Slate */
+            
             --focus: #2563EB;
             --hero-glow: rgba(139, 92, 246, 0.05);
         }
@@ -48,6 +54,10 @@
             --accent-quick: #6BAE8E;
             --accent-sync: #A98BE0;
             --accent-cell: #6BAE8E;
+            --accent-pr3s: #D3A76A;
+            --accent-c4l: #6CBFCB;
+            --accent-f0rm: #C97B89;
+            --accent-qr: #7A8896;
             --hero-glow: transparent;
         }
 
@@ -198,19 +208,14 @@
 
         .card-header { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; margin-top: 20px; }
         .card-icon { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center; flex-shrink: 0; overflow: hidden; }
-        .icon-a11y, .icon-design, .icon-quick, .icon-sync, .icon-cell { background: transparent; padding: 0; }
+        .icon-a11y, .icon-design, .icon-quick, .icon-sync, .icon-cell, .icon-pr3s, .icon-c4l, .icon-f0rm, .icon-qr { background: transparent; padding: 0; }
         
         .title-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .card h2 { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.6rem; color: var(--ink); }
         .version-badge {
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: var(--ink2);
-            background: var(--line2);
-            padding: 3px 8px;
-            border-radius: 999px;
-            border: 1px solid var(--line);
-            line-height: 1;
+            font-size: 0.7rem; font-weight: 700; color: var(--ink2);
+            background: var(--line2); padding: 3px 8px; border-radius: 999px;
+            border: 1px solid var(--line); line-height: 1;
         }
 
         .tag { display: inline-block; font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; margin-bottom: 16px; width: fit-content; }
@@ -219,6 +224,10 @@
         .tag-quick { background: rgba(16, 185, 129, 0.15); color: var(--accent-quick); }
         .tag-sync { background: rgba(139, 92, 246, 0.15); color: var(--accent-sync); }
         .tag-cell { background: rgba(5, 150, 105, 0.15); color: var(--accent-cell); }
+        .tag-pr3s { background: rgba(245, 158, 11, 0.15); color: var(--accent-pr3s); }
+        .tag-c4l { background: rgba(6, 182, 212, 0.15); color: var(--accent-c4l); }
+        .tag-f0rm { background: rgba(225, 29, 72, 0.15); color: var(--accent-f0rm); }
+        .tag-qr { background: rgba(71, 85, 105, 0.15); color: var(--accent-qr); }
         
         .card p { color: var(--ink2); line-height: 1.6; margin-bottom: 24px; flex-grow: 1; font-size: 0.95rem; }
 
@@ -228,16 +237,15 @@
             padding: 16px 24px; border-radius: 12px; text-decoration: none;
             transition: background 0.2s; cursor: pointer; border: none; width: 100%;
         }
-        .btn-a11y { background: var(--accent-a11y); color: #fff; }
-        .card:hover .btn-a11y { background: #B23E17; }
-        .btn-design { background: var(--accent-design); color: #fff; }
-        .card:hover .btn-design { background: #1d4ed8; }
-        .btn-quick { background: var(--accent-quick); color: #fff; }
-        .card:hover .btn-quick { background: #0e9c6b; }
-        .btn-sync { background: var(--accent-sync); color: #fff; }
-        .card:hover .btn-sync { background: #7C3AED; }
-        .btn-cell { background: var(--accent-cell); color: #fff; }
-        .card:hover .btn-cell { background: #047857; }
+        .btn-a11y { background: var(--accent-a11y); color: #fff; } .card:hover .btn-a11y { background: #B23E17; }
+        .btn-design { background: var(--accent-design); color: #fff; } .card:hover .btn-design { background: #1d4ed8; }
+        .btn-quick { background: var(--accent-quick); color: #fff; } .card:hover .btn-quick { background: #0e9c6b; }
+        .btn-sync { background: var(--accent-sync); color: #fff; } .card:hover .btn-sync { background: #7C3AED; }
+        .btn-cell { background: var(--accent-cell); color: #fff; } .card:hover .btn-cell { background: #047857; }
+        .btn-pr3s { background: var(--accent-pr3s); color: #fff; } .card:hover .btn-pr3s { background: #D97706; }
+        .btn-c4l { background: var(--accent-c4l); color: #fff; } .card:hover .btn-c4l { background: #0891B2; }
+        .btn-f0rm { background: var(--accent-f0rm); color: #fff; } .card:hover .btn-f0rm { background: #BE123C; }
+        .btn-qr { background: var(--accent-qr); color: #fff; } .card:hover .btn-qr { background: #334155; }
 
         .quick-print-card { max-width: 100%; flex-basis: 100%; border-style: dashed; }
         .quick-print-card .card-header { margin-top: 0; }
@@ -413,213 +421,247 @@
 
     <div class="hero">
         <h1>Which tool do you need today?</h1>
-        <p>Whether you need accessible posters, rapid block-based designs, text documents, or offline spreadsheets, we have exactly what you need.</p>
+        <p>An offline-first, accessible alternative to mainstream office software. From accessible posters and rapid notices to documents, spreadsheets, and presentations—no accounts, no tracking, ever.</p>
     </div>
 
     <div class="container">
-        <!-- PosterA11y Card -->
+        <!-- 1. PosterA11y Card -->
         <div class="card" tabindex="0" role="button" onclick="openApp('postera11y.html', 'a11y')" onkeydown="if(event.key==='Enter')openApp('postera11y.html', 'a11y')">
-            <span id="resumeBadge_a11y" class="resume-badge">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                Currently Open
-            </span>
-            <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('postera11y.html');">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </button>
+            <span id="resumeBadge_a11y" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
+            <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('postera11y.html');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
             <div class="card-header">
                 <div class="card-icon icon-a11y">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-labelledby="pi-title-l pi-desc-l" focusable="false">
                       <title id="pi-title-l">PosterA11y icon (light)</title>
                       <desc id="pi-desc-l">A white poster hangs from a pink pushpin on amber strings. On the poster, a navy figure stands with open arms inside a pale blue circle, above two short grey text lines.</desc>
-                      <defs>
-                        <linearGradient id="bgGradL" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.55" stop-color="#F2F6FB"/><stop offset="1" stop-color="#E3EAF4"/></linearGradient>
-                        <radialGradient id="pinGradL" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FF9BB5"/><stop offset="1" stop-color="#E13A66"/></radialGradient>
-                        <filter id="posterShadowL" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1B2A4A" flood-opacity="0.16"/></filter>
-                        <filter id="pinShadowL" x="-60%" y="-60%" width="220%" height="220%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#1B2A4A" flood-opacity="0.25"/></filter>
-                      </defs>
+                      <defs><linearGradient id="bgGradL" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.55" stop-color="#F2F6FB"/><stop offset="1" stop-color="#E3EAF4"/></linearGradient><radialGradient id="pinGradL" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FF9BB5"/><stop offset="1" stop-color="#E13A66"/></radialGradient><filter id="posterShadowL" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1B2A4A" flood-opacity="0.16"/></filter><filter id="pinShadowL" x="-60%" y="-60%" width="220%" height="220%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#1B2A4A" flood-opacity="0.25"/></filter></defs>
                       <rect width="120" height="120" rx="26" fill="url(#bgGradL)"/>
                       <rect x="1.5" y="1.5" width="117" height="117" rx="24.5" fill="none" stroke="#1B2A4A" stroke-opacity="0.1"/>
-                      <path d="M34.3 43.3 L57.8 26.5" fill="none" stroke="#F2A93B" stroke-width="3" stroke-linecap="round"/>
-                      <path d="M85.7 43.3 L62.2 26.5" fill="none" stroke="#F2A93B" stroke-width="3" stroke-linecap="round"/>
+                      <path d="M34.3 43.3 L57.8 26.5" fill="none" stroke="#F2A93B" stroke-width="3" stroke-linecap="round"/><path d="M85.7 43.3 L62.2 26.5" fill="none" stroke="#F2A93B" stroke-width="3" stroke-linecap="round"/>
                       <rect x="32" y="41" width="56" height="64" rx="8" fill="#FFFFFF" filter="url(#posterShadowL)"/>
-                      <circle cx="34.3" cy="43.3" r="2.4" fill="url(#pinGradL)"/>
-                      <circle cx="85.7" cy="43.3" r="2.4" fill="url(#pinGradL)"/>
+                      <circle cx="34.3" cy="43.3" r="2.4" fill="url(#pinGradL)"/><circle cx="85.7" cy="43.3" r="2.4" fill="url(#pinGradL)"/>
                       <circle cx="60" cy="69" r="19" fill="#EAF1FA"/>
                       <g fill="none" stroke="#1B2A4A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M51.5 61 L60 68 L68.5 61"/><path d="M60 63.5 L60 74.5"/><path d="M54 84 L60 74.5 L66 84"/></g>
                       <circle cx="60" cy="57.5" r="5" fill="#1B2A4A"/>
-                      <rect x="40" y="91" width="40" height="4" rx="2" fill="#C5D1E5"/>
-                      <rect x="48" y="97" width="24" height="4" rx="2" fill="#C5D1E5"/>
-                      <circle cx="60" cy="21" r="6.5" fill="url(#pinGradL)" filter="url(#pinShadowL)"/>
-                      <circle cx="57.9" cy="19.1" r="1.7" fill="#FFFFFF" opacity="0.85"/>
+                      <rect x="40" y="91" width="40" height="4" rx="2" fill="#C5D1E5"/><rect x="48" y="97" width="24" height="4" rx="2" fill="#C5D1E5"/>
+                      <circle cx="60" cy="21" r="6.5" fill="url(#pinGradL)" filter="url(#pinShadowL)"/><circle cx="57.9" cy="19.1" r="1.7" fill="#FFFFFF" opacity="0.85"/>
                     </svg>
                 </div>
-                <div class="title-group">
-                    <h2>PosterA11y</h2>
-                    <span id="versionA11y" class="version-badge">v1.0</span>
-                </div>
+                <div class="title-group"><h2>PosterA11y</h2><span id="versionA11y" class="version-badge">v1.0</span></div>
             </div>
             <span class="tag tag-a11y">Best for: Easy Read & Symbols</span>
             <p>An accessibility-first poster maker. Featuring ARASAAC symbol support, high-contrast modes, dyslexia-friendly fonts, screen-reader optimization, and auto-pagination for printing. Perfect for Easy Read documents.</p>
             <button class="btn btn-a11y" onclick="event.stopPropagation(); openApp('postera11y.html', 'a11y');">Launch Accessible Maker</button>
         </div>
         
-        <!-- PosterD45h Card -->
+        <!-- 2. PosterD45h Card -->
         <div class="card" tabindex="0" role="button" onclick="openApp('posterd45h.html', 'd45h')" onkeydown="if(event.key==='Enter')openApp('posterd45h.html', 'd45h')">
-            <span id="resumeBadge_d45h" class="resume-badge">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                Currently Open
-            </span>
-            <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('posterd45h.html');">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </button>
+            <span id="resumeBadge_d45h" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
+            <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('posterd45h.html');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
             <div class="card-header">
                 <div class="card-icon icon-design">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterD45h Logo">
-                      <defs>
-                        <linearGradient id="bgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F8FAFC"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient>
-                        <radialGradient id="pinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FF8A65"/><stop offset="1" stop-color="#D14C1E"/></radialGradient>
-                        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter>
-                      </defs>
+                      <defs><linearGradient id="bgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F8FAFC"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient><radialGradient id="pinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FF8A65"/><stop offset="1" stop-color="#D14C1E"/></radialGradient><filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs>
                       <rect width="120" height="120" rx="28" fill="url(#bgGrad)"/>
                       <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
-                      <path d="M38 42 L60 24" fill="none" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/>
-                      <path d="M82 42 L60 24" fill="none" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/>
-                      <circle cx="38" cy="42" r="2.5" fill="#3B82F6"/>
-                      <circle cx="82" cy="42" r="2.5" fill="#3B82F6"/>
+                      <path d="M38 42 L60 24" fill="none" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/>
+                      <circle cx="38" cy="42" r="2.5" fill="#3B82F6"/><circle cx="82" cy="42" r="2.5" fill="#3B82F6"/>
                       <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#shadow)"/>
                       <circle cx="60" cy="62" r="16" fill="#F1F5F9"/>
                       <path d="M53 62 L58 68 L68 56" fill="none" stroke="#D14C1E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/>
-                      <rect x="48" y="94" width="24" height="5" rx="2.5" fill="#64748B"/>
-                      <circle cx="60" cy="20" r="7" fill="url(#pinGrad)" filter="url(#shadow)"/>
-                      <circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
+                      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#64748B"/>
+                      <circle cx="60" cy="20" r="7" fill="url(#pinGrad)" filter="url(#shadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
                     </svg>
                 </div>
-                <div class="title-group">
-                    <h2>PosterD45h</h2>
-                    <span id="versionD45h" class="version-badge">v1.0</span>
-                </div>
+                <div class="title-group"><h2>PosterD45h</h2><span id="versionD45h" class="version-badge">v1.0</span></div>
             </div>
             <span class="tag tag-design">Best for: Quick Notices & Menus</span>
             <p>A rapid, block-based poster designer for care homes and learning disability support. Offering visual timetables, task boards, quick templates, and layered design elements.</p>
             <button class="btn btn-design" onclick="event.stopPropagation(); openApp('posterd45h.html', 'd45h');">Launch Design Maker</button>
         </div>
 
-        <!-- Poster5ync Card -->
+        <!-- 3. Poster5ync Card -->
         <div class="card" tabindex="0" role="button" onclick="openApp('poster5ync.html', 'sync')" onkeydown="if(event.key==='Enter')openApp('poster5ync.html', 'sync')">
-            <span id="resumeBadge_sync" class="resume-badge">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                Currently Open
-            </span>
-            <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('poster5ync.html');">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </button>
+            <span id="resumeBadge_sync" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
+            <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('poster5ync.html');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
             <div class="card-header">
                 <div class="card-icon icon-sync">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="Poster5ync Logo">
-                      <defs>
-                        <linearGradient id="sbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
-                          <stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F8F8FE"/><stop offset="1" stop-color="#ECECF7"/>
-                        </linearGradient>
-                        <radialGradient id="spinGrad" cx="0.35" cy="0.3" r="0.8">
-                          <stop offset="0" stop-color="#C4B5FD"/><stop offset="1" stop-color="#8B5CF6"/>
-                        </radialGradient>
-                        <filter id="sshadow" x="-20%" y="-20%" width="140%" height="140%">
-                          <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/>
-                        </filter>
-                      </defs>
+                      <defs><linearGradient id="sbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F8F8FE"/><stop offset="1" stop-color="#ECECF7"/></linearGradient><radialGradient id="spinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#C4B5FD"/><stop offset="1" stop-color="#8B5CF6"/></radialGradient><filter id="sshadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs>
                       <rect width="120" height="120" rx="28" fill="url(#sbgGrad)"/>
                       <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
-                      <path d="M38 42 L60 24" fill="none" stroke="#8B5CF6" stroke-width="3" stroke-linecap="round"/>
-                      <path d="M82 42 L60 24" fill="none" stroke="#8B5CF6" stroke-width="3" stroke-linecap="round"/>
-                      <circle cx="38" cy="42" r="2.5" fill="#8B5CF6"/>
-                      <circle cx="82" cy="42" r="2.5" fill="#8B5CF6"/>
+                      <path d="M38 42 L60 24" fill="none" stroke="#8B5CF6" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#8B5CF6" stroke-width="3" stroke-linecap="round"/>
+                      <circle cx="38" cy="42" r="2.5" fill="#8B5CF6"/><circle cx="82" cy="42" r="2.5" fill="#8B5CF6"/>
                       <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#sshadow)"/>
                       <circle cx="60" cy="62" r="16" fill="#F3F0FF"/>
-                      <path d="M55 54 L50 58 L55 62" fill="none" stroke="#6D28D9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M50 58 A 10 10 0 0 1 60 48" fill="none" stroke="#6D28D9" stroke-width="4" stroke-linecap="round"/>
-                      <path d="M65 70 L70 66 L65 62" fill="none" stroke="#6D28D9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M70 66 A 10 10 0 0 1 60 76" fill="none" stroke="#6D28D9" stroke-width="4" stroke-linecap="round"/>
-                      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/>
-                      <rect x="48" y="94" width="24" height="5" rx="2.5" fill="#8B5CF6"/>
-                      <circle cx="60" cy="20" r="7" fill="url(#spinGrad)" filter="url(#sshadow)"/>
-                      <circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
+                      <path d="M55 54 L50 58 L55 62" fill="none" stroke="#6D28D9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M50 58 A 10 10 0 0 1 60 48" fill="none" stroke="#6D28D9" stroke-width="4" stroke-linecap="round"/>
+                      <path d="M65 70 L70 66 L65 62" fill="none" stroke="#6D28D9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M70 66 A 10 10 0 0 1 60 76" fill="none" stroke="#6D28D9" stroke-width="4" stroke-linecap="round"/>
+                      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#8B5CF6"/>
+                      <circle cx="60" cy="20" r="7" fill="url(#spinGrad)" filter="url(#sshadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
                     </svg>
                 </div>
-                <div class="title-group">
-                    <h2>Poster5ync</h2>
-                    <span id="versionSync" class="version-badge">v1.0</span>
-                </div>
+                <div class="title-group"><h2>Poster5ync</h2><span id="versionSync" class="version-badge">v1.0</span></div>
             </div>
             <span class="tag tag-sync">Best for: Notes & Documents</span>
             <p>A lightweight, offline-first text editor and note-taking tool. Write, draft, and collaborate on documents locally—no accounts, no cloud servers, and no internet connection required.</p>
             <button class="btn btn-sync" onclick="event.stopPropagation(); openApp('poster5ync.html', 'sync');">Launch Text Editor</button>
         </div>
 
-        <!-- PosterC3ll Card -->
+        <!-- 4. PosterC3ll Card -->
         <div class="card" tabindex="0" role="button" onclick="openApp('posterc3ll.html', 'cell')" onkeydown="if(event.key==='Enter')openApp('posterc3ll.html', 'cell')">
-            <span id="resumeBadge_cell" class="resume-badge">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                Currently Open
-            </span>
-            <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('posterc3ll.html');">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </button>
+            <span id="resumeBadge_cell" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
+            <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('posterc3ll.html');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
             <div class="card-header">
                 <div class="card-icon icon-cell">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterC3ll Logo">
-                      <defs>
-                        <linearGradient id="cbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
-                          <stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F0FDF4"/><stop offset="1" stop-color="#DCFCE7"/>
-                        </linearGradient>
-                        <radialGradient id="cpinGrad" cx="0.35" cy="0.3" r="0.8">
-                          <stop offset="0" stop-color="#6EE7B7"/><stop offset="1" stop-color="#10B981"/>
-                        </radialGradient>
-                        <filter id="cshadow" x="-20%" y="-20%" width="140%" height="140%">
-                          <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/>
-                        </filter>
-                      </defs>
+                      <defs><linearGradient id="cbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F0FDF4"/><stop offset="1" stop-color="#DCFCE7"/></linearGradient><radialGradient id="cpinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#6EE7B7"/><stop offset="1" stop-color="#10B981"/></radialGradient><filter id="cshadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs>
                       <rect width="120" height="120" rx="28" fill="url(#cbgGrad)"/>
                       <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
-                      <path d="M38 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>
-                      <path d="M82 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>
-                      <circle cx="38" cy="42" r="2.5" fill="#10B981"/>
-                      <circle cx="82" cy="42" r="2.5" fill="#10B981"/>
+                      <path d="M38 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>
+                      <circle cx="38" cy="42" r="2.5" fill="#10B981"/><circle cx="82" cy="42" r="2.5" fill="#10B981"/>
                       <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#cshadow)"/>
                       <circle cx="60" cy="62" r="16" fill="#ECFDF5"/>
-                      <g fill="none" stroke="#047857" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="51" y="53" width="18" height="18" rx="2"/>
-                        <line x1="51" y1="59" x2="69" y2="59"/>
-                        <line x1="51" y1="65" x2="69" y2="65"/>
-                        <line x1="57" y1="53" x2="57" y2="71"/>
-                        <line x1="63" y1="53" x2="63" y2="71"/>
-                      </g>
+                      <g fill="none" stroke="#047857" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="51" y="53" width="18" height="18" rx="2"/><line x1="51" y1="59" x2="69" y2="59"/><line x1="51" y1="65" x2="69" y2="65"/><line x1="57" y1="53" x2="57" y2="71"/><line x1="63" y1="53" x2="63" y2="71"/></g>
                       <rect x="57" y="59" width="6" height="6" fill="#047857" stroke="none"/>
-                      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/>
-                      <rect x="48" y="94" width="24" height="5" rx="2.5" fill="#10B981"/>
-                      <circle cx="60" cy="20" r="7" fill="url(#cpinGrad)" filter="url(#cshadow)"/>
-                      <circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
+                      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#10B981"/>
+                      <circle cx="60" cy="20" r="7" fill="url(#cpinGrad)" filter="url(#cshadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
                     </svg>
                 </div>
-                <div class="title-group">
-                    <h2>PosterC3ll</h2>
-                    <span id="versionCell" class="version-badge">v1.0</span>
-                </div>
+                <div class="title-group"><h2>PosterC3ll</h2><span id="versionCell" class="version-badge">v1.0</span></div>
             </div>
             <span class="tag tag-cell">Best for: Data & Spreadsheets</span>
             <p>An offline-first spreadsheet tool. Create grids, track data, and calculate totals locally—no accounts, no cloud servers, and no internet connection required.</p>
             <button class="btn btn-cell" onclick="event.stopPropagation(); openApp('posterc3ll.html', 'cell');">Launch Spreadsheet Editor</button>
         </div>
 
-        <!-- Quick Print Blank Sheet Card -->
+        <!-- 5. PosterPr3s Card -->
+        <div class="card" tabindex="0" role="button" onclick="openApp('posterpr3s.html', 'pr3s')" onkeydown="if(event.key==='Enter')openApp('posterpr3s.html', 'pr3s')">
+            <span id="resumeBadge_pr3s" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
+            <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('posterpr3s.html');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
+            <div class="card-header">
+                <div class="card-icon icon-pr3s">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterPr3s Logo">
+                      <defs><linearGradient id="p3bgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#FFFBEB"/><stop offset="1" stop-color="#FEF3C7"/></linearGradient><radialGradient id="p3pinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FCD34D"/><stop offset="1" stop-color="#F59E0B"/></radialGradient><filter id="p3shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs>
+                      <rect width="120" height="120" rx="28" fill="url(#p3bgGrad)"/>
+                      <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
+                      <path d="M38 42 L60 24" fill="none" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/>
+                      <circle cx="38" cy="42" r="2.5" fill="#F59E0B"/><circle cx="82" cy="42" r="2.5" fill="#F59E0B"/>
+                      <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#p3shadow)"/>
+                      <circle cx="60" cy="62" r="16" fill="#FFF7E6"/>
+                      <!-- Presentation Play Icon -->
+                      <path d="M56 56 L68 62 L56 68 Z" fill="#D97706" stroke="none"/>
+                      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#F59E0B"/>
+                      <circle cx="60" cy="20" r="7" fill="url(#p3pinGrad)" filter="url(#p3shadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
+                    </svg>
+                </div>
+                <div class="title-group"><h2>PosterPr3s</h2><span id="versionPr3s" class="version-badge">v1.0</span></div>
+            </div>
+            <span class="tag tag-pr3s">Best for: Slides & Talks</span>
+            <p>A simple, offline presentation maker. Build multi-slide decks for training, visual aids, or meetings. No bloat, no logins—just clean, accessible slides.</p>
+            <button class="btn btn-pr3s" onclick="event.stopPropagation(); openApp('posterpr3s.html', 'pr3s');">Launch Presentation Maker</button>
+        </div>
+
+        <!-- 6. PosterC4l Card -->
+        <div class="card" tabindex="0" role="button" onclick="openApp('posterc4l.html', 'c4l')" onkeydown="if(event.key==='Enter')openApp('posterc4l.html', 'c4l')">
+            <span id="resumeBadge_c4l" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
+            <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('posterc4l.html');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
+            <div class="card-header">
+                <div class="card-icon icon-c4l">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterC4l Logo">
+                      <defs><linearGradient id="c4bgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#ECFEFF"/><stop offset="1" stop-color="#CFFAFE"/></linearGradient><radialGradient id="c4pinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#67E8F9"/><stop offset="1" stop-color="#06B6D4"/></radialGradient><filter id="c4shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs>
+                      <rect width="120" height="120" rx="28" fill="url(#c4bgGrad)"/>
+                      <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
+                      <path d="M38 42 L60 24" fill="none" stroke="#06B6D4" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#06B6D4" stroke-width="3" stroke-linecap="round"/>
+                      <circle cx="38" cy="42" r="2.5" fill="#06B6D4"/><circle cx="82" cy="42" r="2.5" fill="#06B6D4"/>
+                      <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#c4shadow)"/>
+                      <circle cx="60" cy="62" r="16" fill="#ECFFFF"/>
+                      <!-- Calendar Icon -->
+                      <rect x="51" y="52" width="18" height="16" rx="2" fill="none" stroke="#0E7490" stroke-width="2.5"/>
+                      <line x1="51" y1="57" x2="69" y2="57" stroke="#0E7490" stroke-width="2.5"/>
+                      <rect x="56" y="61" width="4" height="4" fill="#0E7490" rx="1"/>
+                      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#06B6D4"/>
+                      <circle cx="60" cy="20" r="7" fill="url(#c4pinGrad)" filter="url(#c4shadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
+                    </svg>
+                </div>
+                <div class="title-group"><h2>PosterC4l</h2><span id="versionC4l" class="version-badge">v1.0</span></div>
+            </div>
+            <span class="tag tag-c4l">Best for: Schedules & Visual Routines</span>
+            <p>An accessible, visual calendar generator. Create high-contrast monthly schedules, printable activity charts, and Easy Read routine templates for care homes.</p>
+            <button class="btn btn-c4l" onclick="event.stopPropagation(); openApp('posterc4l.html', 'c4l');">Launch Calendar Maker</button>
+        </div>
+
+        <!-- 7. PosterF0rm Card -->
+        <div class="card" tabindex="0" role="button" onclick="openApp('posterf0rm.html', 'f0rm')" onkeydown="if(event.key==='Enter')openApp('posterf0rm.html', 'f0rm')">
+            <span id="resumeBadge_f0rm" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
+            <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('posterf0rm.html');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
+            <div class="card-header">
+                <div class="card-icon icon-f0rm">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterF0rm Logo">
+                      <defs><linearGradient id="f0bgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#FFF1F2"/><stop offset="1" stop-color="#FFE4E6"/></linearGradient><radialGradient id="f0pinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FDA4AF"/><stop offset="1" stop-color="#E11D48"/></radialGradient><filter id="f0shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs>
+                      <rect width="120" height="120" rx="28" fill="url(#f0bgGrad)"/>
+                      <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
+                      <path d="M38 42 L60 24" fill="none" stroke="#E11D48" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#E11D48" stroke-width="3" stroke-linecap="round"/>
+                      <circle cx="38" cy="42" r="2.5" fill="#E11D48"/><circle cx="82" cy="42" r="2.5" fill="#E11D48"/>
+                      <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#f0shadow)"/>
+                      <circle cx="60" cy="62" r="16" fill="#FFF5F7"/>
+                      <!-- Form/Checklist Icon -->
+                      <rect x="51" y="52" width="6" height="6" rx="1" fill="none" stroke="#9F1239" stroke-width="2"/>
+                      <polyline points="52 55 54 57 56 54" fill="none" stroke="#9F1239" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <line x1="60" y1="55" x2="69" y2="55" stroke="#9F1239" stroke-width="2" stroke-linecap="round"/>
+                      <rect x="51" y="62" width="6" height="6" rx="1" fill="none" stroke="#9F1239" stroke-width="2"/>
+                      <line x1="60" y1="65" x2="65" y2="65" stroke="#9F1239" stroke-width="2" stroke-linecap="round"/>
+                      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#E11D48"/>
+                      <circle cx="60" cy="20" r="7" fill="url(#f0pinGrad)" filter="url(#f0shadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
+                    </svg>
+                </div>
+                <div class="title-group"><h2>PosterF0rm</h2><span id="versionF0rm" class="version-badge">v1.0</span></div>
+            </div>
+            <span class="tag tag-f0rm">Best for: Surveys & Intake</span>
+            <p>An offline-first form builder. Create accessible checklists, intake forms, and printable surveys. Export as standalone offline HTML or print directly.</p>
+            <button class="btn btn-f0rm" onclick="event.stopPropagation(); openApp('posterf0rm.html', 'f0rm');">Launch Form Builder</button>
+        </div>
+
+        <!-- 8. PosterQR Card -->
+        <div class="card" tabindex="0" role="button" onclick="openApp('posterqr.html', 'qr')" onkeydown="if(event.key==='Enter')openApp('posterqr.html', 'qr')">
+            <span id="resumeBadge_qr" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
+            <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('posterqr.html');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
+            <div class="card-header">
+                <div class="card-icon icon-qr">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterQR Logo">
+                      <defs><linearGradient id="qrbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F8FAFC"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient><radialGradient id="qrpinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#94A3B8"/><stop offset="1" stop-color="#475569"/></radialGradient><filter id="qrshadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs>
+                      <rect width="120" height="120" rx="28" fill="url(#qrbgGrad)"/>
+                      <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
+                      <path d="M38 42 L60 24" fill="none" stroke="#475569" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#475569" stroke-width="3" stroke-linecap="round"/>
+                      <circle cx="38" cy="42" r="2.5" fill="#475569"/><circle cx="82" cy="42" r="2.5" fill="#475569"/>
+                      <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#qrshadow)"/>
+                      <circle cx="60" cy="62" r="16" fill="#F8FAFC"/>
+                      <!-- QR Code Icon -->
+                      <rect x="50" y="52" width="8" height="8" rx="1" fill="none" stroke="#0F172A" stroke-width="2"/>
+                      <rect x="52" y="54" width="4" height="4" fill="#0F172A"/>
+                      <rect x="62" y="52" width="8" height="8" rx="1" fill="none" stroke="#0F172A" stroke-width="2"/>
+                      <rect x="64" y="54" width="4" height="4" fill="#0F172A"/>
+                      <rect x="50" y="64" width="8" height="8" rx="1" fill="none" stroke="#0F172A" stroke-width="2"/>
+                      <rect x="52" y="66" width="4" height="4" fill="#0F172A"/>
+                      <rect x="62" y="62" width="4" height="4" fill="#0F172A"/>
+                      <rect x="64" y="68" width="4" height="4" fill="#0F172A"/>
+                      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#475569"/>
+                      <circle cx="60" cy="20" r="7" fill="url(#qrpinGrad)" filter="url(#qrshadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
+                    </svg>
+                </div>
+                <div class="title-group"><h2>PosterQR</h2><span id="versionQr" class="version-badge">v1.0</span></div>
+            </div>
+            <span class="tag tag-qr">Best for: Links & Signage</span>
+            <p>A utility tool to bridge physical and digital. Paste a link to instantly generate a high-contrast, accessible QR code poster for care home signage and notices.</p>
+            <button class="btn btn-qr" onclick="event.stopPropagation(); openApp('posterqr.html', 'qr');">Launch QR Generator</button>
+        </div>
+
+        <!-- 9. Quick Print Card -->
         <div class="card quick-print-card" tabindex="0" role="button" onclick="quickPrintBlank()" onkeydown="if(event.key==='Enter')quickPrintBlank()">
             <div class="card-header">
                 <div class="card-icon icon-quick">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent-quick)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
                 </div>
-                <div class="title-group">
-                    <h2>Quick Print Blank Template</h2>
-                </div>
+                <div class="title-group"><h2>Quick Print Blank Template</h2></div>
             </div>
             <span class="tag tag-quick">Best for: Handwritten Rush Notices</span>
             <p>Need to handwrite a notice right now? Click here to instantly print a beautifully structured A4 worksheet with handwriting guidelines, title boxes, and image areas. No designer needed.</p>
@@ -629,11 +671,15 @@
 
     <div class="kb-hint">
         <span>Pro Tip:</span>
-        <span><kbd>1</kbd> PosterA11y</span>
-        <span><kbd>2</kbd> PosterD45h</span>
-        <span><kbd>3</kbd> Poster5ync</span>
-        <span><kbd>4</kbd> PosterC3ll</span>
-        <span><kbd>5</kbd> Quick Print</span>
+        <span><kbd>1</kbd> A11y</span>
+        <span><kbd>2</kbd> D45h</span>
+        <span><kbd>3</kbd> 5ync</span>
+        <span><kbd>4</kbd> C3ll</span>
+        <span><kbd>5</kbd> Pr3s</span>
+        <span><kbd>6</kbd> C4l</span>
+        <span><kbd>7</kbd> F0rm</span>
+        <span><kbd>8</kbd> QR</span>
+        <span><kbd>9</kbd> Quick Print</span>
     </div>
 
     <footer>
@@ -661,24 +707,25 @@
         <div class="print-footer"></div>
     </div>
 
-    <!-- First Time Welcome Modal -->
+    <!-- Welcome Modal -->
     <div id="welcomeOverlay" class="modal-overlay" onclick="closeModal(event, 'welcomeOverlay')">
         <div class="modal-box" style="text-align: center;" onclick="event.stopPropagation()">
             <button class="modal-close" onclick="closeModal(false, 'welcomeOverlay')">&times;</button>
             <div style="display: flex; justify-content: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D14C1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#D14C1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
             </div>
             <h2 style="justify-content: center;">Welcome to Poster Suite! 👋</h2>
-            <p>Your home for creating accessible posters, drafting documents, and managing data. Whether you are making pictogram documents, quick care home notices, or offline spreadsheets, we have a tool tailored for you.</p>
+            <p>Your offline-first, accessible alternative to mainstream office software. Whether you need accessible posters, rapid notices, text documents, spreadsheets, or presentations, we have a tool tailored for you.</p>
             <p style="font-size: 0.9rem; color: var(--ink2);">Tip: If you find bright screens overwhelming, try our Sensory-Friendly "Calm Mode" in the top right corner!</p>
             <button class="btn btn-sync" style="margin-top: 10px;" onclick="closeModal(false, 'welcomeOverlay')">Get Started</button>
         </div>
     </div>
 
-    <!-- Accessibility Statement Modal -->
+    <!-- Accessibility Modal -->
     <div id="accessibilityOverlay" class="modal-overlay" onclick="closeModal(event, 'accessibilityOverlay')">
         <div class="modal-box" onclick="event.stopPropagation()">
             <button class="modal-close" onclick="closeModal(false, 'accessibilityOverlay')">&times;</button>
@@ -730,19 +777,19 @@
             <h2>What's New? 🚀</h2>
             <p>Here are the latest updates and improvements to Poster Suite:</p>
             <ul>
-                <li><b>Hub Launch:</b> Welcome to the new Poster Suite Hub! You can now access all tools from one place.</li>
-                <li><b>PosterC3ll (v1.0):</b> Added an offline-first spreadsheet editor for data and tables!</li>
-                <li><b>Poster5ync (v1.0):</b> Added an offline-first text editor and note-taking tool!</li>
-                <li><b>Theme Sync:</b> Your Dark Mode and Calm Mode preferences now carry over into the apps automatically.</li>
-                <li><b>Dark & Calm Modes:</b> The Hub now supports Dark Mode and a Sensory-Friendly Calm Mode.</li>
-                <li><b>Quick Print:</b> Instantly print a blank A4 handwriting template with logos.</li>
-                <li><b>Keyboard Shortcuts:</b> Press 1, 2, 3, 4, or 5 to launch tools instantly.</li>
+                <li><b>The Mega Suite Update:</b> We've added 4 brand new tools to the Suite!</li>
+                <li><b>PosterPr3s (v1.0):</b> An offline-first presentation maker.</li>
+                <li><b>PosterC4l (v1.0):</b> A visual calendar and schedule generator.</li>
+                <li><b>PosterF0rm (v1.0):</b> An accessible, offline form builder.</li>
+                <li><b>PosterQR (v1.0):</b> An instant, high-contrast QR code generator.</li>
+                <li><b>Theme Sync:</b> Dark Mode and Calm Mode now carry over into the apps automatically.</li>
+                <li><b>Keyboard Shortcuts:</b> Press 1 through 9 to launch tools instantly.</li>
             </ul>
             <button class="btn btn-sync" style="margin-top: 10px;" onclick="closeModal(false, 'whatsNewOverlay')">Close</button>
         </div>
     </div>
 
-    <!-- Full Screen Iframe Overlay -->
+    <!-- App Overlay -->
     <div id="appOverlay" class="app-overlay">
         <div id="loader" class="loader"></div>
         <button class="close-btn" onclick="closeApp()">
@@ -752,7 +799,7 @@
         <iframe id="appFrame" src=""></iframe>
     </div>
 
-    <!-- Toast Notification -->
+    <!-- Toast -->
     <div id="toast" class="toast">Link copied to clipboard!</div>
 
     <script>
@@ -763,20 +810,14 @@
 
         function getAppUrl(url) {
             const params = new URLSearchParams();
-            if (document.body.classList.contains('dark-mode')) {
-                params.append('theme', 'dark');
-            }
-            if (document.body.classList.contains('calm-mode')) {
-                params.append('calm', 'true');
-            }
+            if (document.body.classList.contains('dark-mode')) params.append('theme', 'dark');
+            if (document.body.classList.contains('calm-mode')) params.append('calm', 'true');
             const queryString = params.toString();
             return queryString ? `${url}?${queryString}` : url;
         }
 
         function openApp(url, appId) {
             const finalUrl = getAppUrl(url);
-            
-            // If opening a different app, or same app but theme settings changed, reload iframe
             if (currentApp !== finalUrl) {
                 loader.style.display = 'block';
                 appFrame.src = finalUrl;
@@ -787,34 +828,27 @@
                 if (appId === 'd45h') document.getElementById('resumeBadge_d45h').style.display = 'flex';
                 if (appId === 'sync') document.getElementById('resumeBadge_sync').style.display = 'flex';
                 if (appId === 'cell') document.getElementById('resumeBadge_cell').style.display = 'flex';
+                if (appId === 'pr3s') document.getElementById('resumeBadge_pr3s').style.display = 'flex';
+                if (appId === 'c4l') document.getElementById('resumeBadge_c4l').style.display = 'flex';
+                if (appId === 'f0rm') document.getElementById('resumeBadge_f0rm').style.display = 'flex';
+                if (appId === 'qr') document.getElementById('resumeBadge_qr').style.display = 'flex';
             }
             
             document.getElementById('appOverlay').style.display = 'block';
             document.body.style.overflow = 'hidden';
         }
 
-        function popOutApp(url) {
-            window.open(getAppUrl(url), '_blank');
-        }
-
-        appFrame.onload = function() {
-            loader.style.display = 'none';
-        };
-        
+        function popOutApp(url) { window.open(getAppUrl(url), '_blank'); }
+        appFrame.onload = function() { loader.style.display = 'none'; };
         function closeApp() {
             document.getElementById('appOverlay').style.display = 'none';
             document.body.style.overflow = 'auto';
         }
-
-        function quickPrintBlank() {
-            window.print();
-        }
-
+        function quickPrintBlank() { window.print(); }
         function openModal(id) {
             document.getElementById(id).classList.add('active');
             document.body.style.overflow = 'hidden';
         }
-
         function closeModal(event, id) {
             if (!event || event.target.id === id) {
                 document.getElementById(id).classList.remove('active');
@@ -829,7 +863,6 @@
                     document.body.style.overflow = 'auto';
                 });
             }
-
             const isTyping = e.target.matches('input, textarea, [contenteditable="true"]');
             const modalOpen = document.querySelector('.modal-overlay.active');
             if (isTyping || modalOpen) return;
@@ -838,10 +871,14 @@
             if (e.key === '2') openApp('posterd45h.html', 'd45h');
             if (e.key === '3') openApp('poster5ync.html', 'sync');
             if (e.key === '4') openApp('posterc3ll.html', 'cell');
-            if (e.key === '5') quickPrintBlank();
+            if (e.key === '5') openApp('posterpr3s.html', 'pr3s');
+            if (e.key === '6') openApp('posterc4l.html', 'c4l');
+            if (e.key === '7') openApp('posterf0rm.html', 'f0rm');
+            if (e.key === '8') openApp('posterqr.html', 'qr');
+            if (e.key === '9') quickPrintBlank();
         });
 
-        const CURRENT_VERSION = '1.4'; // Bumped version for PosterC3ll addition
+        const CURRENT_VERSION = '2.0'; // Major update version!
         function openWhatsNew() {
             openModal('whatsNewOverlay');
             localStorage.setItem('postersuite-seen-version', CURRENT_VERSION);
@@ -852,21 +889,12 @@
         }
 
         async function shareSuite() {
-            const shareData = {
-                title: 'Poster Suite',
-                text: 'Check out these free, accessible poster making tools!',
-                url: window.location.href
-            };
+            const shareData = { title: 'Poster Suite', text: 'Check out these free, accessible poster making tools!', url: window.location.href };
             try {
-                if (navigator.share) {
-                    await navigator.share(shareData);
-                } else {
-                    await navigator.clipboard.writeText(window.location.href);
-                    showToast();
-                }
+                if (navigator.share) await navigator.share(shareData);
+                else { await navigator.clipboard.writeText(window.location.href); showToast(); }
             } catch(err) { console.log("Share cancelled or failed"); }
         }
-
         function showToast() {
             const toast = document.getElementById("toast");
             toast.classList.add("show");
@@ -879,31 +907,15 @@
         const moonIcon = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
 
         function applyTheme(isDark) {
-            if(isDark) {
-                document.body.classList.add('dark-mode');
-                themeIcon.innerHTML = sunIcon;
-                themeToggleBtn.classList.add('active');
-                localStorage.setItem('postersuite-theme', 'dark');
-            } else {
-                document.body.classList.remove('dark-mode');
-                themeIcon.innerHTML = moonIcon;
-                themeToggleBtn.classList.remove('active');
-                localStorage.setItem('postersuite-theme', 'light');
-            }
+            if(isDark) { document.body.classList.add('dark-mode'); themeIcon.innerHTML = sunIcon; themeToggleBtn.classList.add('active'); localStorage.setItem('postersuite-theme', 'dark'); }
+            else { document.body.classList.remove('dark-mode'); themeIcon.innerHTML = moonIcon; themeToggleBtn.classList.remove('active'); localStorage.setItem('postersuite-theme', 'light'); }
         }
         function toggleTheme() { applyTheme(!document.body.classList.contains('dark-mode')); }
 
         const calmToggleBtn = document.getElementById('calmToggle');
         function applyCalmMode(isCalm) {
-            if(isCalm) {
-                document.body.classList.add('calm-mode');
-                calmToggleBtn.classList.add('active');
-                localStorage.setItem('postersuite-calm', 'true');
-            } else {
-                document.body.classList.remove('calm-mode');
-                calmToggleBtn.classList.remove('active');
-                localStorage.setItem('postersuite-calm', 'false');
-            }
+            if(isCalm) { document.body.classList.add('calm-mode'); calmToggleBtn.classList.add('active'); localStorage.setItem('postersuite-calm', 'true'); }
+            else { document.body.classList.remove('calm-mode'); calmToggleBtn.classList.remove('active'); localStorage.setItem('postersuite-calm', 'false'); }
         }
         function toggleCalmMode() { applyCalmMode(!document.body.classList.contains('calm-mode')); }
 
@@ -922,25 +934,23 @@
         // --- Auto-Fetch App Versions ---
         async function fetchAppVersions() {
             try {
-                const resA11y = await fetch('postera11y.html?v=' + Date.now()); 
-                const textA11y = await resA11y.text();
-                const matchA11y = textA11y.match(/<meta name="version" content="([^"]+)">/);
-                if (matchA11y) document.getElementById('versionA11y').textContent = `v${matchA11y[1]}`;
-
-                const resD45h = await fetch('posterd45h.html?v=' + Date.now()); 
-                const textD45h = await resD45h.text();
-                const matchD45h = textD45h.match(/<meta name="version" content="([^"]+)">/);
-                if (matchD45h) document.getElementById('versionD45h').textContent = `v${matchD45h[1]}`;
+                const fetchMap = [
+                    { url: 'postera11y.html', id: 'versionA11y' },
+                    { url: 'posterd45h.html', id: 'versionD45h' },
+                    { url: 'poster5ync.html', id: 'versionSync' },
+                    { url: 'posterc3ll.html', id: 'versionCell' },
+                    { url: 'posterpr3s.html', id: 'versionPr3s' },
+                    { url: 'posterc4l.html', id: 'versionC4l' },
+                    { url: 'posterf0rm.html', id: 'versionF0rm' },
+                    { url: 'posterqr.html', id: 'versionQr' }
+                ];
                 
-                const resSync = await fetch('poster5ync.html?v=' + Date.now()); 
-                const textSync = await resSync.text();
-                const matchSync = textSync.match(/<meta name="version" content="([^"]+)">/);
-                if (matchSync) document.getElementById('versionSync').textContent = `v${matchSync[1]}`;
-
-                const resCell = await fetch('posterc3ll.html?v=' + Date.now()); 
-                const textCell = await resCell.text();
-                const matchCell = textCell.match(/<meta name="version" content="([^"]+)">/);
-                if (matchCell) document.getElementById('versionCell').textContent = `v${matchCell[1]}`;
+                for (const item of fetchMap) {
+                    const res = await fetch(item.url + '?v=' + Date.now()); 
+                    const text = await res.text();
+                    const match = text.match(/<meta name="version" content="([^"]+)">/);
+                    if (match) document.getElementById(item.id).textContent = `v${match[1]}`;
+                }
             } catch (e) {
                 console.log("Could not fetch app versions automatically.");
             }
