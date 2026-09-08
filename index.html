@@ -17,6 +17,7 @@
             --line2: #F0F1F3;
             --accent-a11y: #D14C1E; /* PosterA11y Orange */
             --accent-design: #2563EB; /* PosterD45h Blue */
+            --accent-quick: #10B981; /* Quick Print Green */
             --focus: #2563EB;
             --hero-glow: rgba(209, 76, 30, 0.05);
         }
@@ -32,17 +33,18 @@
             --hero-glow: rgba(209, 76, 30, 0.15);
         }
 
-        /* Calm Mode Variables (Soft, muted, low-contrast) */
+        /* Calm Mode Variables */
         body.calm-mode {
-            --paper: #F7F7F2; /* Soft off-white */
+            --paper: #F7F7F2;
             --surface: #FFFFFF; 
-            --ink: #595959; /* Soft dark grey instead of harsh black */
+            --ink: #595959;
             --ink2: #8c8c8c;
             --line: #ECECE6;
             --line2: #F4F4F0;
-            --accent-a11y: #C8825E; /* Muted terracotta */
-            --accent-design: #7C9CB8; /* Muted soft blue */
-            --hero-glow: transparent; /* Remove glowing gradient */
+            --accent-a11y: #C8825E;
+            --accent-design: #7C9CB8;
+            --accent-quick: #6BAE8E;
+            --hero-glow: transparent;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Lexend', sans-serif; }
@@ -65,7 +67,7 @@
             text-shadow: none !important;
         }
         body.calm-mode .card:hover {
-            transform: none !important; /* Stop cards from lifting up */
+            transform: none !important;
         }
 
         header {
@@ -126,14 +128,9 @@
             position: relative;
         }
 
-        nav a:hover, nav button:hover {
-            color: var(--ink);
-        }
+        nav a:hover, nav button:hover { color: var(--ink); }
 
-        nav svg {
-            width: 16px;
-            height: 16px;
-        }
+        nav svg { width: 16px; height: 16px; }
 
         /* Glowing dot for What's New */
         .new-dot {
@@ -153,7 +150,7 @@
             100% { box-shadow: 0 0 0 0 rgba(209, 76, 30, 0); }
         }
 
-        /* Toggle Buttons (Dark Mode & Calm Mode) */
+        /* Toggle Buttons */
         .theme-toggle {
             background: transparent;
             border: 1px solid var(--line);
@@ -176,10 +173,7 @@
             color: var(--ink);
             border-color: var(--ink);
         }
-        .theme-toggle svg {
-            width: 18px;
-            height: 18px;
-        }
+        .theme-toggle svg { width: 18px; height: 18px; }
 
         /* Hero Section */
         .hero {
@@ -209,7 +203,7 @@
         .container {
             display: flex;
             gap: 24px;
-            padding: 0 32px 60px;
+            padding: 0 32px 20px;
             max-width: 1200px;
             margin: 0 auto;
             flex-wrap: wrap;
@@ -237,9 +231,7 @@
             box-shadow: 0 12px 24px rgba(0,0,0,0.06);
             border-color: var(--ink2);
         }
-        body.dark-mode .card:hover {
-            box-shadow: 0 12px 24px rgba(0,0,0,0.3);
-        }
+        body.dark-mode .card:hover { box-shadow: 0 12px 24px rgba(0,0,0,0.3); }
 
         .card:focus-visible {
             outline: none;
@@ -247,11 +239,50 @@
             box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
         }
 
+        /* Pop-out icon button */
+        .popout-btn {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--ink2);
+            padding: 6px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            display: grid;
+            place-items: center;
+        }
+        .popout-btn:hover {
+            background: var(--line2);
+            color: var(--ink);
+        }
+        .popout-btn svg { width: 16px; height: 16px; }
+
+        /* Currently Open Badge */
+        .resume-badge {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            background: var(--accent-quick);
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 999px;
+            display: none; /* Hidden by default */
+            align-items: center;
+            gap: 6px;
+        }
+        .resume-badge svg { width: 12px; height: 12px; }
+
         .card-header {
             display: flex;
             align-items: center;
             gap: 16px;
             margin-bottom: 12px;
+            margin-top: 20px; /* Space for popout/badge */
         }
 
         .card-icon {
@@ -264,7 +295,7 @@
             overflow: hidden;
         }
 
-        .icon-a11y, .icon-design { background: transparent; padding: 0; }
+        .icon-a11y, .icon-design, .icon-quick { background: transparent; padding: 0; }
 
         .card h2 {
             font-family: 'Bricolage Grotesque', sans-serif;
@@ -283,6 +314,7 @@
         }
         .tag-a11y { background: rgba(209, 76, 30, 0.15); color: var(--accent-a11y); }
         .tag-design { background: rgba(37, 99, 235, 0.15); color: var(--accent-design); }
+        .tag-quick { background: rgba(16, 185, 129, 0.15); color: var(--accent-quick); }
         
         .card p {
             color: var(--ink2);
@@ -314,6 +346,42 @@
         .btn-design { background: var(--accent-design); color: #fff; }
         .card:hover .btn-design { background: #1d4ed8; }
 
+        .btn-quick { background: var(--accent-quick); color: #fff; }
+        .card:hover .btn-quick { background: #0e9c6b; }
+
+        /* Full width Quick Print Card */
+        .quick-print-card {
+            max-width: 100%;
+            flex-basis: 100%;
+            border-style: dashed; /* Visually distinct from main apps */
+        }
+        .quick-print-card .card-header {
+            margin-top: 0;
+        }
+
+        /* Keyboard Hint */
+        .kb-hint {
+            text-align: center;
+            color: var(--ink2);
+            font-size: 0.85rem;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        kbd {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-bottom-width: 2px;
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--ink);
+        }
+
         /* Footer */
         footer {
             text-align: center;
@@ -324,11 +392,7 @@
             font-size: 0.9rem;
             transition: background 0.2s, border-color 0.2s;
         }
-
-        footer b {
-            color: var(--ink);
-            font-weight: 600;
-        }
+        footer b { color: var(--ink); font-weight: 600; }
 
         .trust-badge {
             display: inline-flex;
@@ -385,20 +449,9 @@
             align-items: center;
             gap: 10px;
         }
-        .modal-box p {
-            color: var(--ink2);
-            line-height: 1.6;
-            margin-bottom: 16px;
-        }
-        .modal-box ul {
-            margin-bottom: 16px;
-            padding-left: 20px;
-            color: var(--ink2);
-            line-height: 1.8;
-        }
-        .modal-box ul li b {
-            color: var(--ink);
-        }
+        .modal-box p { color: var(--ink2); line-height: 1.6; margin-bottom: 16px; }
+        .modal-box ul { margin-bottom: 16px; padding-left: 20px; color: var(--ink2); line-height: 1.8; }
+        .modal-box ul li b { color: var(--ink); }
         .modal-close {
             position: absolute;
             top: 16px;
@@ -413,10 +466,7 @@
             border-radius: 8px;
             transition: background 0.2s;
         }
-        .modal-close:hover {
-            background: var(--line2);
-            color: var(--ink);
-        }
+        .modal-close:hover { background: var(--line2); color: var(--ink); }
 
         /* Iframe Overlay */
         .app-overlay {
@@ -429,7 +479,6 @@
             z-index: 100;
             background: var(--paper);
         }
-        
         .app-overlay iframe {
             width: 100%;
             height: 100%;
@@ -457,7 +506,6 @@
             opacity: 0.75; 
             transition: opacity 0.2s ease, transform 0.2s ease;
         }
-        
         .close-btn:hover {
             opacity: 1;
             transform: translateY(-2px); 
@@ -479,23 +527,33 @@
             transition: transform 0.3s ease;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* Blank Print Area CSS */
+        #blankPrintArea {
+            display: none;
+            flex-direction: column;
+            gap: 40px;
+            padding: 40px;
+            width: 210mm;
+            min-height: 297mm;
+            background: #fff;
+        }
+        .blank-line {
+            border-bottom: 2px solid #1A1D21;
+            height: 40px;
+        }
+        @media print {
+            body * { visibility: hidden; }
+            #blankPrintArea, #blankPrintArea * { visibility: visible; }
+            #blankPrintArea { display: flex !important; position: absolute; left: 0; top: 0; }
         }
 
         @media (max-width: 600px) {
-            header {
-                padding: 12px 16px;
-            }
-            .logo span {
-                display: none; /* Hide logo text on very small screens to save space */
-            }
-            nav a, nav button {
-                font-size: 0.85rem;
-            }
-            .hero h1 {
-                font-size: 2.2rem;
-            }
+            header { padding: 12px 16px; }
+            .logo span { display: none; }
+            nav a, nav button { font-size: 0.85rem; }
+            .hero h1 { font-size: 2.2rem; }
         }
     </style>
 </head>
@@ -532,7 +590,6 @@
                 <button onclick="openModal('aboutOverlay')">About</button>
             </nav>
             <div style="display: flex; gap: 8px;">
-                <!-- Calm Mode Toggle -->
                 <button id="calmToggle" class="theme-toggle" aria-label="Toggle sensory-friendly calm mode" onclick="toggleCalmMode()">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
@@ -540,7 +597,6 @@
                         <line x1="17.5" y1="15" x2="9" y2="15"></line>
                     </svg>
                 </button>
-                <!-- Dark Mode Toggle -->
                 <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode" onclick="toggleTheme()">
                     <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
@@ -557,22 +613,25 @@
 
     <div class="container">
         <!-- PosterA11y Card -->
-        <div class="card" tabindex="0" role="button" onclick="openApp('postera11y.html')" onkeydown="if(event.key==='Enter')openApp('postera11y.html')">
+        <div class="card" tabindex="0" role="button" onclick="openApp('postera11y.html', 'a11y')" onkeydown="if(event.key==='Enter')openApp('postera11y.html', 'a11y')">
+            <span id="resumeBadge_a11y" class="resume-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Currently Open
+            </span>
+            <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); window.open('postera11y.html', '_blank');">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </button>
             <div class="card-header">
                 <div class="card-icon icon-a11y">
-                    <!-- PosterA11y SVG Logo -->
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-labelledby="pi-title-l pi-desc-l" focusable="false">
                       <title id="pi-title-l">PosterA11y icon (light)</title>
                       <desc id="pi-desc-l">A white poster hangs from a pink pushpin on amber strings. On the poster, a navy figure stands with open arms inside a pale blue circle, above two short grey text lines.</desc>
                       <defs>
                         <linearGradient id="bgGradL" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
-                          <stop offset="0" stop-color="#FFFFFF"/>
-                          <stop offset="0.55" stop-color="#F2F6FB"/>
-                          <stop offset="1" stop-color="#E3EAF4"/>
+                          <stop offset="0" stop-color="#FFFFFF"/><stop offset="0.55" stop-color="#F2F6FB"/><stop offset="1" stop-color="#E3EAF4"/>
                         </linearGradient>
                         <radialGradient id="pinGradL" cx="0.35" cy="0.3" r="0.8">
-                          <stop offset="0" stop-color="#FF9BB5"/>
-                          <stop offset="1" stop-color="#E13A66"/>
+                          <stop offset="0" stop-color="#FF9BB5"/><stop offset="1" stop-color="#E13A66"/>
                         </radialGradient>
                         <filter id="posterShadowL" x="-30%" y="-30%" width="160%" height="160%">
                           <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1B2A4A" flood-opacity="0.16"/>
@@ -590,9 +649,7 @@
                       <circle cx="85.7" cy="43.3" r="2.4" fill="url(#pinGradL)"/>
                       <circle cx="60" cy="69" r="19" fill="#EAF1FA"/>
                       <g fill="none" stroke="#1B2A4A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M51.5 61 L60 68 L68.5 61"/>
-                        <path d="M60 63.5 L60 74.5"/>
-                        <path d="M54 84 L60 74.5 L66 84"/>
+                        <path d="M51.5 61 L60 68 L68.5 61"/><path d="M60 63.5 L60 74.5"/><path d="M54 84 L60 74.5 L66 84"/>
                       </g>
                       <circle cx="60" cy="57.5" r="5" fill="#1B2A4A"/>
                       <rect x="40" y="91" width="40" height="4" rx="2" fill="#C5D1E5"/>
@@ -605,48 +662,43 @@
             </div>
             <span class="tag tag-a11y">Best for: Easy Read & Symbols</span>
             <p>An accessibility-first poster maker. Featuring ARASAAC symbol support, high-contrast modes, dyslexia-friendly fonts, screen-reader optimization, and auto-pagination for printing. Perfect for Easy Read documents.</p>
-            <button class="btn btn-a11y" onclick="event.stopPropagation(); openApp('postera11y.html');">Launch Accessible Maker</button>
+            <button class="btn btn-a11y" onclick="event.stopPropagation(); openApp('postera11y.html', 'a11y');">Launch Accessible Maker</button>
         </div>
         
         <!-- PosterD45h Card -->
-        <div class="card" tabindex="0" role="button" onclick="openApp('posterd45h.html')" onkeydown="if(event.key==='Enter')openApp('posterd45h.html')">
+        <div class="card" tabindex="0" role="button" onclick="openApp('posterd45h.html', 'd45h')" onkeydown="if(event.key==='Enter')openApp('posterd45h.html', 'd45h')">
+            <span id="resumeBadge_d45h" class="resume-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Currently Open
+            </span>
+            <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); window.open('posterd45h.html', '_blank');">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </button>
             <div class="card-header">
                 <div class="card-icon icon-design">
-                    <!-- PosterD45h SVG Logo -->
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterD45h Logo">
                       <defs>
                         <linearGradient id="bgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
-                          <stop offset="0" stop-color="#FFFFFF"/>
-                          <stop offset="0.5" stop-color="#F8FAFC"/>
-                          <stop offset="1" stop-color="#E2E8F0"/>
+                          <stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F8FAFC"/><stop offset="1" stop-color="#E2E8F0"/>
                         </linearGradient>
                         <radialGradient id="pinGrad" cx="0.35" cy="0.3" r="0.8">
-                          <stop offset="0" stop-color="#FF8A65"/>
-                          <stop offset="1" stop-color="#D14C1E"/>
+                          <stop offset="0" stop-color="#FF8A65"/><stop offset="1" stop-color="#D14C1E"/>
                         </radialGradient>
                         <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
                           <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/>
                         </filter>
                       </defs>
-                      
                       <rect width="120" height="120" rx="28" fill="url(#bgGrad)"/>
                       <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
-                      
                       <path d="M38 42 L60 24" fill="none" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/>
                       <path d="M82 42 L60 24" fill="none" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/>
-                      
                       <circle cx="38" cy="42" r="2.5" fill="#3B82F6"/>
                       <circle cx="82" cy="42" r="2.5" fill="#3B82F6"/>
-                      
                       <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#shadow)"/>
-                      
                       <circle cx="60" cy="62" r="16" fill="#F1F5F9"/>
-                      
                       <path d="M53 62 L58 68 L68 56" fill="none" stroke="#D14C1E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                      
                       <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/>
                       <rect x="48" y="94" width="24" height="5" rx="2.5" fill="#64748B"/>
-                      
                       <circle cx="60" cy="20" r="7" fill="url(#pinGrad)" filter="url(#shadow)"/>
                       <circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
                     </svg>
@@ -655,8 +707,28 @@
             </div>
             <span class="tag tag-design">Best for: Quick Notices & Menus</span>
             <p>A rapid, block-based poster designer for care homes and learning disability support. Offering visual timetables, task boards, quick templates, and layered design elements.</p>
-            <button class="btn btn-design" onclick="event.stopPropagation(); openApp('posterd45h.html');">Launch Design Maker</button>
+            <button class="btn btn-design" onclick="event.stopPropagation(); openApp('posterd45h.html', 'd45h');">Launch Design Maker</button>
         </div>
+
+        <!-- Quick Print Blank Sheet Card -->
+        <div class="card quick-print-card" tabindex="0" role="button" onclick="quickPrintBlank()" onkeydown="if(event.key==='Enter')quickPrintBlank()">
+            <div class="card-header">
+                <div class="card-icon icon-quick">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent-quick)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                </div>
+                <h2>Quick Print Blank Template</h2>
+            </div>
+            <span class="tag tag-quick">Best for: Handwritten Rush Notices</span>
+            <p>Need to handwrite a notice right now? Click here to instantly print a perfectly formatted, high-contrast A4 template with helpful guidelines. No designer needed.</p>
+            <button class="btn btn-quick" onclick="event.stopPropagation(); quickPrintBlank();">Print Blank A4 Sheet</button>
+        </div>
+    </div>
+
+    <div class="kb-hint">
+        <span>Pro Tip:</span>
+        <span><kbd>1</kbd> PosterA11y</span>
+        <span><kbd>2</kbd> PosterD45h</span>
+        <span><kbd>3</kbd> Quick Print</span>
     </div>
 
     <footer>
@@ -666,6 +738,15 @@
             No sign-up. No tracking. 100% free.
         </div>
     </footer>
+
+    <!-- Hidden Printable Area -->
+    <div id="blankPrintArea">
+        <div class="blank-line"></div><div class="blank-line"></div><div class="blank-line"></div>
+        <div class="blank-line"></div><div class="blank-line"></div><div class="blank-line"></div>
+        <div class="blank-line"></div><div class="blank-line"></div><div class="blank-line"></div>
+        <div class="blank-line"></div><div class="blank-line"></div><div class="blank-line"></div>
+        <div class="blank-line"></div><div class="blank-line"></div><div class="blank-line"></div>
+    </div>
 
     <!-- First Time Welcome Modal -->
     <div id="welcomeOverlay" class="modal-overlay" onclick="closeModal(event, 'welcomeOverlay')">
@@ -719,6 +800,8 @@
             <ul>
                 <li><b>Hub Launch:</b> Welcome to the new Poster Suite Hub! You can now access both tools from one place.</li>
                 <li><b>Dark & Calm Modes:</b> The Hub now supports Dark Mode and a Sensory-Friendly Calm Mode.</li>
+                <li><b>Quick Print:</b> Instantly print a blank A4 handwriting template.</li>
+                <li><b>Keyboard Shortcuts:</b> Press 1, 2, or 3 to launch tools instantly.</li>
                 <li><b>PosterA11y v1.2:</b> Added auto-pagination and compound word splitting.</li>
                 <li><b>PosterD45h v1.5:</b> Added new themes (Cafe, Medical) and quick-insert icons.</li>
             </ul>
@@ -739,17 +822,38 @@
     <div id="toast" class="toast">Link copied to clipboard!</div>
 
     <script>
-        // --- App Launcher Logic ---
-        function openApp(url) {
-            document.getElementById('appFrame').src = url;
+        // --- App Launcher Logic with Resume State ---
+        let currentApp = null;
+
+        function openApp(url, appId) {
+            const frame = document.getElementById('appFrame');
+            
+            // If opening a different app, update the iframe source
+            if (currentApp !== url) {
+                frame.src = url;
+                currentApp = url;
+                
+                // Hide all resume badges, then show the correct one
+                document.querySelectorAll('.resume-badge').forEach(b => b.style.display = 'none');
+                if (appId === 'a11y') document.getElementById('resumeBadge_a11y').style.display = 'flex';
+                if (appId === 'd45h') document.getElementById('resumeBadge_d45h').style.display = 'flex';
+            }
+            
+            // Show overlay (this works for both opening and resuming)
             document.getElementById('appOverlay').style.display = 'block';
             document.body.style.overflow = 'hidden';
         }
         
         function closeApp() {
-            document.getElementById('appFrame').src = '';
+            // We DON'T clear the iframe src here anymore! 
+            // This allows the user to resume exactly where they left off.
             document.getElementById('appOverlay').style.display = 'none';
             document.body.style.overflow = 'auto';
+        }
+
+        // --- Quick Print Logic ---
+        function quickPrintBlank() {
+            window.print();
         }
 
         // --- Generic Modal Logic ---
@@ -766,12 +870,23 @@
         }
 
         document.addEventListener('keydown', function(e) {
+            // Close modals on Escape
             if(e.key === "Escape") {
                 document.querySelectorAll('.modal-overlay.active').forEach(modal => {
                     modal.classList.remove('active');
                     document.body.style.overflow = 'auto';
                 });
             }
+
+            // Keyboard Shortcuts (1, 2, 3)
+            // Ignore if user is typing in an input/textarea or modal is open
+            const isTyping = e.target.matches('input, textarea, [contenteditable="true"]');
+            const modalOpen = document.querySelector('.modal-overlay.active');
+            if (isTyping || modalOpen) return;
+
+            if (e.key === '1') openApp('postera11y.html', 'a11y');
+            if (e.key === '2') openApp('posterd45h.html', 'd45h');
+            if (e.key === '3') quickPrintBlank();
         });
 
         // --- What's New Logic ---
@@ -781,7 +896,6 @@
             localStorage.setItem('postersuite-seen-version', CURRENT_VERSION);
             document.getElementById('newDot').style.display = 'none';
         }
-        // Check if user has seen the current version
         if (localStorage.getItem('postersuite-seen-version') !== CURRENT_VERSION) {
             document.getElementById('newDot').style.display = 'block';
         }
