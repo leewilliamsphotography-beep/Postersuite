@@ -3,23 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PosterC3ll - Open Source Spreadsheet</title>
+    <title>PosterC3ll - Local-First Spreadsheet</title>
     <style>
         :root {
-            --pc-bg: #F0FDF4;
-            --pc-surface: #FFFFFF;
-            --pc-primary: #10B981;
-            --pc-primary-dark: #047857;
-            --pc-border: #D1D5DB;
-            --pc-border-light: #E5E7EB;
-            --pc-text: #1A1D21;
-            --pc-text-muted: #6B7280;
-            --pc-highlight: #ECFDF5;
-            --pc-ribbon-bg: #F9FAFB;
+            --pc-bg: #F0FDF4; --pc-surface: #FFFFFF; --pc-primary: #10B981;
+            --pc-primary-dark: #047857; --pc-border: #D1D5DB; --pc-border-light: #E5E7EB;
+            --pc-text: #1A1D21; --pc-text-muted: #6B7280; --pc-highlight: #ECFDF5; --pc-ribbon-bg: #F9FAFB;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-
         body { background-color: var(--pc-bg); color: var(--pc-text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
         /* --- Navbar --- */
@@ -29,174 +20,163 @@
         .brand-name { font-size: 1.2rem; font-weight: 700; color: var(--pc-primary-dark); }
         .nav-actions { display: flex; gap: 0.5rem; }
         
-        /* --- Buttons --- */
+        /* --- Buttons & Ribbon --- */
         .btn { background-color: var(--pc-surface); color: var(--pc-text); border: 1px solid var(--pc-border); padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: all 0.15s ease; display: flex; align-items: center; gap: 0.4rem; }
         .btn:hover { background-color: var(--pc-highlight); border-color: var(--pc-primary); color: var(--pc-primary-dark); }
         .btn-primary { background-color: var(--pc-primary); color: white; border: none; }
         .btn-primary:hover { background-color: var(--pc-primary-dark); color: white; }
-        .btn-ribbon { padding: 0.3rem 0.5rem; font-size: 0.8rem; border: none; background: transparent; border-radius: 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--pc-text); }
-        .btn-ribbon:hover { background-color: var(--pc-highlight); border: 1px solid var(--pc-border-light); padding: calc(0.3rem - 1px) calc(0.5rem - 1px); /* offset for border */ }
+        .btn-ribbon { padding: 0.3rem 0.5rem; font-size: 0.8rem; border: none; background: transparent; border-radius: 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--pc-text); cursor: pointer; }
+        .btn-ribbon:hover { background-color: var(--pc-highlight); border: 1px solid var(--pc-border-light); padding: calc(0.3rem - 1px) calc(0.5rem - 1px); }
         .btn-ribbon.active { background-color: var(--pc-highlight); border: 1px solid var(--pc-primary); padding: calc(0.3rem - 1px) calc(0.5rem - 1px); }
-        .btn-ribbon i { font-size: 1.1rem; }
-        .btn-ribbon span { font-size: 0.7rem; }
-
-        /* --- Excel-like Ribbon --- */
-        .ribbon { display: flex; align-items: stretch; gap: 0; padding: 0.2rem 1rem; background-color: var(--pc-ribbon-bg); border-bottom: 1px solid var(--pc-border); overflow-x: auto; }
+        .btn-ribbon i { font-size: 1.1rem; } .btn-ribbon span { font-size: 0.7rem; }
+        .ribbon { display: flex; align-items: stretch; padding: 0.2rem 1rem; background-color: var(--pc-ribbon-bg); border-bottom: 1px solid var(--pc-border); overflow-x: auto; }
         .ribbon-group { display: flex; flex-direction: column; padding: 0.2rem 0.5rem; border-right: 1px solid var(--pc-border-light); }
         .ribbon-group-content { display: flex; gap: 0.2rem; align-items: center; flex: 1; }
         .ribbon-group-label { text-align: center; font-size: 0.65rem; color: var(--pc-text-muted); margin-top: 0.2rem; }
         .separator { width: 1px; background-color: var(--pc-border); margin: 0 0.5rem; }
 
-        /* --- Toolbar (Formula Bar) --- */
+        /* --- Toolbar & Grid --- */
         .toolbar { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 1rem; background-color: var(--pc-surface); border-bottom: 1px solid var(--pc-border); }
         .name-box { border: 1px solid var(--pc-border); padding: 0.35rem; border-radius: 4px; width: 80px; text-align: center; font-weight: bold; font-size: 0.8rem; color: var(--pc-primary-dark); background-color: var(--pc-highlight); }
         .fx-label { font-style: italic; font-weight: bold; color: var(--pc-text-muted); font-family: serif; }
         .formula-bar { flex: 1; border: 1px solid var(--pc-border); padding: 0.35rem; border-radius: 4px; font-family: monospace; font-size: 0.9rem; }
         .formula-bar:focus { outline: none; border-color: var(--pc-primary); box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); }
-
-        /* --- Grid Container --- */
         .grid-wrapper { flex: 1; overflow: auto; position: relative; background-color: var(--pc-surface); }
         table { border-collapse: collapse; width: max-content; table-layout: fixed; }
         th, td { border: 1px solid var(--pc-border); padding: 0; margin: 0; position: relative; }
-        
-        /* Headers */
-        th.corner { width: 40px; height: 24px; background-color: var(--pc-ribbon-bg); position: sticky; top: 0; left: 0; z-index: 3; border-right: 1px solid var(--pc-border); border-bottom: 1px solid var(--pc-border); }
-        th.col-header { min-width: 100px; width: 100px; height: 24px; background-color: var(--pc-ribbon-bg); color: var(--pc-text-muted); font-weight: 500; font-size: 0.75rem; position: sticky; top: 0; z-index: 2; text-align: center; cursor: pointer; user-select: none; }
-        th.row-header { width: 40px; background-color: var(--pc-ribbon-bg); color: var(--pc-text-muted); font-weight: 500; font-size: 0.75rem; position: sticky; left: 0; z-index: 2; text-align: center; padding: 4px 0; cursor: pointer; user-select: none; }
-
-        /* Resizing Handles */
-        .col-resizer { width: 4px; height: 100%; position: absolute; right: 0; top: 0; cursor: col-resize; z-index: 4; }
+        th.corner { width: 40px; height: 24px; background-color: var(--pc-ribbon-bg); position: sticky; top: 0; left: 0; z-index: 3; }
+        th.col-header { min-width: 100px; width: 100px; height: 24px; background-color: var(--pc-ribbon-bg); color: var(--pc-text-muted); font-weight: 500; font-size: 0.75rem; position: sticky; top: 0; z-index: 2; text-align: center; user-select: none; }
+        th.row-header { width: 40px; background-color: var(--pc-ribbon-bg); color: var(--pc-text-muted); font-weight: 500; font-size: 0.75rem; position: sticky; left: 0; z-index: 2; text-align: center; padding: 4px 0; user-select: none; }
+        .col-resizer { width: 4px; height: 100%; position: absolute; right: -2px; top: 0; cursor: col-resize; z-index: 4; }
         .col-resizer:hover, .col-resizer.active { background-color: var(--pc-primary); }
-
-        /* Cells */
         td.cell { height: 24px; background-color: var(--pc-surface); overflow: hidden; }
         .cell-content { width: 100%; height: 100%; padding: 2px 4px; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: clip; display: flex; align-items: center; }
-        
-        /* Active Cell */
         .active-cell { outline: 2px solid var(--pc-primary); outline-offset: -2px; z-index: 1; }
         .row-header.active, .col-header.active { background-color: var(--pc-primary); color: white; }
-        
-        /* Selected Range */
         .selected-range { background-color: rgba(16, 185, 129, 0.1) !important; }
-
-        /* Hidden input for typing */
         .hidden-input { position: absolute; border: none; outline: 2px solid var(--pc-primary); padding: 1px 3px; font-size: 0.85rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: none; z-index: 5; background: white; }
 
-        /* --- Context Menu --- */
+        /* --- Modals & Menus --- */
         .context-menu { position: fixed; background: white; border: 1px solid var(--pc-border); border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 100; min-width: 180px; display: none; }
         .context-menu button { display: block; width: 100%; text-align: left; padding: 0.5rem 1rem; border: none; background: transparent; font-size: 0.85rem; cursor: pointer; }
         .context-menu button:hover { background-color: var(--pc-highlight); color: var(--pc-primary-dark); }
         .context-menu hr { border: 0; border-top: 1px solid var(--pc-border-light); margin: 0.2rem 0; }
-
-        /* --- Sheet Tabs --- */
-        .sheet-tabs { display: flex; align-items: center; gap: 0.2rem; padding: 0.2rem 1rem; background-color: var(--pc-ribbon-bg); border-top: 1px solid var(--pc-border); }
-        .tab { padding: 0.3rem 0.8rem; font-size: 0.8rem; border: 1px solid transparent; border-radius: 4px 4px 0 0; cursor: pointer; color: var(--pc-text-muted); }
-        .tab.active { background-color: white; border: 1px solid var(--pc-border); border-bottom: none; color: var(--pc-primary-dark); font-weight: 600; }
-        .add-tab { cursor: pointer; color: var(--pc-primary); font-size: 1.2rem; padding: 0 0.5rem; }
-
-        /* --- Modal (Insert/Delete) --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 200; }
         .modal { background: white; padding: 1.5rem; border-radius: 8px; width: 300px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .modal h3 { margin-bottom: 1rem; color: var(--pc-primary-dark); }
         .modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem; }
         .modal label { display: flex; align-items: center; gap: 0.5rem; margin: 0.5rem 0; font-size: 0.9rem; cursor: pointer; }
+
+        /* --- Command Palette --- */
+        .palette-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: flex-start; padding-top: 15vh; z-index: 300; }
+        .palette-box { background: white; width: 500px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; }
+        .palette-input { width: 100%; padding: 1rem; border: none; border-bottom: 1px solid var(--pc-border-light); font-size: 1.1rem; outline: none; }
+        .palette-results { max-height: 300px; overflow-y: auto; }
+        .palette-item { padding: 0.8rem 1rem; cursor: pointer; display: flex; justify-content: space-between; border-bottom: 1px solid var(--pc-border-light); }
+        .palette-item:hover, .palette-item.active { background-color: var(--pc-highlight); color: var(--pc-primary-dark); }
+        .palette-item span { font-size: 0.75rem; color: var(--pc-text-muted); background: #f3f4f6; padding: 2px 6px; border-radius: 4px; }
+
+        /* --- P2P & Status --- */
+        .p2p-status { font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 4px; background: #fee2e2; color: #ef4444; font-weight: 600; }
+        .p2p-status.live { background: var(--pc-highlight); color: var(--pc-primary-dark); }
+        .sheet-tabs { display: flex; align-items: center; gap: 0.2rem; padding: 0.2rem 1rem; background-color: var(--pc-ribbon-bg); border-top: 1px solid var(--pc-border); }
+        .tab { padding: 0.3rem 0.8rem; font-size: 0.8rem; border: 1px solid transparent; border-radius: 4px 4px 0 0; cursor: pointer; color: var(--pc-text-muted); }
+        .tab.active { background-color: white; border: 1px solid var(--pc-border); border-bottom: none; color: var(--pc-primary-dark); font-weight: 600; }
+
+        /* --- Markdown / Rich Cell CSS --- */
+        .md-h1 { font-size: 1.2rem; font-weight: bold; } .md-h2 { font-size: 1rem; font-weight: bold; }
+        .md-ul { list-style: disc; margin-left: 15px; } .md-strong { font-weight: bold; } .md-em { font-style: italic; }
+        .progress-bar-track { width: 90%; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--pc-primary); border-radius: 4px; }
+        .cell-image { max-width: 100%; max-height: 100%; object-fit: contain; }
     </style>
-    <!-- Using Lucide icons for the Ribbon -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- PeerJS for Serverless P2P Collaboration -->
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 </head>
 <body>
 
-    <!-- Embedded SVG Logo Defs -->
+    <!-- SVG Defs -->
     <svg width="0" height="0" style="position:absolute;">
         <defs>
-            <linearGradient id="cbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
-                <stop offset="0" stop-color="#FFFFFF"/> <stop offset="0.5" stop-color="#F0FDF4"/> <stop offset="1" stop-color="#DCFCE7"/>
-            </linearGradient>
-            <radialGradient id="cpinGrad" cx="0.35" cy="0.3" r="0.8">
-                <stop offset="0" stop-color="#6EE7B7"/> <stop offset="1" stop-color="#10B981"/>
-            </radialGradient>
-            <filter id="cshadow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/>
-            </filter>
+            <linearGradient id="cbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F0FDF4"/><stop offset="1" stop-color="#DCFCE7"/></linearGradient>
+            <radialGradient id="cpinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#6EE7B7"/><stop offset="1" stop-color="#10B981"/></radialGradient>
+            <filter id="cshadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter>
         </defs>
     </svg>
 
-    <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-left">
-            <svg class="logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-                <rect width="120" height="120" rx="28" fill="url(#cbgGrad)"/> <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/> <path d="M38 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/> <path d="M82 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/> <circle cx="38" cy="42" r="2.5" fill="#10B981"/> <circle cx="82" cy="42" r="2.5" fill="#10B981"/> <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#cshadow)"/> <circle cx="60" cy="62" r="16" fill="#ECFDF5"/> <g fill="none" stroke="#047857" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"> <rect x="51" y="53" width="18" height="18" rx="2"/> <line x1="51" y1="59" x2="69" y2="59"/> <line x1="51" y1="65" x2="69" y2="65"/> <line x1="57" y1="53" x2="57" y2="71"/> <line x1="63" y1="53" x2="63" y2="71"/> </g> <rect x="57" y="59" width="6" height="6" fill="#047857" stroke="none"/> <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/> <rect x="48" y="94" width="24" height="5" rx="2.5" fill="#10B981"/> <circle cx="60" cy="20" r="7" fill="url(#cpinGrad)" filter="url(#cshadow)"/> <circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
-            </svg>
+            <svg class="logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="28" fill="url(#cbgGrad)"/><rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/><path d="M38 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/><circle cx="38" cy="42" r="2.5" fill="#10B981"/><circle cx="82" cy="42" r="2.5" fill="#10B981"/><rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#cshadow)"/><circle cx="60" cy="62" r="16" fill="#ECFDF5"/><g fill="none" stroke="#047857" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="51" y="53" width="18" height="18" rx="2"/><line x1="51" y1="59" x2="69" y2="59"/><line x1="51" y1="65" x2="69" y2="65"/><line x1="57" y1="53" x2="57" y2="71"/><line x1="63" y1="53" x2="63" y2="71"/></g><rect x="57" y="59" width="6" height="6" fill="#047857" stroke="none"/><rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#10B981"/><circle cx="60" cy="20" r="7" fill="url(#cpinGrad)" filter="url(#cshadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/></svg>
             <span class="brand-name">PosterC3ll</span>
+            <div class="p2p-status" id="p2pStatus">Offline</div>
         </div>
         <div class="nav-actions">
-            <button class="btn" id="btnOpen"> Open </button>
-            <button class="btn btn-primary" id="btnSave"> Save to Device </button>
-            <input type="file" id="fileInput" accept=".json" style="display:none">
+            <button class="btn" id="btnShareLive" title="Share Sheet P2P"><i data-lucide="share-2"></i> Share Live</button>
+            <button class="btn" id="btnOpen">Open</button>
+            <button class="btn btn-primary" id="btnSaveDirect" title="Save directly to hard drive (Ctrl+S)"><i data-lucide="save"></i> Save Direct</button>
+            <input type="file" id="fileInput" accept=".json,.pcl" style="display:none">
         </div>
     </nav>
 
-    <!-- Excel-like Ribbon -->
     <div class="ribbon">
-        <!-- Font Group -->
         <div class="ribbon-group">
             <div class="ribbon-group-content">
                 <button class="btn-ribbon" id="btn-bold"><i data-lucide="bold"></i><span>Bold</span></button>
                 <button class="btn-ribbon" id="btn-italic"><i data-lucide="italic"></i><span>Italic</span></button>
-                <button class="btn-ribbon" id="btn-underline"><i data-lucide="underline"></i><span>Underline</span></button>
-                <div class="separator"></div>
-                <input type="color" id="fontColor" value="#1A1D21" style="width: 30px; height: 30px; border: none; cursor: pointer;" title="Font Color">
                 <input type="color" id="bgColor" value="#FFFFFF" style="width: 30px; height: 30px; border: none; cursor: pointer;" title="Fill Color">
             </div>
             <div class="ribbon-group-label">Font</div>
         </div>
-
-        <!-- Alignment Group -->
-        <div class="ribbon-group">
-            <div class="ribbon-group-content">
-                <button class="btn-ribbon active" id="btn-align-left" data-align="left"><i data-lucide="align-left"></i><span>Left</span></button>
-                <button class="btn-ribbon" id="btn-align-center" data-align="center"><i data-lucide="align-center"></i><span>Center</span></button>
-                <button class="btn-ribbon" id="btn-align-right" data-align="right"><i data-lucide="align-right"></i><span>Right</span></button>
-            </div>
-            <div class="ribbon-group-label">Alignment</div>
-        </div>
-
-        <!-- Number Group -->
+        
         <div class="ribbon-group">
             <div class="ribbon-group-content">
                 <button class="btn-ribbon" id="btn-currency"><i data-lucide="dollar-sign"></i><span>Currency</span></button>
-                <button class="btn-ribbon" id="btn-percent"><i data-lucide="percent"></i><span>Percent</span></button>
             </div>
             <div class="ribbon-group-label">Number</div>
         </div>
-        
-        <!-- Cells Group -->
+
+        <!-- NEW: Poster Rich Cell Types -->
+        <div class="ribbon-group">
+            <div class="ribbon-group-content">
+                <button class="btn-ribbon" id="btn-markdown"><i data-lucide="file-text"></i><span>Markdown</span></button>
+                <button class="btn-ribbon" id="btn-progress"><i data-lucide="bar-chart-2"></i><span>Progress</span></button>
+                <button class="btn-ribbon" id="btn-image"><i data-lucide="image"></i><span>Image</span></button>
+            </div>
+            <div class="ribbon-group-label">Poster Types</div>
+        </div>
+
         <div class="ribbon-group">
             <div class="ribbon-group-content">
                 <button class="btn-ribbon" id="btn-insert"><i data-lucide="insert"></i><span>Insert</span></button>
                 <button class="btn-ribbon" id="btn-delete"><i data-lucide="trash-2"></i><span>Delete</span></button>
+                <button class="btn-ribbon" id="btn-cmd" title="Open Command Palette (Ctrl+K)"><i data-lucide="command"></i><span>Commands</span></button>
             </div>
-            <div class="ribbon-group-label">Cells</div>
+            <div class="ribbon-group-label">Tools</div>
         </div>
     </div>
 
-    <!-- Formula Toolbar -->
     <div class="toolbar">
         <div class="name-box" id="activeCellDisplay">A1</div>
         <span class="fx-label">fx</span>
-        <input type="text" class="formula-bar" id="formulaBar" placeholder="Enter value or formula (e.g., =A1+B1 or =SUM(A1:A3))">
+        <input type="text" class="formula-bar" id="formulaBar" placeholder="Enter value or try =FETCH('https://api.github.com/zen')">
     </div>
 
-    <!-- Grid -->
     <div class="grid-wrapper" id="gridWrapper">
         <table id="spreadsheet"></table>
         <input type="text" class="hidden-input" id="cellEditor">
     </div>
 
-    <!-- Sheet Tabs -->
     <div class="sheet-tabs">
         <div class="tab active">Sheet1</div>
-        <div class="add-tab">+</div>
+    </div>
+
+    <!-- Command Palette -->
+    <div class="palette-overlay" id="paletteOverlay">
+        <div class="palette-box">
+            <input type="text" class="palette-input" id="paletteInput" placeholder="Type a command... (e.g., Bold, Currency, Insert Row)" autofocus>
+            <div class="palette-results" id="paletteResults"></div>
+        </div>
     </div>
 
     <!-- Context Menu -->
@@ -205,7 +185,6 @@
         <button id="ctx-delete-cells">Delete Cells...</button>
         <hr>
         <button id="ctx-clear-content">Clear Contents</button>
-        <button id="ctx-format-bold">Toggle Bold</button>
     </div>
 
     <!-- Insert/Delete Modal -->
@@ -224,25 +203,40 @@
     <script>
         lucide.createIcons();
         
-        // --- Configuration & State ---
-        const ROWS = 50;
-        const COLS = 26; // A-Z
-        let sheetData = {}; // "A1": { v: "Hello", s: { b: true, i: false, u: false, bg: "#fff", c: "#000", a: "left", fmt: "currency" } }
+        // --- Core State ---
+        const ROWS = 50, COLS = 26;
+        let sheetData = {};
         let activeCell = { row: 0, col: 0 };
         let selectedRange = { startRow: 0, startCol: 0, endRow: 0, endCol: 0 };
         let isSelecting = false;
-        let currentModalAction = null; // 'insert' or 'delete'
+        let currentModalAction = null;
+        let fileHandle = null; // For File System Access API
+        let peer = null;
+        let conn = null;
+        let isApplyingRemoteData = false;
 
-        // Load from local storage
         const savedLocal = localStorage.getItem('posterC3llData');
         if (savedLocal) {
-            try { sheetData = JSON.parse(savedLocal); } catch (e) { console.error("Failed to load local data", e); }
+            try { sheetData = JSON.parse(savedLocal); } catch (e) { console.error(e); }
         }
 
-        // --- DOM Elements ---
         const table = document.getElementById('spreadsheet');
         const cellEditor = document.getElementById('cellEditor');
         const formulaBar = document.getElementById('formulaBar');
+
+        // --- Command Palette Data ---
+        const commands = [
+            { title: "Format: Bold", action: () => applyStyle('b', true), shortcut: "Ctrl+B" },
+            { title: "Format: Markdown", action: () => applyStyle('fmt', 'markdown') },
+            { title: "Format: Progress Bar", action: () => applyStyle('fmt', 'progress') },
+            { title: "Format: Image URL", action: () => applyStyle('fmt', 'image') },
+            { title: "Format: Currency", action: () => applyStyle('fmt', 'currency') },
+            { title: "Insert Row", action: () => openModal('insert', 'row') },
+            { title: "Insert Column", action: () => openModal('insert', 'col') },
+            { title: "Clear Contents", action: () => clearContents() },
+            { title: "Save Direct to Device", action: () => saveDirect(), shortcut: "Ctrl+S" },
+            { title: "Share Live (P2P)", action: () => startP2PSharing() }
+        ];
 
         // --- Grid Generation ---
         function createGrid() {
@@ -252,18 +246,14 @@
                 html += `<th class="col-header" data-col="${c}" style="min-width:${width}px; width:${width}px;">${String.fromCharCode(65 + c)}<div class="col-resizer" data-col="${c}"></div></th>`;
             }
             html += '</tr>';
-
             for (let r = 0; r < ROWS; r++) {
                 html += `<tr><th class="row-header" data-row="${r}">${r + 1}</th>`;
                 for (let c = 0; c < COLS; c++) {
                     const cellId = `${String.fromCharCode(65 + c)}${r + 1}`;
                     const cellData = sheetData[cellId] || {};
                     const styleStr = getCellStyleString(cellData.s || {});
-                    const displayValue = getCellDisplayValue(cellId, cellData);
-                    
-                    html += `<td class="cell" data-row="${r}" data-col="${c}" data-id="${cellId}">
-                                 <div class="cell-content" style="${styleStr}">${displayValue}</div>
-                             </td>`;
+                    const displayHtml = getCellDisplayHtml(cellId, cellData);
+                    html += `<td class="cell" data-row="${r}" data-col="${c}" data-id="${cellId}"><div class="cell-content" style="${styleStr}">${displayHtml}</div></td>`;
                 }
                 html += '</tr>';
             }
@@ -272,47 +262,59 @@
             updateActiveCellUI();
         }
 
-        // --- Styling & Value Resolution ---
         function getCellStyleString(s) {
             let str = '';
             if (s.b) str += 'font-weight:bold; ';
-            if (s.i) str += 'font-style:italic; ';
-            if (s.u) str += 'text-decoration:underline; ';
             if (s.bg) str += `background-color:${s.bg}; `;
-            if (s.c) str += `color:${s.c}; `;
             if (s.a) str += `justify-content:${s.a}; `;
             return str;
         }
 
-        function getCellDisplayValue(id, data) {
+        function getCellDisplayHtml(id, data) {
             if (!data.v) return '';
             let val = data.v;
-            
-            // Formula evaluation
+
             if (typeof val === 'string' && val.startsWith('=')) {
+                if (val.toUpperCase().startsWith('=FETCH(')) {
+                    handleFetchFormula(id, val);
+                    return '<i style="color:#999">Loading...</i>';
+                }
                 try {
                     val = evaluateFormula(val.substring(1));
                     if (isNaN(val)) return '';
-                    if (data.s && data.s.fmt === 'currency') return `$${parseFloat(val).toFixed(2)}`;
-                    if (data.s && data.s.fmt === 'percent') return `${(parseFloat(val) * 100).toFixed(0)}%`;
-                } catch (e) {
-                    return '#ERROR!';
-                }
+                } catch (e) { return '#ERROR!'; }
             }
-            if (data.s && data.s.fmt === 'currency' && !isNaN(val)) return `$${parseFloat(val).toFixed(2)}`;
-            if (data.s && data.s.fmt === 'percent' && !isNaN(val)) return `${(parseFloat(val) * 100).toFixed(0)}%`;
+
+            if (data.s && data.s.fmt === 'currency' && !isNaN(val)) {
+                return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+            }
+            if (data.s && data.s.fmt === 'markdown') return parseMarkdown(val);
+            if (data.s && data.s.fmt === 'progress') {
+                let num = Math.max(0, Math.min(1, parseFloat(val) || 0));
+                return `<div class="progress-bar-track"><div class="progress-bar-fill" style="width:${num*100}%"></div></div>`;
+            }
+            if (data.s && data.s.fmt === 'image') {
+                return `<img src="${val}" class="cell-image" alt="img">`;
+            }
             return val;
         }
 
-        // --- Basic Formula Engine ---
+        function parseMarkdown(text) {
+            let html = text
+                .replace(/^# (.*$)/gm, '<div class="md-h1">$1</div>')
+                .replace(/^## (.*$)/gm, '<div class="md-h2">$1</div>')
+                .replace(/^\* (.*$)/gm, '<ul class="md-ul"><li>$1</li></ul>')
+                .replace(/\*\*(.*?)\*/g, '<span class="md-strong">$1</span>')
+                .replace(/\*(.*?)\*/g, '<span class="md-em">$1</span>');
+            return html;
+        }
+
+        // --- Formulas & =FETCH() ---
         function evaluateFormula(formula) {
-            // 1. Handle SUM(A1:B2)
             formula = formula.replace(/SUM\(([^)]+)\)/gi, (match, rangeStr) => {
                 const [start, end] = rangeStr.split(':');
                 return sumRange(start, end);
             });
-
-            // 2. Replace cell references (A1, B2) with their numeric values
             formula = formula.replace(/([A-Z]+[0-9]+)/g, (match, cellId) => {
                 const cellData = sheetData[cellId.toUpperCase()];
                 if (!cellData || !cellData.v) return '0';
@@ -320,9 +322,7 @@
                 if (typeof val === 'string' && val.startsWith('=')) val = evaluateFormula(val.substring(1));
                 return parseFloat(val) || 0;
             });
-
-            // 3. Evaluate the math string safely
-            if (!/^[0-9+\-*/().\s]+$/.test(formula)) throw new Error("Invalid characters");
+            if (!/^[0-9+\-*/().\s]+$/.test(formula)) throw new Error("Invalid");
             return Function('"use strict";return (' + formula + ')')();
         }
 
@@ -330,15 +330,9 @@
             const startMatch = start.match(/([A-Z]+)([0-9]+)/);
             const endMatch = end.match(/([A-Z]+)([0-9]+)/);
             if (!startMatch || !endMatch) return 0;
-
-            const startCol = startMatch[1].charCodeAt(0) - 65;
-            const startRow = parseInt(startMatch[2]) - 1;
-            const endCol = endMatch[1].charCodeAt(0) - 65;
-            const endRow = parseInt(endMatch[2]) - 1;
-
             let sum = 0;
-            for (let r = startRow; r <= endRow; r++) {
-                for (let c = startCol; c <= endCol; c++) {
+            for (let r = startMatch[2] - 1; r <= endMatch[2] - 1; r++) {
+                for (let c = startMatch[1].charCodeAt(0) - 65; c <= endMatch[1].charCodeAt(0) - 65; c++) {
                     const id = `${String.fromCharCode(65 + c)}${r + 1}`;
                     const val = sheetData[id]?.v;
                     if (val && !isNaN(val)) sum += parseFloat(val);
@@ -347,26 +341,51 @@
             return sum;
         }
 
-        // --- Listeners & Interactions ---
+        // Live Web Data Fetch
+        async function handleFetchFormula(id, formula) {
+            try {
+                const urlMatch = formula.match(/=FETCH\(["']([^"']+)["']\)/i);
+                if (!urlMatch) return;
+                const url = urlMatch[1];
+                
+                const res = await fetch(url);
+                const text = await res.text();
+                
+                // Try to parse JSON, fallback to raw text
+                try {
+                    const json = JSON.parse(text);
+                    const keys = Object.keys(json);
+                    val = JSON.stringify(json[keys[0]] || json);
+                } catch { val = text.substring(0, 100); }
+
+                if (!sheetData[id]) sheetData[id] = { s: {} };
+                sheetData[id].v = val; // Overwrite formula with fetched value
+                saveLocally(); recalculateAndRender();
+            } catch (e) {
+                if (sheetData[id]) sheetData[id].v = "#FETCH_ERROR";
+                recalculateAndRender();
+            }
+        }
+
+        // --- Grid Interactions ---
         function attachGridListeners() {
             document.querySelectorAll('.cell').forEach(td => {
                 td.addEventListener('mousedown', (e) => {
-                    if (e.button === 2) return; // Right click handled separately
+                    if (e.button === 2) return;
                     isSelecting = true;
                     activeCell = { row: parseInt(td.dataset.row), col: parseInt(td.dataset.col) };
                     selectedRange = { ...activeCell, endRow: activeCell.row, endCol: activeCell.col };
-                    updateSelectionUI();
-                    updateActiveCellUI();
+                    updateSelectionUI(); updateActiveCellUI();
                     formulaBar.value = sheetData[td.dataset.id]?.v || '';
                 });
-                td.addEventListener('mouseenter', (e) => {
+                td.addEventListener('mouseenter', () => {
                     if (isSelecting) {
                         selectedRange.endRow = parseInt(td.dataset.row);
                         selectedRange.endCol = parseInt(td.dataset.col);
                         updateSelectionUI();
                     }
                 });
-                td.addEventListener('dblclick', (e) => startEditing(td));
+                td.addEventListener('dblclick', () => startEditing(td));
                 td.addEventListener('contextmenu', (e) => {
                     e.preventDefault();
                     activeCell = { row: parseInt(td.dataset.row), col: parseInt(td.dataset.col) };
@@ -374,38 +393,24 @@
                     showContextMenu(e.clientX, e.clientY);
                 });
             });
-
-            document.querySelectorAll('.col-resizer').forEach(handle => {
-                handle.addEventListener('mousedown', startColResize);
-            });
-
-            document.addEventListener('mouseup', () => {
-                isSelecting = false;
-                if (cellEditor.style.display !== 'none') return;
-            });
-            
+            document.querySelectorAll('.col-resizer').forEach(h => h.addEventListener('mousedown', startColResize));
+            document.addEventListener('mouseup', () => isSelecting = false);
             document.addEventListener('click', (e) => {
-                if (!e.target.closest('#contextMenu') && !e.target.closest('.cell')) {
-                    document.getElementById('contextMenu').style.display = 'none';
-                }
+                if (!e.target.closest('#contextMenu') && !e.target.closest('.cell')) document.getElementById('contextMenu').style.display = 'none';
             });
         }
 
         function startEditing(td) {
             const rect = td.getBoundingClientRect();
             const gridRect = document.getElementById('gridWrapper').getBoundingClientRect();
-            
             cellEditor.style.display = 'block';
             cellEditor.style.left = `${rect.left - gridRect.left + gridWrapper.scrollLeft}px`;
             cellEditor.style.top = `${rect.top - gridRect.top + gridWrapper.scrollTop}px`;
-            cellEditor.style.width = `${rect.width}px`;
-            cellEditor.style.height = `${rect.height}px`;
+            cellEditor.style.width = `${rect.width}px`; cellEditor.style.height = `${rect.height}px`;
             
             const cellId = td.dataset.id;
             cellEditor.value = sheetData[cellId]?.v || '';
-            cellEditor.focus();
-            cellEditor.select();
-
+            cellEditor.focus(); cellEditor.select();
             cellEditor.onblur = () => saveCellEdit(td);
             cellEditor.onkeydown = (e) => {
                 if (e.key === 'Enter') { e.preventDefault(); saveCellEdit(td); moveActiveCell(1, 0); }
@@ -420,33 +425,26 @@
             if (!sheetData[cellId]) sheetData[cellId] = { s: {} };
             sheetData[cellId].v = cellEditor.value;
             cellEditor.style.display = 'none';
-            saveLocally();
-            recalculateAndRender();
+            saveLocally(); recalculateAndRender();
         }
 
         function moveActiveCell(rOffset, cOffset) {
             activeCell.row = Math.min(ROWS - 1, Math.max(0, activeCell.row + rOffset));
             activeCell.col = Math.min(COLS - 1, Math.max(0, activeCell.col + cOffset));
             selectedRange = { ...activeCell, endRow: activeCell.row, endCol: activeCell.col };
-            updateSelectionUI();
-            updateActiveCellUI();
+            updateSelectionUI(); updateActiveCellUI();
             const id = `${String.fromCharCode(65 + activeCell.col)}${activeCell.row + 1}`;
             formulaBar.value = sheetData[id]?.v || '';
         }
 
-        // --- UI Updates ---
         function updateSelectionUI() {
             document.querySelectorAll('.selected-range').forEach(el => el.classList.remove('selected-range'));
             const minR = Math.min(selectedRange.startRow, selectedRange.endRow);
             const maxR = Math.max(selectedRange.startRow, selectedRange.endRow);
             const minC = Math.min(selectedRange.startCol, selectedRange.endCol);
             const maxC = Math.max(selectedRange.startCol, selectedRange.endCol);
-            
-            for (let r = minR; r <= maxR; r++) {
-                for (let c = minC; c <= maxC; c++) {
-                    const td = document.querySelector(`td[data-row="${r}"][data-col="${c}"]`);
-                    if (td) td.classList.add('selected-range');
-                }
+            for (let r = minR; r <= maxR; r++) for (let c = minC; c <= maxC; c++) {
+                document.querySelector(`td[data-row="${r}"][data-col="${c}"]`)?.classList.add('selected-range');
             }
         }
 
@@ -454,7 +452,6 @@
             document.querySelectorAll('.active-cell, .active').forEach(el => el.classList.remove('active-cell', 'active'));
             const cellId = `${String.fromCharCode(65 + activeCell.col)}${activeCell.row + 1}`;
             document.getElementById('activeCellDisplay').textContent = cellId;
-            
             const activeTd = document.querySelector(`td[data-row="${activeCell.row}"][data-col="${activeCell.col}"]`);
             if (activeTd) {
                 activeTd.classList.add('active-cell');
@@ -464,86 +461,98 @@
         }
 
         function recalculateAndRender() {
-            // Only update content to prevent losing scroll state
             document.querySelectorAll('.cell').forEach(td => {
                 const id = td.dataset.id;
                 const data = sheetData[id] || {};
                 const contentDiv = td.querySelector('.cell-content');
                 contentDiv.style.cssText = getCellStyleString(data.s || {});
-                contentDiv.textContent = getCellDisplayValue(id, data);
+                contentDiv.innerHTML = getCellDisplayHtml(id, data);
             });
         }
 
-        // --- Ribbon Actions ---
+        // --- Ribbon & Command Actions ---
         function applyStyle(styleKey, value) {
             const minR = Math.min(selectedRange.startRow, selectedRange.endRow);
             const maxR = Math.max(selectedRange.startRow, selectedRange.endRow);
             const minC = Math.min(selectedRange.startCol, selectedRange.endCol);
             const maxC = Math.max(selectedRange.startCol, selectedRange.endCol);
-
-            for (let r = minR; r <= maxR; r++) {
-                for (let c = minC; c <= maxC; c++) {
-                    const id = `${String.fromCharCode(65 + c)}${r + 1}`;
-                    if (!sheetData[id]) sheetData[id] = { v: '', s: {} };
-                    if (!sheetData[id].s) sheetData[id].s = {};
-                    sheetData[id].s[styleKey] = value;
-                }
+            for (let r = minR; r <= maxR; r++) for (let c = minC; c <= maxC; c++) {
+                const id = `${String.fromCharCode(65 + c)}${r + 1}`;
+                if (!sheetData[id]) sheetData[id] = { v: '', s: {} };
+                if (!sheetData[id].s) sheetData[id].s = {};
+                sheetData[id].s[styleKey] = value;
             }
-            saveLocally();
-            recalculateAndRender();
+            saveLocally(); recalculateAndRender();
         }
 
         document.getElementById('btn-bold').onclick = () => applyStyle('b', true);
-        document.getElementById('btn-italic').onclick = () => applyStyle('i', true);
-        document.getElementById('btn-underline').onclick = () => applyStyle('u', true);
-        document.getElementById('fontColor').oninput = (e) => applyStyle('c', e.target.value);
-        document.getElementById('bgColor').oninput = (e) => applyStyle('bg', e.target.value);
-        
-        document.querySelectorAll('[id^="btn-align-"]').forEach(btn => {
-            btn.onclick = () => {
-                document.querySelectorAll('[id^="btn-align-"]').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                applyStyle('a', btn.dataset.align);
-            };
-        });
-
         document.getElementById('btn-currency').onclick = () => applyStyle('fmt', 'currency');
-        document.getElementById('btn-percent').onclick = () => applyStyle('fmt', 'percent');
+        document.getElementById('btn-markdown').onclick = () => applyStyle('fmt', 'markdown');
+        document.getElementById('btn-progress').onclick = () => applyStyle('fmt', 'progress');
+        document.getElementById('btn-image').onclick = () => applyStyle('fmt', 'image');
+        document.getElementById('bgColor').oninput = (e) => applyStyle('bg', e.target.value);
 
-        // --- Context Menu ---
-        function showContextMenu(x, y) {
-            const menu = document.getElementById('contextMenu');
-            menu.style.display = 'block';
-            menu.style.left = `${x}px`;
-            menu.style.top = `${y}px`;
-        }
-        document.getElementById('ctx-clear-content').onclick = () => {
-            applyStyle('v', ''); // Hack to clear, better implementation would delete key
+        function clearContents() {
             const minR = Math.min(selectedRange.startRow, selectedRange.endRow);
             const maxR = Math.max(selectedRange.startRow, selectedRange.endRow);
             const minC = Math.min(selectedRange.startCol, selectedRange.endCol);
             const maxC = Math.max(selectedRange.startCol, selectedRange.endCol);
             for (let r = minR; r <= maxR; r++) for (let c = minC; c <= maxC; c++) {
-                delete sheetData[`${String.fromCharCode(65 + c)}${r + 1}`].v;
+                const id = `${String.fromCharCode(65 + c)}${r + 1}`;
+                if(sheetData[id]) delete sheetData[id].v;
             }
-            document.getElementById('contextMenu').style.display = 'none';
-            recalculateAndRender();
-            saveLocally();
-        };
+            recalculateAndRender(); saveLocally(); document.getElementById('contextMenu').style.display = 'none';
+        }
+        document.getElementById('ctx-clear-content').onclick = clearContents;
 
-        // --- Insert/Delete Rows & Cols ---
-        document.getElementById('btn-insert').onclick = () => openModal('insert');
-        document.getElementById('btn-delete').onclick = () => openModal('delete');
-        document.getElementById('ctx-insert-cells').onclick = () => openModal('insert');
-        document.getElementById('ctx-delete-cells').onclick = () => openModal('delete');
+        // --- Command Palette UI ---
+        const paletteOverlay = document.getElementById('paletteOverlay');
+        const paletteInput = document.getElementById('paletteInput');
+        const paletteResults = document.getElementById('paletteResults');
+        let activePaletteIndex = 0;
 
-        function openModal(action) {
+        function openPalette() { paletteOverlay.style.display = 'flex'; paletteInput.value = ''; renderPaletteResults(''); paletteInput.focus(); }
+        function closePalette() { paletteOverlay.style.display = 'none'; }
+        
+        paletteInput.addEventListener('input', () => renderPaletteResults(paletteInput.value));
+        paletteInput.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown') { e.preventDefault(); activePaletteIndex = Math.min(commands.length-1, activePaletteIndex+1); renderPaletteResults(paletteInput.value); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); activePaletteIndex = Math.max(0, activePaletteIndex-1); renderPaletteResults(paletteInput.value); }
+            else if (e.key === 'Enter') { e.preventDefault(); executePaletteCommand(paletteInput.value); }
+            else if (e.key === 'Escape') closePalette();
+        });
+
+        function renderPaletteResults(query) {
+            const filtered = commands.filter(c => c.title.toLowerCase().includes(query.toLowerCase()));
+            paletteResults.innerHTML = filtered.map((c, i) => 
+                `<div class="palette-item ${i === activePaletteIndex ? 'active' : ''}" data-title="${c.title}">
+                    <div>${c.title}</div>${c.shortcut ? `<span>${c.shortcut}</span>` : ''}
+                </div>`
+            ).join('');
+            paletteResults.querySelectorAll('.palette-item').forEach(el => {
+                el.onclick = () => executePaletteCommand(el.dataset.title);
+            });
+        }
+
+        function executePaletteCommand(title) {
+            const cmd = commands.find(c => c.title.toLowerCase() === title.toLowerCase());
+            if (cmd) { cmd.action(); closePalette(); }
+        }
+
+        // --- Context Menu & Modals ---
+        function showContextMenu(x, y) { const m = document.getElementById('contextMenu'); m.style.display = 'block'; m.style.left = `${x}px`; m.style.top = `${y}px`; }
+        document.getElementById('btn-insert').onclick = () => openModal('insert', null);
+        document.getElementById('btn-delete').onclick = () => openModal('delete', null);
+        document.getElementById('ctx-insert-cells').onclick = () => openModal('insert', null);
+        document.getElementById('ctx-delete-cells').onclick = () => openModal('delete', null);
+
+        function openModal(action, presetDir) {
             currentModalAction = action;
             document.getElementById('modalTitle').textContent = action === 'insert' ? 'Insert' : 'Delete';
+            if (presetDir) document.querySelector(`input[name="dir"][value="${presetDir}"]`).checked = true;
             document.getElementById('modalOverlay').style.display = 'flex';
             document.getElementById('contextMenu').style.display = 'none';
         }
-
         document.getElementById('modalCancel').onclick = () => document.getElementById('modalOverlay').style.display = 'none';
         document.getElementById('modalConfirm').onclick = () => {
             const dir = document.querySelector('input[name="dir"]:checked').value;
@@ -554,153 +563,170 @@
 
         function insertRowOrCol(dir) {
             if (dir === 'row') {
-                // Shift all rows down
-                for (let r = ROWS - 1; r > activeCell.row; r--) {
-                    for (let c = 0; c < COLS; c++) {
-                        const oldId = `${String.fromCharCode(65 + c)}${r}`;
-                        const newId = `${String.fromCharCode(65 + c)}${r + 1}`;
-                        if (sheetData[oldId]) sheetData[newId] = sheetData[oldId];
-                    }
+                for (let r = ROWS - 1; r > activeCell.row; r--) for (let c = 0; c < COLS; c++) {
+                    const oldId = `${String.fromCharCode(65 + c)}${r}`; const newId = `${String.fromCharCode(65 + c)}${r + 1}`;
+                    if (sheetData[oldId]) sheetData[newId] = sheetData[oldId];
                 }
-                // Clear current row
                 for (let c = 0; c < COLS; c++) delete sheetData[`${String.fromCharCode(65 + c)}${activeCell.row + 1}`];
             } else {
-                for (let c = COLS - 1; c > activeCell.col; c--) {
-                    for (let r = 0; r < ROWS; r++) {
-                        const oldId = `${String.fromCharCode(64 + c)}${r + 1}`; // 64 because 65 is A. If c=2 (C), we want B.
-                        const newId = `${String.fromCharCode(65 + c)}${r + 1}`;
-                        if (sheetData[oldId]) sheetData[newId] = sheetData[oldId];
-                    }
+                for (let c = COLS - 1; c > activeCell.col; c--) for (let r = 0; r < ROWS; r++) {
+                    const oldId = `${String.fromCharCode(64 + c)}${r + 1}`; const newId = `${String.fromCharCode(65 + c)}${r + 1}`;
+                    if (sheetData[oldId]) sheetData[newId] = sheetData[oldId];
                 }
                 for (let r = 0; r < ROWS; r++) delete sheetData[`${String.fromCharCode(65 + activeCell.col)}${r + 1}`];
             }
-            saveLocally();
-            createGrid();
+            saveLocally(); createGrid();
         }
 
         function deleteRowOrCol(dir) {
             if (dir === 'row') {
-                for (let r = activeCell.row; r < ROWS - 1; r++) {
-                    for (let c = 0; c < COLS; c++) {
-                        const nextId = `${String.fromCharCode(65 + c)}${r + 2}`;
-                        const currId = `${String.fromCharCode(65 + c)}${r + 1}`;
-                        if (sheetData[nextId]) sheetData[currId] = sheetData[nextId];
-                        else delete sheetData[currId];
-                    }
+                for (let r = activeCell.row; r < ROWS - 1; r++) for (let c = 0; c < COLS; c++) {
+                    const nextId = `${String.fromCharCode(65 + c)}${r + 2}`; const currId = `${String.fromCharCode(65 + c)}${r + 1}`;
+                    if (sheetData[nextId]) sheetData[currId] = sheetData[nextId]; else delete sheetData[currId];
                 }
             } else {
-                for (let c = activeCell.col; c < COLS - 1; c++) {
-                    for (let r = 0; r < ROWS; r++) {
-                        const nextId = `${String.fromCharCode(66 + c)}${r + 1}`; // 66 is B
-                        const currId = `${String.fromCharCode(65 + c)}${r + 1}`;
-                        if (sheetData[nextId]) sheetData[currId] = sheetData[nextId];
-                        else delete sheetData[currId];
-                    }
+                for (let c = activeCell.col; c < COLS - 1; c++) for (let r = 0; r < ROWS; r++) {
+                    const nextId = `${String.fromCharCode(66 + c)}${r + 1}`; const currId = `${String.fromCharCode(65 + c)}${r + 1}`;
+                    if (sheetData[nextId]) sheetData[currId] = sheetData[nextId]; else delete sheetData[currId];
                 }
             }
-            saveLocally();
-            createGrid();
+            saveLocally(); createGrid();
         }
 
-        // --- Column Resizing ---
         function startColResize(e) {
-            e.stopPropagation();
-            e.preventDefault();
-            const handle = e.target;
-            handle.classList.add('active');
-            const startX = e.clientX;
+            e.stopPropagation(); e.preventDefault();
+            const handle = e.target; handle.classList.add('active');
             const colIdx = parseInt(handle.dataset.col);
             const th = document.querySelector(`th.col-header[data-col="${colIdx}"]`);
             const startWidth = th.offsetWidth;
-
-            function onMouseMove(moveEvent) {
-                const newWidth = Math.max(40, startWidth + (moveEvent.clientX - startX));
-                th.style.minWidth = `${newWidth}px`;
-                th.style.width = `${newWidth}px`;
-            }
-            function onMouseUp() {
-                handle.classList.remove('active');
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('mouseup', onMouseUp);
-                if (!sheetData._colWidths) sheetData._colWidths = {};
-                sheetData._colWidths[colIdx] = th.offsetWidth;
-                saveLocally();
-            }
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mouseup', onMouseUp);
+            function move(ev) { const newWidth = Math.max(40, startWidth + (ev.clientX - e.clientX)); th.style.minWidth = `${newWidth}px`; th.style.width = `${newWidth}px`; }
+            function up() { handle.classList.remove('active'); document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); if (!sheetData._colWidths) sheetData._colWidths = {}; sheetData._colWidths[colIdx] = th.offsetWidth; saveLocally(); }
+            document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
         }
 
-        // --- Formula Bar Sync ---
+        // --- File System Access API (Direct Saving) ---
+        async function saveDirect() {
+            if (!window.showSaveFilePicker) { alert("Your browser doesn't support Direct Saving. Use Chrome/Edge."); return; }
+            try {
+                if (!fileHandle) {
+                    fileHandle = await window.showSaveFilePicker({ suggestedName: 'PosterC3ll-Sheet.pcl', types: [{ description: 'PosterC3ll File', accept: { 'application/json': ['.pcl', '.json'] } }] });
+                }
+                const writable = await fileHandle.createWritable();
+                await writable.write(JSON.stringify(sheetData));
+                await writable.close();
+            } catch (err) { console.error("Save canceled or failed", err); }
+        }
+
+        async function openDirect() {
+            if (!window.showOpenFilePicker) { document.getElementById('fileInput').click(); return; }
+            try {
+                const [handle] = await window.showOpenFilePicker({ types: [{ description: 'PosterC3ll File', accept: { 'application/json': ['.pcl', '.json'] } }] });
+                fileHandle = handle;
+                const file = await handle.getFile();
+                const text = await file.text();
+                sheetData = JSON.parse(text);
+                saveLocally(); createGrid();
+            } catch (err) { console.error("Open canceled or failed", err); }
+        }
+
+        document.getElementById('btnSaveDirect').onclick = saveDirect;
+        document.getElementById('btnOpen').onclick = openDirect;
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => { sheetData = JSON.parse(event.target.result); localStorage.setItem('posterC3llData', JSON.stringify(sheetData)); createGrid(); };
+            reader.readAsText(file); e.target.value = '';
+        });
+
+        // --- Peer-to-Peer Collaboration (Serverless) ---
+        function startP2PSharing() {
+            if (typeof Peer === 'undefined') { alert("P2P library failed to load."); return; }
+            peer = new Peer();
+            const statusEl = document.getElementById('p2pStatus');
+            
+            peer.on('open', (id) => {
+                const shareUrl = `${window.location.origin}${window.location.pathname}?peer=${id}`;
+                navigator.clipboard.writeText(shareUrl);
+                statusEl.textContent = "Live: Link Copied!";
+                statusEl.classList.add('live');
+                alert("Share link copied to clipboard!\nSend it to a friend.\nKeep this tab open.");
+            });
+
+            peer.on('connection', (c) => {
+                conn = c;
+                conn.on('open', () => { statusEl.textContent = "Live: 1 Connected"; conn.send({ type: 'full_sync', data: sheetData }); });
+                conn.on('data', handleRemoteData);
+                conn.on('close', () => { statusEl.textContent = "Live: Disconnected"; });
+            });
+        }
+
+        function joinP2PSession(hostId) {
+            peer = new Peer();
+            const statusEl = document.getElementById('p2pStatus');
+            peer.on('open', () => {
+                statusEl.textContent = "Live: Connecting...";
+                statusEl.classList.add('live');
+                conn = peer.connect(hostId);
+                conn.on('open', () => { statusEl.textContent = "Live: Connected"; });
+                conn.on('data', handleRemoteData);
+                conn.on('close', () => { statusEl.textContent = "Live: Disconnected"; });
+            });
+        }
+
+        function handleRemoteData(payload) {
+            if (payload.type === 'full_sync' || payload.type === 'partial_update') {
+                isApplyingRemoteData = true;
+                if (payload.type === 'full_sync') sheetData = payload.data;
+                else Object.assign(sheetData, payload.data);
+                recalculateAndRender();
+                isApplyingRemoteData = false;
+            }
+        }
+
+        // --- Global Keyboard ---
+        document.addEventListener('keydown', (e) => {
+            if (paletteOverlay.style.display === 'flex') return; // Palette handles its own keys
+            if (cellEditor.style.display === 'block' || document.activeElement === formulaBar) return;
+
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openPalette(); return; }
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveDirect(); return; }
+
+            if (e.key === 'ArrowRight') moveActiveCell(0, 1);
+            else if (e.key === 'ArrowLeft') moveActiveCell(0, -1);
+            else if (e.key === 'ArrowDown' || e.key === 'Enter') { e.preventDefault(); moveActiveCell(1, 0); }
+            else if (e.key === 'ArrowUp') moveActiveCell(-1, 0);
+            else if (e.key === 'Delete' || e.key === 'Backspace') clearContents();
+            else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+                const td = document.querySelector(`td[data-row="${activeCell.row}"][data-col="${activeCell.col}"]`);
+                if (td) { startEditing(td); cellEditor.value = e.key; }
+            }
+        });
+
         formulaBar.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const cellId = `${String.fromCharCode(65 + activeCell.col)}${activeCell.row + 1}`;
                 if (!sheetData[cellId]) sheetData[cellId] = { s: {} };
                 sheetData[cellId].v = formulaBar.value;
-                saveLocally();
-                recalculateAndRender();
-                moveActiveCell(1, 0);
+                saveLocally(); recalculateAndRender(); moveActiveCell(1, 0);
             }
         });
 
-        // --- Keyboard Nav ---
-        document.addEventListener('keydown', (e) => {
-            if (cellEditor.style.display === 'block' || document.activeElement === formulaBar) return;
-            if (e.key === 'ArrowRight') moveActiveCell(0, 1);
-            else if (e.key === 'ArrowLeft') moveActiveCell(0, -1);
-            else if (e.key === 'ArrowDown' || e.key === 'Enter') { e.preventDefault(); moveActiveCell(1, 0); }
-            else if (e.key === 'ArrowUp') moveActiveCell(-1, 0);
-            else if (e.key === 'Delete' || e.key === 'Backspace') {
-                document.getElementById('ctx-clear-content').click();
-            } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
-                // Start typing immediately
-                const td = document.querySelector(`td[data-row="${activeCell.row}"][data-col="${activeCell.col}"]`);
-                if (td) {
-                    startEditing(td);
-                    cellEditor.value = e.key;
-                    // place cursor at end
-                    setTimeout(() => { cellEditor.setSelectionRange(cellEditor.value.length, cellEditor.value.length); }, 0);
-                }
-            }
-        });
-
-        // --- Account-Free Saving ---
+        // --- Account-Free Saving & P2P Sync Trigger ---
         let saveTimeout;
         function saveLocally() {
+            if (isApplyingRemoteData) return; // Don't broadcast changes received from peer
             clearTimeout(saveTimeout);
             saveTimeout = setTimeout(() => {
                 localStorage.setItem('posterC3llData', JSON.stringify(sheetData));
+                if (conn && conn.open) conn.send({ type: 'partial_update', data: sheetData });
             }, 300);
         }
 
-        document.getElementById('btnSave').addEventListener('click', () => {
-            const dataStr = JSON.stringify(sheetData, null, 2);
-            const blob = new Blob([dataStr], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url; a.download = "PosterC3ll-Sheet.json";
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        });
-
-        document.getElementById('btnOpen').addEventListener('click', () => document.getElementById('fileInput').click());
-        document.getElementById('fileInput').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                try {
-                    sheetData = JSON.parse(event.target.result);
-                    localStorage.setItem('posterC3llData', JSON.stringify(sheetData));
-                    createGrid();
-                    alert("PosterC3ll sheet loaded successfully!");
-                } catch (err) { alert("Invalid PosterC3ll file format."); }
-            };
-            reader.readAsText(file);
-            e.target.value = '';
-        });
-
         // --- Init ---
         createGrid();
+        // Check URL for P2P peer ID
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('peer')) joinP2PSession(urlParams.get('peer'));
     </script>
 </body>
 </html>
