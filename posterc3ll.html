@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="version" content="1.5">
+    <meta name="version" content="1.1">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PosterC3ll - Local-First Spreadsheet</title>
@@ -92,9 +92,9 @@
         td.cell { height: 24px; overflow: hidden; padding: 0 4px; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: clip; color: var(--pc-text); }
         .cell-content { width: 100%; height: 24px; line-height: 24px; overflow: hidden; }
         
-        /* Excel-like Selection Box */
+        /* Excel-like Multi-Selection Box */
         .selected-range { background-color: rgba(16, 185, 129, 0.1) !important; }
-        .selection-box { position: absolute; border: 2px solid var(--pc-primary); background: transparent; pointer-events: none; z-index: 4; box-sizing: border-box; }
+        .dyn-selection-box { position: absolute; border: 2px solid var(--pc-primary); background: transparent; pointer-events: none; z-index: 4; box-sizing: border-box; }
         .active-cell { outline: 2px solid var(--pc-primary); outline-offset: -2px; z-index: 6; background: var(--pc-surface) !important; }
         
         .col-resizer { width: 4px; height: 100%; position: absolute; right: -2px; top: 0; cursor: col-resize; z-index: 4; }
@@ -220,7 +220,6 @@
             <tbody id="gridBody"></tbody>
         </table>
         <input type="text" class="hidden-input" id="cellEditor">
-        <div class="selection-box" id="selectionBox"></div>
         <div id="fillHandle"></div>
     </div>
 
@@ -269,7 +268,7 @@
         }
         
         let activeCell = { row: 0, col: 0 };
-        let selectedRange = { startRow: 0, startCol: 0, endRow: 0, endCol: 0 };
+        let selectionRanges = [{ startRow: 0, startCol: 0, endRow: 0, endCol: 0 }];
         let isSelecting = false, isFilling = false, currentModalAction = null;
         let fileHandle = null, peer = null, conn = null, isApplyingRemoteData = false;
         let isFormulaBarFocused = false;
@@ -280,7 +279,6 @@
         const cellEditor = document.getElementById('cellEditor');
         const formulaBar = document.getElementById('formulaBar');
         const fillHandle = document.getElementById('fillHandle');
-        const selectionBox = document.getElementById('selectionBox');
 
         const commands = [
             { title: "Format: Bold", action: () => applyStyle('b', true) },
@@ -300,7 +298,6 @@
             { title: "Share Live (P2P)", action: startP2PSharing }
         ];
 
-        // --- Theme Logic ---
         function changeTheme(themeName) {
             document.body.setAttribute('data-theme', themeName);
             document.getElementById('themeSelect').value = themeName;
@@ -310,9 +307,7 @@
         document.getElementById('themeSelect').onchange = (e) => changeTheme(e.target.value);
         if (sheetData.settings.theme) changeTheme(sheetData.settings.theme);
 
-        // --- Grid Generation ---
         function createGrid() {
-            // Headers
             let headHtml = '<tr><th class="gh-corner"></th>';
             for (let c = 0; c < COLS; c++) {
                 const width = sheetData._colWidths?.[c] || 100;
@@ -321,7 +316,6 @@
             headHtml += '</tr>';
             gridHead.innerHTML = headHtml;
 
-            // Body
             let bodyHtml = '';
             for (let r = 0; r < ROWS; r++) {
                 bodyHtml += `<tr><th class="gh-row" data-row="${r}">${r + 1}</th>`;
@@ -407,26 +401,46 @@
             } catch (e) { if (sheetData[id]) sheetData[id].v = "#FETCH_ERROR"; recalculateAndRender(); }
         }
 
-        // --- UI & Interactions ---
+        // --- UI & Multi-Selection Interactions ---
         function attachGridListeners() {
             document.querySelectorAll('.cell').forEach(td => {
                 td.addEventListener('mousedown', (e) => {
-                    if (e.button === 2) return;
+                    if (e.button === 2) return; // Ignore right clicks for selection
                     if (isFormulaBarFocused) { formulaBar.value += td.dataset.id; formulaBar.focus(); return; }
+
                     isSelecting = true;
                     activeCell = { row: parseInt(td.dataset.row), col: parseInt(td.dataset.col) };
-                    selectedRange = { ...activeCell, endRow: activeCell.row, endCol: activeCell.col };
+                    const newRange = { ...activeCell, endRow: activeCell.row, endCol: activeCell.col };
+
+                    if (e.ctrlKey || e.metaKey) {
+                        selectionRanges.push(newRange); // Add new range
+                    } else if (e.shiftKey) {
+                        selectionRanges[selectionRanges.length - 1].endRow = activeCell.row;
+                        selectionRanges[selectionRanges.length - 1].endCol = activeCell.col;
+                    } else {
+                        selectionRanges = [newRange]; // Reset to single range
+                    }
+
                     updateSelectionUI(); updateActiveCellUI();
                     formulaBar.value = sheetData[td.dataset.id]?.v || '';
                 });
                 td.addEventListener('mouseenter', () => {
-                    if (isFilling) { selectedRange.endRow = parseInt(td.dataset.row); selectedRange.endCol = parseInt(td.dataset.col); updateSelectionUI(); }
-                    else if (isSelecting) { selectedRange.endRow = parseInt(td.dataset.row); selectedRange.endCol = parseInt(td.dataset.col); updateSelectionUI(); }
+                    if (isSelecting) {
+                        const last = selectionRanges[selectionRanges.length - 1];
+                        last.endRow = parseInt(td.dataset.row);
+                        last.endCol = parseInt(td.dataset.col);
+                        updateSelectionUI();
+                    }
                 });
                 td.addEventListener('dblclick', () => startEditing(td));
                 td.addEventListener('contextmenu', (e) => {
-                    e.preventDefault(); activeCell = { row: parseInt(td.dataset.row), col: parseInt(td.dataset.col) };
-                    updateActiveCellUI(); showContextMenu(e.clientX, e.clientY);
+                    e.preventDefault();
+                    activeCell = { row: parseInt(td.dataset.row), col: parseInt(td.dataset.col) };
+                    if (!isCellInSelection(activeCell.row, activeCell.col)) {
+                        selectionRanges = [{ ...activeCell, endRow: activeCell.row, endCol: activeCell.col }];
+                    }
+                    updateSelectionUI(); updateActiveCellUI();
+                    showContextMenu(e.clientX, e.clientY);
                 });
             });
 
@@ -435,7 +449,10 @@
                     if (e.target.classList.contains('col-resizer')) return;
                     const c = parseInt(th.dataset.col);
                     activeCell = { row: 0, col: c };
-                    selectedRange = { startRow: 0, startCol: c, endRow: ROWS - 1, endCol: c };
+                    const newRange = { startRow: 0, startCol: c, endRow: ROWS - 1, endCol: c };
+                    if (e.ctrlKey || e.metaKey) selectionRanges.push(newRange);
+                    else if (e.shiftKey) selectionRanges[selectionRanges.length - 1].endCol = c;
+                    else selectionRanges = [newRange];
                     updateSelectionUI(); updateActiveCellUI();
                 });
             });
@@ -444,7 +461,10 @@
                 th.addEventListener('click', (e) => {
                     const r = parseInt(th.dataset.row);
                     activeCell = { row: r, col: 0 };
-                    selectedRange = { startRow: r, startCol: 0, endRow: r, endCol: COLS - 1 };
+                    const newRange = { startRow: r, startCol: 0, endRow: r, endCol: COLS - 1 };
+                    if (e.ctrlKey || e.metaKey) selectionRanges.push(newRange);
+                    else if (e.shiftKey) selectionRanges[selectionRanges.length - 1].endRow = r;
+                    else selectionRanges = [newRange];
                     updateSelectionUI(); updateActiveCellUI();
                 });
             });
@@ -452,6 +472,10 @@
             document.querySelectorAll('.col-resizer').forEach(h => h.addEventListener('mousedown', startColResize));
             document.addEventListener('mouseup', handleMouseUp);
             document.addEventListener('click', (e) => { if (!e.target.closest('#contextMenu') && !e.target.closest('.cell')) document.getElementById('contextMenu').style.display = 'none'; });
+        }
+
+        function isCellInSelection(r, c) {
+            return selectionRanges.some(range => r >= Math.min(range.startRow, range.endRow) && r <= Math.max(range.startRow, range.endRow) && c >= Math.min(range.startCol, range.endCol) && c <= Math.max(range.startCol, range.endCol));
         }
 
         function startEditing(td) {
@@ -484,37 +508,44 @@
         function moveActiveCell(rOffset, cOffset) {
             activeCell.row = Math.min(ROWS - 1, Math.max(0, activeCell.row + rOffset));
             activeCell.col = Math.min(COLS - 1, Math.max(0, activeCell.col + cOffset));
-            selectedRange = { ...activeCell, endRow: activeCell.row, endCol: activeCell.col };
+            selectionRanges = [{ ...activeCell, endRow: activeCell.row, endCol: activeCell.col }];
             updateSelectionUI(); updateActiveCellUI();
             formulaBar.value = sheetData[`${String.fromCharCode(65 + activeCell.col)}${activeCell.row + 1}`]?.v || '';
         }
 
         function updateSelectionUI() {
             document.querySelectorAll('.selected-range').forEach(el => el.classList.remove('selected-range'));
-            const minR = Math.min(selectedRange.startRow, selectedRange.endRow);
-            const maxR = Math.max(selectedRange.startRow, selectedRange.endRow);
-            const minC = Math.min(selectedRange.startCol, selectedRange.endCol);
-            const maxC = Math.max(selectedRange.startCol, selectedRange.endCol);
-            
-            for (let r = minR; r <= maxR; r++) {
-                for (let c = minC; c <= maxC; c++) {
-                    document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`)?.classList.add('selected-range');
-                }
-            }
-            
-            const startTd = document.querySelector(`.cell[data-row="${minR}"][data-col="${minC}"]`);
-            const endTd = document.querySelector(`.cell[data-row="${maxR}"][data-col="${maxC}"]`);
-            if (startTd && endTd) {
-                const gridRect = gridWrapper.getBoundingClientRect();
-                const sRect = startTd.getBoundingClientRect();
-                const eRect = endTd.getBoundingClientRect();
+            document.querySelectorAll('.dyn-selection-box').forEach(el => el.remove());
+
+            selectionRanges.forEach(range => {
+                const minR = Math.min(range.startRow, range.endRow);
+                const maxR = Math.max(range.startRow, range.endRow);
+                const minC = Math.min(range.startCol, range.endCol);
+                const maxC = Math.max(range.startCol, range.endCol);
                 
-                selectionBox.style.display = 'block';
-                selectionBox.style.left = `${sRect.left - gridRect.left + gridWrapper.scrollLeft}px`;
-                selectionBox.style.top = `${sRect.top - gridRect.top + gridWrapper.scrollTop}px`;
-                selectionBox.style.width = `${eRect.right - sRect.left}px`;
-                selectionBox.style.height = `${eRect.bottom - sRect.top}px`;
-            }
+                for (let r = minR; r <= maxR; r++) {
+                    for (let c = minC; c <= maxC; c++) {
+                        document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`)?.classList.add('selected-range');
+                    }
+                }
+                
+                const startTd = document.querySelector(`.cell[data-row="${minR}"][data-col="${minC}"]`);
+                const endTd = document.querySelector(`.cell[data-row="${maxR}"][data-col="${maxC}"]`);
+                if (startTd && endTd) {
+                    const gridRect = gridWrapper.getBoundingClientRect();
+                    const sRect = startTd.getBoundingClientRect();
+                    const eRect = endTd.getBoundingClientRect();
+                    
+                    const box = document.createElement('div');
+                    box.className = 'dyn-selection-box';
+                    box.style.display = 'block';
+                    box.style.left = `${sRect.left - gridRect.left + gridWrapper.scrollLeft}px`;
+                    box.style.top = `${sRect.top - gridRect.top + gridWrapper.scrollTop}px`;
+                    box.style.width = `${eRect.right - sRect.left}px`;
+                    box.style.height = `${eRect.bottom - sRect.top}px`;
+                    gridWrapper.appendChild(box);
+                }
+            });
             positionFillHandle();
         }
 
@@ -531,10 +562,12 @@
         }
 
         function positionFillHandle() {
-            const minR = Math.min(selectedRange.startRow, selectedRange.endRow);
-            const maxR = Math.max(selectedRange.startRow, selectedRange.endRow);
-            const minC = Math.min(selectedRange.startCol, selectedRange.endCol);
-            const maxC = Math.max(selectedRange.startCol, selectedRange.endCol);
+            const range = selectionRanges[selectionRanges.length - 1];
+            if (!range) return fillHandle.style.display = 'none';
+            const minR = Math.min(range.startRow, range.endRow);
+            const maxR = Math.max(range.startRow, range.endRow);
+            const minC = Math.min(range.startCol, range.endCol);
+            const maxC = Math.max(range.startCol, range.endCol);
             const td = document.querySelector(`.cell[data-row="${maxR}"][data-col="${maxC}"]`);
             if (td) {
                 const rect = td.getBoundingClientRect();
@@ -566,11 +599,12 @@
         }
 
         function executeFill() {
-            const minR = Math.min(selectedRange.startRow, selectedRange.endRow);
-            const maxR = Math.max(selectedRange.startRow, selectedRange.endRow);
-            const minC = Math.min(selectedRange.startCol, selectedRange.endCol);
-            const maxC = Math.max(selectedRange.startCol, selectedRange.endCol);
-
+            const range = selectionRanges[selectionRanges.length - 1];
+            if (!range) return;
+            const minR = Math.min(range.startRow, range.endRow);
+            const maxR = Math.max(range.startRow, range.endRow);
+            const minC = Math.min(range.startCol, range.endCol);
+            const maxC = Math.max(range.startCol, range.endCol);
             const isFillingDown = activeCell.row === minR;
 
             function copyCell(srcId, destId, rOffset, cOffset) {
@@ -591,7 +625,7 @@
             if (isFillingDown) {
                 for (let c = minC; c <= maxC; c++) {
                     let lastVal = sheetData[`${String.fromCharCode(65 + c)}${minR + 1}`]?.v || 0;
-                    for (let r = maxR + 1; r <= selectedRange.endRow; r++) {
+                    for (let r = maxR + 1; r <= range.endRow; r++) {
                         const destId = `${String.fromCharCode(65 + c)}${r + 1}`;
                         const srcId = `${String.fromCharCode(65 + c)}${minR + 1}`;
                         copyCell(srcId, destId, r - minR, 0);
@@ -602,18 +636,20 @@
             saveLocally(); recalculateAndRender();
         }
 
-        // --- Ribbon Actions ---
+        // --- Multi-Range Ribbon Actions ---
         function applyStyle(styleKey, value) {
-            const minR = Math.min(selectedRange.startRow, selectedRange.endRow);
-            const maxR = Math.max(selectedRange.startRow, selectedRange.endRow);
-            const minC = Math.min(selectedRange.startCol, selectedRange.endCol);
-            const maxC = Math.max(selectedRange.startCol, selectedRange.endCol);
-            for (let r = minR; r <= maxR; r++) for (let c = minC; c <= maxC; c++) {
-                const id = `${String.fromCharCode(65 + c)}${r + 1}`;
-                if (!sheetData[id]) sheetData[id] = { v: '', s: {} };
-                if (!sheetData[id].s) sheetData[id].s = {};
-                sheetData[id].s[styleKey] = value;
-            }
+            selectionRanges.forEach(range => {
+                const minR = Math.min(range.startRow, range.endRow);
+                const maxR = Math.max(range.startRow, range.endRow);
+                const minC = Math.min(range.startCol, range.endCol);
+                const maxC = Math.max(range.startCol, range.endCol);
+                for (let r = minR; r <= maxR; r++) for (let c = minC; c <= maxC; c++) {
+                    const id = `${String.fromCharCode(65 + c)}${r + 1}`;
+                    if (!sheetData[id]) sheetData[id] = { v: '', s: {} };
+                    if (!sheetData[id].s) sheetData[id].s = {};
+                    sheetData[id].s[styleKey] = value;
+                }
+            });
             saveLocally(); recalculateAndRender();
         }
 
@@ -626,13 +662,16 @@
         document.getElementById('bgColor').oninput = (e) => applyStyle('bg', e.target.value);
 
         function clearContents() {
-            const minR = Math.min(selectedRange.startRow, selectedRange.endRow);
-            const maxR = Math.max(selectedRange.startRow, selectedRange.endRow);
-            const minC = Math.min(selectedRange.startCol, selectedRange.endCol);
-            const maxC = Math.max(selectedRange.startCol, selectedRange.endCol);
-            for (let r = minR; r <= maxR; r++) for (let c = minC; c <= maxC; c++) {
-                const id = `${String.fromCharCode(65 + c)}${r + 1}`; if(sheetData[id]) delete sheetData[id].v;
-            }
+            selectionRanges.forEach(range => {
+                const minR = Math.min(range.startRow, range.endRow);
+                const maxR = Math.max(range.startRow, range.endRow);
+                const minC = Math.min(range.startCol, range.endCol);
+                const maxC = Math.max(range.startCol, range.endCol);
+                for (let r = minR; r <= maxR; r++) for (let c = minC; c <= maxC; c++) {
+                    const id = `${String.fromCharCode(65 + c)}${r + 1}`;
+                    if (sheetData[id]) delete sheetData[id].v;
+                }
+            });
             recalculateAndRender(); saveLocally(); document.getElementById('contextMenu').style.display = 'none';
         }
         document.getElementById('ctx-clear-content').onclick = clearContents;
@@ -644,10 +683,7 @@
             saveLocally(); applyFreezePanels();
         }
         document.getElementById('btn-freeze').onclick = toggleFreezePanes;
-
-        function applyFreezePanels() {
-            // CSS handles sticky headers automatically now, so this is mostly a placeholder for future complex freezing
-        }
+        function applyFreezePanels() {}
 
         // --- Command Palette ---
         const paletteOverlay = document.getElementById('paletteOverlay');
