@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Poster Suite | Free & Accessible Poster Makers</title>
+    <title>Poster Suite | Free & Accessible Design Tools</title>
     <!-- Inline Branded Favicon -->
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D14C1E' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='7' height='7'/%3E%3Crect x='14' y='3' width='7' height='7'/%3E%3Crect x='14' y='14' width='7' height='7'/%3E%3Crect x='3' y='14' width='7' height='7'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -407,8 +407,8 @@
     </header>
 
     <div class="hero">
-        <h1>Which poster do you need to make today?</h1>
-        <p>Whether you need cutting-edge accessibility, a rapid block-based designer, or offline team collaboration, we have exactly what you need.</p>
+        <h1>Which tool do you need today?</h1>
+        <p>Whether you need cutting-edge accessible posters, a rapid block-based designer, or offline document collaboration, we have exactly what you need.</p>
     </div>
 
     <div class="container">
@@ -547,12 +547,12 @@
                 </div>
                 <div class="title-group">
                     <h2>Poster5ync</h2>
-                    <span class="version-badge">Beta</span>
+                    <span id="versionSync" class="version-badge">v1.0</span>
                 </div>
             </div>
-            <span class="tag tag-sync">Best for: Offline Collaboration</span>
-            <p>An offline-first, collaborative poster maker. Work together on local networks or sync via manual files—no accounts, no cloud servers, and no internet connection required.</p>
-            <button class="btn btn-sync" onclick="event.stopPropagation(); openApp('poster5ync.html', 'sync');">Launch Collaborative Maker</button>
+            <span class="tag tag-sync">Best for: Notes & Documents</span>
+            <p>A lightweight, offline-first text editor and note-taking tool. Write, draft, and collaborate on documents locally—no accounts, no cloud servers, and no internet connection required.</p>
+            <button class="btn btn-sync" onclick="event.stopPropagation(); openApp('poster5ync.html', 'sync');">Launch Text Editor</button>
         </div>
 
         <!-- Quick Print Blank Sheet Card -->
@@ -614,7 +614,7 @@
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
             </div>
             <h2 style="justify-content: center;">Welcome to Poster Suite! 👋</h2>
-            <p>Your home for creating accessible, Easy Read, and rapid visual posters. Whether you are making pictogram documents, quick care home notices, or collaborating with a team offline, we have a tool tailored for you.</p>
+            <p>Your home for creating accessible posters and drafting documents. Whether you are making pictogram documents, quick care home notices, or collaborating on notes offline, we have a tool tailored for you.</p>
             <p style="font-size: 0.9rem; color: var(--ink2);">Tip: If you find bright screens overwhelming, try our Sensory-Friendly "Calm Mode" in the top right corner!</p>
             <button class="btn btn-sync" style="margin-top: 10px;" onclick="closeModal(false, 'welcomeOverlay')">Get Started</button>
         </div>
@@ -642,7 +642,7 @@
             <button class="modal-close" onclick="closeModal(false, 'aboutOverlay')">&times;</button>
             <h2>About Poster Suite</h2>
             <p>Poster Suite is born from a personal passion for creating free, open-source tools that make communication more accessible and design simpler for everyone.</p>
-            <p>Both PosterA11y and PosterD45h are designed to run entirely in your browser—no accounts, no subscriptions, and no data tracking. It's just pure, accessible tech built to help care homes, support workers, and families communicate better.</p>
+            <p>Our tools are designed to run entirely in your browser—no accounts, no subscriptions, and no data tracking. It's just pure, accessible tech built to help care homes, support workers, and families communicate better.</p>
             <p>If you find these tools helpful, feel free to explore the code, fork it, and share it with anyone who might benefit.</p>
             <button class="btn btn-a11y" style="margin-top: 10px;" onclick="closeModal(false, 'aboutOverlay')">Close</button>
         </div>
@@ -673,7 +673,7 @@
             <p>Here are the latest updates and improvements to Poster Suite:</p>
             <ul>
                 <li><b>Hub Launch:</b> Welcome to the new Poster Suite Hub! You can now access all tools from one place.</li>
-                <li><b>Poster5ync (Beta):</b> Added an offline-first, collaborative poster maker!</li>
+                <li><b>Poster5ync (v1.0):</b> Added an offline-first text editor and note-taking tool!</li>
                 <li><b>Dark & Calm Modes:</b> The Hub now supports Dark Mode and a Sensory-Friendly Calm Mode.</li>
                 <li><b>Quick Print:</b> Instantly print a blank A4 handwriting template with logos.</li>
                 <li><b>Keyboard Shortcuts:</b> Press 1, 2, 3, or 4 to launch tools instantly.</li>
@@ -853,7 +853,11 @@
                 const matchD45h = textD45h.match(/<meta name="version" content="([^"]+)">/);
                 if (matchD45h) document.getElementById('versionD45h').textContent = `v${matchD45h[1]}`;
                 
-                // Note: Poster5ync is currently hardcoded to "Beta" until you create the file
+                // Fetch Poster5ync version
+                const resSync = await fetch('poster5ync.html?v=' + Date.now()); 
+                const textSync = await resSync.text();
+                const matchSync = textSync.match(/<meta name="version" content="([^"]+)">/);
+                if (matchSync) document.getElementById('versionSync').textContent = `v${matchSync[1]}`;
             } catch (e) {
                 console.log("Could not fetch app versions automatically.");
             }

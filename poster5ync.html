@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="description" content="Poster5ync — a free, open source, offline document editor.">
+<meta name="version" content="1.0">
 <title>Poster5ync — Docs</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='sbgGrad' x1='0' y1='0' x2='120' y2='120' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23FFFFFF'/%3E%3Cstop offset='0.5' stop-color='%23F8F8FE'/%3E%3Cstop offset='1' stop-color='%23ECECF7'/%3E%3C/linearGradient%3E%3CradialGradient id='spinGrad' cx='0.35' cy='0.3' r='0.8'%3E%3Cstop offset='0' stop-color='%23C4B5FD'/%3E%3Cstop offset='1' stop-color='%238B5CF6'/%3E%3C/radialGradient%3E%3Cfilter id='sshadow' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='0' dy='3' stdDeviation='3' flood-color='%231A1D21' flood-opacity='0.2'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='120' height='120' rx='28' fill='url(%23sbgGrad)'/%3E%3Crect x='1.5' y='1.5' width='117' height='117' rx='26.5' fill='none' stroke='%231A1D21' stroke-opacity='0.05'/%3E%3Cpath d='M38 42 L60 24' fill='none' stroke='%238B5CF6' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M82 42 L60 24' fill='none' stroke='%238B5CF6' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='38' cy='42' r='2.5' fill='%238B5CF6'/%3E%3Ccircle cx='82' cy='42' r='2.5' fill='%238B5CF6'/%3E%3Crect x='32' y='38' width='56' height='64' rx='10' fill='%23FFFFFF' filter='url(%23sshadow)'/%3E%3Ccircle cx='60' cy='62' r='16' fill='%23F3F0FF'/%3E%3Cpath d='M55 54 L50 58 L55 62' fill='none' stroke='%236D28D9' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M50 58 A 10 10 0 0 1 60 48' fill='none' stroke='%236D28D9' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M65 70 L70 66 L65 62' fill='none' stroke='%236D28D9' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M70 66 A 10 10 0 0 1 60 76' fill='none' stroke='%236D28D9' stroke-width='4' stroke-linecap='round'/%3E%3Crect x='42' y='86' width='36' height='5' rx='2.5' fill='%231A1D21'/%3E%3Crect x='48' y='94' width='24' height='5' rx='2.5' fill='%238B5CF6'/%3E%3Ccircle cx='60' cy='20' r='7' fill='url(%23spinGrad)' filter='url(%23sshadow)'/%3E%3Ccircle cx='57.5' cy='17.5' r='1.8' fill='%23FFFFFF' opacity='0.7'/%3E%3C/svg%3E">
 
@@ -100,7 +101,7 @@ body.sidebar-closed .main-area{margin-left:0}
 body.dark-mode .sheet{background:#1E1E1E;}body.dark-mode .ql-container{color:#E8E8E8 !important;}
 body.dark-mode .ql-editor.ql-blank::before{color:#6B6B6B;}
 
-/* === MAPPED FONTS (FIX) === */
+/* === MAPPED FONTS === */
 .ql-editor .ql-font-roboto { font-family: 'Roboto', sans-serif; }
 .ql-editor .ql-font-open-sans { font-family: 'Open Sans', sans-serif; }
 .ql-editor .ql-font-lato { font-family: 'Lato', sans-serif; }
@@ -114,7 +115,7 @@ body.dark-mode .ql-editor.ql-blank::before{color:#6B6B6B;}
 .ql-editor .ql-font-fira-code { font-family: 'Fira Code', monospace; }
 .ql-editor .ql-font-caveat { font-family: 'Caveat', cursive; font-size: 18pt; }
 
-/* === FONT PICKER DROPDOWN PREVIEW (UX FIX) === */
+/* === FONT PICKER DROPDOWN PREVIEW === */
 .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="roboto"]::before { font-family: 'Roboto', sans-serif; content: 'Roboto'; }
 .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="open-sans"]::before { font-family: 'Open Sans', sans-serif; content: 'Open Sans'; }
 .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="lato"]::before { font-family: 'Lato', sans-serif; content: 'Lato'; }
@@ -319,6 +320,7 @@ body.focus-mode .ql-editor > *.active { opacity: 1; }
     <div class="modal-body">
       <p><strong>Poster5ync</strong> is a 100% free, open-source, privacy-first document editor. All your work is stored locally on your device. No accounts, no tracking, no clouds.</p>
       <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+      <p><strong>Version:</strong> <span id="appVersion">1.0</span></p>
       <h4>Open Source Fonts</h4>
       <p>Roboto, Open Sans, Lato, Montserrat, Poppins, Oswald, Merriweather, Lora, Playfair Display, JetBrains Mono, Fira Code, Caveat (All under SIL Open Font License, 1.1)</p>
       <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
@@ -334,6 +336,10 @@ body.focus-mode .ql-editor > *.active { opacity: 1; }
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 function refreshIcons(){try{if(window.lucide&&lucide.createIcons)lucide.createIcons();}catch(e){}}
+
+// Dynamically pull version from meta tag
+const appVersion = document.querySelector('meta[name="version"]').getAttribute('content');
+ $('#appVersion').textContent = appVersion;
 
 // --- IndexedDB Setup ---
 let db;
