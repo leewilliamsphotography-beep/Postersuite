@@ -27,6 +27,9 @@
   --tb:61px;
   --f-ui:'Bricolage Grotesque','Lexend',sans-serif;
   --f-doc:'Lexend',sans-serif;
+  --t-color:#1A1D21;
+  --s-color:#50545C;
+  --l-color:#1A1D21;
 }
 
 body.dark-mode{
@@ -84,6 +87,10 @@ button:focus-visible, .btn:focus-visible{outline-offset:1px}
 .mic-btn.recording{background:var(--accent);color:#fff;border-color:var(--accent);animation:mic-pulse 1.5s infinite}
 @keyframes mic-pulse{0%{box-shadow:0 0 0 0 rgba(209,76,30,.4)}70%{box-shadow:0 0 0 8px rgba(209,76,30,0)}100%{box-shadow:0 0 0 0 rgba(209,76,30,0)}}
 
+/* Print Options */
+.print-tog{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ink2);padding:0 10px;border-left:1px solid var(--line);height:28px}
+.print-tog input{width:14px;height:14px;accent-color:var(--accent)}
+
 /* ---------- layout ---------- */
 .app{display:grid;grid-template-columns:340px minmax(0,1fr);align-items:start}
 .rail{border-right:1px solid var(--line);padding:28px 24px 48px;position:sticky;top:var(--tb);height:calc(100vh - var(--tb));overflow-y:auto;background:var(--surface)}
@@ -131,6 +138,10 @@ body.dark-mode .stage{background-color: #0A0A0A; background-image: linear-gradie
 .field>label{display:block;font:700 11px var(--f-ui);letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin-bottom:8px}
 .field select, .field input[type="text"]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font:400 14px var(--f-doc);cursor:pointer;outline:none;color:var(--ink)}
 .field select:focus, .field input[type="text"]:focus{border-color:var(--ink)}
+.color-grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:12px;margin-bottom:12px}
+.color-input-wrap{display:flex;flex-direction:column;gap:4px}
+.color-input-wrap span{font:600 11px var(--f-ui);color:var(--ink2)}
+.color-input-wrap input[type="color"]{width:100%;height:36px;border:1px solid var(--line);border-radius:8px;cursor:pointer;background:var(--surface);padding:2px}
 .seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--paper)}
 .seg button{flex:1;padding:9px 0;font:600 13px var(--f-ui);background:transparent;border:0;cursor:pointer;color:var(--ink2);transition:background .15s,color .15s}
 .seg button+button{border-left:1px solid var(--line)}
@@ -138,10 +149,10 @@ body.dark-mode .stage{background-color: #0A0A0A; background-image: linear-gradie
 
 .tog{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);font:500 14px var(--f-doc);cursor:pointer}
 .tog:last-of-type{border-bottom:0;padding-bottom:4px}
-.tog input{appearance:none;-webkit-appearance:none;width:38px;height:22px;border-radius:999px;background:#D1D5DB;border:0;position:relative;cursor:pointer;flex:none;transition:background .18s}
-.tog input::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .18s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
-.tog input:checked{background:var(--accent)}
-.tog input:checked::after{left:19px}
+.tog input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:38px;height:22px;border-radius:999px;background:#D1D5DB;border:0;position:relative;cursor:pointer;flex:none;transition:background .18s}
+.tog input[type="checkbox"]::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .18s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tog input[type="checkbox"]:checked{background:var(--accent)}
+.tog input[type="checkbox"]:checked::after{left:19px}
 
 /* Spacing Sliders */
 .slider-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
@@ -151,36 +162,46 @@ body.dark-mode .stage{background-color: #0A0A0A; background-image: linear-gradie
 
 /* Library Grid */
 .lib-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;max-height:220px;overflow-y:auto;padding-right:4px}
-.lib-item{cursor:grab;border:1px solid var(--line);border-radius:8px;overflow:hidden;aspect-ratio:1/1;display:grid;place-items:center;background:var(--paper);transition:border-color .15s, transform .15s}
+.lib-item{position:relative;cursor:grab;border:1px solid var(--line);border-radius:8px;overflow:hidden;aspect-ratio:1/1;display:grid;place-items:center;background:var(--paper);transition:border-color .15s, transform .15s}
 .lib-item:hover{border-color:var(--accent);transform:translateY(-2px)}
 .lib-item img{width:100%;height:100%;object-fit:contain;pointer-events:none}
 .lib-item:active{cursor:grabbing}
+.lib-fav-star{position:absolute;top:2px;right:2px;width:20px;height:20px;background:rgba(255,255,255,0.8);border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--ink2);z-index:2}
+.lib-fav-star:hover{color:var(--accent)}
+.lib-fav-star.active{color:#F59E0B}
+.lib-fav-star svg{width:12px;height:12px}
 .lib-load{grid-column: span 3; text-align:center; padding: 20px; color: var(--ink2); font-size: 13px;}
+.lib-quick-row{margin-bottom:16px}
+.lib-quick-row h4{font:700 11px var(--f-ui);letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin:0 0 8px}
 
 /* ---------- the sheet ---------- */
-.sheet{width:722px;max-width:100%;min-height:1020px;background:#fff;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.05),0 20px 40px -20px rgba(0,0,0,0.15);padding:54px 52px 38px;display:flex;flex-direction:column;transition:width .3s, min-height .3s; --line-gap: 22px; --card-gap: 16px; --sym-radius: 8px;}
+.sheet{width:722px;max-width:100%;min-height:1020px;background:#fff;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.05),0 20px 40px -20px rgba(0,0,0,0.15);padding:54px 52px 38px;display:flex;flex-direction:column;transition:width .3s, min-height .3s; --line-gap: 22px; --card-gap: 16px; --sym-radius: 8px; position:relative; overflow:hidden;}
 .sheet.landscape{width:1020px;min-height:721px}
 .sheet.f-atkinson .lbl,.sheet.f-atkinson .doc-sub{font-family:'Atkinson Hyperlegible',var(--f-doc)}
-.doc-title{font:800 38px/1.12 var(--f-ui);text-align:center;margin:0 0 8px;outline:none;white-space:pre-wrap;letter-spacing:-0.02em}
-.doc-sub{font:400 16.5px/1.45 var(--f-doc);text-align:center;color:var(--ink2);outline:none;margin:0 0 10px;white-space:pre-wrap}
+.doc-title{font:800 38px/1.12 var(--f-ui);text-align:center;margin:0 0 8px;outline:none;white-space:pre-wrap;letter-spacing:-0.02em;color:var(--t-color)}
+.doc-sub{font:400 16.5px/1.45 var(--f-doc);text-align:center;color:var(--s-color);outline:none;margin:0 0 10px;white-space:pre-wrap}
 [contenteditable]:empty::before{content:attr(data-ph);color:#D1D5DB;pointer-events:none}
 [contenteditable]:focus{background:var(--accent-soft);border-radius:6px}
 
-#brandLogo{display:none;max-height:60px;max-width:150px;width:auto;height:auto;margin:0 0 15px auto;align-self:flex-end;object-fit:contain;}
+#brandLogo{display:none;max-height:60px;max-width:150px;width:auto;height:auto;margin:0 0 15px auto;align-self:flex-end;object-fit:contain;position:relative;z-index:1;}
+
+#watermarkImg{display:none;position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);width:60%;max-width:400px;height:auto;opacity:0.08;pointer-events:none;z-index:0;}
+.sheet.has-watermark #watermarkImg{display:block;}
+.sheet > *:not(#watermarkImg){position:relative;z-index:1;}
 
 /* Themed Sheets */
 .sheet.theme-spring { background:#F0FFF4; border-top:12px solid #10B981; }
-.sheet.theme-spring .doc-title { color:#065F46; } .sheet.theme-spring .doc-sub { color:#047857; } .sheet.theme-spring .line { border-bottom-color:#D1FAE5; }
+.sheet.theme-spring .doc-title { color:#065F46 !important; } .sheet.theme-spring .doc-sub { color:#047857 !important; } .sheet.theme-spring .line { border-bottom-color:#D1FAE5; }
 .sheet.theme-summer { background:#FFFDE7; border-top:12px solid #F59E0B; }
-.sheet.theme-summer .doc-title { color:#92400E; } .sheet.theme-summer .doc-sub { color:#B45309; } .sheet.theme-summer .line { border-bottom-color:#FEF3C7; }
+.sheet.theme-summer .doc-title { color:#92400E !important; } .sheet.theme-summer .doc-sub { color:#B45309 !important; } .sheet.theme-summer .line { border-bottom-color:#FEF3C7; }
 .sheet.theme-autumn { background:#FFF3E0; border-top:12px solid #D14C1E; }
-.sheet.theme-autumn .doc-title { color:#7C2D12; } .sheet.theme-autumn .doc-sub { color:#9A3412; } .sheet.theme-autumn .line { border-bottom-color:#FFEDD5; }
+.sheet.theme-autumn .doc-title { color:#7C2D12 !important; } .sheet.theme-autumn .doc-sub { color:#9A3412 !important; } .sheet.theme-autumn .line { border-bottom-color:#FFEDD5; }
 .sheet.theme-winter { background:#F0F9FF; border-top:12px solid #3B82F6; }
-.sheet.theme-winter .doc-title { color:#1E3A8A; } .sheet.theme-winter .doc-sub { color:#3730A3; } .sheet.theme-winter .line { border-bottom-color:#DBEAFE; }
+.sheet.theme-winter .doc-title { color:#1E3A8A !important; } .sheet.theme-winter .doc-sub { color:#3730A3 !important; } .sheet.theme-winter .line { border-bottom-color:#DBEAFE; }
 .sheet.theme-medical { background:#F0FDFA; border-top:12px solid #14B8A6; }
-.sheet.theme-medical .doc-title { color:#115E59; } .sheet.theme-medical .doc-sub { color:#0F766E; } .sheet.theme-medical .line { border-bottom-color:#CCFBF1; }
+.sheet.theme-medical .doc-title { color:#115E59 !important; } .sheet.theme-medical .doc-sub { color:#0F766E !important; } .sheet.theme-medical .line { border-bottom-color:#CCFBF1; }
 .sheet.theme-cafe { background:#FBF7F0; border-top:12px solid #C4A484; }
-.sheet.theme-cafe .doc-title { color:#4A3B2A; } .sheet.theme-cafe .doc-sub { color:#6B5A48; } .sheet.theme-cafe .line { border-bottom-color:#EAE0D5; }
+.sheet.theme-cafe .doc-title { color:#4A3B2A !important; } .sheet.theme-cafe .doc-sub { color:#6B5A48 !important; } .sheet.theme-cafe .line { border-bottom-color:#EAE0D5; }
 
 /* Alternating Lines */
 .sheet.alt-lines .line:nth-child(even) { background-color: rgba(20, 30, 50, 0.03); }
@@ -217,7 +238,7 @@ body.dark-mode .sheet.alt-lines .line:nth-child(even) { background-color: rgba(2
 .card.dragging{opacity:0.35;transform:scale(0.95)}
 .card .sym{display:grid;place-items:center;background:#fff;border-radius:var(--sym-radius, 8px);overflow:hidden;border:3px solid transparent;box-sizing:content-box; width: var(--sym-size, 80px); height: var(--sym-size, 80px);}
 .card .sym img{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none}
-.card .lbl{font:600 14px/1.15 var(--f-doc);text-align:center;max-width:132px;overflow-wrap:break-word;word-break:break-word;outline:none;cursor:text;border:1px solid transparent;border-radius:4px;padding:0 2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.card .lbl{font:600 14px/1.15 var(--f-doc);text-align:center;max-width:132px;overflow-wrap:break-word;word-break:break-word;outline:none;cursor:text;border:1px solid transparent;border-radius:4px;padding:0 2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--l-color);}
 .card .lbl:hover{border-color:var(--line)}
 .card .sym.load{background:#F0EADD;animation:pulse 1.2s ease-in-out infinite}
 .card .sym.none{background:#FBF8F1;border:3px dashed #D9D1B9;color:#CDC4AA} .card .sym.none svg{width:24px;height:24px}
@@ -252,6 +273,7 @@ body.dark-mode .sheet.alt-lines .line:nth-child(even) { background-color: rgba(2
 .sheet.hc .doc-title,.sheet.hc .card .lbl{color:#FFE14D !important;} .sheet.hc .doc-sub{color:#E8CF4F !important;} .sheet.hc .line{border-bottom-color:#2C2921 !important;}
 .sheet.hc .card .sym{background:#fff;border-color:transparent !important;} .sheet.hc .card .sym.none{background:#15130E;border-color:#57513F;color:#877F66} .sheet.hc .attr{color:#877F66 !important;}
 .sheet.hc .empty{border-color:#3B3627 !important;} .sheet.hc .empty h3{color:#FFE14D !important;} .sheet.hc .empty p{color:#A69D82 !important;} .sheet.hc #qrcode{background:#000;border-color:#444}
+.sheet.hc #watermarkImg{filter: invert(1) brightness(2); opacity: 0.1; }
 
 .pages-container{display:flex;flex-direction:column;align-items:center;gap:24px;width:100%}
 .paginated-sheet{display:none}
@@ -315,6 +337,7 @@ body.locked-mode #unlockBtn{display:flex}
   .app{display:block} .stage{display:block;padding:0;background:none;min-height:0}
   .pages-container{display:block;gap:0}
   .paginated-sheet{display:flex !important; page-break-after: always; box-shadow:none; border-radius:0; margin:0; width:210mm; min-height:297mm;}
+  body.print-current-only .paginated-sheet:not(.active) { display: none !important; }
   .paginated-sheet:last-child{page-break-after: auto;}
   .sheet{width:210mm;min-height:297mm;margin:0;border-radius:0;box-shadow:none;padding:16mm 15mm 10mm}
   .sheet.landscape{width:297mm;min-height:210mm} @page landscape{size: A4 landscape; margin: 0;} .sheet.landscape{page: landscape;}
@@ -335,6 +358,7 @@ body.locked-mode #unlockBtn{display:flex}
   .doc-title{font-size:26px;} .doc-sub{font-size:15px;} .sheet{padding:30px 20px;min-height:auto;} .sheet.landscape{width:100%;min-height:auto;}
   .btn{padding:10px 12px;} .ibtn{width:36px;height:36px;border-radius:10px;} .ibtn svg{width:18px;height:18px;}
   .line{padding:16px 48px 16px 0;} .card .swap{width:24px;height:24px;} .card .swap svg{width:14px;height:14px;}
+  .print-tog{display:none;}
 }
 body.locked-mode .rail, body.locked-mode .line-tools, body.locked-mode .card .swap, body.locked-mode #pageNav, body.locked-mode .card .vis-toggle { display: none !important; }
 body.locked-mode .card { cursor: default; } body.locked-mode [contenteditable] { pointer-events: none; outline: none; }
@@ -390,6 +414,7 @@ body.locked-mode .stage { overflow-y: auto; height: 100vh; padding-top: 20px; }
       <button class="btn ghost" id="pptBtn"><i data-lucide="monitor-play"></i><span>PPT</span></button>
       <button class="btn ghost" id="pngBtn"><i data-lucide="image"></i><span>PNG</span></button>
       <button class="btn accent" id="printBtn"><i data-lucide="printer"></i><span>Print / PDF</span></button>
+      <label class="print-tog" title="Print current page only"><input type="checkbox" id="printCurrentTog"> Page Only</label>
       <button class="btn ghost" id="darkToggleBtn" title="Toggle Dark Mode"><i data-lucide="moon"></i></button>
     </div>
   </div>
@@ -414,8 +439,9 @@ body.locked-mode .stage { overflow-y: auto; height: 100vh; padding-top: 20px; }
         <input id="libInput" type="text" placeholder="Search symbols (e.g., quiet)..." autocomplete="off" spellcheck="false">
         <button class="btn ghost" id="libSearchBtn"><i data-lucide="search"></i></button>
       </div>
+      <div class="lib-quick-row" id="libQuickAccess" hidden></div>
       <div id="libResults" class="lib-grid"></div>
-      <p class="hint">Drag any symbol onto your poster, or <b>click it</b> to add it to the last line. If ARASAAC doesn't have it, we check OpenSymbols automatically!</p>
+      <p class="hint">Drag any symbol onto your poster, or <b>click it</b> to add it to the last line. Star symbols to save them to Quick Access!</p>
     </section>
 
     <section class="panel">
@@ -425,6 +451,14 @@ body.locked-mode .stage { overflow-y: auto; height: 100vh; padding-top: 20px; }
 
     <section class="panel">
       <h2 class="k"><b>04</b>Poster style</h2>
+      <div class="field">
+        <label>Text Colors</label>
+        <div class="color-grid">
+          <div class="color-input-wrap"><span>Title</span><input type="color" id="titleColor" value="#1A1D21"></div>
+          <div class="color-input-wrap"><span>Subtitle</span><input type="color" id="subColor" value="#50545C"></div>
+          <div class="color-input-wrap"><span>Labels</span><input type="color" id="lblColor" value="#1A1D21"></div>
+        </div>
+      </div>
       <div class="field">
         <label>Symbol size</label>
         <div class="slider-row"><label>Image scale</label><input type="range" id="symSizeSlider" min="50" max="180" value="80"><span id="ssVal">80px</span></div>
@@ -480,6 +514,14 @@ body.locked-mode .stage { overflow-y: auto; height: 100vh; padding-top: 20px; }
         </div>
       </div>
 
+      <div class="field" style="margin-bottom: 10px;">
+        <label>Background Watermark</label>
+        <div style="display:flex; gap:8px;">
+          <button class="btn small" id="wmUploadBtn" style="flex:1; border-color:var(--line); background:var(--paper);"><i data-lucide="image"></i> Upload</button>
+          <button class="btn small danger" id="wmRemoveBtn" style="flex:1;" hidden><i data-lucide="trash-2"></i> Remove</button>
+        </div>
+      </div>
+
       <label class="tog"><span>Word under each symbol</span><input type="checkbox" id="showTextTog" checked></label>
       <label class="tog"><span>Sentence mode (show small words)</span><input type="checkbox" id="skipTog"></label>
       <label class="tog"><span>Color-coded grammar</span><input type="checkbox" id="grammarTog"></label>
@@ -493,6 +535,7 @@ body.locked-mode .stage { overflow-y: auto; height: 100vh; padding-top: 20px; }
     <section class="panel">
       <h2 class="k"><b>05</b>My Drafts</h2>
       <button class="btn small" id="saveDraftBtn" style="width:100%; margin-bottom:10px; background:var(--paper); border-color:var(--line);"><i data-lucide="save"></i> Save current poster</button>
+      <button class="btn small ghost" id="zipBtn" style="width:100%; margin-bottom:10px;"><i data-lucide="folder-archive"></i> Download All (ZIP)</button>
       <div id="draftList"></div>
     </section>
 
@@ -507,6 +550,7 @@ body.locked-mode .stage { overflow-y: auto; height: 100vh; padding-top: 20px; }
   <section class="stage">
     <div class="pages-container" id="pagesContainer">
       <div class="sheet f-lexend active paginated-sheet" id="sheet1">
+        <img id="watermarkImg" alt="">
         <img id="brandLogo" alt="Organization logo">
         <h1 class="doc-title" id="docTitle" contenteditable="true" data-ph="Poster title" spellcheck="true"></h1>
         <div class="doc-sub" id="docSub" contenteditable="true" data-ph="Subtitle (optional)" spellcheck="true"></div>
@@ -582,9 +626,11 @@ const dragAttr = isTouchDevice ? '' : 'draggable="true"';
 
 const API_BASES=['https://api.arasaac.org/api','https://api.arasaac.org/api/v1'];
 const STATIC='https://static.arasaac.org/pictograms';
-const LS_KEY='postera11y.doc.v13'; 
+const LS_KEY='postera11y.doc.v14'; 
 const LS_DRAFTS='postera11y.drafts';
 const LS_DARK='postera11y.dark';
+const LS_FAV='postera11y.favorites';
+const LS_RECENT='postera11y.recent';
 const LANGS={en:'English',es:'Español',fr:'Français',de:'Deutsch',it:'Italiano',pt:'Português',nl:'Nederlands',pl:'Polski',ru:'Русский',ar:'العربية',ca:'Català',gl:'Galego'};
 const RTL=new Set(['ar']);
 
@@ -622,7 +668,7 @@ const THEME_STYLES = {
 
 let uidSeq=1;
 const uid=()=>'w'+(uidSeq++)+Date.now().toString(36);
-function newDoc(){return{title:'',subtitle:'',lang:'en',symSize:80,symStyle:'8px',font:'lexend',format:'portrait',theme:'default',listStyle:'none',logo:'',showText:true,skipSmall:true,grammarColors:false,showMeanings:false,strictGrid:false,altLines:false,inkSaver:false,lineSpacing:22,cardSpacing:16,useQR:false,qrUrl:'',hc:false,locked:false,lines:[]}}
+function newDoc(){return{title:'',subtitle:'',lang:'en',symSize:80,symStyle:'8px',titleColor:'#1A1D21',subColor:'#50545C',lblColor:'#1A1D21',font:'lexend',format:'portrait',theme:'default',listStyle:'none',logo:'',watermark:'',showText:true,skipSmall:true,grammarColors:false,showMeanings:false,strictGrid:false,altLines:false,inkSaver:false,lineSpacing:22,cardSpacing:16,useQR:false,qrUrl:'',hc:false,locked:false,lines:[]}}
 let doc=newDoc();
 
 const pagesContainer=$('#pagesContainer'),linesEl=$('#lines'),composeInput=$('#composeInput'),previewEl=$('#preview'),
@@ -856,8 +902,12 @@ function applyLineClasses(){
     $$('.sheet').forEach(el => {
         el.style.setProperty('--sym-size', (doc.symSize || 80) + 'px');
         el.style.setProperty('--sym-radius', doc.symStyle || '8px');
+        el.style.setProperty('--t-color', doc.titleColor || '#1A1D21');
+        el.style.setProperty('--s-color', doc.subColor || '#50545C');
+        el.style.setProperty('--l-color', doc.lblColor || '#1A1D21');
         el.classList.toggle('alt-lines', !!doc.altLines);
         el.classList.toggle('ink-saver', !!doc.inkSaver);
+        el.classList.toggle('has-watermark', !!doc.watermark);
     });
     $$('.sheet .lines').forEach(el => {
         el.className = 'lines' + (doc.showText ? '' : ' hideLbl') + (doc.strictGrid ? ' strict-grid' : '');
@@ -883,6 +933,10 @@ function renderAll(){
   const logoEl = $('#brandLogo');
   if (doc.logo) { logoEl.src = doc.logo; logoEl.style.display = 'block'; } 
   else { logoEl.src = ''; logoEl.style.display = 'none'; }
+
+  const wmEl = $('#watermarkImg');
+  if (doc.watermark) { wmEl.src = doc.watermark; } 
+  else { wmEl.src = ''; }
   
   applyLock(doc.locked);
   applyLineClasses(); 
@@ -950,6 +1004,9 @@ function repaginate() {
             newPage.style.setProperty('--card-gap', (doc.cardSpacing||16) + 'px');
             newPage.style.setProperty('--sym-size', (doc.symSize||80) + 'px');
             newPage.style.setProperty('--sym-radius', doc.symStyle || '8px');
+            newPage.style.setProperty('--t-color', doc.titleColor || '#1A1D21');
+            newPage.style.setProperty('--s-color', doc.subColor || '#50545C');
+            newPage.style.setProperty('--l-color', doc.lblColor || '#1A1D21');
             newPage.innerHTML = `<div class="lines ${doc.showText?'':'hideLbl'} ${doc.strictGrid?'strict-grid':''} ${doc.altLines?'alt-lines':''} ${doc.inkSaver?'ink-saver':''}"></div>`;
             pagesContainer.appendChild(newPage);
             newPage.appendChild(footer);
@@ -1045,6 +1102,9 @@ function syncStyleControls(){
   $('#sheetFormat').value=doc.format;
   $('#themeSel').value=doc.theme;
   $('#symStyleSel').value = doc.symStyle || '8px';
+  $('#titleColor').value = doc.titleColor || '#1A1D21';
+  $('#subColor').value = doc.subColor || '#50545C';
+  $('#lblColor').value = doc.lblColor || '#1A1D21';
   $$('#listSeg button').forEach(b=>b.classList.toggle('on',b.dataset.list===doc.listStyle));
   $('#showTextTog').checked=doc.showText;
   $('#skipTog').checked=!doc.skipSmall; 
@@ -1065,6 +1125,7 @@ function syncStyleControls(){
   $('#qrUrlField').hidden = !doc.useQR;
   $('#qrUrl').value = doc.qrUrl || '';
   $('#logoRemoveBtn').hidden = !doc.logo;
+  $('#wmRemoveBtn').hidden = !doc.watermark;
 }
 
 let qrInstance = null;
@@ -1115,6 +1176,85 @@ document.addEventListener('click', e => {
   }
 });
 
+/* ============ Recent & Favorite Symbols ============ */
+function getFavorites() { try { return JSON.parse(localStorage.getItem(LS_FAV) || '[]'); } catch(e) { return []; } }
+function getRecents() { try { return JSON.parse(localStorage.getItem(LS_RECENT) || '[]'); } catch(e) { return []; } }
+function saveFavorites(f) { localStorage.setItem(LS_FAV, JSON.stringify(f)); }
+function saveRecents(r) { localStorage.setItem(LS_RECENT, JSON.stringify(r)); }
+
+function addRecent(item) {
+    if(!item.id && !item.customImg) return;
+    const id = item.id || item.customImg;
+    const word = item.word;
+    const isArasaac = !!item.id;
+    const src = item.customImg || imgUrl(item.id, 300);
+    
+    let recents = getRecents().filter(r => r.id !== id);
+    recents.unshift({ id, word, isArasaac, src });
+    if(recents.length > 6) recents.pop();
+    saveRecents(recents);
+    renderQuickAccess();
+}
+
+function toggleFavorite(libItemData) {
+    const id = libItemData.id || libItemData.src;
+    let favs = getFavorites();
+    const exists = favs.find(f => (f.id || f.src) === id);
+    if(exists) {
+        favs = favs.filter(f => (f.id || f.src) !== id);
+    } else {
+        favs.push(libItemData);
+    }
+    saveFavorites(favs);
+    renderQuickAccess();
+    // Update star state in grid
+    const starBtn = document.querySelector(`.lib-fav-star[data-id="${id}"]`);
+    if(starBtn) {
+        starBtn.classList.toggle('active', !exists);
+        starBtn.innerHTML = exists ? '<i data-lucide="star"></i>' : '<i data-lucide="star-off"></i>';
+        refreshIcons();
+    }
+}
+
+function renderQuickAccess() {
+    const c = $('#libQuickAccess');
+    const favs = getFavorites();
+    const recents = getRecents();
+    
+    if(!favs.length && !recents.length) {
+        c.hidden = true;
+        c.innerHTML = '';
+        return;
+    }
+    
+    c.hidden = false;
+    let html = '';
+    if(favs.length) {
+        html += '<h4>Favorites</h4><div class="lib-grid" style="max-height:120px; margin-bottom:16px;">';
+        html += favs.map(f => {
+            const isFav = true;
+            return `<div class="lib-item" draggable="true" data-id="${f.id||''}" data-src="${f.src}" data-word="${esc(f.word)}" data-is-arasaac="${f.isArasaac}">
+                <div class="lib-fav-star active" data-id="${f.id||f.src}" data-is-arasaac="${f.isArasaac}"><i data-lucide="star"></i></div>
+                <img src="${f.src}" alt="${esc(f.word)}">
+            </div>`;
+        }).join('');
+        html += '</div>';
+    }
+    if(recents.length) {
+        html += '<h4>Recent</h4><div class="lib-grid" style="max-height:120px;">';
+        html += recents.map(r => {
+            const isFav = getFavorites().some(f => (f.id||f.src) === (r.id||r.src));
+            return `<div class="lib-item" draggable="true" data-id="${r.id||''}" data-src="${r.src}" data-word="${esc(r.word)}" data-is-arasaac="${r.isArasaac}">
+                <div class="lib-fav-star ${isFav?'active':''}" data-id="${r.id||r.src}" data-is-arasaac="${r.isArasaac}"><i data-lucide="${isFav?'star':'star-off'}"></i></div>
+                <img src="${r.src}" alt="${esc(r.word)}">
+            </div>`;
+        }).join('');
+        html += '</div>';
+    }
+    c.innerHTML = html;
+    refreshIcons();
+}
+
 /* ============ Global Symbol Library Logic ============ */
 let libDragData = null;
 
@@ -1133,7 +1273,11 @@ async function searchLibrary(word) {
 
 async function doLibrarySearch() {
     const word = $('#libInput').value.trim();
-    if(!word) return;
+    if(!word) {
+        renderQuickAccess();
+        $('#libResults').innerHTML = '';
+        return;
+    }
     const grid = $('#libResults');
     grid.innerHTML = '<div class="lib-load">Searching...</div>';
     
@@ -1143,14 +1287,18 @@ async function doLibrarySearch() {
         return;
     }
     
+    const favs = getFavorites();
     grid.innerHTML = results.map(k => {
-        if (k.image_url) { // OpenSymbols
-            return `<div class="lib-item" draggable="true" data-src="${k.image_url}" data-word="${esc(word)}"><img src="${k.image_url}" alt="${esc(word)}"></div>`;
-        } else { // ARASAAC
-            const imgSrc = imgUrl(k._id, 300); 
-            return `<div class="lib-item" draggable="true" data-id="${k._id}" data-src="${imgSrc}" data-word="${esc(word)}"><img src="${imgSrc}" alt="${esc(word)}"></div>`;
-        }
+        const isARASAAC = k._id && !k.image_url;
+        const id = isARASAAC ? k._id : k.image_url;
+        const imgSrc = isARASAAC ? imgUrl(id, 300) : id;
+        const isFav = favs.some(f => (f.id||f.src) === id);
+        return `<div class="lib-item" draggable="true" data-id="${id}" data-src="${imgSrc}" data-word="${esc(word)}" data-is-arasaac="${isARASAAC}">
+            <div class="lib-fav-star ${isFav?'active':''}" data-id="${id}" data-is-arasaac="${isARASAAC}"><i data-lucide="${isFav?'star':'star-off'}"></i></div>
+            <img src="${imgSrc}" alt="${esc(word)}">
+        </div>`;
     }).join('');
+    refreshIcons();
 }
 
  $('#libSearchBtn').onclick = doLibrarySearch;
@@ -1158,8 +1306,23 @@ async function doLibrarySearch() {
     if(e.key === 'Enter') doLibrarySearch();
 });
 
-// Click to add (for touch devices & quick adding)
+// Click to add (for touch devices & quick adding) or Toggle Favorite
 document.addEventListener('click', e => {
+    const starBtn = e.target.closest('.lib-fav-star');
+    if(starBtn) {
+        e.stopPropagation();
+        e.preventDefault();
+        const libItem = starBtn.closest('.lib-item');
+        const data = {
+            id: libItem.dataset.id || null,
+            src: libItem.dataset.src,
+            word: libItem.dataset.word,
+            isArasaac: libItem.dataset.isArasaac === 'true'
+        };
+        toggleFavorite(data);
+        return;
+    }
+
     const libItem = e.target.closest('.lib-item');
     if(libItem) {
         e.preventDefault();
@@ -1177,6 +1340,7 @@ document.addEventListener('click', e => {
             doc.lines[doc.lines.length - 1].items.push(newItem);
         }
         renderLines(); save();
+        addRecent(newItem);
         toast('Symbol added to poster.', 'check');
     }
 });
@@ -1253,6 +1417,7 @@ if(!isTouchDevice) {
           } else { targetLineObj.items.push(newItem); }
           
           renderLines(); save(); cleanupDrag();
+          addRecent(newItem);
           return;
       }
 
@@ -1655,7 +1820,7 @@ document.addEventListener('click',e=>{
 });
 function applyTpl(k){
   const t=TEMPLATES[k];
-  const keep={lang:doc.lang,symSize:doc.symSize,symStyle:doc.symStyle,font:doc.font,format:doc.format,theme:doc.theme,listStyle:doc.listStyle,logo:doc.logo,showText:doc.showText,skipSmall:doc.skipSmall,grammarColors:doc.grammarColors,showMeanings:doc.showMeanings,strictGrid:doc.strictGrid,altLines:doc.altLines,inkSaver:doc.inkSaver,lineSpacing:doc.lineSpacing,cardSpacing:doc.cardSpacing,hc:doc.hc,useQR:doc.useQR,qrUrl:doc.qrUrl};
+  const keep={lang:doc.lang,symSize:doc.symSize,symStyle:doc.symStyle,titleColor:doc.titleColor,subColor:doc.subColor,lblColor:doc.lblColor,font:doc.font,format:doc.format,theme:doc.theme,listStyle:doc.listStyle,logo:doc.logo,watermark:doc.watermark,showText:doc.showText,skipSmall:doc.skipSmall,grammarColors:doc.grammarColors,showMeanings:doc.showMeanings,strictGrid:doc.strictGrid,altLines:doc.altLines,inkSaver:doc.inkSaver,lineSpacing:doc.lineSpacing,cardSpacing:doc.cardSpacing,hc:doc.hc,useQR:doc.useQR,qrUrl:doc.qrUrl};
   pushHistory();
   doc=Object.assign(newDoc(),keep,{title:t.title,subtitle:t.subtitle,lines:[]});
   renderAll();save();
@@ -1683,6 +1848,10 @@ function applyTpl(k){
   pushHistory(); doc.symStyle = $('#symStyleSel').value;
   applyLineClasses(); save();
 };
+ $('#titleColor').oninput = e => { pushHistory(); doc.titleColor = e.target.value; applyLineClasses(); save(); };
+ $('#subColor').oninput = e => { pushHistory(); doc.subColor = e.target.value; applyLineClasses(); save(); };
+ $('#lblColor').oninput = e => { pushHistory(); doc.lblColor = e.target.value; applyLineClasses(); save(); };
+
  $('#logoUploadBtn').onclick = () => {
     const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*';
     input.onchange = e => {
@@ -1694,6 +1863,19 @@ function applyTpl(k){
     input.click();
 };
  $('#logoRemoveBtn').onclick = () => { pushHistory(); doc.logo = ''; renderAll(); save(); };
+
+ $('#wmUploadBtn').onclick = () => {
+    const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*';
+    input.onchange = e => {
+        const file = e.target.files[0]; if(!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => { pushHistory(); doc.watermark = ev.target.result; renderAll(); save(); };
+        reader.readAsDataURL(file);
+    };
+    input.click();
+};
+ $('#wmRemoveBtn').onclick = () => { pushHistory(); doc.watermark = ''; renderAll(); save(); };
+
  $('#showTextTog').onchange=e=>{pushHistory();doc.showText=e.target.checked;applyLineClasses();scheduleRepaginate();save();};
  $('#skipTog').onchange=e=>{ pushHistory(); doc.skipSmall=!e.target.checked; save();buildPreview(); toast('Sentence mode ' + (e.target.checked ? 'ON' : 'OFF') + '. Applies to new lines added.'); };
  $('#grammarTog').onchange=e=>{pushHistory();doc.grammarColors=e.target.checked;renderLines();save();};
@@ -1745,7 +1927,7 @@ langSel.onchange=()=>{
 const tourSteps = [
   { el: '#composeInput', title: 'Step 1: Write a Line', text: 'Type a sentence here. The app will automatically find symbols for the key words.' },
   { el: '#addBtn', title: 'Step 2: Add to Poster', text: 'Click here to add your line to the poster. You can also just press Enter.' },
-  { el: '.panel:nth-child(4)', title: 'Step 3: Customize', text: 'Change the symbol size, shape, spacing, and themes here to make your poster perfect.' },
+  { el: '.panel:nth-child(4)', title: 'Step 3: Customize', text: 'Change the symbol size, shape, spacing, colors, and themes here to make your poster perfect.' },
   { el: '.actions', title: 'Step 4: Export', text: 'When you\'re done, export your poster as a PDF, Word document, or PowerPoint!' }
 ];
 let currentStep = 0;
@@ -1848,6 +2030,9 @@ function sanitize(o){
   d.lang=LANGS[o.lang]?o.lang:'en';
   d.symSize = (typeof o.symSize === 'number') ? o.symSize : (o.size === 's' ? 56 : (o.size === 'l' ? 106 : 80));
   d.symStyle = o.symStyle || '8px';
+  d.titleColor = o.titleColor || '#1A1D21';
+  d.subColor = o.subColor || '#50545C';
+  d.lblColor = o.lblColor || '#1A1D21';
   d.font=['lexend','atkinson'].indexOf(o.font)>-1?o.font:'lexend';
   d.format=o.format === 'landscape' ? 'landscape' : 'portrait';
   const validThemes = ['default', 'spring', 'summer', 'autumn', 'winter', 'medical', 'cafe'];
@@ -1855,6 +2040,7 @@ function sanitize(o){
   const validLists = ['none', 'bullets', 'numbers'];
   d.listStyle = validLists.indexOf(o.listStyle) > -1 ? o.listStyle : 'none';
   d.logo = typeof o.logo === 'string' ? o.logo.slice(0, 500000) : ''; 
+  d.watermark = typeof o.watermark === 'string' ? o.watermark.slice(0, 500000) : ''; 
   d.showText=!!o.showText;d.skipSmall=o.skipSmall!==false;d.grammarColors=!!o.grammarColors;d.showMeanings=!!o.showMeanings;d.strictGrid=!!o.strictGrid;
   d.altLines=!!o.altLines;d.inkSaver=!!o.inkSaver;
   d.lineSpacing = o.lineSpacing || 22; d.cardSpacing = o.cardSpacing || 16;
@@ -1889,7 +2075,7 @@ async function copyText(txt){
   else toast('Copy failed — the link is in your address bar; copy it from there.','alert');
 };
 
-/* ============ new / print / png / word / ppt / html / backup ============ */
+/* ============ new / print / png / word / ppt / html / zip / backup ============ */
 let mCb=null;
 function confirmBox(t,m,ok,cb){
   $('#mTitle').textContent=t;$('#mMsg').textContent=m;$('#mOk').textContent=ok;
@@ -1901,7 +2087,16 @@ function confirmBox(t,m,ok,cb){
      if(e.target.id==='overlay'){ $('#overlay').hidden=true;$('#confirmModal').hidden=true;$('#searchModal').hidden=true;mCb=null; }
  });
  $('#newBtn').onclick=()=>confirmBox('Start a new poster?','This clears the sheet, and it can’t be recovered. Copy a Share link first if you want to keep this poster.','Start fresh',()=>{pushHistory();doc=newDoc();renderAll();save();closePopover();toast('Fresh sheet ready.','check');});
- $('#printBtn').onclick=()=>{closePopover();setTimeout(()=>window.print(),50);};
+ 
+ $('#printBtn').onclick=()=>{
+    closePopover();
+    if($('#printCurrentTog').checked) document.body.classList.add('print-current-only');
+    else document.body.classList.remove('print-current-only');
+    setTimeout(()=>{
+        window.print();
+        document.body.classList.remove('print-current-only'); // Clean up after print
+    }, 50);
+};
 
 async function corsOK(){
   const it=doc.lines.flatMap(l=>l.items).find(i=>i.id!=null);
@@ -1927,6 +2122,49 @@ async function corsOK(){
   }catch(e){ toast('PNG export failed — use Print → “Save as PDF” instead.','alert'); }
 };
 
+// Helper for HTML content generation (used by HTML export and ZIP export)
+function generateHtmlContent(d) {
+    function getImgSrc(it) { if (it.customImg) return it.customImg; if (it.id) return imgUrl(it.id, 500); return ''; }
+    const ts = THEME_STYLES[d.theme] || THEME_STYLES.default;
+    const bg = d.hc ? '#000' : ts.bg;
+    const titleC = d.hc ? '#FFE14D' : (d.titleColor || ts.title);
+    const subC = d.hc ? '#E8CF4F' : (d.subColor || ts.sub);
+    const lblC = d.hc ? '#FFE14D' : (d.lblColor || '#1A1D21');
+
+    let cardsHtml = '';
+    d.lines.forEach((line, idx) => {
+        let marker = d.listStyle === 'bullets' ? '• ' : (d.listStyle === 'numbers' ? (idx+1)+'. ' : '');
+        cardsHtml += `<div class="ex-line"><div class="ex-marker">${marker}</div><div class="ex-cards">`;
+        line.items.forEach(it => {
+            if(it.hidden) return;
+            const src = getImgSrc(it);
+            if(it.textOnly || !src) {
+                cardsHtml += `<div class="ex-card text"><span>${esc(it.word)}</span></div>`;
+            } else {
+                cardsHtml += `<div class="ex-card"><img src="${src}" alt="${esc(it.word)}">${d.showText ? `<span>${esc(it.word)}</span>` : ''}</div>`;
+            }
+        });
+        cardsHtml += `</div></div>`;
+    });
+
+    let wmHtml = d.watermark ? `<img src="${d.watermark}" class="watermark" alt="">` : '';
+    
+    return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(d.title||'Poster')}</title><style>
+    body{font-family:'Lexend',Arial,sans-serif;background:${bg};color:${titleC};margin:0;padding:40px;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+    .container{max-width:800px;width:100%;text-align:center;position:relative;z-index:1;}
+    h1{font-size:38px;margin:0 0 8px;color:${titleC}} h3{font-size:18px;font-weight:normal;color:${subC};margin:0 0 20px}
+    .ex-line{display:flex;align-items:flex-start;justify-content:center;margin-bottom:30px;flex-wrap:wrap;gap:10px 15px}
+    .ex-marker{font-weight:bold;font-size:18px;width:20px;text-align:left}
+    .ex-cards{display:flex;flex-wrap:wrap;gap:15px;justify-content:center;flex:1}
+    .ex-card{display:flex;flex-direction:column;align-items:center;gap:8px;width:100px}
+    .ex-card img{width:80px;height:80px;object-fit:contain}
+    .ex-card span{font-weight:bold;font-size:14px;color:${lblC}}
+    .ex-card.text span{border:1px solid currentColor;padding:10px;border-radius:8px;min-height:60px;display:flex;align-items:center}
+    .watermark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:60%;max-width:400px;opacity:0.08;pointer-events:none;z-index:0;}
+    .attr{margin-top:40px;font-size:11px;color:#888}
+    </style></head><body>${wmHtml}<div class="container"><h1>${esc(d.title||'')}</h1><h3>${esc(d.subtitle||'')}</h3>${cardsHtml}<div class="attr">Pictograms: ARASAAC · Sergio Palao · CC BY-NC-SA 4.0<br>PosterA11y by Lee Williams</div></div></body></html>`;
+}
+
  $('#wordBtn').onclick = async () => {
   closePopover();
   toast('Generating Word document...');
@@ -1934,8 +2172,8 @@ async function corsOK(){
   const ts = THEME_STYLES[doc.theme] || THEME_STYLES.default;
   const hcOverride = doc.hc;
   const bodyBg = hcOverride ? '#000000' : ts.bg;
-  const titleColor = hcOverride ? '#FFE14D' : ts.title;
-  const subColor = hcOverride ? '#E8CF4F' : ts.sub;
+  const titleColor = hcOverride ? '#FFE14D' : (doc.titleColor || ts.title);
+  const subColor = hcOverride ? '#E8CF4F' : (doc.subColor || ts.sub);
   let html = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>${esc(doc.title || 'Poster')}</title><style>body { background-color: ${bodyBg}; } h1 { color: ${titleColor}; } h3 { color: ${subColor}; } .line-marker { font-weight: bold; font-size: 14pt; margin-right: 10px; }</style></head><body style="font-family: 'Lexend', Arial, sans-serif; text-align: center; margin: 20px;">`;
   if (doc.logo) { html += `<div style="text-align: right; margin-bottom: 20px;"><img src="${doc.logo}" style="max-height: 60px; max-width: 150px;"/></div>`; }
   html += `<h1>${esc(doc.title || '')}</h1><h3 style="font-weight: normal;">${esc(doc.subtitle || '')}</h3><div style="margin-top: 20px;">`;
@@ -1969,38 +2207,7 @@ async function corsOK(){
  $('#htmlBtn').onclick = () => {
   closePopover();
   toast('Generating HTML file...');
-  let cardsHtml = '';
-  doc.lines.forEach((line, idx) => {
-    let marker = doc.listStyle === 'bullets' ? '• ' : (doc.listStyle === 'numbers' ? (idx+1)+'. ' : '');
-    cardsHtml += `<div class="ex-line"><div class="ex-marker">${marker}</div><div class="ex-cards">`;
-    line.items.forEach(it => {
-      if(it.hidden) return;
-      const src = it.customImg ? it.customImg : imgUrl(it.id, 500);
-      if(it.textOnly || !src) {
-        cardsHtml += `<div class="ex-card text"><span>${esc(it.word)}</span></div>`;
-      } else {
-        cardsHtml += `<div class="ex-card"><img src="${src}" alt="${esc(it.word)}">${doc.showText ? `<span>${esc(it.word)}</span>` : ''}</div>`;
-      }
-    });
-    cardsHtml += `</div></div>`;
-  });
-  const ts = THEME_STYLES[doc.theme] || THEME_STYLES.default;
-  const bg = doc.hc ? '#000' : ts.bg;
-  const titleC = doc.hc ? '#FFE14D' : ts.title;
-  const subC = doc.hc ? '#E8CF4F' : ts.sub;
-  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(doc.title||'Poster')}</title><style>
-  body{font-family:'Lexend',Arial,sans-serif;background:${bg};color:${titleC};margin:0;padding:40px;display:flex;flex-direction:column;align-items:center}
-  .container{max-width:800px;width:100%;text-align:center}
-  h1{font-size:38px;margin:0 0 8px} h3{font-size:18px;font-weight:normal;color:${subC};margin:0 0 20px}
-  .ex-line{display:flex;align-items:flex-start;justify-content:center;margin-bottom:30px;flex-wrap:wrap;gap:10px 15px}
-  .ex-marker{font-weight:bold;font-size:18px;width:20px;text-align:left}
-  .ex-cards{display:flex;flex-wrap:wrap;gap:15px;justify-content:center;flex:1}
-  .ex-card{display:flex;flex-direction:column;align-items:center;gap:8px;width:100px}
-  .ex-card img{width:80px;height:80px;object-fit:contain}
-  .ex-card span{font-weight:bold;font-size:14px}
-  .ex-card.text span{border:1px solid currentColor;padding:10px;border-radius:8px;min-height:60px;display:flex;align-items:center}
-  .attr{margin-top:40px;font-size:11px;color:#888}
-  </style></head><body><div class="container"><h1>${esc(doc.title||'')}</h1><h3>${esc(doc.subtitle||'')}</h3>${cardsHtml}<div class="attr">Pictograms: ARASAAC · Sergio Palao · CC BY-NC-SA 4.0<br>PosterA11y by Lee Williams</div></div></body></html>`;
+  const html = generateHtmlContent(doc);
   const blob = new Blob([html], {type: 'text/html'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href = url;
@@ -2025,14 +2232,30 @@ async function corsOK(){
   pptx.author = 'PosterA11y'; pptx.title = doc.title || 'Poster';
   const ts = THEME_STYLES[doc.theme] || THEME_STYLES.default;
   const bg = doc.hc ? '000000' : ts.bg.replace('#','');
-  const titleColor = doc.hc ? 'FFE14D' : ts.title.replace('#','');
-  const subColor = doc.hc ? 'E8CF4F' : ts.sub.replace('#','');
-  const slide1 = pptx.addSlide(); slide1.background = { color: bg };
+  const titleColor = doc.hc ? 'FFE14D' : (doc.titleColor || ts.title).replace('#','');
+  const subColor = doc.hc ? 'E8CF4F' : (doc.subColor || ts.sub).replace('#','');
+  const lblColor = doc.hc ? 'FFE14D' : (doc.lblColor || '#1A1D21').replace('#','');
+  
+  // Add watermark to Master Slide
+  if(doc.watermark) {
+     pptx.defineSlideMaster({
+       title: 'WATERMARK_MASTER',
+       background: { color: bg },
+       objects: [
+         { image: { path: doc.watermark, x: 3.5, y: 1.5, w: 6, h: 4, transparency: 90 } }
+       ]
+     });
+  }
+
+  const slide1 = pptx.addSlide({ masterName: doc.watermark ? 'WATERMARK_MASTER' : undefined });
+  if (!doc.watermark) slide1.background = { color: bg };
   if (doc.logo) { try { slide1.addImage({ data: doc.logo, x: 10.5, y: 0.5, w: 2, h: 1 }); } catch(e){} }
   slide1.addText(doc.title || 'Poster', { x: 0, y: 2.5, w: '100%', h: 1.5, align: 'center', fontSize: 44, bold: true, color: titleColor });
   if (doc.subtitle) { slide1.addText(doc.subtitle, { x: 0, y: 4, w: '100%', h: 1, align: 'center', fontSize: 24, color: subColor }); }
+  
   doc.lines.forEach((line, i) => {
-    const slide = pptx.addSlide(); slide.background = { color: bg };
+    const slide = pptx.addSlide({ masterName: doc.watermark ? 'WATERMARK_MASTER' : undefined });
+    if (!doc.watermark) slide.background = { color: bg };
     let marker = ''; if (doc.listStyle === 'bullets') marker = '• '; else if (doc.listStyle === 'numbers') marker = `${i+1}. `;
     slide.addText(marker + line.src, { x: 0.5, y: 0.5, w: 12.33, h: 1, align: 'center', fontSize: 24, bold: true, color: titleColor });
     const validItems = line.items.filter(it => !it.hidden && !it.textOnly && (it.id || it.customImg));
@@ -2042,11 +2265,45 @@ async function corsOK(){
       const x = c * colW + 0.5; const y = 1.8 + r * 2.5;
       const imgSrc = it.customImg ? it.customImg : imgUrl(it.id, 500);
       slide.addImage({ data: imgSrc, x: x + 0.5, y, w: colW - 1, h: 1.5 });
-      if (doc.showText) { slide.addText(it.word, { x, y: y + 1.5, w: colW, h: 0.5, align: 'center', fontSize: 14, color: titleColor }); }
+      if (doc.showText) { slide.addText(it.word, { x, y: y + 1.5, w: colW, h: 0.5, align: 'center', fontSize: 14, color: lblColor }); }
     });
   });
   await pptx.writeFile({ fileName: (doc.title || 'poster') + '.pptx' });
   toast('PowerPoint downloaded!', 'check');
+};
+
+// Batch ZIP Export
+ $('#zipBtn').onclick = async () => {
+    const drafts = getDrafts();
+    if(!drafts.length) { toast('No drafts to export.','alert'); return; }
+    toast('Generating ZIP file...');
+    
+    await new Promise((res, rej) => {
+      if (window.JSZip) return res();
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+      s.onload = () => res(); s.onerror = () => rej(new Error('cdn'));
+      document.head.append(s);
+    });
+    
+    const zip = new JSZip();
+    const folder = zip.folder("PosterA11y_Drafts");
+    
+    drafts.forEach(d => {
+        const cleanDoc = sanitize(d.doc);
+        if(cleanDoc) {
+            const html = generateHtmlContent(cleanDoc);
+            const safeName = (d.name || 'Untitled').replace(/[^\w\- ]+/g,'').trim().replace(/\s+/g,'-') || 'Untitled';
+            folder.file(`${safeName}.html`, html);
+        }
+    });
+    
+    const blob = await zip.generateAsync({type:"blob"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url;
+    a.download = "PosterA11y_Drafts.zip"; 
+    document.body.append(a); a.click(); a.remove();
+    toast('ZIP file downloaded.','check');
 };
 
 // JSON Backup & Restore
@@ -2119,7 +2376,7 @@ function boot(){
     try{ const raw=localStorage.getItem(LS_KEY); if(raw){const o=sanitize(JSON.parse(raw));if(o)doc=o;} }catch(e){}
   }
   history = [JSON.stringify(doc)]; hIndex = 0; updateUndoRedoBtns();
-  renderAll(); renderDrafts();
+  renderAll(); renderDrafts(); renderQuickAccess();
   const pending=[];
   doc.lines.forEach(l=>l.items.forEach(it=>{if(!it.textOnly&&it.state!=='ok'&&it.id==null&&!it.customImg)pending.push(it);}));
   pending.forEach(resolveItem);
