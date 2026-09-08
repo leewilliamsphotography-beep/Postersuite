@@ -1,1 +1,61 @@
-COMING SOON
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="version" content="1.0">
+<title>PosterF0rm — Form Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root { --paper:#F8F9FA; --surface:#FFFFFF; --ink:#1A1D21; --ink2:#50545C; --line:#E3E5E8; --accent:#E11D48; }
+body.dark-mode { --paper:#121212; --surface:#1E1E1E; --ink:#E8E8E8; --ink2:#A0A0A0; --line:#333333; }
+* { box-sizing:border-box; margin:0; padding:0; font-family:'Lexend',sans-serif; }
+body { background:var(--paper); color:var(--ink); height:100vh; display:flex; flex-direction:column; transition:background .2s; }
+header { display:flex; justify-content:space-between; align-items:center; padding:16px 24px; background:var(--surface); border-bottom:1px solid var(--line); }
+.logo { font-family:'Bricolage Grotesque'; font-weight:800; color:var(--accent); text-decoration:none; }
+.btn { background:var(--accent); color:#fff; border:none; padding:8px 16px; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Bricolage Grotesque'; }
+.builder-area { flex:1; padding:40px; overflow-y:auto; max-width:800px; margin:0 auto; width:100%; }
+.form-field { background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:20px; margin-bottom:16px; display:flex; flex-direction:column; gap:8px; }
+.field-label { font-weight:600; color:var(--ink); outline:none; }
+.field-input { background:var(--paper); border:1px solid var(--line); border-radius:6px; padding:10px; color:var(--ink); }
+.add-btn { background:transparent; border:2px dashed var(--line); color:var(--ink2); padding:16px; border-radius:12px; font-weight:600; cursor:pointer; width:100%; margin-top:16px; }
+.add-btn:hover { border-color:var(--accent); color:var(--accent); }
+</style>
+<script>
+const params = new URLSearchParams(window.location.search);
+if (params.get('theme') === 'dark') localStorage.setItem('pf0-theme', 'dark');
+if (localStorage.getItem('pf0-theme') === 'dark') document.documentElement.classList.add('dark-mode');
+</script>
+</head>
+<body>
+<header>
+    <a href="index.html" class="logo">← PosterF0rm</a>
+    <button class="btn" onclick="saveForm()">Save Form</button>
+</header>
+<div class="builder-area" id="builderArea">
+    <div class="form-field">
+        <div class="field-label" contenteditable="true">Question 1</div>
+        <input type="text" class="field-input" placeholder="User answer goes here...">
+    </div>
+    <button class="add-btn" onclick="addField()">+ Add Question</button>
+</div>
+<script>
+const builder = document.getElementById('builderArea');
+
+function addField() {
+    const field = document.createElement('div');
+    field.className = 'form-field';
+    field.innerHTML = `
+        <div class="field-label" contenteditable="true">New Question</div>
+        <input type="text" class="field-input" placeholder="User answer goes here...">
+    `;
+    builder.insertBefore(field, builder.querySelector('.add-btn'));
+}
+
+function saveForm() {
+    localStorage.setItem('posterf0rm-form', builder.innerHTML);
+    alert('Form saved locally!');
+}
+</script>
+</body>
+</html>
