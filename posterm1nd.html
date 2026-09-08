@@ -1,1 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PosterM1nd - Mind Map & Flowchart Maker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-dark: #312E81;
+            --primary-light: #EEF2FF;
+            --bg: #FFFFFF;
+            --text: #1A1D21;
+            --text-muted: #64748B;
+            --border: #E2E8F0;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text);
+            background-color: var(--bg);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Navbar */
+        nav {
+            padding: 20px 0;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--text);
+        }
+
+        .logo-area svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e0e7ff;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            font-weight: 800;
+        }
+
+        .hero-content h1 span {
+            color: var(--primary);
+        }
+
+        .hero-content p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+        }
+
+        /* Hero Visual / Mockup */
+        .hero-visual {
+            position: relative;
+            height: 450px;
+            background: linear-gradient(135deg, #EEF2FF 0%, #FFFFFF 100%);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .node {
+            position: absolute;
+            padding: 12px 20px;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .node-center {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary-dark);
+            z-index: 2;
+            font-size: 1.1rem;
+        }
+
+        .node-1 { top: 10%; left: 10%; animation-delay: 0s; }
+        .node-2 { top: 20%; right: 10%; animation-delay: 0.5s; }
+        .node-3 { bottom: 15%; left: 15%; animation-delay: 1s; }
+        .node-4 { bottom: 10%; right: 15%; animation-delay: 1.5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .connectors {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .connector-path {
+            stroke: var(--primary);
+            stroke-width: 2;
+            stroke-dasharray: 6;
+            animation: dash 30s linear infinite;
+            fill: none;
+            opacity: 0.6;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -1000;
+            }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background-color: var(--primary-light);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .section-title p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(79, 70, 229, 0.1);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            color: var(--primary);
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+        }
+
+        /* Ecosystem Section */
+        .ecosystem {
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .trinity {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 48px;
+            flex-wrap: wrap;
+        }
+
+        .trinity-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+
+        .trinity-item:hover {
+            color: var(--primary);
+        }
+
+        .trinity-box {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 800;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+        }
+
+        .trinity-item.active .trinity-box {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        /* CTA Section */
+        .cta {
+            padding: 80px 0;
+        }
+
+        .cta-box {
+            background: var(--primary);
+            border-radius: 24px;
+            padding: 64px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .cta-box h2 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .cta-box p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .cta-box .btn {
+            background: white;
+            color: var(--primary);
+            position: relative;
+        }
+
+        .cta-box .btn:hover {
+            background: #F8FAFC;
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            padding: 48px 0;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            .hero-visual {
+                height: 350px;
+                margin-top: 40px;
+            }
+            .nav-links a:not(.btn) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <div class="container nav-container">
+            <div class="logo-area">
+                <!-- Your Provided SVG Logo -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="PosterM1nd Logo">
+                  <defs>
+                    <linearGradient id="mbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
+                      <stop offset="0" stop-color="#FFFFFF"/>
+                      <stop offset="0.5" stop-color="#EEF2FF"/>
+                      <stop offset="1" stop-color="#E0E7FF"/>
+                    </linearGradient>
+                    <radialGradient id="mpinGrad" cx="0.35" cy="0.3" r="0.8">
+                      <stop offset="0" stop-color="#A5B4FC"/>
+                      <stop offset="1" stop-color="#4F46E5"/>
+                    </radialGradient>
+                    <filter id="mshadow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/>
+                    </filter>
+                  </defs>
+                  <rect width="120" height="120" rx="28" fill="url(#mbgGrad)"/>
+                  <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
+                  <!-- Indigo Strings -->
+                  <path d="M38 42 L60 24" fill="none" stroke="#4F46E5" stroke-width="3" stroke-linecap="round"/>
+                  <path d="M82 42 L60 24" fill="none" stroke="#4F46E5" stroke-width="3" stroke-linecap="round"/>
+                  <circle cx="38" cy="42" r="2.5" fill="#4F46E5"/>
+                  <circle cx="82" cy="42" r="2.5" fill="#4F46E5"/>
+                  <!-- White Poster Sheet -->
+                  <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#mshadow)"/>
+                  <circle cx="60" cy="62" r="16" fill="#EEF2FF"/>
+                  <!-- Mind Map / Flowchart Icon -->
+                  <rect x="54" y="58" width="12" height="8" rx="2" fill="#4F46E5"/>
+                  <path d="M54 62 L48 54" fill="none" stroke="#312E81" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M54 62 L48 70" fill="none" stroke="#312E81" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M66 62 L72 54" fill="none" stroke="#312E81" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M66 62 L72 70" fill="none" stroke="#312E81" stroke-width="2" stroke-linecap="round"/>
+                  <circle cx="46" cy="52" r="3" fill="#312E81"/>
+                  <circle cx="46" cy="72" r="3" fill="#312E81"/>
+                  <circle cx="74" cy="52" r="3" fill="#312E81"/>
+                  <circle cx="74" cy="72" r="3" fill="#312E81"/>
+                  <!-- Bottom Text Lines -->
+                  <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/>
+                  <rect x="48" y="94" width="24" height="5" rx="2.5" fill="#4F46E5"/>
+                  <!-- Indigo Pushpin -->
+                  <circle cx="60" cy="20" r="7" fill="url(#mpinGrad)" filter="url(#mshadow)"/>
+                  <circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
+                </svg>
+                PosterM1nd
+            </div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#ecosystem">Ecosystem</a>
+                <a href="#contact">Contact</a>
+                <button class="btn btn-primary">Try for Free</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-grid">
+            <div class="hero-content">
+                <h1>Visualize <span>Complexity</span><br>Simply.</h1>
+                <p>The accessible, drag-and-drop mind map and flowchart maker. Build emergency procedures, plan activities, and map out care steps without the steep learning curve of Miro or Visio.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary">Start Mapping</button>
+                    <button class="btn btn-secondary">View Templates</button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <!-- Dynamic SVG Connectors -->
+                <svg class="connectors" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <path class="connector-path" d="M50,50 L20,15" />
+                    <path class="connector-path" d="M50,50 L80,20" />
+                    <path class="connector-path" d="M50,50 L25,85" />
+                    <path class="connector-path" d="M50,50 L75,80" />
+                </svg>
+                <!-- Mockup Nodes -->
+                <div class="node node-center">Care Plan</div>
+                <div class="node node-1">Medication</div>
+                <div class="node node-2">Diet</div>
+                <div class="node node-3">Emergency</div>
+                <div class="node node-4">Activities</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Everything you need to map your mind</h2>
+                <p>Designed for clarity and speed. PosterM1nd brings the power of professional diagramming to everyone.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    </div>
+                    <h3>Intuitive Drag & Drop</h3>
+                    <p>No manuals required. Connect nodes, move elements, and build structures naturally. If you can think it, you can map it.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                    <h3>Care & Emergency Ready</h3>
+                    <p>Create foolproof flowcharts for emergency procedures or detailed mind maps for patient care planning and activity scheduling.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    </div>
+                    <h3>Seamless Collaboration</h3>
+                    <p>Share maps with your team. Edit in real-time, leave comments, and ensure everyone is on the exact same page.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ecosystem Section -->
+    <section class="ecosystem" id="ecosystem">
+        <div class="container">
+            <div class="section-title">
+                <h2>Completes Your Workflow</h2>
+                <p>PosterM1nd is the final piece of your productivity trinity. Diagrams meet Documents and Slides.</p>
+            </div>
+            <div class="trinity">
+                <div class="trinity-item">
+                    <div class="trinity-box">5<span style="font-size: 1rem; vertical-align: super;">ync</span></div>
+                    <span>Docs</span>
+                </div>
+                <div class="trinity-item">
+                    <div class="trinity-box">Pr<span style="font-size: 1rem; vertical-align: super;">3s</span></div>
+                    <span>Slides</span>
+                </div>
+                <div class="trinity-item active">
+                    <div class="trinity-box">M<span style="font-size: 1rem; vertical-align: super;">1nd</span></div>
+                    <span>Diagrams</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-box">
+                <h2>Ready to map it out?</h3>
+                <p>Join thousands of professionals simplifying their planning with PosterM1nd.</p>
+                <button class="btn">Get Started for Free</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 PosterM1nd. Part of the Office Trinity. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
