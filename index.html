@@ -931,7 +931,7 @@
             localStorage.setItem('postersuite-welcomed', 'true');
         }
 
-              // --- Auto-Fetch App Versions (Improved Regex) ---
+                // --- Auto-Fetch App Versions (Ultra-Robust) ---
         async function fetchAppVersions() {
             try {
                 const fetchMap = [
@@ -946,14 +946,21 @@
                 ];
                 
                 for (const item of fetchMap) {
-                    const res = await fetch(item.url + '?v=' + Date.now()); 
+                    // Cache-buster appended to URL
+                    const res = await fetch(item.url + '?t=' + Date.now()); 
                     const text = await res.text();
-                    // This new Regex handles single quotes, double quotes, and self-closing slashes
-                    const match = text.match(/<meta\s+name=["']version["']\s+content=["']([^"']+)["']/i);
-                    if (match) document.getElementById(item.id).textContent = `v${match[1]}`;
+                    
+                    // This regex allows for any order of attributes (e.g. <meta content="1.0" name="version">)
+                    const match = text.match(/<meta[^>]*name=["']version["'][^>]*content=["']([^"']+)["']/i);
+                    
+                    if (match) {
+                        document.getElementById(item.id).textContent = `v${match[1]}`;
+                    } else {
+                        console.warn(`Could not find version meta tag in ${item.url}`);
+                    }
                 }
             } catch (e) {
-                console.log("Could not fetch app versions automatically.");
+                console.error("Could not fetch app versions automatically.", e);
             }
         }
         fetchAppVersions();
