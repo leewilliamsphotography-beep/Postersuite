@@ -9,16 +9,22 @@
             --pc-bg: #F0FDF4; --pc-surface: #FFFFFF; --pc-primary: #10B981;
             --pc-primary-dark: #047857; --pc-border: #D1D5DB; --pc-border-light: #E5E7EB;
             --pc-text: #1A1D21; --pc-text-muted: #6B7280; --pc-highlight: #ECFDF5; --pc-ribbon-bg: #F9FAFB;
+            --pc-fill-handle: #10B981;
+        }
+        body.dark-mode {
+            --pc-bg: #111827; --pc-surface: #1F2937; --pc-primary: #10B981;
+            --pc-primary-dark: #34D399; --pc-border: #374151; --pc-border-light: #4B5563;
+            --pc-text: #F9FAFB; --pc-text-muted: #9CA3AF; --pc-highlight: #064E3B; --pc-ribbon-bg: #111827;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-        body { background-color: var(--pc-bg); color: var(--pc-text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body { background-color: var(--pc-bg); color: var(--pc-text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; transition: background-color 0.2s; }
 
         /* --- Navbar --- */
         .navbar { display: flex; align-items: center; justify-content: space-between; padding: 0.4rem 1rem; background-color: var(--pc-surface); border-bottom: 1px solid var(--pc-border-light); box-shadow: 0 1px 3px rgba(0,0,0,0.05); z-index: 10; }
         .nav-left { display: flex; align-items: center; gap: 1rem; }
         .logo { width: 32px; height: 32px; }
         .brand-name { font-size: 1.2rem; font-weight: 700; color: var(--pc-primary-dark); }
-        .nav-actions { display: flex; gap: 0.5rem; }
+        .nav-actions { display: flex; gap: 0.5rem; align-items: center; }
         
         /* --- Buttons & Ribbon --- */
         .btn { background-color: var(--pc-surface); color: var(--pc-text); border: 1px solid var(--pc-border); padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: all 0.15s ease; display: flex; align-items: center; gap: 0.4rem; }
@@ -29,74 +35,84 @@
         .btn-ribbon:hover { background-color: var(--pc-highlight); border: 1px solid var(--pc-border-light); padding: calc(0.3rem - 1px) calc(0.5rem - 1px); }
         .btn-ribbon.active { background-color: var(--pc-highlight); border: 1px solid var(--pc-primary); padding: calc(0.3rem - 1px) calc(0.5rem - 1px); }
         .btn-ribbon i { font-size: 1.1rem; } .btn-ribbon span { font-size: 0.7rem; }
+        .icon-btn { background: transparent; border: none; color: var(--pc-text-muted); cursor: pointer; padding: 0.4rem; border-radius: 4px; display: flex; align-items: center; }
+        .icon-btn:hover { background-color: var(--pc-highlight); color: var(--pc-primary); }
+
         .ribbon { display: flex; align-items: stretch; padding: 0.2rem 1rem; background-color: var(--pc-ribbon-bg); border-bottom: 1px solid var(--pc-border); overflow-x: auto; }
         .ribbon-group { display: flex; flex-direction: column; padding: 0.2rem 0.5rem; border-right: 1px solid var(--pc-border-light); }
         .ribbon-group-content { display: flex; gap: 0.2rem; align-items: center; flex: 1; }
         .ribbon-group-label { text-align: center; font-size: 0.65rem; color: var(--pc-text-muted); margin-top: 0.2rem; }
-        .separator { width: 1px; background-color: var(--pc-border); margin: 0 0.5rem; }
 
         /* --- Toolbar & Grid --- */
         .toolbar { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 1rem; background-color: var(--pc-surface); border-bottom: 1px solid var(--pc-border); }
         .name-box { border: 1px solid var(--pc-border); padding: 0.35rem; border-radius: 4px; width: 80px; text-align: center; font-weight: bold; font-size: 0.8rem; color: var(--pc-primary-dark); background-color: var(--pc-highlight); }
         .fx-label { font-style: italic; font-weight: bold; color: var(--pc-text-muted); font-family: serif; }
-        .formula-bar { flex: 1; border: 1px solid var(--pc-border); padding: 0.35rem; border-radius: 4px; font-family: monospace; font-size: 0.9rem; }
+        .formula-bar { flex: 1; border: 1px solid var(--pc-border); padding: 0.35rem; border-radius: 4px; font-family: monospace; font-size: 0.9rem; background: var(--pc-surface); color: var(--pc-text); }
         .formula-bar:focus { outline: none; border-color: var(--pc-primary); box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); }
+        
         .grid-wrapper { flex: 1; overflow: auto; position: relative; background-color: var(--pc-surface); }
         table { border-collapse: collapse; width: max-content; table-layout: fixed; }
-        th, td { border: 1px solid var(--pc-border); padding: 0; margin: 0; position: relative; }
-        th.corner { width: 40px; height: 24px; background-color: var(--pc-ribbon-bg); position: sticky; top: 0; left: 0; z-index: 3; }
-        th.col-header { min-width: 100px; width: 100px; height: 24px; background-color: var(--pc-ribbon-bg); color: var(--pc-text-muted); font-weight: 500; font-size: 0.75rem; position: sticky; top: 0; z-index: 2; text-align: center; user-select: none; }
-        th.row-header { width: 40px; background-color: var(--pc-ribbon-bg); color: var(--pc-text-muted); font-weight: 500; font-size: 0.75rem; position: sticky; left: 0; z-index: 2; text-align: center; padding: 4px 0; user-select: none; }
+        th, td { border: 1px solid var(--pc-border); padding: 0; margin: 0; position: relative; background: var(--pc-surface); }
+        th.corner { width: 40px; height: 24px; background-color: var(--pc-ribbon-bg); position: sticky; top: 0; left: 0; z-index: 4; }
+        th.col-header { min-width: 100px; width: 100px; height: 24px; background-color: var(--pc-ribbon-bg); color: var(--pc-text-muted); font-weight: 500; font-size: 0.75rem; position: sticky; top: 0; z-index: 3; text-align: center; user-select: none; }
+        th.row-header { width: 40px; background-color: var(--pc-ribbon-bg); color: var(--pc-text-muted); font-weight: 500; font-size: 0.75rem; position: sticky; left: 0; z-index: 3; text-align: center; padding: 4px 0; user-select: none; }
+        
+        /* Freeze Panes Logic */
+        .freeze-row th.col-header, .freeze-row td { position: sticky; top: 24px; z-index: 2; }
+        .freeze-col th.row-header, .freeze-col td { position: sticky; left: 40px; z-index: 2; }
+        .freeze-row.freeze-col th.corner { z-index: 5; }
+        .freeze-row.freeze-col td:nth-child(2) { z-index: 3; } /* Top-left data cell needs high z-index */
+        
         .col-resizer { width: 4px; height: 100%; position: absolute; right: -2px; top: 0; cursor: col-resize; z-index: 4; }
         .col-resizer:hover, .col-resizer.active { background-color: var(--pc-primary); }
-        td.cell { height: 24px; background-color: var(--pc-surface); overflow: hidden; }
-        .cell-content { width: 100%; height: 100%; padding: 2px 4px; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: clip; display: flex; align-items: center; }
+        td.cell { height: 24px; overflow: hidden; }
+        .cell-content { width: 100%; height: 100%; padding: 2px 4px; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: clip; display: flex; align-items: center; color: var(--pc-text); }
         .active-cell { outline: 2px solid var(--pc-primary); outline-offset: -2px; z-index: 1; }
         .row-header.active, .col-header.active { background-color: var(--pc-primary); color: white; }
         .selected-range { background-color: rgba(16, 185, 129, 0.1) !important; }
-        .hidden-input { position: absolute; border: none; outline: 2px solid var(--pc-primary); padding: 1px 3px; font-size: 0.85rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: none; z-index: 5; background: white; }
+        .hidden-input { position: absolute; border: none; outline: 2px solid var(--pc-primary); padding: 1px 3px; font-size: 0.85rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: none; z-index: 10; background: var(--pc-surface); color: var(--pc-text); }
+        
+        /* Fill Handle */
+        #fillHandle { position: absolute; width: 8px; height: 8px; background: var(--pc-fill-handle); border: 1px solid var(--pc-surface); cursor: crosshair; z-index: 20; display: none; }
+        #fillHandle:hover { background: var(--pc-primary-dark); }
 
         /* --- Modals & Menus --- */
-        .context-menu { position: fixed; background: white; border: 1px solid var(--pc-border); border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 100; min-width: 180px; display: none; }
-        .context-menu button { display: block; width: 100%; text-align: left; padding: 0.5rem 1rem; border: none; background: transparent; font-size: 0.85rem; cursor: pointer; }
+        .context-menu { position: fixed; background: var(--pc-surface); border: 1px solid var(--pc-border); border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 100; min-width: 180px; display: none; }
+        .context-menu button { display: block; width: 100%; text-align: left; padding: 0.5rem 1rem; border: none; background: transparent; font-size: 0.85rem; cursor: pointer; color: var(--pc-text); }
         .context-menu button:hover { background-color: var(--pc-highlight); color: var(--pc-primary-dark); }
-        .context-menu hr { border: 0; border-top: 1px solid var(--pc-border-light); margin: 0.2rem 0; }
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 200; }
-        .modal { background: white; padding: 1.5rem; border-radius: 8px; width: 300px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .modal { background: var(--pc-surface); padding: 1.5rem; border-radius: 8px; width: 300px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); color: var(--pc-text); }
         .modal h3 { margin-bottom: 1rem; color: var(--pc-primary-dark); }
         .modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem; }
         .modal label { display: flex; align-items: center; gap: 0.5rem; margin: 0.5rem 0; font-size: 0.9rem; cursor: pointer; }
 
         /* --- Command Palette --- */
         .palette-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: flex-start; padding-top: 15vh; z-index: 300; }
-        .palette-box { background: white; width: 500px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; }
-        .palette-input { width: 100%; padding: 1rem; border: none; border-bottom: 1px solid var(--pc-border-light); font-size: 1.1rem; outline: none; }
+        .palette-box { background: var(--pc-surface); width: 500px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; }
+        .palette-input { width: 100%; padding: 1rem; border: none; border-bottom: 1px solid var(--pc-border-light); font-size: 1.1rem; outline: none; background: var(--pc-surface); color: var(--pc-text); }
         .palette-results { max-height: 300px; overflow-y: auto; }
-        .palette-item { padding: 0.8rem 1rem; cursor: pointer; display: flex; justify-content: space-between; border-bottom: 1px solid var(--pc-border-light); }
+        .palette-item { padding: 0.8rem 1rem; cursor: pointer; display: flex; justify-content: space-between; border-bottom: 1px solid var(--pc-border-light); color: var(--pc-text); }
         .palette-item:hover, .palette-item.active { background-color: var(--pc-highlight); color: var(--pc-primary-dark); }
-        .palette-item span { font-size: 0.75rem; color: var(--pc-text-muted); background: #f3f4f6; padding: 2px 6px; border-radius: 4px; }
+        .palette-item span { font-size: 0.75rem; color: var(--pc-text-muted); background: var(--pc-bg); padding: 2px 6px; border-radius: 4px; }
 
-        /* --- P2P & Status --- */
         .p2p-status { font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 4px; background: #fee2e2; color: #ef4444; font-weight: 600; }
         .p2p-status.live { background: var(--pc-highlight); color: var(--pc-primary-dark); }
         .sheet-tabs { display: flex; align-items: center; gap: 0.2rem; padding: 0.2rem 1rem; background-color: var(--pc-ribbon-bg); border-top: 1px solid var(--pc-border); }
         .tab { padding: 0.3rem 0.8rem; font-size: 0.8rem; border: 1px solid transparent; border-radius: 4px 4px 0 0; cursor: pointer; color: var(--pc-text-muted); }
-        .tab.active { background-color: white; border: 1px solid var(--pc-border); border-bottom: none; color: var(--pc-primary-dark); font-weight: 600; }
+        .tab.active { background-color: var(--pc-surface); border: 1px solid var(--pc-border); border-bottom: none; color: var(--pc-primary-dark); font-weight: 600; }
 
-        /* --- Markdown / Rich Cell CSS --- */
+        /* Markdown & Rich Cells */
         .md-h1 { font-size: 1.2rem; font-weight: bold; } .md-h2 { font-size: 1rem; font-weight: bold; }
         .md-ul { list-style: disc; margin-left: 15px; } .md-strong { font-weight: bold; } .md-em { font-style: italic; }
-        .progress-bar-track { width: 90%; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; }
+        .progress-bar-track { width: 90%; height: 8px; background: var(--pc-border-light); border-radius: 4px; overflow: hidden; }
         .progress-bar-fill { height: 100%; background: var(--pc-primary); border-radius: 4px; }
         .cell-image { max-width: 100%; max-height: 100%; object-fit: contain; }
     </style>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- PeerJS for Serverless P2P Collaboration -->
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 </head>
 <body>
 
-    <!-- SVG Defs -->
     <svg width="0" height="0" style="position:absolute;">
         <defs>
             <linearGradient id="cbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F0FDF4"/><stop offset="1" stop-color="#DCFCE7"/></linearGradient>
@@ -112,6 +128,7 @@
             <div class="p2p-status" id="p2pStatus">Offline</div>
         </div>
         <div class="nav-actions">
+            <button class="icon-btn" id="btnDarkMode" title="Toggle Dark Mode"><i data-lucide="moon"></i></button>
             <button class="btn" id="btnShareLive" title="Share Sheet P2P"><i data-lucide="share-2"></i> Share Live</button>
             <button class="btn" id="btnOpen">Open</button>
             <button class="btn btn-primary" id="btnSaveDirect" title="Save directly to hard drive (Ctrl+S)"><i data-lucide="save"></i> Save Direct</button>
@@ -124,7 +141,7 @@
             <div class="ribbon-group-content">
                 <button class="btn-ribbon" id="btn-bold"><i data-lucide="bold"></i><span>Bold</span></button>
                 <button class="btn-ribbon" id="btn-italic"><i data-lucide="italic"></i><span>Italic</span></button>
-                <input type="color" id="bgColor" value="#FFFFFF" style="width: 30px; height: 30px; border: none; cursor: pointer;" title="Fill Color">
+                <input type="color" id="bgColor" value="#FFFFFF" style="width: 30px; height: 30px; border: none; cursor: pointer; background: transparent;" title="Fill Color">
             </div>
             <div class="ribbon-group-label">Font</div>
         </div>
@@ -132,11 +149,11 @@
         <div class="ribbon-group">
             <div class="ribbon-group-content">
                 <button class="btn-ribbon" id="btn-currency"><i data-lucide="dollar-sign"></i><span>Currency</span></button>
+                <button class="btn-ribbon" id="btn-percent"><i data-lucide="percent"></i><span>Percent</span></button>
             </div>
             <div class="ribbon-group-label">Number</div>
         </div>
 
-        <!-- NEW: Poster Rich Cell Types -->
         <div class="ribbon-group">
             <div class="ribbon-group-content">
                 <button class="btn-ribbon" id="btn-markdown"><i data-lucide="file-text"></i><span>Markdown</span></button>
@@ -148,11 +165,11 @@
 
         <div class="ribbon-group">
             <div class="ribbon-group-content">
+                <button class="btn-ribbon" id="btn-freeze"><i data-lucide="pin"></i><span>Freeze Panes</span></button>
                 <button class="btn-ribbon" id="btn-insert"><i data-lucide="insert"></i><span>Insert</span></button>
-                <button class="btn-ribbon" id="btn-delete"><i data-lucide="trash-2"></i><span>Delete</span></button>
                 <button class="btn-ribbon" id="btn-cmd" title="Open Command Palette (Ctrl+K)"><i data-lucide="command"></i><span>Commands</span></button>
             </div>
-            <div class="ribbon-group-label">Tools</div>
+            <div class="ribbon-group-label">View & Tools</div>
         </div>
     </div>
 
@@ -165,21 +182,20 @@
     <div class="grid-wrapper" id="gridWrapper">
         <table id="spreadsheet"></table>
         <input type="text" class="hidden-input" id="cellEditor">
+        <div id="fillHandle"></div>
     </div>
 
     <div class="sheet-tabs">
         <div class="tab active">Sheet1</div>
     </div>
 
-    <!-- Command Palette -->
     <div class="palette-overlay" id="paletteOverlay">
         <div class="palette-box">
-            <input type="text" class="palette-input" id="paletteInput" placeholder="Type a command... (e.g., Bold, Currency, Insert Row)" autofocus>
+            <input type="text" class="palette-input" id="paletteInput" placeholder="Type a command... (e.g., Bold, Currency, Freeze)" autofocus>
             <div class="palette-results" id="paletteResults"></div>
         </div>
     </div>
 
-    <!-- Context Menu -->
     <div class="context-menu" id="contextMenu">
         <button id="ctx-insert-cells">Insert Cells...</button>
         <button id="ctx-delete-cells">Delete Cells...</button>
@@ -187,7 +203,6 @@
         <button id="ctx-clear-content">Clear Contents</button>
     </div>
 
-    <!-- Insert/Delete Modal -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
             <h3 id="modalTitle">Insert</h3>
@@ -203,39 +218,37 @@
     <script>
         lucide.createIcons();
         
-        // --- Core State ---
-        const ROWS = 50, COLS = 26;
-        let sheetData = {};
+        const ROWS = 100, COLS = 26; // Increased rows for scroll testing
+        let sheetData = JSON.parse(localStorage.getItem('posterC3llData') || '{}');
+        if (!sheetData.settings) sheetData.settings = {};
+        
         let activeCell = { row: 0, col: 0 };
         let selectedRange = { startRow: 0, startCol: 0, endRow: 0, endCol: 0 };
         let isSelecting = false;
+        let isFilling = false;
         let currentModalAction = null;
-        let fileHandle = null; // For File System Access API
-        let peer = null;
-        let conn = null;
-        let isApplyingRemoteData = false;
-
-        const savedLocal = localStorage.getItem('posterC3llData');
-        if (savedLocal) {
-            try { sheetData = JSON.parse(savedLocal); } catch (e) { console.error(e); }
-        }
+        let fileHandle = null;
+        let peer = null, conn = null, isApplyingRemoteData = false;
 
         const table = document.getElementById('spreadsheet');
+        const gridWrapper = document.getElementById('gridWrapper');
         const cellEditor = document.getElementById('cellEditor');
         const formulaBar = document.getElementById('formulaBar');
+        const fillHandle = document.getElementById('fillHandle');
 
-        // --- Command Palette Data ---
         const commands = [
-            { title: "Format: Bold", action: () => applyStyle('b', true), shortcut: "Ctrl+B" },
+            { title: "Format: Bold", action: () => applyStyle('b', true) },
             { title: "Format: Markdown", action: () => applyStyle('fmt', 'markdown') },
             { title: "Format: Progress Bar", action: () => applyStyle('fmt', 'progress') },
-            { title: "Format: Image URL", action: () => applyStyle('fmt', 'image') },
             { title: "Format: Currency", action: () => applyStyle('fmt', 'currency') },
+            { title: "Format: Percent", action: () => applyStyle('fmt', 'percent') },
+            { title: "Toggle Freeze Panes", action: toggleFreezePanes },
+            { title: "Toggle Dark Mode", action: toggleDarkMode },
             { title: "Insert Row", action: () => openModal('insert', 'row') },
             { title: "Insert Column", action: () => openModal('insert', 'col') },
-            { title: "Clear Contents", action: () => clearContents() },
-            { title: "Save Direct to Device", action: () => saveDirect(), shortcut: "Ctrl+S" },
-            { title: "Share Live (P2P)", action: () => startP2PSharing() }
+            { title: "Clear Contents", action: clearContents },
+            { title: "Save Direct to Device", action: saveDirect, shortcut: "Ctrl+S" },
+            { title: "Share Live (P2P)", action: startP2PSharing }
         ];
 
         // --- Grid Generation ---
@@ -260,6 +273,7 @@
             table.innerHTML = html;
             attachGridListeners();
             updateActiveCellUI();
+            applyFreezePanels();
         }
 
         function getCellStyleString(s) {
@@ -273,50 +287,32 @@
         function getCellDisplayHtml(id, data) {
             if (!data.v) return '';
             let val = data.v;
-
             if (typeof val === 'string' && val.startsWith('=')) {
-                if (val.toUpperCase().startsWith('=FETCH(')) {
-                    handleFetchFormula(id, val);
-                    return '<i style="color:#999">Loading...</i>';
-                }
-                try {
-                    val = evaluateFormula(val.substring(1));
-                    if (isNaN(val)) return '';
-                } catch (e) { return '#ERROR!'; }
+                if (val.toUpperCase().startsWith('=FETCH(')) { handleFetchFormula(id, val); return '<i style="color:var(--pc-text-muted)">Loading...</i>'; }
+                try { val = evaluateFormula(val.substring(1)); if (isNaN(val) && typeof val === 'number') return ''; } catch (e) { return '#ERROR!'; }
             }
-
-            if (data.s && data.s.fmt === 'currency' && !isNaN(val)) {
-                return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
-            }
+            if (data.s && data.s.fmt === 'currency' && !isNaN(val)) return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+            if (data.s && data.s.fmt === 'percent' && !isNaN(val)) return `${(parseFloat(val) * 100).toFixed(0)}%`;
             if (data.s && data.s.fmt === 'markdown') return parseMarkdown(val);
-            if (data.s && data.s.fmt === 'progress') {
-                let num = Math.max(0, Math.min(1, parseFloat(val) || 0));
-                return `<div class="progress-bar-track"><div class="progress-bar-fill" style="width:${num*100}%"></div></div>`;
-            }
-            if (data.s && data.s.fmt === 'image') {
-                return `<img src="${val}" class="cell-image" alt="img">`;
-            }
+            if (data.s && data.s.fmt === 'progress') return `<div class="progress-bar-track"><div class="progress-bar-fill" style="width:${Math.max(0, Math.min(1, parseFloat(val) || 0))*100}%"></div></div>`;
+            if (data.s && data.s.fmt === 'image') return `<img src="${val}" class="cell-image" alt="img">`;
             return val;
         }
 
         function parseMarkdown(text) {
-            let html = text
-                .replace(/^# (.*$)/gm, '<div class="md-h1">$1</div>')
+            return text.replace(/^# (.*$)/gm, '<div class="md-h1">$1</div>')
                 .replace(/^## (.*$)/gm, '<div class="md-h2">$1</div>')
                 .replace(/^\* (.*$)/gm, '<ul class="md-ul"><li>$1</li></ul>')
                 .replace(/\*\*(.*?)\*/g, '<span class="md-strong">$1</span>')
                 .replace(/\*(.*?)\*/g, '<span class="md-em">$1</span>');
-            return html;
         }
 
-        // --- Formulas & =FETCH() ---
         function evaluateFormula(formula) {
             formula = formula.replace(/SUM\(([^)]+)\)/gi, (match, rangeStr) => {
-                const [start, end] = rangeStr.split(':');
-                return sumRange(start, end);
+                const [start, end] = rangeStr.split(':'); return sumRange(start, end);
             });
-            formula = formula.replace(/([A-Z]+[0-9]+)/g, (match, cellId) => {
-                const cellData = sheetData[cellId.toUpperCase()];
+            formula = formula.replace(/([A-Z]+)([0-9]+)/g, (match, col, row) => {
+                const cellData = sheetData[`${col}${row}`];
                 if (!cellData || !cellData.v) return '0';
                 let val = cellData.v;
                 if (typeof val === 'string' && val.startsWith('=')) val = evaluateFormula(val.substring(1));
@@ -327,47 +323,27 @@
         }
 
         function sumRange(start, end) {
-            const startMatch = start.match(/([A-Z]+)([0-9]+)/);
-            const endMatch = end.match(/([A-Z]+)([0-9]+)/);
-            if (!startMatch || !endMatch) return 0;
+            const sM = start.match(/([A-Z]+)([0-9]+)/), eM = end.match(/([A-Z]+)([0-9]+)/);
+            if (!sM || !eM) return 0;
             let sum = 0;
-            for (let r = startMatch[2] - 1; r <= endMatch[2] - 1; r++) {
-                for (let c = startMatch[1].charCodeAt(0) - 65; c <= endMatch[1].charCodeAt(0) - 65; c++) {
-                    const id = `${String.fromCharCode(65 + c)}${r + 1}`;
-                    const val = sheetData[id]?.v;
-                    if (val && !isNaN(val)) sum += parseFloat(val);
-                }
+            for (let r = +sM[2] - 1; r <= +eM[2] - 1; r++) for (let c = sM[1].charCodeAt(0) - 65; c <= eM[1].charCodeAt(0) - 65; c++) {
+                const val = sheetData[`${String.fromCharCode(65 + c)}${r + 1}`]?.v;
+                if (val && !isNaN(val)) sum += parseFloat(val);
             }
             return sum;
         }
 
-        // Live Web Data Fetch
         async function handleFetchFormula(id, formula) {
             try {
-                const urlMatch = formula.match(/=FETCH\(["']([^"']+)["']\)/i);
-                if (!urlMatch) return;
-                const url = urlMatch[1];
-                
-                const res = await fetch(url);
-                const text = await res.text();
-                
-                // Try to parse JSON, fallback to raw text
-                try {
-                    const json = JSON.parse(text);
-                    const keys = Object.keys(json);
-                    val = JSON.stringify(json[keys[0]] || json);
-                } catch { val = text.substring(0, 100); }
-
+                const url = formula.match(/=FETCH\(["']([^"']+)["']\)/i)[1];
+                const res = await fetch(url); const text = await res.text();
+                let val; try { const json = JSON.parse(text); val = JSON.stringify(json[Object.keys(json)[0]] || json); } catch { val = text.substring(0, 100); }
                 if (!sheetData[id]) sheetData[id] = { s: {} };
-                sheetData[id].v = val; // Overwrite formula with fetched value
-                saveLocally(); recalculateAndRender();
-            } catch (e) {
-                if (sheetData[id]) sheetData[id].v = "#FETCH_ERROR";
-                recalculateAndRender();
-            }
+                sheetData[id].v = val; saveLocally(); recalculateAndRender();
+            } catch (e) { if (sheetData[id]) sheetData[id].v = "#FETCH_ERROR"; recalculateAndRender(); }
         }
 
-        // --- Grid Interactions ---
+        // --- UI & Interactions ---
         function attachGridListeners() {
             document.querySelectorAll('.cell').forEach(td => {
                 td.addEventListener('mousedown', (e) => {
@@ -379,35 +355,27 @@
                     formulaBar.value = sheetData[td.dataset.id]?.v || '';
                 });
                 td.addEventListener('mouseenter', () => {
-                    if (isSelecting) {
-                        selectedRange.endRow = parseInt(td.dataset.row);
-                        selectedRange.endCol = parseInt(td.dataset.col);
-                        updateSelectionUI();
-                    }
+                    if (isFilling) { selectedRange.endRow = parseInt(td.dataset.row); selectedRange.endCol = parseInt(td.dataset.col); updateSelectionUI(); }
+                    else if (isSelecting) { selectedRange.endRow = parseInt(td.dataset.row); selectedRange.endCol = parseInt(td.dataset.col); updateSelectionUI(); }
                 });
                 td.addEventListener('dblclick', () => startEditing(td));
                 td.addEventListener('contextmenu', (e) => {
-                    e.preventDefault();
-                    activeCell = { row: parseInt(td.dataset.row), col: parseInt(td.dataset.col) };
-                    updateActiveCellUI();
-                    showContextMenu(e.clientX, e.clientY);
+                    e.preventDefault(); activeCell = { row: parseInt(td.dataset.row), col: parseInt(td.dataset.col) };
+                    updateActiveCellUI(); showContextMenu(e.clientX, e.clientY);
                 });
             });
             document.querySelectorAll('.col-resizer').forEach(h => h.addEventListener('mousedown', startColResize));
-            document.addEventListener('mouseup', () => isSelecting = false);
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('#contextMenu') && !e.target.closest('.cell')) document.getElementById('contextMenu').style.display = 'none';
-            });
+            document.addEventListener('mouseup', handleMouseUp);
+            document.addEventListener('click', (e) => { if (!e.target.closest('#contextMenu') && !e.target.closest('.cell')) document.getElementById('contextMenu').style.display = 'none'; });
         }
 
         function startEditing(td) {
             const rect = td.getBoundingClientRect();
-            const gridRect = document.getElementById('gridWrapper').getBoundingClientRect();
+            const gridRect = gridWrapper.getBoundingClientRect();
             cellEditor.style.display = 'block';
             cellEditor.style.left = `${rect.left - gridRect.left + gridWrapper.scrollLeft}px`;
             cellEditor.style.top = `${rect.top - gridRect.top + gridWrapper.scrollTop}px`;
             cellEditor.style.width = `${rect.width}px`; cellEditor.style.height = `${rect.height}px`;
-            
             const cellId = td.dataset.id;
             cellEditor.value = sheetData[cellId]?.v || '';
             cellEditor.focus(); cellEditor.select();
@@ -433,8 +401,7 @@
             activeCell.col = Math.min(COLS - 1, Math.max(0, activeCell.col + cOffset));
             selectedRange = { ...activeCell, endRow: activeCell.row, endCol: activeCell.col };
             updateSelectionUI(); updateActiveCellUI();
-            const id = `${String.fromCharCode(65 + activeCell.col)}${activeCell.row + 1}`;
-            formulaBar.value = sheetData[id]?.v || '';
+            formulaBar.value = sheetData[`${String.fromCharCode(65 + activeCell.col)}${activeCell.row + 1}`]?.v || '';
         }
 
         function updateSelectionUI() {
@@ -446,6 +413,7 @@
             for (let r = minR; r <= maxR; r++) for (let c = minC; c <= maxC; c++) {
                 document.querySelector(`td[data-row="${r}"][data-col="${c}"]`)?.classList.add('selected-range');
             }
+            positionFillHandle();
         }
 
         function updateActiveCellUI() {
@@ -458,19 +426,85 @@
                 document.querySelector(`th.row-header[data-row="${activeCell.row}"]`)?.classList.add('active');
                 document.querySelector(`th.col-header[data-col="${activeCell.col}"]`)?.classList.add('active');
             }
+            positionFillHandle();
+        }
+
+        function positionFillHandle() {
+            const minR = Math.min(selectedRange.startRow, selectedRange.endRow);
+            const maxR = Math.max(selectedRange.startRow, selectedRange.endRow);
+            const minC = Math.min(selectedRange.startCol, selectedRange.endCol);
+            const maxC = Math.max(selectedRange.startCol, selectedRange.endCol);
+            const td = document.querySelector(`td[data-row="${maxR}"][data-col="${maxC}"]`);
+            if (td) {
+                const rect = td.getBoundingClientRect();
+                const gridRect = gridWrapper.getBoundingClientRect();
+                fillHandle.style.display = 'block';
+                fillHandle.style.left = `${rect.right - gridRect.left - 4}px`;
+                fillHandle.style.top = `${rect.bottom - gridRect.top - 4}px`;
+            } else { fillHandle.style.display = 'none'; }
         }
 
         function recalculateAndRender() {
             document.querySelectorAll('.cell').forEach(td => {
-                const id = td.dataset.id;
-                const data = sheetData[id] || {};
+                const id = td.dataset.id; const data = sheetData[id] || {};
                 const contentDiv = td.querySelector('.cell-content');
                 contentDiv.style.cssText = getCellStyleString(data.s || {});
                 contentDiv.innerHTML = getCellDisplayHtml(id, data);
             });
         }
 
-        // --- Ribbon & Command Actions ---
+        // --- Fill Handle (Auto-Fill) ---
+        fillHandle.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); isFilling = true; });
+
+        function handleMouseUp() {
+            if (isFilling) { executeFill(); isFilling = false; }
+            isSelecting = false;
+        }
+
+        function executeFill() {
+            const minR = Math.min(selectedRange.startRow, selectedRange.endRow);
+            const maxR = Math.max(selectedRange.startRow, selectedRange.endRow);
+            const minC = Math.min(selectedRange.startCol, selectedRange.endCol);
+            const maxC = Math.max(selectedRange.startCol, selectedRange.endCol);
+
+            // Determine fill direction (Down, Right, etc.) based on active cell relative to selection
+            const isFillingDown = activeCell.row === minR;
+            const isFillingRight = activeCell.col === minC;
+
+            function copyCell(srcId, destId, rOffset, cOffset) {
+                if (!sheetData[srcId]) return;
+                const srcData = JSON.parse(JSON.stringify(sheetData[srcId]));
+                if (typeof srcData.v === 'string' && srcData.v.startsWith('=')) {
+                    // Adjust formula references
+                    srcData.v = srcData.v.replace(/([A-Z]+)([0-9]+)/g, (match, col, row) => {
+                        let newCol = String.fromCharCode(col.charCodeAt(0) + cOffset);
+                        let newRow = parseInt(row) + rOffset;
+                        return `${newCol}${newRow}`;
+                    });
+                } else if (!isNaN(srcData.v)) {
+                    // Smart sequence: 1 -> 2, 2 -> 3
+                    srcData.v = parseFloat(srcData.v) + (rOffset + cOffset > 0 ? 1 : -1); 
+                }
+                sheetData[destId] = srcData;
+            }
+
+            if (isFillingDown) {
+                for (let c = minC; c <= maxC; c++) {
+                    let lastVal = sheetData[`${String.fromCharCode(65 + c)}${minR + 1}`]?.v || 0;
+                    for (let r = maxR + 1; r <= selectedRange.endRow; r++) {
+                        const destId = `${String.fromCharCode(65 + c)}${r + 1}`;
+                        const srcId = `${String.fromCharCode(65 + c)}${minR + 1}`;
+                        copyCell(srcId, destId, r - minR, 0);
+                        // To continue sequences accurately:
+                        if (!isNaN(lastVal)) lastVal = parseFloat(lastVal) + 1;
+                    }
+                }
+            }
+            // Add isFillingRight / Up / Left logic similarly if needed in future
+            saveLocally(); recalculateAndRender();
+        }
+
+        // --- Ribbon Actions ---
         function applyStyle(styleKey, value) {
             const minR = Math.min(selectedRange.startRow, selectedRange.endRow);
             const maxR = Math.max(selectedRange.startRow, selectedRange.endRow);
@@ -487,6 +521,7 @@
 
         document.getElementById('btn-bold').onclick = () => applyStyle('b', true);
         document.getElementById('btn-currency').onclick = () => applyStyle('fmt', 'currency');
+        document.getElementById('btn-percent').onclick = () => applyStyle('fmt', 'percent');
         document.getElementById('btn-markdown').onclick = () => applyStyle('fmt', 'markdown');
         document.getElementById('btn-progress').onclick = () => applyStyle('fmt', 'progress');
         document.getElementById('btn-image').onclick = () => applyStyle('fmt', 'image');
@@ -498,54 +533,67 @@
             const minC = Math.min(selectedRange.startCol, selectedRange.endCol);
             const maxC = Math.max(selectedRange.startCol, selectedRange.endCol);
             for (let r = minR; r <= maxR; r++) for (let c = minC; c <= maxC; c++) {
-                const id = `${String.fromCharCode(65 + c)}${r + 1}`;
-                if(sheetData[id]) delete sheetData[id].v;
+                const id = `${String.fromCharCode(65 + c)}${r + 1}`; if(sheetData[id]) delete sheetData[id].v;
             }
             recalculateAndRender(); saveLocally(); document.getElementById('contextMenu').style.display = 'none';
         }
         document.getElementById('ctx-clear-content').onclick = clearContents;
 
-        // --- Command Palette UI ---
+        // --- Dark Mode & Freeze Panes ---
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            sheetData.settings = sheetData.settings || {};
+            sheetData.settings.darkMode = document.body.classList.contains('dark-mode');
+            saveLocally();
+            document.querySelector('#btnDarkMode i').setAttribute('data-lucide', sheetData.settings.darkMode ? 'sun' : 'moon');
+            lucide.createIcons();
+        }
+        document.getElementById('btnDarkMode').onclick = toggleDarkMode;
+        if (sheetData.settings?.darkMode) toggleDarkMode();
+
+        function toggleFreezePanes() {
+            sheetData.settings = sheetData.settings || {};
+            sheetData.settings.freeze = !sheetData.settings.freeze;
+            saveLocally(); applyFreezePanels();
+        }
+        document.getElementById('btn-freeze').onclick = toggleFreezePanes;
+
+        function applyFreezePanels() {
+            const firstRow = document.querySelector('tr');
+            if (sheetData.settings?.freeze) {
+                firstRow.classList.add('freeze-row');
+                document.querySelectorAll('td:first-child').forEach(td => td.classList.add('freeze-col'));
+                firstRow.querySelector('th.corner').classList.add('freeze-row', 'freeze-col');
+            } else {
+                document.querySelectorAll('.freeze-row, .freeze-col').forEach(el => el.classList.remove('freeze-row', 'freeze-col'));
+            }
+        }
+
+        // --- Command Palette ---
         const paletteOverlay = document.getElementById('paletteOverlay');
         const paletteInput = document.getElementById('paletteInput');
         const paletteResults = document.getElementById('paletteResults');
-        let activePaletteIndex = 0;
-
-        function openPalette() { paletteOverlay.style.display = 'flex'; paletteInput.value = ''; renderPaletteResults(''); paletteInput.focus(); }
+        let activeIdx = 0;
+        function openPalette() { paletteOverlay.style.display = 'flex'; paletteInput.value = ''; renderPalette(''); paletteInput.focus(); }
         function closePalette() { paletteOverlay.style.display = 'none'; }
-        
-        paletteInput.addEventListener('input', () => renderPaletteResults(paletteInput.value));
+        paletteInput.addEventListener('input', () => renderPalette(paletteInput.value));
         paletteInput.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowDown') { e.preventDefault(); activePaletteIndex = Math.min(commands.length-1, activePaletteIndex+1); renderPaletteResults(paletteInput.value); }
-            else if (e.key === 'ArrowUp') { e.preventDefault(); activePaletteIndex = Math.max(0, activePaletteIndex-1); renderPaletteResults(paletteInput.value); }
-            else if (e.key === 'Enter') { e.preventDefault(); executePaletteCommand(paletteInput.value); }
+            if (e.key === 'ArrowDown') { e.preventDefault(); activeIdx = Math.min(commands.length-1, activeIdx+1); renderPalette(paletteInput.value); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); activeIdx = Math.max(0, activeIdx-1); renderPalette(paletteInput.value); }
+            else if (e.key === 'Enter') { e.preventDefault(); executePalette(paletteInput.value); }
             else if (e.key === 'Escape') closePalette();
         });
-
-        function renderPaletteResults(query) {
+        function renderPalette(query) {
             const filtered = commands.filter(c => c.title.toLowerCase().includes(query.toLowerCase()));
-            paletteResults.innerHTML = filtered.map((c, i) => 
-                `<div class="palette-item ${i === activePaletteIndex ? 'active' : ''}" data-title="${c.title}">
-                    <div>${c.title}</div>${c.shortcut ? `<span>${c.shortcut}</span>` : ''}
-                </div>`
-            ).join('');
-            paletteResults.querySelectorAll('.palette-item').forEach(el => {
-                el.onclick = () => executePaletteCommand(el.dataset.title);
-            });
+            paletteResults.innerHTML = filtered.map((c, i) => `<div class="palette-item ${i === activeIdx ? 'active' : ''}" data-title="${c.title}"><div>${c.title}</div>${c.shortcut ? `<span>${c.shortcut}</span>` : ''}</div>`).join('');
+            paletteResults.querySelectorAll('.palette-item').forEach(el => el.onclick = () => executePalette(el.dataset.title));
         }
+        function executePalette(title) { const cmd = commands.find(c => c.title.toLowerCase() === title.toLowerCase()); if (cmd) { cmd.action(); closePalette(); } }
 
-        function executePaletteCommand(title) {
-            const cmd = commands.find(c => c.title.toLowerCase() === title.toLowerCase());
-            if (cmd) { cmd.action(); closePalette(); }
-        }
-
-        // --- Context Menu & Modals ---
+        // --- Context & Modals ---
         function showContextMenu(x, y) { const m = document.getElementById('contextMenu'); m.style.display = 'block'; m.style.left = `${x}px`; m.style.top = `${y}px`; }
         document.getElementById('btn-insert').onclick = () => openModal('insert', null);
-        document.getElementById('btn-delete').onclick = () => openModal('delete', null);
         document.getElementById('ctx-insert-cells').onclick = () => openModal('insert', null);
-        document.getElementById('ctx-delete-cells').onclick = () => openModal('delete', null);
-
         function openModal(action, presetDir) {
             currentModalAction = action;
             document.getElementById('modalTitle').textContent = action === 'insert' ? 'Insert' : 'Delete';
@@ -557,38 +605,21 @@
         document.getElementById('modalConfirm').onclick = () => {
             const dir = document.querySelector('input[name="dir"]:checked').value;
             if (currentModalAction === 'insert') insertRowOrCol(dir);
-            else deleteRowOrCol(dir);
             document.getElementById('modalOverlay').style.display = 'none';
         };
-
         function insertRowOrCol(dir) {
             if (dir === 'row') {
                 for (let r = ROWS - 1; r > activeCell.row; r--) for (let c = 0; c < COLS; c++) {
-                    const oldId = `${String.fromCharCode(65 + c)}${r}`; const newId = `${String.fromCharCode(65 + c)}${r + 1}`;
-                    if (sheetData[oldId]) sheetData[newId] = sheetData[oldId];
+                    const o = `${String.fromCharCode(65 + c)}${r}`, n = `${String.fromCharCode(65 + c)}${r + 1}`;
+                    if (sheetData[o]) sheetData[n] = sheetData[o];
                 }
                 for (let c = 0; c < COLS; c++) delete sheetData[`${String.fromCharCode(65 + c)}${activeCell.row + 1}`];
             } else {
                 for (let c = COLS - 1; c > activeCell.col; c--) for (let r = 0; r < ROWS; r++) {
-                    const oldId = `${String.fromCharCode(64 + c)}${r + 1}`; const newId = `${String.fromCharCode(65 + c)}${r + 1}`;
-                    if (sheetData[oldId]) sheetData[newId] = sheetData[oldId];
+                    const o = `${String.fromCharCode(64 + c)}${r + 1}`, n = `${String.fromCharCode(65 + c)}${r + 1}`;
+                    if (sheetData[o]) sheetData[n] = sheetData[o];
                 }
                 for (let r = 0; r < ROWS; r++) delete sheetData[`${String.fromCharCode(65 + activeCell.col)}${r + 1}`];
-            }
-            saveLocally(); createGrid();
-        }
-
-        function deleteRowOrCol(dir) {
-            if (dir === 'row') {
-                for (let r = activeCell.row; r < ROWS - 1; r++) for (let c = 0; c < COLS; c++) {
-                    const nextId = `${String.fromCharCode(65 + c)}${r + 2}`; const currId = `${String.fromCharCode(65 + c)}${r + 1}`;
-                    if (sheetData[nextId]) sheetData[currId] = sheetData[nextId]; else delete sheetData[currId];
-                }
-            } else {
-                for (let c = activeCell.col; c < COLS - 1; c++) for (let r = 0; r < ROWS; r++) {
-                    const nextId = `${String.fromCharCode(66 + c)}${r + 1}`; const currId = `${String.fromCharCode(65 + c)}${r + 1}`;
-                    if (sheetData[nextId]) sheetData[currId] = sheetData[nextId]; else delete sheetData[currId];
-                }
             }
             saveLocally(); createGrid();
         }
@@ -599,98 +630,63 @@
             const colIdx = parseInt(handle.dataset.col);
             const th = document.querySelector(`th.col-header[data-col="${colIdx}"]`);
             const startWidth = th.offsetWidth;
-            function move(ev) { const newWidth = Math.max(40, startWidth + (ev.clientX - e.clientX)); th.style.minWidth = `${newWidth}px`; th.style.width = `${newWidth}px`; }
+            function move(ev) { const w = Math.max(40, startWidth + (ev.clientX - e.clientX)); th.style.minWidth = `${w}px`; th.style.width = `${w}px`; }
             function up() { handle.classList.remove('active'); document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); if (!sheetData._colWidths) sheetData._colWidths = {}; sheetData._colWidths[colIdx] = th.offsetWidth; saveLocally(); }
             document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
         }
 
-        // --- File System Access API (Direct Saving) ---
+        // --- File System API ---
         async function saveDirect() {
-            if (!window.showSaveFilePicker) { alert("Your browser doesn't support Direct Saving. Use Chrome/Edge."); return; }
+            if (!window.showSaveFilePicker) { alert("Direct saving requires Chrome/Edge."); return; }
             try {
-                if (!fileHandle) {
-                    fileHandle = await window.showSaveFilePicker({ suggestedName: 'PosterC3ll-Sheet.pcl', types: [{ description: 'PosterC3ll File', accept: { 'application/json': ['.pcl', '.json'] } }] });
-                }
-                const writable = await fileHandle.createWritable();
-                await writable.write(JSON.stringify(sheetData));
-                await writable.close();
-            } catch (err) { console.error("Save canceled or failed", err); }
+                if (!fileHandle) fileHandle = await window.showSaveFilePicker({ suggestedName: 'PosterC3ll.pcl', types: [{ description: 'PosterC3ll File', accept: { 'application/json': ['.pcl'] } }] });
+                const w = await fileHandle.createWritable(); await w.write(JSON.stringify(sheetData)); await w.close();
+            } catch (err) {}
         }
-
         async function openDirect() {
             if (!window.showOpenFilePicker) { document.getElementById('fileInput').click(); return; }
             try {
-                const [handle] = await window.showOpenFilePicker({ types: [{ description: 'PosterC3ll File', accept: { 'application/json': ['.pcl', '.json'] } }] });
-                fileHandle = handle;
-                const file = await handle.getFile();
-                const text = await file.text();
-                sheetData = JSON.parse(text);
-                saveLocally(); createGrid();
-            } catch (err) { console.error("Open canceled or failed", err); }
+                const [h] = await window.showOpenFilePicker({ types: [{ description: 'PosterC3ll File', accept: { 'application/json': ['.pcl', '.json'] } }] });
+                fileHandle = h; const file = await h.getFile(); sheetData = JSON.parse(await file.text()); saveLocally(); createGrid();
+            } catch (err) {}
         }
-
         document.getElementById('btnSaveDirect').onclick = saveDirect;
         document.getElementById('btnOpen').onclick = openDirect;
-        document.getElementById('fileInput').addEventListener('change', (e) => {
-            const file = e.target.files[0]; if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (event) => { sheetData = JSON.parse(event.target.result); localStorage.setItem('posterC3llData', JSON.stringify(sheetData)); createGrid(); };
-            reader.readAsText(file); e.target.value = '';
-        });
 
-        // --- Peer-to-Peer Collaboration (Serverless) ---
+        // --- P2P ---
         function startP2PSharing() {
-            if (typeof Peer === 'undefined') { alert("P2P library failed to load."); return; }
-            peer = new Peer();
-            const statusEl = document.getElementById('p2pStatus');
-            
+            if (typeof Peer === 'undefined') return;
+            peer = new Peer(); const statusEl = document.getElementById('p2pStatus');
             peer.on('open', (id) => {
-                const shareUrl = `${window.location.origin}${window.location.pathname}?peer=${id}`;
-                navigator.clipboard.writeText(shareUrl);
-                statusEl.textContent = "Live: Link Copied!";
-                statusEl.classList.add('live');
-                alert("Share link copied to clipboard!\nSend it to a friend.\nKeep this tab open.");
+                const url = `${window.location.origin}${window.location.pathname}?peer=${id}`;
+                navigator.clipboard.writeText(url); statusEl.textContent = "Live: Link Copied!"; statusEl.classList.add('live');
+                alert("Share link copied!\nKeep this tab open.");
             });
-
             peer.on('connection', (c) => {
-                conn = c;
-                conn.on('open', () => { statusEl.textContent = "Live: 1 Connected"; conn.send({ type: 'full_sync', data: sheetData }); });
-                conn.on('data', handleRemoteData);
-                conn.on('close', () => { statusEl.textContent = "Live: Disconnected"; });
+                conn = c; conn.on('open', () => { statusEl.textContent = "Live: Connected"; conn.send({ type: 'full_sync', data: sheetData }); });
+                conn.on('data', handleRemoteData); conn.on('close', () => statusEl.textContent = "Live: Disconnected");
             });
         }
-
         function joinP2PSession(hostId) {
-            peer = new Peer();
-            const statusEl = document.getElementById('p2pStatus');
-            peer.on('open', () => {
-                statusEl.textContent = "Live: Connecting...";
-                statusEl.classList.add('live');
-                conn = peer.connect(hostId);
-                conn.on('open', () => { statusEl.textContent = "Live: Connected"; });
-                conn.on('data', handleRemoteData);
-                conn.on('close', () => { statusEl.textContent = "Live: Disconnected"; });
+            peer = new Peer(); const statusEl = document.getElementById('p2pStatus');
+            peer.on('open', () => { statusEl.textContent = "Live: Connecting..."; statusEl.classList.add('live'); conn = peer.connect(hostId);
+                conn.on('open', () => statusEl.textContent = "Live: Connected"); conn.on('data', handleRemoteData); conn.on('close', () => statusEl.textContent = "Live: Disconnected");
             });
         }
-
-        function handleRemoteData(payload) {
-            if (payload.type === 'full_sync' || payload.type === 'partial_update') {
+        function handleRemoteData(p) {
+            if (p.type === 'full_sync' || p.type === 'partial_update') {
                 isApplyingRemoteData = true;
-                if (payload.type === 'full_sync') sheetData = payload.data;
-                else Object.assign(sheetData, payload.data);
-                recalculateAndRender();
-                isApplyingRemoteData = false;
+                if (p.type === 'full_sync') sheetData = p.data; else Object.assign(sheetData, p.data);
+                recalculateAndRender(); isApplyingRemoteData = false;
             }
         }
 
-        // --- Global Keyboard ---
+        // --- Global Keys ---
         document.addEventListener('keydown', (e) => {
-            if (paletteOverlay.style.display === 'flex') return; // Palette handles its own keys
+            if (paletteOverlay.style.display === 'flex') return;
             if (cellEditor.style.display === 'block' || document.activeElement === formulaBar) return;
-
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openPalette(); return; }
             if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveDirect(); return; }
-
             if (e.key === 'ArrowRight') moveActiveCell(0, 1);
             else if (e.key === 'ArrowLeft') moveActiveCell(0, -1);
             else if (e.key === 'ArrowDown' || e.key === 'Enter') { e.preventDefault(); moveActiveCell(1, 0); }
@@ -704,17 +700,15 @@
 
         formulaBar.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
-                const cellId = `${String.fromCharCode(65 + activeCell.col)}${activeCell.row + 1}`;
-                if (!sheetData[cellId]) sheetData[cellId] = { s: {} };
-                sheetData[cellId].v = formulaBar.value;
-                saveLocally(); recalculateAndRender(); moveActiveCell(1, 0);
+                const id = `${String.fromCharCode(65 + activeCell.col)}${activeCell.row + 1}`;
+                if (!sheetData[id]) sheetData[id] = { s: {} };
+                sheetData[id].v = formulaBar.value; saveLocally(); recalculateAndRender(); moveActiveCell(1, 0);
             }
         });
 
-        // --- Account-Free Saving & P2P Sync Trigger ---
         let saveTimeout;
         function saveLocally() {
-            if (isApplyingRemoteData) return; // Don't broadcast changes received from peer
+            if (isApplyingRemoteData) return;
             clearTimeout(saveTimeout);
             saveTimeout = setTimeout(() => {
                 localStorage.setItem('posterC3llData', JSON.stringify(sheetData));
@@ -724,7 +718,6 @@
 
         // --- Init ---
         createGrid();
-        // Check URL for P2P peer ID
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('peer')) joinP2PSession(urlParams.get('peer'));
     </script>
