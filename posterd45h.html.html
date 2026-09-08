@@ -246,7 +246,7 @@ body.presenting #exitPresentBtn { display: inline-flex; }
 /* Badges */
 .block[data-type="badge"]{display:inline-block; padding:6px 14px; border-radius:999px; font:700 14px/1 'Lexend',sans-serif; align-self:flex-start; color:#fff; margin:0;}
 
-/* Interactive Choice Board Panels */
+/* Interactive Choice board Panels */
 .block.is-choice { cursor:pointer; transition:transform 0.2s, box-shadow 0.2s, border 0.2s; border: 3px solid transparent; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:24px; }
 body.presenting .block.is-choice:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
 .block.is-choice.choice-selected { border-color: #10B981 !important; background-color: #F0FDF4 !important; color: #064E3B !important; transform: scale(1.05); }
@@ -554,7 +554,7 @@ const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const toKebab = (str) => str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
 
-const LS_KEY='posterd45h.doc.carehome.v7';
+const LS_KEY='posterd45h.doc.carehome.v8';
 const LS_DRAFTS='posterd45h.drafts';
 const LS_DARK='posterd45h.dark';
 
@@ -725,21 +725,26 @@ function applyBackground() {
     return;
   }
   sheet.style.backgroundColor = doc.bgColor || '#FFFFFF';
+  
+  // Use standard css color for gradients, and encoded color for SVG data URIs
+  const cssColor = doc.patternColor || '#F1F5F9';
+  const svgColor = encodeURIComponent(cssColor);
+  
   if (doc.pattern === 'dots') {
-    sheet.style.backgroundImage = `radial-gradient(${doc.patternColor} 2px, transparent 2px)`;
-    sheet.style.backgroundSize = '24px 24px';
+    sheet.style.backgroundImage = `radial-gradient(${cssColor} 1.5px, transparent 1.5px)`;
+    sheet.style.backgroundSize = '20px 20px';
   } else if (doc.pattern === 'grid') {
-    sheet.style.backgroundImage = `linear-gradient(${doc.patternColor} 1px, transparent 1px), linear-gradient(90deg, ${doc.patternColor} 1px, transparent 1px)`;
-    sheet.style.backgroundSize = '24px 24px';
+    sheet.style.backgroundImage = `linear-gradient(${cssColor} 1px, transparent 1px), linear-gradient(90deg, ${cssColor} 1px, transparent 1px)`;
+    sheet.style.backgroundSize = '25px 25px';
   } else if (doc.pattern === 'diag') {
-    sheet.style.backgroundImage = `repeating-linear-gradient(45deg, ${doc.patternColor} 0, ${doc.patternColor} 1px, transparent 1px, transparent 12px)`;
+    sheet.style.backgroundImage = `repeating-linear-gradient(45deg, ${cssColor} 0, ${cssColor} 1px, transparent 1px, transparent 12px)`;
+    sheet.style.backgroundSize = 'auto';
   } else if (doc.pattern === 'waves') {
-    sheet.style.backgroundImage = `radial-gradient(circle at 50% 50%, transparent 9px, ${doc.patternColor} 10px, transparent 11px)`;
-    sheet.style.backgroundSize = '30px 30px';
+    sheet.style.backgroundImage = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='20' viewBox='0 0 40 20'%3E%3Cpath d='M0 10 Q 10 0 20 10 T 40 10' stroke='${svgColor}' fill='none' stroke-width='2'/%3E%3C/svg%3E")`;
+    sheet.style.backgroundSize = '40px 20px';
   } else if (doc.pattern === 'clouds') {
-    sheet.style.backgroundImage = `radial-gradient(${doc.patternColor} 20%, transparent 0), radial-gradient(${doc.patternColor} 20%, transparent 0)`;
-    sheet.style.backgroundSize = '60px 60px';
-    sheet.style.backgroundPosition = '0 0, 30px 30px';
+    sheet.style.backgroundImage = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='50' viewBox='0 0 80 50'%3E%3Cpath d='M20 35 Q20 15 40 25 Q45 10 65 20 Q80 20 75 35 Z' fill='${svgColor}' opacity='0.6'/%3E%3C/svg%3E")`;
+    sheet.style.backgroundSize = '120px 80px';
   } else {
     sheet.style.backgroundImage = 'none';
   }
