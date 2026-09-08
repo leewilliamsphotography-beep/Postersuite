@@ -3,58 +3,116 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="version" content="2.0">
+<meta name="version" content="3.0">
 <title>PosterC4l — Visual Calendar</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root { 
-    --paper:#F8F9FA; --surface:#FFFFFF; --ink:#1A1D21; --ink2:#50545C; 
-    --line:#E3E5E8; --accent:#06B6D4; --accent-light:rgba(6,182,212,0.1); 
-    --weekend:#F1F3F5; --shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
-}
-body.dark-mode { 
-    --paper:#121212; --surface:#1E1E1E; --ink:#E8E8E8; --ink2:#A0A0A0; 
-    --line:#333333; --accent:#22D3EE; --accent-light:rgba(34,211,238,0.1);
-    --weekend:#181818; --shadow:0 4px 6px -1px rgba(0,0,0,0.2), 0 2px 4px -1px rgba(0,0,0,0.1);
-}
+/* Theme Definitions */
+:root, [data-theme="light"] { --paper:#F8F9FA; --surface:#FFFFFF; --ink:#1A1D21; --ink2:#50545C; --line:#E3E5E8; --accent:#06B6D4; --accent-light:rgba(6,182,212,0.1); --weekend:#F1F3F5; --shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); --cat-work:#3B82F6; --cat-important:#EF4444; --cat-bday:#EC4899; --cat-habit:#10B981; }
+[data-theme="dark"] { --paper:#121212; --surface:#1E1E1E; --ink:#E8E8E8; --ink2:#A0A0A0; --line:#333333; --accent:#22D3EE; --accent-light:rgba(34,211,238,0.1); --weekend:#181818; --shadow:0 4px 6px -1px rgba(0,0,0,0.2), 0 2px 4px -1px rgba(0,0,0,0.1); --cat-work:#60A5FA; --cat-important:#F87171; --cat-bday:#F472B6; --cat-habit:#34D399; }
+[data-theme="ocean"] { --paper:#E0F2FE; --surface:#FFFFFF; --ink:#0C4A6E; --ink2:#0369A1; --line:#BAE6FD; --accent:#0284C7; --accent-light:rgba(2,132,199,0.1); --weekend:#F0F9FF; --shadow:0 4px 6px -1px rgba(2,132,199,0.1); --cat-work:#0284C7; --cat-important:#EF4444; --cat-bday:#EC4899; --cat-habit:#10B981; }
+[data-theme="forest"] { --paper:#F0FDF4; --surface:#FFFFFF; --ink:#14532D; --ink2:#166534; --line:#BBF7D0; --accent:#16A34A; --accent-light:rgba(22,163,74,0.1); --weekend:#F7FEE7; --shadow:0 4px 6px -1px rgba(22,163,74,0.1); --cat-work:#0284C7; --cat-important:#EF4444; --cat-bday:#EC4899; --cat-habit:#16A34A; }
+[data-theme="sunset"] { --paper:#FDF4FF; --surface:#FFFFFF; --ink:#581C87; --ink2:#6B21A8; --line:#E9D5FF; --accent:#9333EA; --accent-light:rgba(147,51,234,0.1); --weekend:#FDF2F8; --shadow:0 4px 6px -1px rgba(147,51,234,0.1); --cat-work:#3B82F6; --cat-important:#EF4444; --cat-bday:#EC4899; --cat-habit:#10B981; }
 
 * { box-sizing:border-box; margin:0; padding:0; font-family:'Lexend',sans-serif; }
-body { background:var(--paper); color:var(--ink); height:100vh; display:flex; flex-direction:column; transition:background .3s, color .3s; }
+body { background:var(--paper); color:var(--ink); height:100vh; display:flex; flex-direction:column; transition:background .4s, color .4s; overflow:hidden; }
 
 /* Header */
-header { display:flex; justify-content:space-between; align-items:center; padding:16px 24px; background:var(--surface); border-bottom:1px solid var(--line); box-shadow:var(--shadow); z-index:10; }
-.logo { font-family:'Bricolage Grotesque'; font-weight:800; font-size:20px; color:var(--accent); text-decoration:none; display:flex; align-items:center; gap:8px; }
+header { display:flex; justify-content:space-between; align-items:center; padding:16px 24px; background:var(--surface); border-bottom:1px solid var(--line); box-shadow:var(--shadow); z-index:10; transition:background .4s, border-color .4s; }
+.logo { font-family:'Bricolage Grotesque'; font-weight:800; font-size:20px; color:var(--accent); text-decoration:none; display:flex; align-items:center; gap:8px; transition:color .4s; }
 .controls { display:flex; gap:12px; align-items:center; }
-.month-display { font-size:20px; font-weight:700; min-width:220px; text-align:center; font-family:'Bricolage Grotesque'; }
-.btn { background:var(--accent); color:#fff; border:none; padding:10px 16px; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Lexend',sans-serif; transition:transform .1s, opacity .2s; display:flex; align-items:center; gap:6px; }
-.btn:hover { opacity:0.9; }
-.btn:active { transform:scale(0.96); }
-.btn.secondary { background:transparent; border:1px solid var(--line); color:var(--ink); }
+.month-display { font-size:20px; font-weight:700; min-width:220px; text-align:center; font-family:'Bricolage Grotesque'; display:flex; align-items:center; justify-content:center; gap:8px; }
+.streak { font-size:16px; filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.5)); }
+.btn { background:var(--accent); color:#fff; border:none; padding:10px 16px; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Lexend',sans-serif; transition:transform .1s, opacity .2s, background .4s; display:flex; align-items:center; gap:6px; font-size:14px; }
+.btn:hover { opacity:0.9; } .btn:active { transform:scale(0.96); }
+.btn.secondary { background:transparent; border:1px solid var(--line); color:var(--ink); transition:background .2s, border-color .4s, color .4s; }
+.btn.secondary:hover { background:var(--accent-light); }
 .btn.icon { padding:10px 12px; }
+.header-actions { display:flex; gap:8px; position:relative; }
 
 /* Calendar Layout */
 .cal-area { flex:1; padding:24px; overflow:auto; }
-table { width:100%; border-collapse:collapse; background:var(--surface); border:1px solid var(--line); border-radius:16px; overflow:hidden; box-shadow:var(--shadow); table-layout:fixed; }
-th, td { border:1px solid var(--line); padding:0; vertical-align:top; transition:background .2s; }
-th { background:var(--paper); font-weight:600; color:var(--ink2); padding:16px 12px; text-transform:uppercase; letter-spacing:1px; font-size:12px; }
-td { height:120px; }
+table { width:100%; border-collapse:collapse; background:var(--surface); border:1px solid var(--line); border-radius:16px; overflow:hidden; box-shadow:var(--shadow); table-layout:fixed; transition:background .4s, border-color .4s; }
+th, td { border:1px solid var(--line); padding:0; vertical-align:top; transition:background .2s, border-color .4s; }
+th { background:var(--paper); font-weight:600; color:var(--ink2); padding:16px 12px; text-transform:uppercase; letter-spacing:1px; font-size:12px; transition:background .4s, color .4s; }
+td { height:120px; position:relative; }
 td.weekend { background:var(--weekend); }
 td:hover { background:var(--accent-light); }
 
-/* Day Cell Content */
-.day-num { padding:8px 12px; font-weight:600; display:inline-block; border-radius:12px; color:var(--ink2); font-family:'Bricolage Grotesque'; }
-td.today .day-num { background:var(--accent); color:#fff; }
-.cell-content { padding:0 12px 12px 12px; min-height:60px; outline:none; font-size:14px; line-height:1.4; color:var(--ink); cursor:text; }
+/* Day Cell Categories */
+td.cat-work { box-shadow: inset 4px 0 0 var(--cat-work); }
+td.cat-important { box-shadow: inset 4px 0 0 var(--cat-important); background: rgba(239,68,68,0.05); }
+td.cat-bday { box-shadow: inset 4px 0 0 var(--cat-bday); background: rgba(236,72,153,0.05); }
+td.cat-habit { box-shadow: inset 4px 0 0 var(--cat-habit); background: rgba(16,185,129,0.05); }
+
+.day-num { padding:8px 12px; font-weight:600; display:inline-block; border-radius:12px; color:var(--ink2); font-family:'Bricolage Grotesque'; transition:color .4s; }
+td.today .day-num { background:var(--accent); color:#fff; animation: pulse 2s infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(6,182,212, 0.4); } 70% { box-shadow: 0 0 0 12px rgba(6,182,212, 0); } 100% { box-shadow: 0 0 0 0 rgba(6,182,212, 0); } }
+
+.cell-content { padding:0 12px 12px 12px; min-height:60px; outline:none; font-size:14px; line-height:1.4; color:var(--ink); cursor:text; transition:color .4s; white-space:pre-wrap; word-wrap:break-word; }
 .cell-content:empty::before { content:attr(data-placeholder); color:var(--ink2); opacity:0.4; }
 
-/* Toast Notification */
-.toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(100px); background:var(--ink); color:var(--surface); padding:12px 24px; border-radius:8px; font-weight:500; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); transition:transform .3s cubic-bezier(0.34, 1.56, 0.64, 1); z-index:100; }
+/* Markdown Styles */
+.cell-content strong { font-weight:700; }
+.cell-content .tag { display:inline-block; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:600; margin-right:4px; background:var(--accent-light); color:var(--accent); }
+.cell-content .tag-work { background:rgba(59,130,246,0.15); color:var(--cat-work); }
+.cell-content .tag-important { background:rgba(239,68,68,0.15); color:var(--cat-important); }
+.cell-content .tag-bday { background:rgba(236,72,153,0.15); color:var(--cat-bday); }
+.cell-content .tag-habit { background:rgba(16,185,129,0.15); color:var(--cat-habit); }
+.checklist-item { display:flex; align-items:center; gap:6px; margin:2px 0; }
+.checklist-item input { cursor:pointer; accent-color: var(--accent); }
+.checklist-item.done label { text-decoration:line-through; opacity:0.6; }
+
+/* Slash Command Menu */
+.slash-menu { position:absolute; background:var(--surface); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); z-index:50; min-width:160px; overflow:hidden; display:none; }
+.slash-menu.show { display:block; animation: dropIn .2s ease-out; }
+.slash-item { padding:10px 16px; cursor:pointer; display:flex; align-items:center; gap:10px; font-weight:500; font-size:14px; }
+.slash-item:hover { background:var(--accent-light); }
+.slash-item.active { background:var(--accent-light); }
+
+/* Year in Pixels View */
+.year-view { display:grid; grid-template-columns: repeat(7, 1fr); gap:4px; max-width:800px; margin:0 auto; background:var(--surface); padding:24px; border-radius:16px; box-shadow:var(--shadow); }
+.year-day { aspect-ratio:1; border-radius:4px; background:var(--weekend); border:1px solid var(--line); cursor:pointer; transition:transform .1s; }
+.year-day:hover { transform:scale(1.1); border:1px solid var(--accent); }
+.year-day.has-data { background:var(--accent); opacity:0.2; }
+.year-day.cat-work { background:var(--cat-work); opacity:0.6; border:none; }
+.year-day.cat-important { background:var(--cat-important); opacity:0.8; border:none; }
+.year-day.cat-bday { background:var(--cat-bday); opacity:0.8; border:none; }
+.year-day.cat-habit { background:var(--cat-habit); opacity:0.8; border:none; }
+.year-day.today { outline:2px solid var(--accent); outline-offset:2px; }
+
+/* Command Palette */
+.cmd-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.4); backdrop-filter:blur(4px); display:none; align-items:flex-start; justify-content:center; padding-top:15vh; z-index:1000; }
+.cmd-backdrop.show { display:flex; }
+.cmd-palette { background:var(--surface); border:1px solid var(--line); border-radius:12px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.2); width:90%; max-width:500px; overflow:hidden; }
+.cmd-input { width:100%; padding:16px 20px; border:none; border-bottom:1px solid var(--line); background:transparent; color:var(--ink); font-size:16px; outline:none; }
+.cmd-results { max-height:300px; overflow-y:auto; }
+.cmd-result { padding:12px 20px; cursor:pointer; display:flex; align-items:center; gap:12px; }
+.cmd-result:hover, .cmd-result.active { background:var(--accent-light); }
+.cmd-result kbd { margin-left:auto; background:var(--paper); padding:2px 6px; border-radius:4px; font-size:12px; border:1px solid var(--line); }
+
+/* Theme Selector & Toast */
+.theme-selector { position:relative; }
+.dropdown { display:none; position:absolute; right:0; top:120%; background:var(--surface); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); z-index:20; min-width:160px; overflow:hidden; }
+.dropdown.show { display:block; }
+.dropdown-item { padding:12px 16px; cursor:pointer; display:flex; align-items:center; gap:10px; font-weight:500; }
+.dropdown-item:hover { background:var(--accent-light); }
+.theme-swatch { width:16px; height:16px; border-radius:50%; border:1px solid var(--line); }
+
+.toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(100px); background:var(--ink); color:var(--surface); padding:12px 24px; border-radius:8px; font-weight:500; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); transition:transform .3s cubic-bezier(0.34, 1.56, 0.64, 1), background .4s, color .4s; z-index:100; }
 .toast.show { transform:translateX(-50%) translateY(0); }
 
-/* Hide scrollbars for cleaner look but keep functionality */
 ::-webkit-scrollbar { width:8px; height:8px; }
 ::-webkit-scrollbar-thumb { background:var(--line); border-radius:4px; }
-::-webkit-scrollbar-thumb:hover { background:var(--ink2); }
+
+/* Print Styles */
+@media print {
+    header, .btn, .theme-selector, .toast { display:none !important; }
+    body { height:auto; overflow:visible; }
+    .cal-area { padding:0; }
+    table { box-shadow:none; border-radius:0; }
+    td { height:100px; border:1px solid #ccc; }
+}
 </style>
 </head>
 <body>
@@ -65,54 +123,125 @@ td.today .day-num { background:var(--accent); color:#fff; }
         <div class="month-display" id="monthDisplay"></div>
         <button class="btn secondary" onclick="changeMonth(1)">→</button>
         <button class="btn secondary" onclick="goToToday()">Today</button>
+        <button class="btn secondary" onclick="toggleView()" id="viewToggle">Year View</button>
     </div>
-    <div style="display:flex; gap:8px;">
+    <div class="header-actions">
         <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importData(event)">
         <button class="btn secondary icon" onclick="document.getElementById('importFile').click()" title="Import Data">📥</button>
-        <button class="btn secondary icon" onclick="exportData()" title="Export Data">📤</button>
-        <button class="btn secondary icon" onclick="toggleTheme()" id="themeBtn" title="Toggle Theme">🌙</button>
+        <button class="btn secondary icon" onclick="exportData()" title="Export JSON">📤</button>
+        <button class="btn secondary icon" onclick="exportICS()" title="Export .ICS">📅</button>
+        <button class="btn secondary icon" onclick="window.print()" title="Print">🖨️</button>
+        
+        <div class="theme-selector">
+            <button class="btn secondary icon" id="themeBtn" title="Select Theme">🎨</button>
+            <div class="dropdown" id="themeDropdown">
+                <div class="dropdown-item" onclick="applyTheme('light')"><div class="theme-swatch" style="background:#06B6D4;"></div> Light</div>
+                <div class="dropdown-item" onclick="applyTheme('dark')"><div class="theme-swatch" style="background:#22D3EE;"></div> Dark</div>
+                <div class="dropdown-item" onclick="applyTheme('ocean')"><div class="theme-swatch" style="background:#0284C7;"></div> Ocean</div>
+                <div class="dropdown-item" onclick="applyTheme('forest')"><div class="theme-swatch" style="background:#16A34A;"></div> Forest</div>
+                <div class="dropdown-item" onclick="applyTheme('sunset')"><div class="theme-swatch" style="background:#9333EA;"></div> Sunset</div>
+            </div>
+        </div>
     </div>
 </header>
+
 <div class="cal-area">
     <table id="calendar">
         <thead>
-            <tr>
-                <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
-            </tr>
+            <tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>
         </thead>
         <tbody id="calBody"></tbody>
     </table>
+    <div id="yearContainer" style="display:none;"></div>
 </div>
-<div class="toast" id="toast">Saved successfully!</div>
+
+<!-- Slash Menu -->
+<div class="slash-menu" id="slashMenu">
+    <div class="slash-item" data-cat="work">💼 <span style="color:var(--cat-work);">Work</span></div>
+    <div class="slash-item" data-cat="important">⚠️ <span style="color:var(--cat-important);">Important</span></div>
+    <div class="slash-item" data-cat="bday">🎉 <span style="color:var(--cat-bday);">Birthday</span></div>
+    <div class="slash-item" data-cat="habit">✅ <span style="color:var(--cat-habit);">Habit</span></div>
+</div>
+
+<!-- Command Palette -->
+<div class="cmd-backdrop" id="cmdBackdrop">
+    <div class="cmd-palette">
+        <input type="text" class="cmd-input" id="cmdInput" placeholder="Type a command or search... (e.g., 'Next month', 'Dark theme')" autocomplete="off">
+        <div class="cmd-results" id="cmdResults"></div>
+    </div>
+</div>
+
+<div class="toast" id="toast">Saved!</div>
 
 <script>
-// --- State & Data Management ---
+// --- State & Data ---
 let currentDate = new Date();
 let calData = JSON.parse(localStorage.getItem('posterc4l-cal-data')) || {};
+let currentView = 'month';
+
 const calBody = document.getElementById('calBody');
+const calendarTable = document.getElementById('calendar');
+const yearContainer = document.getElementById('yearContainer');
 const monthDisplay = document.getElementById('monthDisplay');
 const toast = document.getElementById('toast');
+const slashMenu = document.getElementById('slashMenu');
 
 // --- Theme Management ---
 function applyTheme(theme) {
-    if (theme === 'dark') {
-        document.body.classList.add('dark-mode');
-        document.getElementById('themeBtn').textContent = '☀️';
-    } else {
-        document.body.classList.remove('dark-mode');
-        document.getElementById('themeBtn').textContent = '🌙';
-    }
+    document.body.setAttribute('data-theme', theme);
     localStorage.setItem('pc4-theme', theme);
 }
-
-function toggleTheme() {
-    const isDark = document.body.classList.contains('dark-mode');
-    applyTheme(isDark ? 'light' : 'dark');
-}
-
-// Apply theme on load
 const savedTheme = localStorage.getItem('pc4-theme') || 'light';
 applyTheme(savedTheme);
+
+const themeBtn = document.getElementById('themeBtn');
+const themeDropdown = document.getElementById('themeDropdown');
+themeBtn.addEventListener('click', (e) => { e.stopPropagation(); themeDropdown.classList.toggle('show'); });
+document.addEventListener('click', () => { themeDropdown.classList.remove('show'); slashMenu.classList.remove('show'); });
+
+// --- Markdown Parser ---
+function parseMarkdown(text) {
+    // Escape HTML
+    let html = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    
+    // Checklists
+    html = html.replace(/- \[ \] (.*)/g, '<div class="checklist-item"><input type="checkbox" onclick="toggleCheckbox(this, \'[ ]\')"><label>$1</label></div>');
+    html = html.replace(/- \[x\] (.*)/g, '<div class="checklist-item done"><input type="checkbox" checked onclick="toggleCheckbox(this, \'[x]\')"><label>$1</label></div>');
+    
+    // Tags
+    html = html.replace(/#work/g, '<span class="tag tag-work">#work</span>');
+    html = html.replace(/#important/g, '<span class="tag tag-important">#important</span>');
+    html = html.replace(/#bday/g, '<span class="tag tag-bday">#bday</span>');
+    html = html.replace(/#habit/g, '<span class="tag tag-habit">#habit</span>');
+    html = html.replace(/#(\w+)/g, '<span class="tag">#$1</span>'); // custom tags
+    
+    // Bold
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    return html;
+}
+
+function toggleCheckbox(checkbox, type) {
+    const cell = checkbox.closest('td');
+    const dateKey = cell.querySelector('.cell-content').getAttribute('data-date');
+    let content = calData[dateKey] || '';
+    
+    // Toggle the specific checkbox in raw text
+    const lines = content.split('\n');
+    let targetIndex = Array.from(cell.querySelectorAll('.checklist-item')).indexOf(checkbox.closest('.checklist-item'));
+    let count = 0;
+    for(let i=0; i<lines.length; i++) {
+        if(lines[i].startsWith('- [ ]') || lines[i].startsWith('- [x]')) {
+            if(count === targetIndex) {
+                lines[i] = type === '[ ]' ? lines[i].replace('- [ ]', '- [x]') : lines[i].replace('- [x]', '- [ ]');
+                break;
+            }
+            count++;
+        }
+    }
+    calData[dateKey] = lines.join('\n');
+    saveData(true);
+    renderCal(); // Re-render to apply strikethrough
+}
 
 // --- Calendar Rendering ---
 function renderCal() {
@@ -120,78 +249,239 @@ function renderCal() {
     const month = currentDate.getMonth();
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     
-    monthDisplay.textContent = `${monthNames[month]} ${year}`;
-    
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const today = new Date();
-    
-    calBody.innerHTML = '';
-    let row = calBody.insertRow();
-    
-    // Add empty cells for days before the 1st of the month
-    for(let i=0; i<firstDay; i++) {
-        let emptyCell = row.insertCell();
-        emptyCell.classList.add('weekend');
-        if(i === 0 || i === 6) emptyCell.classList.add('weekend'); // Keep weekend styling logic simple
-    }
-    
-    // Add days of the month
-    for(let d=1; d<=daysInMonth; d++) {
-        if(row.cells.length === 7) row = calBody.insertRow();
+    if(currentView === 'month') {
+        calendarTable.style.display = 'table';
+        yearContainer.style.display = 'none';
+        document.getElementById('viewToggle').textContent = 'Year View';
         
-        let cell = row.insertCell();
-        let dayOfWeek = new Date(year, month, d).getDay();
+        monthDisplay.innerHTML = `${monthNames[month]} ${year}`;
         
-        if(dayOfWeek === 0 || dayOfWeek === 6) cell.classList.add('weekend');
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const today = new Date();
         
-        // Check if it's today
-        if(year === today.getFullYear() && month === today.getMonth() && d === today.getDate()) {
-            cell.classList.add('today');
+        calBody.innerHTML = '';
+        let row = calBody.insertRow();
+        
+        for(let i=0; i<firstDay; i++) {
+            let emptyCell = row.insertCell();
+            if(i === 0 || i === 6) emptyCell.classList.add('weekend');
         }
         
-        // Generate unique key for this date
-        const dateKey = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-        const savedContent = calData[dateKey] || '';
-        
-        cell.innerHTML = `
-            <div class="day-num">${d}</div>
-            <div class="cell-content" contenteditable="true" data-date="${dateKey}" data-placeholder="Add note...">${savedContent}</div>
-        `;
+        for(let d=1; d<=daysInMonth; d++) {
+            if(row.cells.length === 7) row = calBody.insertRow();
+            let cell = row.insertCell();
+            let dayOfWeek = new Date(year, month, d).getDay();
+            if(dayOfWeek === 0 || dayOfWeek === 6) cell.classList.add('weekend');
+            
+            if(year === today.getFullYear() && month === today.getMonth() && d === today.getDate()) {
+                cell.classList.add('today');
+            }
+            
+            const dateKey = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const rawContent = calData[dateKey] || '';
+            
+            // Apply Category Class based on tags
+            if(rawContent.includes('#work')) cell.classList.add('cat-work');
+            if(rawContent.includes('#important')) cell.classList.add('cat-important');
+            if(rawContent.includes('#bday')) cell.classList.add('cat-bday');
+            if(rawContent.includes('#habit')) cell.classList.add('cat-habit');
+            
+            cell.innerHTML = `
+                <div class="day-num">${d}</div>
+                <div class="cell-content" contenteditable="true" data-date="${dateKey}" data-placeholder="Type / for commands..."></div>
+            `;
+            
+            const contentDiv = cell.querySelector('.cell-content');
+            contentDiv.innerHTML = parseMarkdown(rawContent);
+        }
+        attachCellListeners();
+        calculateStreak();
+    } else {
+        calendarTable.style.display = 'none';
+        yearContainer.style.display = 'block';
+        document.getElementById('viewToggle').textContent = 'Month View';
+        monthDisplay.innerHTML = `${year}`;
+        renderYearView(year);
     }
-    
-    // Attach event listeners to all editable cells
+}
+
+function renderYearView(year) {
+    const today = new Date();
+    let html = `<div class="year-view">`;
+    for(let m=0; m<12; m++) {
+        const daysInMonth = new Date(year, m+1, 0).getDate();
+        for(let d=1; d<=daysInMonth; d++) {
+            const dateKey = `${year}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const content = calData[dateKey] || '';
+            let classes = "year-day";
+            if(content) {
+                classes += " has-data";
+                if(content.includes('#work')) classes = "year-day cat-work";
+                if(content.includes('#important')) classes = "year-day cat-important";
+                if(content.includes('#bday')) classes = "year-day cat-bday";
+                if(content.includes('#habit')) classes = "year-day cat-habit";
+            }
+            if(year === today.getFullYear() && m === today.getMonth() && d === today.getDate()) {
+                classes += " today";
+            }
+            html += `<div class="${classes}" onclick="jumpToMonth(${m}, ${year})" title="${dateKey}"></div>`;
+        }
+    }
+    html += `</div>`;
+    yearContainer.innerHTML = html;
+}
+
+function jumpToMonth(month, year) {
+    currentDate = new Date(year, month, 1);
+    toggleView(); // back to month
+}
+
+// --- Cell Listeners & Slash Commands ---
+function attachCellListeners() {
     document.querySelectorAll('.cell-content').forEach(div => {
         div.addEventListener('blur', (e) => {
             const dateKey = e.target.getAttribute('data-date');
-            const content = e.target.innerText.trim();
-            
+            let content = e.target.innerText.trim();
             if(content) {
                 calData[dateKey] = content;
             } else {
-                delete calData[dateKey]; // Remove empty entries to save space
+                delete calData[dateKey];
             }
             saveData(true);
+            renderCal(); // Re-render to apply markdown and categories
+        });
+
+        div.addEventListener('keydown', (e) => {
+            if (e.key === '/') {
+                const rect = div.getBoundingClientRect();
+                slashMenu.style.top = `${rect.bottom + window.scrollY}px`;
+                slashMenu.style.left = `${rect.left + window.scrollX}px`;
+                slashMenu.classList.add('show');
+            } else if (e.key === 'Escape') {
+                slashMenu.classList.remove('show');
+            }
         });
     });
 }
 
-// --- Navigation ---
-function changeMonth(dir) {
-    currentDate.setMonth(currentDate.getMonth() + dir);
+document.querySelectorAll('.slash-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const cat = item.getAttribute('data-cat');
+        const activeEl = document.activeElement;
+        if(activeEl.classList.contains('cell-content')) {
+            activeEl.innerText += ` #${cat} `;
+            activeEl.focus();
+            slashMenu.classList.remove('show');
+            // trigger save
+            activeEl.dispatchEvent(new Event('blur'));
+        }
+    });
+});
+
+// --- Habit Streaks ---
+function calculateStreak() {
+    let streak = 0;
+    let checkDate = new Date();
+    
+    while(true) {
+        const dateKey = `${checkDate.getFullYear()}-${String(checkDate.getMonth()+1).padStart(2,'0')}-${String(checkDate.getDate()).padStart(2,'0')}`;
+        if(calData[dateKey]) {
+            streak++;
+            checkDate.setDate(checkDate.getDate() - 1);
+        } else {
+            break;
+        }
+    }
+    
+    const existingStreak = document.querySelector('.streak');
+    if(streak >= 3) {
+        if(!existingStreak) {
+            const icon = document.createElement('span');
+            icon.className = 'streak';
+            icon.innerHTML = '🔥';
+            icon.title = `${streak} day streak!`;
+            monthDisplay.appendChild(icon);
+        } else {
+            existingStreak.title = `${streak} day streak!`;
+        }
+    } else {
+        if(existingStreak) existingStreak.remove();
+    }
+}
+
+// --- Navigation & Views ---
+function changeMonth(dir) { currentDate.setMonth(currentDate.getMonth() + dir); renderCal(); }
+function goToToday() { currentDate = new Date(); renderCal(); showToast('Jumped to today!'); }
+function toggleView() {
+    currentView = currentView === 'month' ? 'year' : 'month';
     renderCal();
 }
 
-function goToToday() {
-    currentDate = new Date();
-    renderCal();
-}
+// --- Command Palette ---
+const cmdBackdrop = document.getElementById('cmdBackdrop');
+const cmdInput = document.getElementById('cmdInput');
+const cmdResults = document.getElementById('cmdResults');
 
-// Keyboard shortcuts (Arrow keys to navigate months)
+const commands = [
+    { title: "Go to Today", action: goToToday, keywords: "today now current" },
+    { title: "Next Month", action: () => changeMonth(1), keywords: "next forward" },
+    { title: "Previous Month", action: () => changeMonth(-1), keywords: "prev back backward" },
+    { title: "Toggle Year View", action: toggleView, keywords: "year pixels heatmap" },
+    { title: "Apply Light Theme", action: () => applyTheme('light'), keywords: "theme light mode" },
+    { title: "Apply Dark Theme", action: () => applyTheme('dark'), keywords: "theme dark mode" },
+    { title: "Apply Ocean Theme", action: () => applyTheme('ocean'), keywords: "theme blue water" },
+    { title: "Export Data (JSON)", action: exportData, keywords: "export save backup json" },
+    { title: "Export Calendar (ICS)", action: exportICS, keywords: "export ical apple outlook" },
+    { title: "Print Calendar", action: () => window.print(), keywords: "print paper pdf" }
+];
+
 document.addEventListener('keydown', (e) => {
-    if(e.target.classList.contains('cell-content')) return; // Don't trigger if typing in a cell
-    if(e.key === 'ArrowLeft') changeMonth(-1);
-    if(e.key === 'ArrowRight') changeMonth(1);
+    if((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        cmdBackdrop.classList.add('show');
+        cmdInput.focus();
+    }
+    if(e.key === 'Escape') {
+        cmdBackdrop.classList.remove('show');
+        slashMenu.classList.remove('show');
+    }
+    if(!e.target.classList.contains('cell-content') && !e.target.classList.contains('cmd-input')) {
+        if(e.key === 'ArrowLeft') changeMonth(-1);
+        if(e.key === 'ArrowRight') changeMonth(1);
+    }
+});
+
+cmdInput.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase();
+    let html = '';
+    const filtered = commands.filter(c => 
+        c.title.toLowerCase().includes(query) || c.keywords.toLowerCase().includes(query)
+    );
+    
+    if(filtered.length === 0) {
+        cmdResults.innerHTML = '<div class="cmd-result">No commands found</div>';
+        return;
+    }
+    
+    filtered.forEach(c => {
+        html += `<div class="cmd-result" onclick="window.executeCmd('${c.title}')">${c.title}</div>`;
+    });
+    cmdResults.innerHTML = html;
+});
+
+window.executeCmd = (title) => {
+    const cmd = commands.find(c => c.title === title);
+    if(cmd) {
+        cmd.action();
+        cmdBackdrop.classList.remove('show');
+        cmdInput.value = '';
+        cmdResults.innerHTML = '';
+    }
+};
+
+cmdBackdrop.addEventListener('click', (e) => {
+    if(e.target === cmdBackdrop) cmdBackdrop.classList.remove('show');
 });
 
 // --- Data Persistence ---
@@ -209,13 +499,35 @@ function exportData() {
     a.download = `posterc4l-backup-${new Date().toISOString().split('T')[0]}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    showToast('Calendar exported!');
+    showToast('Calendar exported (JSON)!');
+}
+
+function exportICS() {
+    let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//PosterC4l//EN\n";
+    for(const [dateKey, content] of Object.entries(calData)) {
+        const cleanContent = content.replace(/\n/g, '\\n');
+        ics += "BEGIN:VEVENT\n";
+        ics += `UID:${dateKey}@posterc4l\n`;
+        ics += `DTSTART;VALUE=DATE:${dateKey.replace(/-/g, '')}\n`;
+        ics += `SUMMARY:${cleanContent.split('\\n')[0].substring(0, 50)}\n`;
+        ics += `DESCRIPTION:${cleanContent}\n`;
+        ics += "END:VEVENT\n";
+    }
+    ics += "END:VCALENDAR";
+    
+    const blob = new Blob([ics], {type: "text/calendar"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `posterc4l-${new Date().toISOString().split('T')[0]}.ics`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Calendar exported (.ics)!');
 }
 
 function importData(event) {
     const file = event.target.files[0];
     if(!file) return;
-    
     const reader = new FileReader();
     reader.onload = (e) => {
         try {
@@ -236,11 +548,8 @@ function showToast(message, isError = false) {
     toast.textContent = message;
     toast.style.background = isError ? '#EF4444' : 'var(--ink)';
     toast.classList.add('show');
-    
     clearTimeout(toastTimeout);
-    toastTimeout = setTimeout(() => {
-        toast.classList.remove('show');
-    }, 3000);
+    toastTimeout = setTimeout(() => { toast.classList.remove('show'); }, 2500);
 }
 
 // Initial Render
