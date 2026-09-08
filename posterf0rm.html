@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="version" content="1.0">
+<meta name="version" content="1.2">
 <title>PosterF0rm — Form Builder</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -11,15 +11,61 @@
 body.dark-mode { --paper:#121212; --surface:#1E1E1E; --ink:#E8E8E8; --ink2:#A0A0A0; --line:#333333; }
 * { box-sizing:border-box; margin:0; padding:0; font-family:'Lexend',sans-serif; }
 body { background:var(--paper); color:var(--ink); height:100vh; display:flex; flex-direction:column; transition:background .2s; }
-header { display:flex; justify-content:space-between; align-items:center; padding:16px 24px; background:var(--surface); border-bottom:1px solid var(--line); }
-.logo { font-family:'Bricolage Grotesque'; font-weight:800; color:var(--accent); text-decoration:none; }
-.btn { background:var(--accent); color:#fff; border:none; padding:8px 16px; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Bricolage Grotesque'; }
-.builder-area { flex:1; padding:40px; overflow-y:auto; max-width:800px; margin:0 auto; width:100%; }
-.form-field { background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:20px; margin-bottom:16px; display:flex; flex-direction:column; gap:8px; }
-.field-label { font-weight:600; color:var(--ink); outline:none; }
-.field-input { background:var(--paper); border:1px solid var(--line); border-radius:6px; padding:10px; color:var(--ink); }
-.add-btn { background:transparent; border:2px dashed var(--line); color:var(--ink2); padding:16px; border-radius:12px; font-weight:600; cursor:pointer; width:100%; margin-top:16px; }
+
+/* Header */
+header { display:flex; justify-content:space-between; align-items:center; padding:16px 24px; background:var(--surface); border-bottom:1px solid var(--line); gap: 12px; flex-wrap: wrap; }
+.logo { font-family:'Bricolage Grotesque'; font-weight:800; color:var(--accent); text-decoration:none; font-size: 1.2rem; }
+.header-actions { display: flex; gap: 8px; align-items: center; }
+.icon-btn { background:transparent; border:none; color:var(--ink2); cursor:pointer; padding:8px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition: background .2s; font-size: 1.1rem; }
+.icon-btn:hover { background:var(--paper); color:var(--ink); }
+.btn { background:var(--accent); color:#fff; border:none; padding:8px 16px; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Bricolage Grotesque'; transition: opacity .2s; }
+.btn:hover { opacity: 0.9; }
+.btn-secondary { background: transparent; border: 1px solid var(--line); color: var(--ink); }
+
+/* Builder Area */
+.builder-area { flex:1; padding:40px 20px; overflow-y:auto; max-width:800px; margin:0 auto; width:100%; }
+.form-field { background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:20px; margin-bottom:16px; display:flex; flex-direction:column; gap:12px; position: relative; transition: border-color .2s; }
+.form-field:hover { border-color: var(--ink2); }
+
+/* Field Structure */
+.field-top { display: flex; justify-content: space-between; gap: 12px; }
+.field-config { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.field-label { font-weight:600; color:var(--ink); outline:none; border: 1px solid transparent; padding: 4px; border-radius: 4px; transition: background .2s; }
+.field-label:hover { background: var(--paper); }
+.field-label:focus { background: var(--paper); border-color: var(--line); }
+.field-type-select { background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 6px; color: var(--ink2); font-size: 0.85rem; cursor: pointer; align-self: flex-start; }
+
+.field-actions { display: flex; flex-direction: column; gap: 4px; opacity: 0; transition: opacity .2s; }
+.form-field:hover .field-actions { opacity: 1; }
+.action-btn { background: transparent; border: none; color: var(--ink2); cursor: pointer; padding: 4px; font-size: 0.9rem; border-radius: 4px; }
+.action-btn:hover { background: var(--paper); color: var(--accent); }
+
+.field-input { background:var(--paper); border:1px solid var(--line); border-radius:6px; padding:10px; color:var(--ink); width: 100%; font-family: 'Lexend', sans-serif; }
+.field-input:focus { outline: none; border-color: var(--accent); }
+textarea.field-input { resize: vertical; }
+
+/* Options (for radio/checkboxes) */
+.option-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; color: var(--ink2); }
+.option-text { background: transparent; border: none; border-bottom: 1px dashed var(--line); color: var(--ink); padding: 4px 0; width: 100%; outline: none; }
+.option-text:focus { border-bottom-color: var(--accent); }
+.add-option-btn { background: transparent; border: none; color: var(--ink2); cursor: pointer; font-size: 0.85rem; padding: 4px 0; }
+.add-option-btn:hover { color: var(--accent); }
+
+.required-star { color: var(--accent); margin-left: 4px; }
+
+/* Add Question Button */
+.add-btn { background:transparent; border:2px dashed var(--line); color:var(--ink2); padding:16px; border-radius:12px; font-weight:600; cursor:pointer; width:100%; margin-top:16px; transition: all .2s; }
 .add-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+/* Preview Mode */
+body.preview-mode .field-label { border: none; background: transparent; pointer-events: none; }
+body.preview-mode .field-type-select, body.preview-mode .field-actions, body.preview-mode .add-btn, body.preview-mode .add-option-btn { display: none; }
+body.preview-mode .option-text { border: none; pointer-events: none; }
+body.preview-mode .field-input:disabled { background: var(--surface); opacity: 1; color: var(--ink); border-color: var(--line); }
+
+/* Toast Notification */
+.toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--ink); color: var(--surface); padding: 12px 24px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform .3s; z-index: 1000; }
+.toast.show { transform: translateX(-50%) translateY(0); }
 </style>
 <script>
 const params = new URLSearchParams(window.location.search);
@@ -30,31 +76,184 @@ if (localStorage.getItem('pf0-theme') === 'dark') document.documentElement.class
 <body>
 <header>
     <a href="index.html" class="logo">← PosterF0rm</a>
-    <button class="btn" onclick="saveForm()">Save Form</button>
-</header>
-<div class="builder-area" id="builderArea">
-    <div class="form-field">
-        <div class="field-label" contenteditable="true">Question 1</div>
-        <input type="text" class="field-input" placeholder="User answer goes here...">
+    <div class="header-actions">
+        <button class="icon-btn" onclick="toggleTheme()" title="Toggle Theme">🌙</button>
+        <button class="btn btn-secondary" onclick="togglePreview()" id="previewBtn">👁️ Preview</button>
+        <button class="btn" onclick="saveForm()">Save Form</button>
     </div>
+</header>
+<div class="builder-area" id="builderArea"></div>
+<div style="max-width: 800px; margin: 0 auto 40px auto; padding: 0 20px;">
     <button class="add-btn" onclick="addField()">+ Add Question</button>
 </div>
+
+<div class="toast" id="toast">Form saved locally!</div>
+
 <script>
 const builder = document.getElementById('builderArea');
+let isPreviewMode = false;
 
-function addField() {
+// Initialize on load
+window.onload = function() {
+    const savedForm = localStorage.getItem('posterf0rm-form');
+    if (savedForm) {
+        builder.innerHTML = savedForm;
+    } else {
+        addField('text', 'Name');
+        addField('paragraph', 'Feedback');
+    }
+};
+
+function addField(type = 'text', label = 'New Question') {
     const field = document.createElement('div');
     field.className = 'form-field';
+    field.dataset.type = type;
+    
+    let inputHTML = '';
+    if (type === 'text') {
+        inputHTML = `<input type="text" class="field-input" placeholder="Short answer text...">`;
+    } else if (type === 'paragraph') {
+        inputHTML = `<textarea class="field-input" rows="3" placeholder="Long answer text..."></textarea>`;
+    } else if (type === 'radio' || type === 'checkbox') {
+        const t = type === 'radio' ? 'radio' : 'checkbox';
+        inputHTML = `
+            <div class="options-container">
+                <div class="option-item">
+                    <input type="${t}" disabled>
+                    <input type="text" class="option-text" value="Option 1">
+                </div>
+            </div>
+            <button class="add-option-btn" onclick="addOption(this)">+ Add option</button>
+        `;
+    }
+
     field.innerHTML = `
-        <div class="field-label" contenteditable="true">New Question</div>
-        <input type="text" class="field-input" placeholder="User answer goes here...">
+        <div class="field-top">
+            <div class="field-config">
+                <div class="field-label" contenteditable="true">${label}</div>
+                <select class="field-type-select" onchange="changeFieldType(this)">
+                    <option value="text" ${type==='text'?'selected':''}>Short Answer</option>
+                    <option value="paragraph" ${type==='paragraph'?'selected':''}>Paragraph</option>
+                    <option value="radio" ${type==='radio'?'selected':''}>Multiple Choice</option>
+                    <option value="checkbox" ${type==='checkbox'?'selected':''}>Checkboxes</option>
+                </select>
+            </div>
+            <div class="field-actions">
+                <button class="action-btn" onclick="toggleRequired(this)" title="Require Answer">✱</button>
+                <button class="action-btn" onclick="duplicateField(this)" title="Duplicate">⧉</button>
+                <button class="action-btn" onclick="deleteField(this)" title="Delete">🗑</button>
+            </div>
+        </div>
+        <div class="field-input-container">${inputHTML}</div>
     `;
-    builder.insertBefore(field, builder.querySelector('.add-btn'));
+    
+    builder.appendChild(field);
+}
+
+function addOption(btn) {
+    const container = btn.previousElementSibling;
+    const type = btn.closest('.form-field').dataset.type;
+    const inputType = type === 'radio' ? 'radio' : 'checkbox';
+    
+    const newOption = document.createElement('div');
+    newOption.className = 'option-item';
+    newOption.innerHTML = `
+        <input type="${inputType}" disabled>
+        <input type="text" class="option-text" value="New Option">
+    `;
+    container.appendChild(newOption);
+}
+
+function changeFieldType(selectEl) {
+    const field = selectEl.closest('.form-field');
+    const newType = selectEl.value;
+    const label = field.querySelector('.field-label').innerText;
+    
+    // Rebuild the field with the new type
+    field.dataset.type = newType;
+    let inputHTML = '';
+    if (newType === 'text') {
+        inputHTML = `<input type="text" class="field-input" placeholder="Short answer text...">`;
+    } else if (newType === 'paragraph') {
+        inputHTML = `<textarea class="field-input" rows="3" placeholder="Long answer text..."></textarea>`;
+    } else if (newType === 'radio' || newType === 'checkbox') {
+        const t = newType === 'radio' ? 'radio' : 'checkbox';
+        inputHTML = `
+            <div class="options-container">
+                <div class="option-item">
+                    <input type="${t}" disabled>
+                    <input type="text" class="option-text" value="Option 1">
+                </div>
+            </div>
+            <button class="add-option-btn" onclick="addOption(this)">+ Add option</button>
+        `;
+    }
+    field.querySelector('.field-input-container').innerHTML = inputHTML;
+}
+
+function deleteField(btn) {
+    if (confirm('Delete this question?')) {
+        btn.closest('.form-field').remove();
+    }
+}
+
+function duplicateField(btn) {
+    const field = btn.closest('.form-field');
+    const clone = field.cloneNode(true);
+    field.parentNode.insertBefore(clone, field.nextSibling);
+}
+
+function toggleRequired(btn) {
+    const field = btn.closest('.form-field');
+    const label = field.querySelector('.field-label');
+    
+    if (field.dataset.required === 'true') {
+        field.dataset.required = 'false';
+        btn.style.color = 'var(--ink2)';
+        // Remove star
+        if (label.querySelector('.required-star')) {
+            label.querySelector('.required-star').remove();
+        }
+    } else {
+        field.dataset.required = 'true';
+        btn.style.color = 'var(--accent)';
+        // Add star
+        const star = document.createElement('span');
+        star.className = 'required-star';
+        star.innerText = ' *';
+        label.appendChild(star);
+    }
+}
+
+function togglePreview() {
+    isPreviewMode = !isPreviewMode;
+    document.body.classList.toggle('preview-mode', isPreviewMode);
+    document.getElementById('previewBtn').innerText = isPreviewMode ? '✏️ Edit' : '👁️ Preview';
 }
 
 function saveForm() {
+    // If in preview mode, switch back to edit mode before saving to ensure clean HTML
+    if (isPreviewMode) togglePreview();
+    
     localStorage.setItem('posterf0rm-form', builder.innerHTML);
-    alert('Form saved locally!');
+    showToast('Form saved locally!');
+}
+
+function toggleTheme() {
+    if (document.documentElement.classList.contains('dark-mode')) {
+        document.documentElement.classList.remove('dark-mode');
+        localStorage.setItem('pf0-theme', 'light');
+    } else {
+        document.documentElement.classList.add('dark-mode');
+        localStorage.setItem('pf0-theme', 'dark');
+    }
+}
+
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.innerText = message;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
 }
 </script>
 </body>
