@@ -931,7 +931,7 @@
             localStorage.setItem('postersuite-welcomed', 'true');
         }
 
-        // --- Auto-Fetch App Versions ---
+              // --- Auto-Fetch App Versions (Improved Regex) ---
         async function fetchAppVersions() {
             try {
                 const fetchMap = [
@@ -948,7 +948,8 @@
                 for (const item of fetchMap) {
                     const res = await fetch(item.url + '?v=' + Date.now()); 
                     const text = await res.text();
-                    const match = text.match(/<meta name="version" content="([^"]+)">/);
+                    // This new Regex handles single quotes, double quotes, and self-closing slashes
+                    const match = text.match(/<meta\s+name=["']version["']\s+content=["']([^"']+)["']/i);
                     if (match) document.getElementById(item.id).textContent = `v${match[1]}`;
                 }
             } catch (e) {
