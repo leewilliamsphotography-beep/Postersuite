@@ -5,51 +5,56 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="version" content="2.0">
 <title>PosterPr3s — Presentation Maker</title>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Lexend:wght@400;500;600&family=Playfair+Display:wght@700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root { --paper:#F8F9FA; --surface:#FFFFFF; --ink:#1A1D21; --ink2:#50545C; --line:#E3E5E8; --accent:#F59E0B; --shadow: 0 10px 30px rgba(0,0,0,0.08); }
+:root { --paper:#F8F9FA; --surface:#FFFFFF; --ink:#1A1D21; --ink2:#50545C; --line:#E3E5E8; --accent:#F59E0B; --shadow: 0 10px 30px rgba(0,0,0,0.08); --title-font: 'Bricolage Grotesque'; }
 body.dark-mode { --paper:#121212; --surface:#1E1E1E; --ink:#E8E8E8; --ink2:#A0A0A0; --line:#333333; --shadow: 0 10px 30px rgba(0,0,0,0.5); }
 * { box-sizing:border-box; margin:0; padding:0; font-family:'Lexend',sans-serif; }
 body { background:var(--paper); color:var(--ink); height:100vh; display:flex; flex-direction:column; transition:background .2s; overflow: hidden; }
 
 /* Header */
-header { display:flex; justify-content:space-between; align-items:center; padding:12px 24px; background:var(--surface); border-bottom:1px solid var(--line); z-index: 10; }
-.logo { font-family:'Bricolage Grotesque'; font-weight:800; color:var(--accent); text-decoration:none; font-size: 1.2rem; }
-.toolbar { display:flex; gap:8px; align-items: center; }
-.btn { background:var(--accent); color:#fff; border:none; padding:8px 16px; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Bricolage Grotesque'; transition: 0.2s; display: flex; align-items: center; gap: 6px;}
+header { display:flex; justify-content:space-between; align-items:center; padding:10px 20px; background:var(--surface); border-bottom:1px solid var(--line); z-index: 10; gap: 10px; flex-wrap: wrap;}
+.logo { font-family:var(--title-font); font-weight:800; color:var(--accent); text-decoration:none; font-size: 1.2rem; }
+.toolbar { display:flex; gap:6px; align-items: center; flex-wrap: wrap; }
+.btn { background:var(--accent); color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:600; cursor:pointer; font-family:var(--title-font); transition: 0.2s; display: flex; align-items: center; gap: 6px; font-size: 14px;}
 .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); }
 .btn-secondary { background:transparent; border:1px solid var(--line); color:var(--ink); }
 .btn-secondary:hover { border-color: var(--accent); color: var(--accent); box-shadow: none; }
 
 /* Layout */
 .main { flex:1; display:flex; overflow: hidden; transition: all 0.3s ease; }
-.sidebar { width:240px; background:var(--surface); border-right:1px solid var(--line); padding:16px; overflow-y:auto; display: flex; flex-direction: column; gap: 10px; transition: width 0.3s ease, padding 0.3s ease; }
+.sidebar { width:220px; background:var(--surface); border-right:1px solid var(--line); padding:12px; overflow-y:auto; display: flex; flex-direction: column; gap: 8px; transition: width 0.3s ease, padding 0.3s ease; }
 .main.zen-mode .sidebar { width: 0; padding: 0; border: none; overflow: hidden; }
-
-.canvas-area { flex:1; padding:40px; display:flex; flex-direction: column; align-items:center; justify-content:center; position: relative; transition: padding 0.3s ease; }
+.canvas-area { flex:1; padding:30px; display:flex; flex-direction: column; align-items:center; justify-content:center; position: relative; transition: padding 0.3s ease; }
 .main.zen-mode .canvas-area { padding: 80px; }
 
 /* Editor Toolbar */
-.editor-toolbar { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 8px; display: flex; gap: 4px; margin-bottom: 20px; box-shadow: var(--shadow); transition: opacity 0.2s, transform 0.2s; }
+.editor-toolbar { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 6px; display: flex; gap: 4px; margin-bottom: 20px; box-shadow: var(--shadow); transition: opacity 0.2s, transform 0.2s; flex-wrap: wrap; }
 .main.zen-mode .editor-toolbar { opacity: 0; transform: translateY(-20px); pointer-events: none; }
-.editor-btn { background: transparent; border: none; width: 36px; height: 36px; border-radius: 6px; cursor: pointer; color: var(--ink2); font-weight: bold; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+.editor-btn { background: transparent; border: none; width: 34px; height: 34px; border-radius: 6px; cursor: pointer; color: var(--ink2); font-weight: bold; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 14px; }
 .editor-btn:hover { background: var(--paper); color: var(--accent); }
-.editor-btn.active { background: var(--accent); color: #fff; }
-.color-input { width: 36px; height: 36px; border: none; background: transparent; cursor: pointer; border-radius: 6px; padding: 0; }
+.editor-btn.wide { width: auto; padding: 0 10px; font-size: 12px; }
+.color-input { width: 34px; height: 34px; border: none; background: transparent; cursor: pointer; border-radius: 6px; padding: 0; }
+.toolbar-divider { width: 1px; background: var(--line); margin: 0 4px; }
 
 /* Slides */
-.slide-thumb { background:var(--paper); border:2px solid transparent; border-radius:8px; height:90px; margin-bottom:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:600; color:var(--ink2); position: relative; transition: 0.2s; padding: 10px; text-align: center; overflow: hidden; }
+.slide-thumb { background:var(--paper); border:2px solid transparent; border-radius:8px; height:80px; margin-bottom:8px; display:flex; align-items:center; justify-content:center; cursor:grab; font-weight:600; color:var(--ink2); position: relative; transition: 0.2s; padding: 10px; text-align: center; overflow: hidden; }
 .slide-thumb:hover { border-color: var(--line); }
 .slide-thumb.active { border-color:var(--accent); color: var(--accent); }
+.slide-thumb.dragging { opacity: 0.4; transform: scale(0.95); }
+.slide-thumb.drag-over { border-top: 3px solid var(--accent); }
 .thumb-controls { position: absolute; top: 4px; right: 4px; display: flex; gap: 4px; opacity: 0; transition: 0.2s; }
 .slide-thumb:hover .thumb-controls { opacity: 1; }
 .thumb-btn { background: var(--surface); border: 1px solid var(--line); border-radius: 4px; width: 20px; height: 20px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--ink); }
 
 /* Canvas */
 .slide-canvas { width:800px; height:450px; background:var(--surface); border-radius:16px; box-shadow:var(--shadow); padding:50px; display:flex; flex-direction:column; justify-content:center; transition: background 0.5s ease; position: relative; overflow: hidden; }
-.slide-title { font-family:'Bricolage Grotesque'; font-size:42px; margin-bottom:20px; color:var(--accent); outline:none; line-height: 1.1; }
-.slide-body { font-size:22px; line-height:1.6; color:var(--ink); outline:none; flex: 1; }
+.slide-title { font-family:var(--title-font); font-size:42px; margin-bottom:20px; color:var(--accent); outline:none; line-height: 1.1; }
+.slide-body { font-size:22px; line-height:1.6; color:var(--ink); outline:none; flex: 1; overflow-y: auto; }
 .slide-body ul, .slide-body ol { padding-left: 20px; }
+.slide-body pre { background: rgba(0,0,0,0.05); padding: 15px; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 16px; overflow-x: auto; }
+.slide-body img { max-width: 100%; max-height: 250px; border-radius: 8px; margin: 10px 0; display: block; }
+body.dark-mode .slide-body pre { background: rgba(255,255,255,0.05); }
 
 /* Dynamic Gradients */
 .bg-sunset { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); }
@@ -59,19 +64,42 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
 .bg-midnight .slide-title, .bg-midnight .slide-body { color: #fff; }
 
 /* Speaker Notes */
-.notes-panel { width: 800px; height: 0; background: var(--surface); border-radius: 12px; margin-top: 20px; overflow: hidden; transition: height 0.3s ease, padding 0.3s ease; box-shadow: var(--shadow); border: 1px solid var(--line); display: flex; flex-direction: column; }
+.notes-panel { width: 800px; height: 0; background: var(--surface); border-radius: 12px; margin-top: 20px; overflow: hidden; transition: height 0.3s ease; box-shadow: var(--shadow); border: 1px solid var(--line); display: flex; flex-direction: column; }
 .notes-panel.active { height: 150px; }
-.notes-header { padding: 10px 16px; border-bottom: 1px solid var(--line); font-weight: 600; color: var(--ink2); display: flex; justify-content: space-between; align-items: center; font-family: 'Bricolage Grotesque'; }
+.notes-header { padding: 10px 16px; border-bottom: 1px solid var(--line); font-weight: 600; color: var(--ink2); display: flex; justify-content: space-between; align-items: center; font-family: var(--title-font); }
 .notes-area { flex: 1; padding: 16px; outline: none; color: var(--ink2); font-size: 14px; resize: none; border: none; background: transparent; }
+
+/* Modals & Overlays */
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 2000; display: none; align-items: flex-start; justify-content: center; padding-top: 15vh; }
+.modal { width: 500px; background: var(--surface); border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); overflow: hidden; border: 1px solid var(--line); }
+.modal-header { padding: 16px 20px; border-bottom: 1px solid var(--line); font-family: var(--title-font); font-weight: 700; display: flex; justify-content: space-between; }
+.modal-body { padding: 20px; }
+.modal-input { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--ink); outline: none; font-size: 14px; margin-bottom: 10px; }
+.modal-btn { background: var(--accent); color: #fff; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; }
+
+/* Command Palette */
+.cmdk-results { max-height: 300px; overflow-y: auto; padding: 8px; }
+.cmdk-item { padding: 10px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 10px; color: var(--ink); }
+.cmdk-item:hover { background: var(--paper); }
+.cmdk-item span { font-size: 12px; color: var(--ink2); margin-left: auto; background: var(--paper); padding: 2px 6px; border-radius: 4px; }
 
 /* Present Mode */
 .present-mode { position: fixed; inset: 0; background: #000; z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+.present-progress { position: fixed; top: 0; left: 0; height: 4px; background: var(--accent); z-index: 1001; transition: width 0.3s ease; }
+.present-timer { position: fixed; top: 20px; right: 20px; color: rgba(255,255,255,0.5); font-family: 'Space Mono', monospace; font-size: 14px; z-index: 1001; }
 .present-slide { width: 80vw; height: 45vw; padding: 5vw; display: flex; flex-direction: column; justify-content: center; position: absolute; }
-.present-title { font-family:'Bricolage Grotesque'; font-size: 4vw; margin-bottom: 2vw; color: #F59E0B; }
+.present-title { font-family:var(--title-font); font-size: 4vw; margin-bottom: 2vw; color: var(--accent); }
 .present-body { font-size: 2vw; line-height: 1.5; color: #fff; white-space: pre-wrap; }
 .present-controls { position: fixed; bottom: 30px; display: flex; gap: 10px; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 50px; backdrop-filter: blur(10px); z-index: 10; }
 .present-controls button { background: rgba(255,255,255,0.2); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 16px; }
-.present-notes { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); width: 80vw; color: rgba(255,255,255,0.5); font-size: 14px; text-align: center; }
+.laser-pointer { position: fixed; width: 20px; height: 20px; border-radius: 50%; background: rgba(255, 0, 0, 0.8); pointer-events: none; z-index: 2000; display: none; box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.4); transform: translate(-50%, -50%); }
+
+/* Grid View */
+.grid-view { position: fixed; inset: 0; background: var(--paper); z-index: 1500; display: none; padding: 40px; overflow-y: auto; }
+.grid-view.active { display: block; }
+.grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; max-width: 1400px; margin: 0 auto; }
+.grid-slide { aspect-ratio: 16/9; background: var(--surface); border-radius: 8px; box-shadow: var(--shadow); cursor: pointer; display: flex; flex-direction: column; justify-content: center; padding: 20px; overflow: hidden; position: relative; transition: transform 0.2s; border: 2px solid transparent; }
+.grid-slide:hover { transform: scale(1.02); border-color: var(--accent); }
 
 /* Transitions */
 @keyframes fadeAnim { from { opacity: 0; } to { opacity: 1; } }
@@ -79,20 +107,9 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
 @keyframes zoomAnim { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @keyframes flipAnim { from { transform: perspective(1000px) rotateY(90deg); opacity: 0; } to { transform: perspective(1000px) rotateY(0deg); opacity: 1; } }
 
-/* Command Palette */
-.cmdk-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 2000; display: none; align-items: flex-start; justify-content: center; padding-top: 15vh; }
-.cmdk-modal { width: 500px; background: var(--surface); border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); overflow: hidden; border: 1px solid var(--line); }
-.cmdk-input { width: 100%; padding: 16px 20px; border: none; border-bottom: 1px solid var(--line); font-size: 16px; background: transparent; color: var(--ink); outline: none; }
-.cmdk-results { max-height: 300px; overflow-y: auto; padding: 8px; }
-.cmdk-item { padding: 10px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 10px; color: var(--ink); }
-.cmdk-item:hover, .cmdk-item.active { background: var(--paper); }
-.cmdk-item span { font-size: 12px; color: var(--ink2); margin-left: auto; background: var(--paper); padding: 2px 6px; border-radius: 4px; }
-
 /* Toast */
-.toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--ink); color: var(--surface); padding: 12px 24px; border-radius: 8px; box-shadow: var(--shadow); transition: transform 0.3s; z-index: 2000; font-weight: 600; }
+.toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--ink); color: var(--surface); padding: 12px 24px; border-radius: 8px; box-shadow: var(--shadow); transition: transform 0.3s; z-index: 3000; font-weight: 600; }
 .toast.show { transform: translateX(-50%) translateY(0); }
-
-/* Placeholders */
 [contenteditable=true]:empty:before { content: attr(data-ph); color: #aaa; font-style: italic; }
 </style>
 </head>
@@ -101,11 +118,16 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
 <header>
     <a href="index.html" class="logo">← PosterPr3s</a>
     <div class="toolbar">
-        <button class="btn btn-secondary" onclick="toggleZenMode()">🧘 Zen Mode</button>
+        <button class="btn btn-secondary" onclick="toggleZenMode()">🧘 Zen</button>
         <button class="btn btn-secondary" onclick="toggleNotes()">📝 Notes</button>
-        <button class="btn btn-secondary" onclick="openCmdk()">⌘ Commands</button>
-        <button class="btn btn-secondary" onclick="toggleTheme()">🌓 Theme</button>
-        <button class="btn btn-secondary" onclick="addSlide()">+ New Slide</button>
+        <button class="btn btn-secondary" onclick="toggleGridView()">🔡 Grid</button>
+        <button class="btn btn-secondary" onclick="openBrandKit()">🎨 Brand Kit</button>
+        <button class="btn btn-secondary" onclick="openSnapshots()">⏱ Snapshots</button>
+        <button class="btn btn-secondary" onclick="openCmdk()">⌘ Cmd</button>
+        <button class="btn btn-secondary" onclick="toggleTheme()">🌓</button>
+        <button class="btn btn-secondary" onclick="exportPDF()">⬇ PDF</button>
+        <button class="btn btn-secondary" onclick="generateShareLink()">🔗 Share</button>
+        <button class="btn btn-secondary" onclick="addSlide()">+ Slide</button>
         <button class="btn" onclick="startPresentation()">▶ Present</button>
     </div>
 </header>
@@ -118,22 +140,25 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
             <button class="editor-btn" onclick="execCmd('italic')"><i>I</i></button>
             <button class="editor-btn" onclick="execCmd('underline')"><u>U</u></button>
             <button class="editor-btn" onclick="execCmd('insertUnorderedList')">• List</button>
+            <button class="editor-btn" onclick="execCmd('formatBlock', 'pre')" title="Code Block">&lt;/&gt;</button>
             <input type="color" class="color-input" onchange="execCmd('foreColor', this.value)" title="Text Color">
-            <div style="width: 1px; background: var(--line); margin: 0 8px;"></div>
+            <div class="toolbar-divider"></div>
+            <button class="editor-btn" onclick="execCmd('justifyLeft')">⬅</button>
+            <button class="editor-btn" onclick="execCmd('justifyCenter')">⬌</button>
+            <button class="editor-btn" onclick="execCmd('justifyRight')">➡</button>
+            <div class="toolbar-divider"></div>
+            <button class="editor-btn wide" onclick="summarizeText()" title="Turn selected text into bullets">✨ Summarize</button>
+            <button class="editor-btn wide" onclick="generateAgenda()" title="Generate Agenda from slide titles">📋 Agenda</button>
+            <div class="toolbar-divider"></div>
             <button class="editor-btn" onclick="changeBg('default')" title="Default">⬜</button>
             <button class="editor-btn" onclick="changeBg('bg-sunset')" title="Sunset">🌅</button>
             <button class="editor-btn" onclick="changeBg('bg-ocean')" title="Ocean">🌊</button>
             <button class="editor-btn" onclick="changeBg('bg-forest')" title="Forest">🌲</button>
             <button class="editor-btn" onclick="changeBg('bg-midnight')" title="Midnight">🌙</button>
-            <div style="width: 1px; background: var(--line); margin: 0 8px;"></div>
-            <button class="editor-btn" onclick="changeTransition('fade')" title="Fade Transition">fade</button>
-            <button class="editor-btn" onclick="changeTransition('slideLeftAnim')" title="Slide Transition">slide</button>
-            <button class="editor-btn" onclick="changeTransition('zoomAnim')" title="Zoom Transition">zoom</button>
-            <button class="editor-btn" onclick="changeTransition('flipAnim')" title="Flip Transition">flip</button>
         </div>
         <div class="slide-canvas" id="canvas">
             <div class="slide-title" id="titleArea" contenteditable="true" data-ph="Slide Title"></div>
-            <div class="slide-body" id="bodyArea" contenteditable="true" data-ph="Start typing your brilliant ideas here..."></div>
+            <div class="slide-body" id="bodyArea" contenteditable="true" data-ph="Start typing, paste images, or drag & drop..."></div>
         </div>
         <div class="notes-panel" id="notesPanel">
             <div class="notes-header">
@@ -146,40 +171,81 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
 </div>
 
 <!-- Command Palette -->
-<div class="cmdk-overlay" id="cmdkOverlay" onclick="if(event.target === this) closeCmdk()">
-    <div class="cmdk-modal">
-        <input type="text" class="cmdk-input" id="cmdkInput" placeholder="Type a command or search..." oninput="filterCmdk()" autofocus>
+<div class="overlay" id="cmdkOverlay" onclick="if(event.target === this) closeCmdk()">
+    <div class="modal" style="width: 500px;">
+        <input type="text" class="modal-input" style="border: none; border-bottom: 1px solid var(--line); border-radius: 0; margin: 0; padding: 20px;" id="cmdkInput" placeholder="Type a command or search..." oninput="filterCmdk()" autofocus>
         <div class="cmdk-results" id="cmdkResults"></div>
+    </div>
+</div>
+
+<!-- Brand Kit Modal -->
+<div class="overlay" id="brandKitOverlay" onclick="if(event.target === this) closeBrandKit()">
+    <div class="modal">
+        <div class="modal-header">🎨 Global Brand Kit <button onclick="closeBrandKit()" style="background:none; border:none; cursor:pointer;">✖</button></div>
+        <div class="modal-body">
+            <p style="margin-bottom: 12px; color: var(--ink2); font-size: 14px;">Changes apply instantly across all slides.</p>
+            <label style="font-size: 12px; font-weight: 600;">Accent Color</label>
+            <input type="color" id="brandColor" class="modal-input" style="height: 40px; padding: 5px;" value="#F59E0B">
+            
+            <label style="font-size: 12px; font-weight: 600; display: block; margin-top: 10px;">Title Font</label>
+            <select id="brandFont" class="modal-input">
+                <option value="'Bricolage Grotesque', sans-serif">Bricolage Grotesque (Modern)</option>
+                <option value="'Playfair Display', serif">Playfair Display (Elegant)</option>
+                <option value="'Space Mono', monospace">Space Mono (Tech)</option>
+                <option value="'Lexend', sans-serif">Lexend (Clean)</option>
+            </select>
+            <button class="modal-btn" onclick="applyBrandKit()">Apply to All Slides</button>
+        </div>
+    </div>
+</div>
+
+<!-- Snapshots Modal -->
+<div class="overlay" id="snapshotsOverlay" onclick="if(event.target === this) closeSnapshots()">
+    <div class="modal">
+        <div class="modal-header">⏱ Version Snapshots <button onclick="closeSnapshots()" style="background:none; border:none; cursor:pointer;">✖</button></div>
+        <div class="modal-body">
+            <button class="modal-btn" onclick="takeSnapshot()" style="margin-bottom: 20px;">+ Save Current State</button>
+            <div id="snapshotList"></div>
+        </div>
     </div>
 </div>
 
 <!-- Presentation Mode Overlay -->
 <div class="present-mode" id="presentMode">
+    <div class="present-progress" id="presentProgress" style="width: 0%;"></div>
+    <div class="present-timer" id="presentTimer">00:00</div>
     <div class="present-slide" id="presentSlide">
         <div class="present-title" id="presentTitle"></div>
         <div class="present-body" id="presentBody"></div>
     </div>
-    <div class="present-notes" id="presentNotes"></div>
     <div class="present-controls">
         <button onclick="prevPresentSlide()">◀</button>
         <button onclick="exitPresentation()">✖</button>
+        <button onclick="toggleLaser()" title="Laser Pointer (L)">🔴</button>
         <button onclick="nextPresentSlide()">▶</button>
     </div>
 </div>
+<div class="laser-pointer" id="laserPointer"></div>
 
+<!-- Grid View Overlay -->
+<div class="grid-view" id="gridView">
+    <div class="grid-container" id="gridContainer"></div>
+</div>
+
+<div id="print-area" style="display: none;"></div>
 <div class="toast" id="toast"></div>
 
 <script>
-// State Management
-let state = { slides: [], currentSlide: 0 };
+let state = { slides: [], currentSlide: 0, globalStyles: { accent: '#F59E0B', font: "'Bricolage Grotesque', sans-serif" } };
 const sidebar = document.getElementById('sidebar');
 const titleArea = document.getElementById('titleArea');
 const bodyArea = document.getElementById('bodyArea');
 const notesArea = document.getElementById('notesArea');
 const canvas = document.getElementById('canvas');
 const mainContainer = document.getElementById('mainContainer');
+const presentMode = document.getElementById('presentMode');
+const laserPointer = document.getElementById('laserPointer');
 
-// Web Audio API for Typewriter Sounds
 let audioCtx;
 function playClick() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -193,31 +259,47 @@ function playClick() {
     o.start(); o.stop(audioCtx.currentTime + 0.05);
 }
 
-// Initialize
 function init() {
-    const saved = localStorage.getItem('posterprs_data');
-    if (saved) {
-        state = JSON.parse(saved);
-        // Backward compatibility for new fields
-        state.slides.forEach(s => { if(!s.transition) s.transition = 'fade'; if(!s.notes) s.notes = ''; });
+    const params = new URLSearchParams(window.location.search);
+    const sharedData = params.get('data');
+    
+    if (sharedData) {
+        try {
+            state = JSON.parse(decodeURIComponent(atob(sharedData)));
+            showToast('Loaded shared presentation!');
+            history.replaceState({}, document.title, window.location.pathname); // Clean URL
+        } catch(e) {
+            showToast('Invalid share link');
+        }
     } else {
-        state.slides = [{ id: Date.now(), title: '', body: '', bg: 'default', transition: 'fade', notes: '' }];
+        const saved = localStorage.getItem('posterprs_data');
+        if (saved) {
+            state = JSON.parse(saved);
+            state.slides.forEach(s => { if(!s.transition) s.transition = 'fadeAnim'; if(!s.notes) s.notes = ''; });
+            if(!state.globalStyles) state.globalStyles = { accent: '#F59E0B', font: "'Bricolage Grotesque', sans-serif" };
+            if(state.slides.length === 0) state.slides = [{ id: Date.now(), title: '', body: '', bg: 'default', transition: 'fadeAnim', notes: '' }];
+        } else {
+            state.slides = [{ id: Date.now(), title: '', body: '', bg: 'default', transition: 'fadeAnim', notes: '' }];
+        }
     }
+    applyBrandKitStyles();
     renderSidebar();
     loadSlide(0);
 }
 
-// Auto-save
 let saveTimeout;
 function autoSave() {
     clearTimeout(saveTimeout);
     saveTimeout = setTimeout(() => {
-        localStorage.setItem('posterprs_data', JSON.stringify(state));
-        showToast('✓ Auto-saved');
+        try {
+            localStorage.setItem('posterprs_data', JSON.stringify(state));
+            showToast('✓ Auto-saved');
+        } catch (e) {
+            showToast('⚠ Storage full! Export to PDF or Share Link.');
+        }
     }, 1000);
 }
 
-// Sync content to state
 function syncContent() {
     if (!state.slides[state.currentSlide]) return;
     state.slides[state.currentSlide].title = titleArea.innerHTML;
@@ -227,9 +309,8 @@ function syncContent() {
     updateThumb(state.currentSlide);
 }
 
-// Slide Management
 function addSlide() {
-    state.slides.push({ id: Date.now(), title: '', body: '', bg: 'default', transition: 'fade', notes: '' });
+    state.slides.push({ id: Date.now(), title: '', body: '', bg: 'default', transition: 'fadeAnim', notes: '' });
     renderSidebar();
     loadSlide(state.slides.length - 1);
     closeCmdk();
@@ -259,6 +340,21 @@ function renderSidebar() {
         const thumb = document.createElement('div');
         thumb.className = 'slide-thumb' + (index === state.currentSlide ? ' active' : '');
         thumb.style.background = getGradientCSS(slide.bg);
+        thumb.draggable = true;
+        
+        thumb.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text/plain', index); thumb.classList.add('dragging'); });
+        thumb.addEventListener('dragend', () => thumb.classList.remove('dragging'));
+        thumb.addEventListener('dragover', (e) => { e.preventDefault(); thumb.classList.add('drag-over'); });
+        thumb.addEventListener('dragleave', () => thumb.classList.remove('drag-over'));
+        thumb.addEventListener('drop', (e) => {
+            e.preventDefault(); thumb.classList.remove('drag-over');
+            const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+            if (fromIndex === index) return;
+            const movedSlide = state.slides.splice(fromIndex, 1)[0];
+            state.slides.splice(index, 0, movedSlide);
+            state.currentSlide = index; renderSidebar(); autoSave();
+        });
+
         thumb.innerHTML = `
             <span style="font-size: 12px; z-index: 2;">${slide.title.replace(/<[^>]*>?/gm, '').substring(0, 20) || 'Slide ' + (index + 1)}</span>
             <div class="thumb-controls">
@@ -286,7 +382,6 @@ function getGradientCSS(bg) {
     }
 }
 
-// Load slide into editor
 function loadSlide(index) {
     state.currentSlide = index;
     const slide = state.slides[index];
@@ -300,7 +395,6 @@ function loadSlide(index) {
     renderSidebar();
 }
 
-// Editor Commands
 function execCmd(command, value = null) {
     document.execCommand(command, false, value);
     syncContent();
@@ -314,168 +408,255 @@ function changeBg(bg) {
     renderSidebar();
 }
 
-function changeTransition(trans) {
-    state.slides[state.currentSlide].transition = trans;
+function toggleZenMode() { mainContainer.classList.toggle('zen-mode'); }
+function toggleNotes() { document.getElementById('notesPanel').classList.toggle('active'); }
+
+// --- BRAND KIT LOGIC ---
+function openBrandKit() {
+    document.getElementById('brandColor').value = state.globalStyles.accent;
+    document.getElementById('brandFont').value = state.globalStyles.font;
+    document.getElementById('brandKitOverlay').style.display = 'flex';
+}
+function closeBrandKit() { document.getElementById('brandKitOverlay').style.display = 'none'; }
+function applyBrandKitStyles() {
+    document.documentElement.style.setProperty('--accent', state.globalStyles.accent);
+    document.documentElement.style.setProperty('--title-font', state.globalStyles.font);
+}
+function applyBrandKit() {
+    state.globalStyles.accent = document.getElementById('brandColor').value;
+    state.globalStyles.font = document.getElementById('brandFont').value;
+    applyBrandKitStyles();
     autoSave();
-    showToast(`Transition set to: ${trans}`);
+    closeBrandKit();
+    showToast('Brand Kit applied globally!');
 }
 
-// Zen Mode & Notes Toggle
-function toggleZenMode() {
-    mainContainer.classList.toggle('zen-mode');
-}
-function toggleNotes() {
-    document.getElementById('notesPanel').classList.toggle('active');
+// --- SMART TEXT REFINER ---
+function summarizeText() {
+    const sel = window.getSelection();
+    if (!sel.rangeCount || sel.toString().trim() === '') return showToast('Highlight text first!');
+    const text = sel.toString();
+    // Simple deterministic "AI" summary: split by period or newline, filter empty, make bullets
+    const sentences = text.split(/[.\n]/).map(s => s.trim()).filter(s => s.length > 0);
+    if(sentences.length === 0) return;
+    const html = sentences.map(s => `<li>${s}</li>`).join('');
+    document.execCommand('insertHTML', false, `<ul>${html}</ul>`);
+    syncContent();
 }
 
-// Markdown auto-formatting
+function generateAgenda() {
+    const items = state.slides.map((s, i) => {
+        const title = s.title.replace(/<[^>]*>?/gm, '').trim() || `Slide ${i+1}`;
+        return `<li>${title}</li>`;
+    }).join('');
+    document.execCommand('insertHTML', false, `<h2><b>Agenda</b></h2><ul>${items}</ul>`);
+    syncContent();
+}
+
+// --- SHAREABLE LINK ---
+function generateShareLink() {
+    // To avoid URL length limits, strip base64 images for the share link
+    const cleanState = JSON.parse(JSON.stringify(state));
+    cleanState.slides.forEach(s => {
+        s.body = s.body.replace(/<img[^>]*>/g, "[Image removed for sharing]");
+    });
+    
+    try {
+        const encoded = btoa(encodeURIComponent(JSON.stringify(cleanState)));
+        const url = `${window.location.origin}${window.location.pathname}?data=${encoded}`;
+        
+        navigator.clipboard.writeText(url).then(() => {
+            showToast('🔗 Share link copied to clipboard!');
+        }).catch(() => {
+            prompt('Copy this link:', url);
+        });
+    } catch(e) {
+        showToast('Presentation too large to share via link.');
+    }
+}
+
+// --- SNAPSHOTS ---
+let snapshots = JSON.parse(localStorage.getItem('posterprs_snapshots')) || [];
+function openSnapshots() {
+    const list = document.getElementById('snapshotList');
+    list.innerHTML = '';
+    if(snapshots.length === 0) list.innerHTML = '<p style="color:var(--ink2); text-align:center;">No snapshots saved yet.</p>';
+    
+    snapshots.forEach((snap, index) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:10px; border:1px solid var(--line); border-radius:8px; margin-bottom:8px;';
+        div.innerHTML = `
+            <span style="font-size:14px;">${snap.name} <span style="color:var(--ink2); font-size:12px;">(${snap.state.slides.length} slides)</span></span>
+            <div>
+                <button onclick="restoreSnapshot(${index})" style="background:var(--paper); border:1px solid var(--line); border-radius:6px; padding:6px 12px; cursor:pointer;">Restore</button>
+                <button onclick="deleteSnapshot(${index})" style="background:transparent; border:none; cursor:pointer; color:red;">🗑</button>
+            </div>
+        `;
+        list.appendChild(div);
+    });
+    document.getElementById('snapshotsOverlay').style.display = 'flex';
+}
+function closeSnapshots() { document.getElementById('snapshotsOverlay').style.display = 'none'; }
+
+function takeSnapshot() {
+    const name = `v${snapshots.length + 1} - ${new Date().toLocaleString()}`;
+    snapshots.push({ name, state: JSON.parse(JSON.stringify(state)) });
+    localStorage.setItem('posterprs_snapshots', JSON.stringify(snapshots));
+    openSnapshots(); // Refresh list
+    showToast('Snapshot saved!');
+}
+
+function restoreSnapshot(index) {
+    state = JSON.parse(JSON.stringify(snapshots[index].state));
+    applyBrandKitStyles();
+    renderSidebar();
+    loadSlide(0);
+    closeSnapshots();
+    showToast('Snapshot restored!');
+}
+
+function deleteSnapshot(index) {
+    snapshots.splice(index, 1);
+    localStorage.setItem('posterprs_snapshots', JSON.stringify(snapshots));
+    openSnapshots();
+}
+
+// --- GRID VIEW ---
+function toggleGridView() {
+    const gridView = document.getElementById('gridView');
+    gridView.classList.toggle('active');
+    if(gridView.classList.contains('active')) {
+        const container = document.getElementById('gridContainer');
+        container.innerHTML = '';
+        state.slides.forEach((slide, index) => {
+            const div = document.createElement('div');
+            div.className = 'grid-slide ' + (slide.bg !== 'default' ? slide.bg : '');
+            div.innerHTML = `<h4 style="font-family:var(--title-font); color:var(--accent); font-size:18px; margin-bottom:8px;">${slide.title.replace(/<[^>]*>?/gm, '').substring(0, 30) || 'Untitled'}</h4><p style="font-size:12px; color:var(--ink2);">${slide.body.replace(/<[^>]*>?/gm, '').substring(0, 100) || 'No content'}</p>`;
+            div.onclick = () => { toggleGridView(); loadSlide(index); };
+            container.appendChild(div);
+        });
+    }
+}
+
+// --- IMAGE PASTE / DRAG ---
+function handleImageInsert(file) {
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = (event) => execCmd('insertImage', event.target.result);
+    reader.readAsDataURL(file);
+}
+canvas.addEventListener('dragover', (e) => e.preventDefault());
+canvas.addEventListener('drop', (e) => { e.preventDefault(); handleImageInsert(e.dataTransfer.files[0]); });
+canvas.addEventListener('paste', (e) => {
+    for (let i = 0; i < e.clipboardData.items.length; i++) {
+        if (e.clipboardData.items[i].type.startsWith('image/')) {
+            e.preventDefault(); handleImageInsert(e.clipboardData.items[i].getAsFile()); return;
+        }
+    }
+});
+
+// --- MARKDOWN ---
 bodyArea.addEventListener('keyup', (e) => {
     const text = bodyArea.innerText;
     if (e.key === ' ') {
-        if (text.startsWith('# ')) {
-            bodyArea.innerHTML = bodyArea.innerHTML.replace('# ', '');
-            document.execCommand('formatBlock', false, 'h1');
-        } else if (text.startsWith('- ')) {
-            document.execCommand('insertUnorderedList');
-            bodyArea.innerHTML = bodyArea.innerHTML.replace('- ', '');
-        }
+        if (text.startsWith('# ')) { bodyArea.innerHTML = bodyArea.innerHTML.replace('# ', ''); document.execCommand('formatBlock', false, 'h1'); } 
+        else if (text.startsWith('- ')) { document.execCommand('insertUnorderedList'); bodyArea.innerHTML = bodyArea.innerHTML.replace('- ', ''); } 
+        else if (text.startsWith('``` ')) { bodyArea.innerHTML = bodyArea.innerHTML.replace('``` ', ''); document.execCommand('formatBlock', false, 'pre'); }
     }
-    playClick();
-    syncContent();
+    playClick(); syncContent();
 });
 
 titleArea.addEventListener('keyup', () => { playClick(); syncContent(); });
 notesArea.addEventListener('keyup', syncContent);
 
-// Presentation Mode
-let presentIndex = 0;
-function startPresentation() {
-    presentIndex = state.currentSlide;
-    document.getElementById('presentMode').style.display = 'flex';
-    renderPresentSlide();
+// --- PDF EXPORT ---
+function exportPDF() {
+    const printArea = document.getElementById('print-area');
+    printArea.innerHTML = '';
+    state.slides.forEach(slide => {
+        const div = document.createElement('div');
+        div.className = 'print-slide slide-canvas ' + (slide.bg !== 'default' ? slide.bg : '');
+        div.style.setProperty('--accent', state.globalStyles.accent);
+        div.style.setProperty('--title-font', state.globalStyles.font);
+        div.innerHTML = `<div class="slide-title">${slide.title || ''}</div><div class="slide-body">${slide.body || ''}</div>`;
+        printArea.appendChild(div);
+    });
+    window.print();
     closeCmdk();
 }
 
-function exitPresentation() {
-    document.getElementById('presentMode').style.display = 'none';
+// --- PRESENT MODE ---
+let presentIndex = 0, presentTimerInterval, presentStartTime, laserOn = false;
+function startPresentation() {
+    presentIndex = state.currentSlide; presentMode.style.display = 'flex'; renderPresentSlide();
+    presentStartTime = Date.now(); presentTimerInterval = setInterval(updateTimer, 1000); closeCmdk();
 }
-
+function updateTimer() {
+    const elapsed = Math.floor((Date.now() - presentStartTime) / 1000);
+    document.getElementById('presentTimer').textContent = `${Math.floor(elapsed / 60).toString().padStart(2, '0')}:${(elapsed % 60).toString().padStart(2, '0')}`;
+}
+function exitPresentation() { presentMode.style.display = 'none'; clearInterval(presentTimerInterval); toggleLaser(false); }
 function renderPresentSlide() {
     const slide = state.slides[presentIndex];
     const pSlide = document.getElementById('presentSlide');
-    
-    // Reset animation
-    pSlide.style.animation = 'none';
-    pSlide.offsetHeight; // trigger reflow
+    pSlide.style.animation = 'none'; pSlide.offsetHeight; 
     pSlide.style.animation = `${slide.transition || 'fadeAnim'} 0.6s ease forwards`;
     
     pSlide.className = 'present-slide ' + (slide.bg !== 'default' ? slide.bg : '');
     document.getElementById('presentTitle').innerHTML = slide.title || "Untitled Slide";
     document.getElementById('presentBody').innerHTML = slide.body || "";
-    document.getElementById('presentNotes').innerText = slide.notes || "";
+    
+    const progress = ((presentIndex + 1) / state.slides.length) * 100;
+    document.getElementById('presentProgress').style.width = `${progress}%`;
 }
+function nextPresentSlide() { if (presentIndex < state.slides.length - 1) { presentIndex++; renderPresentSlide(); } }
+function prevPresentSlide() { if (presentIndex > 0) { presentIndex--; renderPresentSlide(); } }
+function toggleLaser(forceState) { laserOn = forceState !== undefined ? forceState : !laserOn; laserPointer.style.display = laserOn ? 'block' : 'none'; }
+document.addEventListener('mousemove', (e) => { if (laserOn && presentMode.style.display === 'flex') { laserPointer.style.left = e.clientX + 'px'; laserPointer.style.top = e.clientY + 'px'; } });
 
-function nextPresentSlide() {
-    if (presentIndex < state.slides.length - 1) { presentIndex++; renderPresentSlide(); }
-}
-function prevPresentSlide() {
-    if (presentIndex > 0) { presentIndex--; renderPresentSlide(); }
-}
-
-// Command Palette Logic
+// --- COMMAND PALETTE ---
 const commands = [
-    { name: 'Add New Slide', action: addSlide, shortcut: 'Ctrl+N' },
-    { name: 'Start Presentation', action: startPresentation, shortcut: 'Ctrl+Enter' },
-    { name: 'Toggle Dark Mode', action: toggleTheme, shortcut: 'Ctrl+D' },
-    { name: 'Toggle Zen Mode', action: toggleZenMode, shortcut: 'Ctrl+Z' },
-    { name: 'Toggle Speaker Notes', action: toggleNotes, shortcut: 'Ctrl+Shift+N' },
-    { name: 'Duplicate Current Slide', action: () => duplicateSlide(state.currentSlide) },
-    { name: 'Delete Current Slide', action: () => deleteSlide(state.currentSlide) },
-    { name: 'Apply Sunset Background', action: () => changeBg('bg-sunset') },
-    { name: 'Apply Ocean Background', action: () => changeBg('bg-ocean') },
-    { name: 'Apply Forest Background', action: () => changeBg('bg-forest') },
-    { name: 'Apply Midnight Background', action: () => changeBg('bg-midnight') },
-    { name: 'Set Transition: Fade', action: () => changeTransition('fadeAnim') },
-    { name: 'Set Transition: Slide', action: () => changeTransition('slideLeftAnim') },
-    { name: 'Set Transition: Zoom', action: () => changeTransition('zoomAnim') },
-    { name: 'Set Transition: Flip', action: () => changeTransition('flipAnim') }
+    { name: 'Add New Slide', action: addSlide }, { name: 'Start Presentation', action: startPresentation },
+    { name: 'Open Brand Kit', action: openBrandKit }, { name: 'Open Snapshots', action: openSnapshots },
+    { name: 'Generate Share Link', action: generateShareLink }, { name: 'Export to PDF', action: exportPDF },
+    { name: 'Toggle Grid View', action: toggleGridView }, { name: 'Toggle Dark Mode', action: toggleTheme },
+    { name: 'Toggle Zen Mode', action: toggleZenMode }, { name: 'Toggle Speaker Notes', action: toggleNotes },
+    { name: 'Summarize Selected Text', action: summarizeText }, { name: 'Generate Agenda Slide', action: generateAgenda },
+    { name: 'Duplicate Current Slide', action: () => duplicateSlide(state.currentSlide) }, { name: 'Delete Current Slide', action: () => deleteSlide(state.currentSlide) }
 ];
-
-function openCmdk() {
-    document.getElementById('cmdkOverlay').style.display = 'flex';
-    document.getElementById('cmdkInput').value = '';
-    renderCmdkResults('');
-    setTimeout(() => document.getElementById('cmdkInput').focus(), 50);
-}
-
-function closeCmdk() {
-    document.getElementById('cmdkOverlay').style.display = 'none';
-}
-
-function filterCmdk() {
-    const query = document.getElementById('cmdkInput').value.toLowerCase();
-    renderCmdkResults(query);
-}
-
+function openCmdk() { document.getElementById('cmdkOverlay').style.display = 'flex'; document.getElementById('cmdkInput').value = ''; renderCmdkResults(''); setTimeout(() => document.getElementById('cmdkInput').focus(), 50); }
+function closeCmdk() { document.getElementById('cmdkOverlay').style.display = 'none'; }
+function filterCmdk() { renderCmdkResults(document.getElementById('cmdkInput').value.toLowerCase()); }
 function renderCmdkResults(query) {
     const resultsDiv = document.getElementById('cmdkResults');
-    const filtered = commands.filter(cmd => cmd.name.toLowerCase().includes(query));
-    
-    resultsDiv.innerHTML = filtered.map((cmd, i) => `
-        <div class="cmdk-item" onclick="commands[${commands.indexOf(cmd)}].action()">
-            <span>${cmd.name}</span>
-            ${cmd.shortcut ? `<span>${cmd.shortcut}</span>` : ''}
-        </div>
-    `).join('');
-    
-    if (filtered.length === 0) {
-        resultsDiv.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--ink2);">No commands found</div>';
-    }
+    resultsDiv.innerHTML = commands.filter(c => c.name.toLowerCase().includes(query)).map(c => `<div class="cmdk-item" onclick="commands[${commands.indexOf(c)}].action()"><span>${c.name}</span></div>`).join('');
+    if (resultsDiv.innerHTML === '') resultsDiv.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--ink2);">No commands found</div>';
 }
 
-// Keyboard shortcuts
+// --- SHORTCUTS ---
 document.addEventListener('keydown', (e) => {
-    // Command Palette
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        if (document.getElementById('cmdkOverlay').style.display === 'flex') closeCmdk();
-        else openCmdk();
-        return;
-    }
-
-    if (document.getElementById('cmdkOverlay').style.display === 'flex') {
-        if (e.key === 'Escape') closeCmdk();
-        return;
-    }
-
-    if (document.getElementById('presentMode').style.display === 'flex') {
+    const isTyping = e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT';
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); if (document.getElementById('cmdkOverlay').style.display === 'flex') closeCmdk(); else openCmdk(); return; }
+    if (document.getElementById('cmdkOverlay').style.display === 'flex') { if (e.key === 'Escape') closeCmdk(); return; }
+    if (document.getElementById('gridView').classList.contains('active')) { if (e.key === 'Escape') toggleGridView(); return; }
+    if (presentMode.style.display === 'flex') {
         if (e.key === 'ArrowRight' || e.key === ' ') nextPresentSlide();
         if (e.key === 'ArrowLeft') prevPresentSlide();
         if (e.key === 'Escape') exitPresentation();
-    } else {
+        if (e.key === 'l' || e.key === 'L') toggleLaser();
+    } else if (!isTyping) {
         if (e.ctrlKey && e.key === 'Enter') { e.preventDefault(); startPresentation(); }
         if (e.ctrlKey && e.key === 'n') { e.preventDefault(); addSlide(); }
         if (e.ctrlKey && e.shiftKey && e.key === 'N') { e.preventDefault(); toggleNotes(); }
         if (e.ctrlKey && e.key === 'd') { e.preventDefault(); toggleTheme(); }
         if (e.ctrlKey && e.key === 'z') { e.preventDefault(); toggleZenMode(); }
+        if (e.ctrlKey && e.key === 'p') { e.preventDefault(); exportPDF(); }
     }
 });
 
-// UI Utilities
-function toggleTheme() {
-    document.documentElement.classList.toggle('dark-mode');
-    localStorage.setItem('pp3-theme', document.documentElement.classList.contains('dark-mode') ? 'dark' : 'light');
-    closeCmdk();
-}
+function toggleTheme() { document.documentElement.classList.toggle('dark-mode'); localStorage.setItem('pp3-theme', document.documentElement.classList.contains('dark-mode') ? 'dark' : 'light'); closeCmdk(); }
+function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
 
-function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2000);
-}
-
-// Boot
 init();
 </script>
 </body>
