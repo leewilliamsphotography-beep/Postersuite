@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="version" content="2.0">
+<meta name="version" content="1.0">
 <title>PosterPr3s — Presentation Maker</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Lexend:wght@400;500;600&family=Playfair+Display:wght@700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -20,6 +20,7 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
 .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); }
 .btn-secondary { background:transparent; border:1px solid var(--line); color:var(--ink); }
 .btn-secondary:hover { border-color: var(--accent); color: var(--accent); box-shadow: none; }
+.btn-secondary.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
 /* Layout */
 .main { flex:1; display:flex; overflow: hidden; transition: all 0.3s ease; }
@@ -55,6 +56,10 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
 .slide-body pre { background: rgba(0,0,0,0.05); padding: 15px; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 16px; overflow-x: auto; }
 .slide-body img { max-width: 100%; max-height: 250px; border-radius: 8px; margin: 10px 0; display: block; }
 body.dark-mode .slide-body pre { background: rgba(255,255,255,0.05); }
+
+/* Magic Layout Columns */
+.magic-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.magic-quote { font-family: 'Playfair Display', serif; font-size: 32px; font-style: italic; text-align: center; color: var(--ink); }
 
 /* Dynamic Gradients */
 .bg-sunset { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); }
@@ -92,7 +97,9 @@ body.dark-mode .slide-body pre { background: rgba(255,255,255,0.05); }
 .present-body { font-size: 2vw; line-height: 1.5; color: #fff; white-space: pre-wrap; }
 .present-controls { position: fixed; bottom: 30px; display: flex; gap: 10px; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 50px; backdrop-filter: blur(10px); z-index: 10; }
 .present-controls button { background: rgba(255,255,255,0.2); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 16px; }
+.present-controls button.active { background: var(--accent); }
 .laser-pointer { position: fixed; width: 20px; height: 20px; border-radius: 50%; background: rgba(255, 0, 0, 0.8); pointer-events: none; z-index: 2000; display: none; box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.4); transform: translate(-50%, -50%); }
+.confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 1999; }
 
 /* Grid View */
 .grid-view { position: fixed; inset: 0; background: var(--paper); z-index: 1500; display: none; padding: 40px; overflow-y: auto; }
@@ -111,6 +118,13 @@ body.dark-mode .slide-body pre { background: rgba(255,255,255,0.05); }
 .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--ink); color: var(--surface); padding: 12px 24px; border-radius: 8px; box-shadow: var(--shadow); transition: transform 0.3s; z-index: 3000; font-weight: 600; }
 .toast.show { transform: translateX(-50%) translateY(0); }
 [contenteditable=true]:empty:before { content: attr(data-ph); color: #aaa; font-style: italic; }
+
+@media print {
+    body * { visibility: hidden; }
+    #print-area, #print-area * { visibility: visible; }
+    #print-area { position: absolute; left: 0; top: 0; width: 100%; display: flex !important; }
+    .print-slide { width: 100vw; height: 100vh; page-break-after: always; display: flex; flex-direction: column; justify-content: center; padding: 10vw; box-shadow: none; border-radius: 0; }
+}
 </style>
 </head>
 <body>
@@ -126,6 +140,7 @@ body.dark-mode .slide-body pre { background: rgba(255,255,255,0.05); }
         <button class="btn btn-secondary" onclick="openCmdk()">⌘ Cmd</button>
         <button class="btn btn-secondary" onclick="toggleTheme()">🌓</button>
         <button class="btn btn-secondary" onclick="exportPDF()">⬇ PDF</button>
+        <button class="btn btn-secondary" onclick="exportHTML()">📦 HTML</button>
         <button class="btn btn-secondary" onclick="generateShareLink()">🔗 Share</button>
         <button class="btn btn-secondary" onclick="addSlide()">+ Slide</button>
         <button class="btn" onclick="startPresentation()">▶ Present</button>
@@ -147,7 +162,8 @@ body.dark-mode .slide-body pre { background: rgba(255,255,255,0.05); }
             <button class="editor-btn" onclick="execCmd('justifyCenter')">⬌</button>
             <button class="editor-btn" onclick="execCmd('justifyRight')">➡</button>
             <div class="toolbar-divider"></div>
-            <button class="editor-btn wide" onclick="summarizeText()" title="Turn selected text into bullets">✨ Summarize</button>
+            <button class="editor-btn wide" onclick="magicLayout()" title="Auto-format text">✨ Magic Layout</button>
+            <button class="editor-btn wide" onclick="summarizeText()" title="Turn selected text into bullets">📝 Summarize</button>
             <button class="editor-btn wide" onclick="generateAgenda()" title="Generate Agenda from slide titles">📋 Agenda</button>
             <div class="toolbar-divider"></div>
             <button class="editor-btn" onclick="changeBg('default')" title="Default">⬜</button>
@@ -186,7 +202,6 @@ body.dark-mode .slide-body pre { background: rgba(255,255,255,0.05); }
             <p style="margin-bottom: 12px; color: var(--ink2); font-size: 14px;">Changes apply instantly across all slides.</p>
             <label style="font-size: 12px; font-weight: 600;">Accent Color</label>
             <input type="color" id="brandColor" class="modal-input" style="height: 40px; padding: 5px;" value="#F59E0B">
-            
             <label style="font-size: 12px; font-weight: 600; display: block; margin-top: 10px;">Title Font</label>
             <select id="brandFont" class="modal-input">
                 <option value="'Bricolage Grotesque', sans-serif">Bricolage Grotesque (Modern)</option>
@@ -220,12 +235,15 @@ body.dark-mode .slide-body pre { background: rgba(255,255,255,0.05); }
     </div>
     <div class="present-controls">
         <button onclick="prevPresentSlide()">◀</button>
-        <button onclick="exitPresentation()">✖</button>
+        <button onclick="toggleVoice()" id="voiceBtn" title="Voice Control (V)">🎤</button>
+        <button onclick="triggerConfetti()" title="Confetti (C)">🎉</button>
         <button onclick="toggleLaser()" title="Laser Pointer (L)">🔴</button>
+        <button onclick="exitPresentation()">✖</button>
         <button onclick="nextPresentSlide()">▶</button>
     </div>
 </div>
 <div class="laser-pointer" id="laserPointer"></div>
+<canvas class="confetti-canvas" id="confettiCanvas"></canvas>
 
 <!-- Grid View Overlay -->
 <div class="grid-view" id="gridView">
@@ -249,11 +267,9 @@ const laserPointer = document.getElementById('laserPointer');
 let audioCtx;
 function playClick() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
+    const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
     o.connect(g); g.connect(audioCtx.destination);
-    o.frequency.value = Math.random() * 100 + 600;
-    o.type = 'square';
+    o.frequency.value = Math.random() * 100 + 600; o.type = 'square';
     g.gain.setValueAtTime(0.02, audioCtx.currentTime);
     g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
     o.start(); o.stop(audioCtx.currentTime + 0.05);
@@ -262,15 +278,12 @@ function playClick() {
 function init() {
     const params = new URLSearchParams(window.location.search);
     const sharedData = params.get('data');
-    
     if (sharedData) {
         try {
             state = JSON.parse(decodeURIComponent(atob(sharedData)));
             showToast('Loaded shared presentation!');
-            history.replaceState({}, document.title, window.location.pathname); // Clean URL
-        } catch(e) {
-            showToast('Invalid share link');
-        }
+            history.replaceState({}, document.title, window.location.pathname);
+        } catch(e) { showToast('Invalid share link'); }
     } else {
         const saved = localStorage.getItem('posterprs_data');
         if (saved) {
@@ -282,21 +295,15 @@ function init() {
             state.slides = [{ id: Date.now(), title: '', body: '', bg: 'default', transition: 'fadeAnim', notes: '' }];
         }
     }
-    applyBrandKitStyles();
-    renderSidebar();
-    loadSlide(0);
+    applyBrandKitStyles(); renderSidebar(); loadSlide(0);
 }
 
 let saveTimeout;
 function autoSave() {
     clearTimeout(saveTimeout);
     saveTimeout = setTimeout(() => {
-        try {
-            localStorage.setItem('posterprs_data', JSON.stringify(state));
-            showToast('✓ Auto-saved');
-        } catch (e) {
-            showToast('⚠ Storage full! Export to PDF or Share Link.');
-        }
+        try { localStorage.setItem('posterprs_data', JSON.stringify(state)); showToast('✓ Auto-saved'); } 
+        catch (e) { showToast('⚠ Storage full! Export to HTML.'); }
     }, 1000);
 }
 
@@ -305,34 +312,12 @@ function syncContent() {
     state.slides[state.currentSlide].title = titleArea.innerHTML;
     state.slides[state.currentSlide].body = bodyArea.innerHTML;
     state.slides[state.currentSlide].notes = notesArea.value;
-    autoSave();
-    updateThumb(state.currentSlide);
+    autoSave(); updateThumb(state.currentSlide);
 }
 
-function addSlide() {
-    state.slides.push({ id: Date.now(), title: '', body: '', bg: 'default', transition: 'fadeAnim', notes: '' });
-    renderSidebar();
-    loadSlide(state.slides.length - 1);
-    closeCmdk();
-}
-
-function deleteSlide(index) {
-    if (state.slides.length <= 1) return showToast("Can't delete the only slide!");
-    state.slides.splice(index, 1);
-    if (state.currentSlide >= state.slides.length) state.currentSlide = state.slides.length - 1;
-    renderSidebar();
-    loadSlide(state.currentSlide);
-    closeCmdk();
-}
-
-function duplicateSlide(index) {
-    const original = state.slides[index];
-    const copy = { ...original, id: Date.now(), title: original.title, body: original.body, notes: original.notes };
-    state.slides.splice(index + 1, 0, copy);
-    renderSidebar();
-    loadSlide(index + 1);
-    closeCmdk();
-}
+function addSlide() { state.slides.push({ id: Date.now(), title: '', body: '', bg: 'default', transition: 'fadeAnim', notes: '' }); renderSidebar(); loadSlide(state.slides.length - 1); closeCmdk(); }
+function deleteSlide(index) { if (state.slides.length <= 1) return showToast("Can't delete the only slide!"); state.slides.splice(index, 1); if (state.currentSlide >= state.slides.length) state.currentSlide = state.slides.length - 1; renderSidebar(); loadSlide(state.currentSlide); closeCmdk(); }
+function duplicateSlide(index) { const o = state.slides[index]; const c = { ...o, id: Date.now(), title: o.title, body: o.body, notes: o.notes }; state.slides.splice(index + 1, 0, c); renderSidebar(); loadSlide(index + 1); closeCmdk(); }
 
 function renderSidebar() {
     sidebar.innerHTML = '';
@@ -341,7 +326,6 @@ function renderSidebar() {
         thumb.className = 'slide-thumb' + (index === state.currentSlide ? ' active' : '');
         thumb.style.background = getGradientCSS(slide.bg);
         thumb.draggable = true;
-        
         thumb.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text/plain', index); thumb.classList.add('dragging'); });
         thumb.addEventListener('dragend', () => thumb.classList.remove('dragging'));
         thumb.addEventListener('dragover', (e) => { e.preventDefault(); thumb.classList.add('drag-over'); });
@@ -350,28 +334,17 @@ function renderSidebar() {
             e.preventDefault(); thumb.classList.remove('drag-over');
             const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
             if (fromIndex === index) return;
-            const movedSlide = state.slides.splice(fromIndex, 1)[0];
-            state.slides.splice(index, 0, movedSlide);
+            const moved = state.slides.splice(fromIndex, 1)[0];
+            state.slides.splice(index, 0, moved);
             state.currentSlide = index; renderSidebar(); autoSave();
         });
-
-        thumb.innerHTML = `
-            <span style="font-size: 12px; z-index: 2;">${slide.title.replace(/<[^>]*>?/gm, '').substring(0, 20) || 'Slide ' + (index + 1)}</span>
-            <div class="thumb-controls">
-                <button class="thumb-btn" onclick="event.stopPropagation(); duplicateSlide(${index})" title="Duplicate">⧉</button>
-                <button class="thumb-btn" onclick="event.stopPropagation(); deleteSlide(${index})" title="Delete">🗑</button>
-            </div>
-        `;
+        thumb.innerHTML = `<span style="font-size: 12px; z-index: 2;">${slide.title.replace(/<[^>]*>?/gm, '').substring(0, 20) || 'Slide ' + (index + 1)}</span><div class="thumb-controls"><button class="thumb-btn" onclick="event.stopPropagation(); duplicateSlide(${index})" title="Duplicate">⧉</button><button class="thumb-btn" onclick="event.stopPropagation(); deleteSlide(${index})" title="Delete">🗑</button></div>`;
         thumb.onclick = () => loadSlide(index);
         sidebar.appendChild(thumb);
     });
 }
 
-function updateThumb(index) {
-    const thumb = sidebar.children[index];
-    if(thumb) thumb.querySelector('span').textContent = state.slides[index].title.replace(/<[^>]*>?/gm, '').substring(0, 20) || 'Slide ' + (index + 1);
-}
-
+function updateThumb(index) { const thumb = sidebar.children[index]; if(thumb) thumb.querySelector('span').textContent = state.slides[index].title.replace(/<[^>]*>?/gm, '').substring(0, 20) || 'Slide ' + (index + 1); }
 function getGradientCSS(bg) {
     switch(bg) {
         case 'bg-sunset': return 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%)';
@@ -387,147 +360,110 @@ function loadSlide(index) {
     const slide = state.slides[index];
     canvas.className = 'slide-canvas';
     if (slide.bg !== 'default') canvas.classList.add(slide.bg);
-    
-    titleArea.innerHTML = slide.title;
-    bodyArea.innerHTML = slide.body;
-    notesArea.value = slide.notes || '';
-    
+    titleArea.innerHTML = slide.title; bodyArea.innerHTML = slide.body; notesArea.value = slide.notes || '';
     renderSidebar();
 }
 
-function execCmd(command, value = null) {
-    document.execCommand(command, false, value);
-    syncContent();
-}
-
-function changeBg(bg) {
-    state.slides[state.currentSlide].bg = bg;
-    canvas.className = 'slide-canvas';
-    if (bg !== 'default') canvas.classList.add(bg);
-    autoSave();
-    renderSidebar();
-}
-
+function execCmd(command, value = null) { document.execCommand(command, false, value); syncContent(); }
+function changeBg(bg) { state.slides[state.currentSlide].bg = bg; canvas.className = 'slide-canvas'; if (bg !== 'default') canvas.classList.add(bg); autoSave(); renderSidebar(); }
 function toggleZenMode() { mainContainer.classList.toggle('zen-mode'); }
 function toggleNotes() { document.getElementById('notesPanel').classList.toggle('active'); }
 
-// --- BRAND KIT LOGIC ---
-function openBrandKit() {
-    document.getElementById('brandColor').value = state.globalStyles.accent;
-    document.getElementById('brandFont').value = state.globalStyles.font;
-    document.getElementById('brandKitOverlay').style.display = 'flex';
-}
-function closeBrandKit() { document.getElementById('brandKitOverlay').style.display = 'none'; }
-function applyBrandKitStyles() {
-    document.documentElement.style.setProperty('--accent', state.globalStyles.accent);
-    document.documentElement.style.setProperty('--title-font', state.globalStyles.font);
-}
-function applyBrandKit() {
-    state.globalStyles.accent = document.getElementById('brandColor').value;
-    state.globalStyles.font = document.getElementById('brandFont').value;
-    applyBrandKitStyles();
-    autoSave();
-    closeBrandKit();
-    showToast('Brand Kit applied globally!');
-}
-
-// --- SMART TEXT REFINER ---
+// --- MAGIC LAYOUT & AI TOOLS ---
 function summarizeText() {
     const sel = window.getSelection();
     if (!sel.rangeCount || sel.toString().trim() === '') return showToast('Highlight text first!');
-    const text = sel.toString();
-    // Simple deterministic "AI" summary: split by period or newline, filter empty, make bullets
-    const sentences = text.split(/[.\n]/).map(s => s.trim()).filter(s => s.length > 0);
+    const sentences = sel.toString().split(/[.\n]/).map(s => s.trim()).filter(s => s.length > 0);
     if(sentences.length === 0) return;
-    const html = sentences.map(s => `<li>${s}</li>`).join('');
-    document.execCommand('insertHTML', false, `<ul>${html}</ul>`);
+    document.execCommand('insertHTML', false, `<ul>${sentences.map(s => `<li>${s}</li>`).join('')}</ul>`);
     syncContent();
 }
 
 function generateAgenda() {
-    const items = state.slides.map((s, i) => {
-        const title = s.title.replace(/<[^>]*>?/gm, '').trim() || `Slide ${i+1}`;
-        return `<li>${title}</li>`;
-    }).join('');
+    const items = state.slides.map((s, i) => `<li>${s.title.replace(/<[^>]*>?/gm, '').trim() || `Slide ${i+1}`}</li>`).join('');
     document.execCommand('insertHTML', false, `<h2><b>Agenda</b></h2><ul>${items}</ul>`);
     syncContent();
 }
 
-// --- SHAREABLE LINK ---
-function generateShareLink() {
-    // To avoid URL length limits, strip base64 images for the share link
-    const cleanState = JSON.parse(JSON.stringify(state));
-    cleanState.slides.forEach(s => {
-        s.body = s.body.replace(/<img[^>]*>/g, "[Image removed for sharing]");
-    });
+function magicLayout() {
+    const text = bodyArea.innerText.trim();
+    const words = text.split(/\s+/);
     
+    // If very short, make it a giant quote
+    if (words.length <= 15) {
+        bodyArea.innerHTML = `<p class="magic-quote">${text}</p>`;
+    } 
+    // If it has bullet points, put them in columns
+    else if (text.includes('\n')) {
+        const items = text.split('\n').filter(t => t.trim() !== '').map(t => `<p>${t}</p>`).join('');
+        bodyArea.innerHTML = `<div class="magic-grid">${items}</div>`;
+    } 
+    // Default: split into 3 columns based on sentences
+    else {
+        const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+        const chunkSize = Math.ceil(sentences.length / 3);
+        let cols = '';
+        for (let i = 0; i < 3; i++) {
+            cols += `<div>${sentences.slice(i * chunkSize, (i + 1) * chunkSize).join(' ')}</div>`;
+        }
+        bodyArea.innerHTML = `<div class="magic-grid">${cols}</div>`;
+    }
+    syncContent();
+    showToast('✨ Magic Layout applied!');
+}
+
+// --- BRAND KIT ---
+function openBrandKit() { document.getElementById('brandColor').value = state.globalStyles.accent; document.getElementById('brandFont').value = state.globalStyles.font; document.getElementById('brandKitOverlay').style.display = 'flex'; }
+function closeBrandKit() { document.getElementById('brandKitOverlay').style.display = 'none'; }
+function applyBrandKitStyles() { document.documentElement.style.setProperty('--accent', state.globalStyles.accent); document.documentElement.style.setProperty('--title-font', state.globalStyles.font); }
+function applyBrandKit() { state.globalStyles.accent = document.getElementById('brandColor').value; state.globalStyles.font = document.getElementById('brandFont').value; applyBrandKitStyles(); autoSave(); closeBrandKit(); showToast('Brand Kit applied globally!'); }
+
+// --- SHARING & EXPORT ---
+function generateShareLink() {
+    const cleanState = JSON.parse(JSON.stringify(state));
+    cleanState.slides.forEach(s => { s.body = s.body.replace(/<img[^>]*>/g, "[Image removed for sharing]"); });
     try {
         const encoded = btoa(encodeURIComponent(JSON.stringify(cleanState)));
         const url = `${window.location.origin}${window.location.pathname}?data=${encoded}`;
-        
-        navigator.clipboard.writeText(url).then(() => {
-            showToast('🔗 Share link copied to clipboard!');
-        }).catch(() => {
-            prompt('Copy this link:', url);
-        });
-    } catch(e) {
-        showToast('Presentation too large to share via link.');
-    }
+        navigator.clipboard.writeText(url).then(() => showToast('🔗 Share link copied!')).catch(() => prompt('Copy this link:', url));
+    } catch(e) { showToast('Too large to share via link.'); }
+}
+
+function exportHTML() {
+    const data = btoa(encodeURIComponent(JSON.stringify(state)));
+    const htmlContent = `<!DOCTYPE html><html><head><title>Presentation</title><style>body{margin:0;background:#000;overflow:hidden;font-family:sans-serif;}#slide{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;padding:5vw;box-sizing:border-box;}.title{font-size:4vw;color:#F59E0B;margin-bottom:2vw;font-weight:800;}.body{font-size:2vw;color:#fff;line-height:1.5;white-space:pre-wrap;}.sunset{background:linear-gradient(135deg,#ff9a9e 0%,#fecfef 100%)}.ocean{background:linear-gradient(120deg,#a1c4fd 0%,#c2e9fb 100%)}.forest{background:linear-gradient(120deg,#d4fc79 0%,#96e6a1 100%)}.midnight{background:linear-gradient(120deg,#2c3e50 0%,#4ca1af 100%)}</style></head><body><div id="slide"><div class="title" id="t"></div><div class="body" id="b"></div></div><script>const state=JSON.parse(decodeURIComponent(atob('${data}')));let i=0;const t=document.getElementById('t'),b=document.getElementById('b'),s=document.getElementById('slide');function render(){const sl=state.slides[i];s.className=sl.bg!=='default'?'bg-'+sl.bg:'';t.innerHTML=sl.title||'';b.innerHTML=sl.body||'';}document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')i=Math.min(i+1,state.slides.length-1);if(e.key==='ArrowLeft')i=Math.max(i-1,0);render();});render();<\/script></body></html>`;
+    
+    const blob = new Blob([htmlContent], {type: 'text/html'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'presentation.html';
+    a.click();
+    showToast('📦 Standalone HTML exported!');
 }
 
 // --- SNAPSHOTS ---
 let snapshots = JSON.parse(localStorage.getItem('posterprs_snapshots')) || [];
 function openSnapshots() {
-    const list = document.getElementById('snapshotList');
-    list.innerHTML = '';
+    const list = document.getElementById('snapshotList'); list.innerHTML = '';
     if(snapshots.length === 0) list.innerHTML = '<p style="color:var(--ink2); text-align:center;">No snapshots saved yet.</p>';
-    
     snapshots.forEach((snap, index) => {
         const div = document.createElement('div');
         div.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:10px; border:1px solid var(--line); border-radius:8px; margin-bottom:8px;';
-        div.innerHTML = `
-            <span style="font-size:14px;">${snap.name} <span style="color:var(--ink2); font-size:12px;">(${snap.state.slides.length} slides)</span></span>
-            <div>
-                <button onclick="restoreSnapshot(${index})" style="background:var(--paper); border:1px solid var(--line); border-radius:6px; padding:6px 12px; cursor:pointer;">Restore</button>
-                <button onclick="deleteSnapshot(${index})" style="background:transparent; border:none; cursor:pointer; color:red;">🗑</button>
-            </div>
-        `;
+        div.innerHTML = `<span style="font-size:14px;">${snap.name} <span style="color:var(--ink2); font-size:12px;">(${snap.state.slides.length} slides)</span></span><div><button onclick="restoreSnapshot(${index})" style="background:var(--paper); border:1px solid var(--line); border-radius:6px; padding:6px 12px; cursor:pointer;">Restore</button><button onclick="deleteSnapshot(${index})" style="background:transparent; border:none; cursor:pointer; color:red;">🗑</button></div>`;
         list.appendChild(div);
     });
     document.getElementById('snapshotsOverlay').style.display = 'flex';
 }
 function closeSnapshots() { document.getElementById('snapshotsOverlay').style.display = 'none'; }
-
-function takeSnapshot() {
-    const name = `v${snapshots.length + 1} - ${new Date().toLocaleString()}`;
-    snapshots.push({ name, state: JSON.parse(JSON.stringify(state)) });
-    localStorage.setItem('posterprs_snapshots', JSON.stringify(snapshots));
-    openSnapshots(); // Refresh list
-    showToast('Snapshot saved!');
-}
-
-function restoreSnapshot(index) {
-    state = JSON.parse(JSON.stringify(snapshots[index].state));
-    applyBrandKitStyles();
-    renderSidebar();
-    loadSlide(0);
-    closeSnapshots();
-    showToast('Snapshot restored!');
-}
-
-function deleteSnapshot(index) {
-    snapshots.splice(index, 1);
-    localStorage.setItem('posterprs_snapshots', JSON.stringify(snapshots));
-    openSnapshots();
-}
+function takeSnapshot() { snapshots.push({ name: `v${snapshots.length + 1} - ${new Date().toLocaleString()}`, state: JSON.parse(JSON.stringify(state)) }); localStorage.setItem('posterprs_snapshots', JSON.stringify(snapshots)); openSnapshots(); showToast('Snapshot saved!'); }
+function restoreSnapshot(index) { state = JSON.parse(JSON.stringify(snapshots[index].state)); applyBrandKitStyles(); renderSidebar(); loadSlide(0); closeSnapshots(); showToast('Snapshot restored!'); }
+function deleteSnapshot(index) { snapshots.splice(index, 1); localStorage.setItem('posterprs_snapshots', JSON.stringify(snapshots)); openSnapshots(); }
 
 // --- GRID VIEW ---
 function toggleGridView() {
-    const gridView = document.getElementById('gridView');
-    gridView.classList.toggle('active');
+    const gridView = document.getElementById('gridView'); gridView.classList.toggle('active');
     if(gridView.classList.contains('active')) {
-        const container = document.getElementById('gridContainer');
-        container.innerHTML = '';
+        const container = document.getElementById('gridContainer'); container.innerHTML = '';
         state.slides.forEach((slide, index) => {
             const div = document.createElement('div');
             div.className = 'grid-slide ' + (slide.bg !== 'default' ? slide.bg : '');
@@ -538,22 +474,11 @@ function toggleGridView() {
     }
 }
 
-// --- IMAGE PASTE / DRAG ---
-function handleImageInsert(file) {
-    if (!file || !file.type.startsWith('image/')) return;
-    const reader = new FileReader();
-    reader.onload = (event) => execCmd('insertImage', event.target.result);
-    reader.readAsDataURL(file);
-}
+// --- IMAGE PASTE ---
+function handleImageInsert(file) { if (!file || !file.type.startsWith('image/')) return; const reader = new FileReader(); reader.onload = (event) => execCmd('insertImage', event.target.result); reader.readAsDataURL(file); }
 canvas.addEventListener('dragover', (e) => e.preventDefault());
 canvas.addEventListener('drop', (e) => { e.preventDefault(); handleImageInsert(e.dataTransfer.files[0]); });
-canvas.addEventListener('paste', (e) => {
-    for (let i = 0; i < e.clipboardData.items.length; i++) {
-        if (e.clipboardData.items[i].type.startsWith('image/')) {
-            e.preventDefault(); handleImageInsert(e.clipboardData.items[i].getAsFile()); return;
-        }
-    }
-});
+canvas.addEventListener('paste', (e) => { for (let i = 0; i < e.clipboardData.items.length; i++) { if (e.clipboardData.items[i].type.startsWith('image/')) { e.preventDefault(); handleImageInsert(e.clipboardData.items[i].getAsFile()); return; } } });
 
 // --- MARKDOWN ---
 bodyArea.addEventListener('keyup', (e) => {
@@ -565,14 +490,12 @@ bodyArea.addEventListener('keyup', (e) => {
     }
     playClick(); syncContent();
 });
-
 titleArea.addEventListener('keyup', () => { playClick(); syncContent(); });
 notesArea.addEventListener('keyup', syncContent);
 
 // --- PDF EXPORT ---
 function exportPDF() {
-    const printArea = document.getElementById('print-area');
-    printArea.innerHTML = '';
+    const printArea = document.getElementById('print-area'); printArea.innerHTML = '';
     state.slides.forEach(slide => {
         const div = document.createElement('div');
         div.className = 'print-slide slide-canvas ' + (slide.bg !== 'default' ? slide.bg : '');
@@ -581,44 +504,98 @@ function exportPDF() {
         div.innerHTML = `<div class="slide-title">${slide.title || ''}</div><div class="slide-body">${slide.body || ''}</div>`;
         printArea.appendChild(div);
     });
-    window.print();
-    closeCmdk();
+    window.print(); closeCmdk();
 }
 
 // --- PRESENT MODE ---
 let presentIndex = 0, presentTimerInterval, presentStartTime, laserOn = false;
-function startPresentation() {
-    presentIndex = state.currentSlide; presentMode.style.display = 'flex'; renderPresentSlide();
-    presentStartTime = Date.now(); presentTimerInterval = setInterval(updateTimer, 1000); closeCmdk();
-}
-function updateTimer() {
-    const elapsed = Math.floor((Date.now() - presentStartTime) / 1000);
-    document.getElementById('presentTimer').textContent = `${Math.floor(elapsed / 60).toString().padStart(2, '0')}:${(elapsed % 60).toString().padStart(2, '0')}`;
-}
-function exitPresentation() { presentMode.style.display = 'none'; clearInterval(presentTimerInterval); toggleLaser(false); }
+function startPresentation() { presentIndex = state.currentSlide; presentMode.style.display = 'flex'; renderPresentSlide(); presentStartTime = Date.now(); presentTimerInterval = setInterval(updateTimer, 1000); closeCmdk(); }
+function updateTimer() { const e = Math.floor((Date.now() - presentStartTime) / 1000); document.getElementById('presentTimer').textContent = `${Math.floor(e / 60).toString().padStart(2, '0')}:${(e % 60).toString().padStart(2, '0')}`; }
+function exitPresentation() { presentMode.style.display = 'none'; clearInterval(presentTimerInterval); toggleLaser(false); toggleVoice(false); }
 function renderPresentSlide() {
     const slide = state.slides[presentIndex];
     const pSlide = document.getElementById('presentSlide');
     pSlide.style.animation = 'none'; pSlide.offsetHeight; 
     pSlide.style.animation = `${slide.transition || 'fadeAnim'} 0.6s ease forwards`;
-    
     pSlide.className = 'present-slide ' + (slide.bg !== 'default' ? slide.bg : '');
     document.getElementById('presentTitle').innerHTML = slide.title || "Untitled Slide";
     document.getElementById('presentBody').innerHTML = slide.body || "";
-    
-    const progress = ((presentIndex + 1) / state.slides.length) * 100;
-    document.getElementById('presentProgress').style.width = `${progress}%`;
+    document.getElementById('presentProgress').style.width = `${((presentIndex + 1) / state.slides.length) * 100}%`;
 }
 function nextPresentSlide() { if (presentIndex < state.slides.length - 1) { presentIndex++; renderPresentSlide(); } }
 function prevPresentSlide() { if (presentIndex > 0) { presentIndex--; renderPresentSlide(); } }
 function toggleLaser(forceState) { laserOn = forceState !== undefined ? forceState : !laserOn; laserPointer.style.display = laserOn ? 'block' : 'none'; }
 document.addEventListener('mousemove', (e) => { if (laserOn && presentMode.style.display === 'flex') { laserPointer.style.left = e.clientX + 'px'; laserPointer.style.top = e.clientY + 'px'; } });
 
+// --- CONFETTI ---
+const confettiCanvas = document.getElementById('confettiCanvas');
+const ctx = confettiCanvas.getContext('2d');
+let confettiParticles = [];
+function resizeConfetti() { confettiCanvas.width = window.innerWidth; confettiCanvas.height = window.innerHeight; }
+window.addEventListener('resize', resizeConfetti); resizeConfetti();
+
+function triggerConfetti() {
+    for (let i = 0; i < 150; i++) {
+        confettiParticles.push({
+            x: window.innerWidth / 2,
+            y: window.innerHeight / 2,
+            vx: (Math.random() - 0.5) * 20,
+            vy: (Math.random() - 0.5) * 20 - 5,
+            color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+            size: Math.random() * 8 + 2,
+            life: 1
+        });
+    }
+}
+function updateConfetti() {
+    ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+    confettiParticles = confettiParticles.filter(p => p.life > 0);
+    confettiParticles.forEach(p => {
+        p.x += p.vx; p.y += p.vy; p.vy += 0.3; p.life -= 0.015;
+        ctx.globalAlpha = p.life; ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+    });
+    requestAnimationFrame(updateConfetti);
+}
+updateConfetti();
+
+// --- VOICE CONTROL ---
+let recognition = null, voiceOn = false;
+function toggleVoice(forceState) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return showToast('Voice control not supported in this browser.');
+    
+    voiceOn = forceState !== undefined ? forceState : !voiceOn;
+    document.getElementById('voiceBtn').classList.toggle('active', voiceOn);
+
+    if (voiceOn) {
+        recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+        
+        recognition.onresult = (event) => {
+            const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase().trim();
+            if (transcript.includes('next')) nextPresentSlide();
+            else if (transcript.includes('previous') || transcript.includes('back')) prevPresentSlide();
+            else if (transcript.includes('laser')) toggleLaser();
+            else if (transcript.includes('confetti')) triggerConfetti();
+            else if (transcript.includes('exit')) exitPresentation();
+        };
+        recognition.start();
+        showToast('🎤 Voice control active. Say "next" or "previous".');
+    } else {
+        if (recognition) recognition.stop();
+        showToast('Voice control off.');
+    }
+}
+
 // --- COMMAND PALETTE ---
 const commands = [
     { name: 'Add New Slide', action: addSlide }, { name: 'Start Presentation', action: startPresentation },
-    { name: 'Open Brand Kit', action: openBrandKit }, { name: 'Open Snapshots', action: openSnapshots },
-    { name: 'Generate Share Link', action: generateShareLink }, { name: 'Export to PDF', action: exportPDF },
+    { name: 'Apply Magic Layout', action: magicLayout }, { name: 'Open Brand Kit', action: openBrandKit },
+    { name: 'Open Snapshots', action: openSnapshots }, { name: 'Generate Share Link', action: generateShareLink },
+    { name: 'Export to PDF', action: exportPDF }, { name: 'Export to HTML', action: exportHTML },
     { name: 'Toggle Grid View', action: toggleGridView }, { name: 'Toggle Dark Mode', action: toggleTheme },
     { name: 'Toggle Zen Mode', action: toggleZenMode }, { name: 'Toggle Speaker Notes', action: toggleNotes },
     { name: 'Summarize Selected Text', action: summarizeText }, { name: 'Generate Agenda Slide', action: generateAgenda },
@@ -644,6 +621,8 @@ document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft') prevPresentSlide();
         if (e.key === 'Escape') exitPresentation();
         if (e.key === 'l' || e.key === 'L') toggleLaser();
+        if (e.key === 'v' || e.key === 'V') toggleVoice();
+        if (e.key === 'c' || e.key === 'C') triggerConfetti();
     } else if (!isTyping) {
         if (e.ctrlKey && e.key === 'Enter') { e.preventDefault(); startPresentation(); }
         if (e.ctrlKey && e.key === 'n') { e.preventDefault(); addSlide(); }
