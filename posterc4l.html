@@ -1,1 +1,250 @@
-COMING SOON
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="version" content="2.0">
+<title>PosterC4l — Visual Calendar</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root { 
+    --paper:#F8F9FA; --surface:#FFFFFF; --ink:#1A1D21; --ink2:#50545C; 
+    --line:#E3E5E8; --accent:#06B6D4; --accent-light:rgba(6,182,212,0.1); 
+    --weekend:#F1F3F5; --shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+}
+body.dark-mode { 
+    --paper:#121212; --surface:#1E1E1E; --ink:#E8E8E8; --ink2:#A0A0A0; 
+    --line:#333333; --accent:#22D3EE; --accent-light:rgba(34,211,238,0.1);
+    --weekend:#181818; --shadow:0 4px 6px -1px rgba(0,0,0,0.2), 0 2px 4px -1px rgba(0,0,0,0.1);
+}
+
+* { box-sizing:border-box; margin:0; padding:0; font-family:'Lexend',sans-serif; }
+body { background:var(--paper); color:var(--ink); height:100vh; display:flex; flex-direction:column; transition:background .3s, color .3s; }
+
+/* Header */
+header { display:flex; justify-content:space-between; align-items:center; padding:16px 24px; background:var(--surface); border-bottom:1px solid var(--line); box-shadow:var(--shadow); z-index:10; }
+.logo { font-family:'Bricolage Grotesque'; font-weight:800; font-size:20px; color:var(--accent); text-decoration:none; display:flex; align-items:center; gap:8px; }
+.controls { display:flex; gap:12px; align-items:center; }
+.month-display { font-size:20px; font-weight:700; min-width:220px; text-align:center; font-family:'Bricolage Grotesque'; }
+.btn { background:var(--accent); color:#fff; border:none; padding:10px 16px; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Lexend',sans-serif; transition:transform .1s, opacity .2s; display:flex; align-items:center; gap:6px; }
+.btn:hover { opacity:0.9; }
+.btn:active { transform:scale(0.96); }
+.btn.secondary { background:transparent; border:1px solid var(--line); color:var(--ink); }
+.btn.icon { padding:10px 12px; }
+
+/* Calendar Layout */
+.cal-area { flex:1; padding:24px; overflow:auto; }
+table { width:100%; border-collapse:collapse; background:var(--surface); border:1px solid var(--line); border-radius:16px; overflow:hidden; box-shadow:var(--shadow); table-layout:fixed; }
+th, td { border:1px solid var(--line); padding:0; vertical-align:top; transition:background .2s; }
+th { background:var(--paper); font-weight:600; color:var(--ink2); padding:16px 12px; text-transform:uppercase; letter-spacing:1px; font-size:12px; }
+td { height:120px; }
+td.weekend { background:var(--weekend); }
+td:hover { background:var(--accent-light); }
+
+/* Day Cell Content */
+.day-num { padding:8px 12px; font-weight:600; display:inline-block; border-radius:12px; color:var(--ink2); font-family:'Bricolage Grotesque'; }
+td.today .day-num { background:var(--accent); color:#fff; }
+.cell-content { padding:0 12px 12px 12px; min-height:60px; outline:none; font-size:14px; line-height:1.4; color:var(--ink); cursor:text; }
+.cell-content:empty::before { content:attr(data-placeholder); color:var(--ink2); opacity:0.4; }
+
+/* Toast Notification */
+.toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(100px); background:var(--ink); color:var(--surface); padding:12px 24px; border-radius:8px; font-weight:500; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); transition:transform .3s cubic-bezier(0.34, 1.56, 0.64, 1); z-index:100; }
+.toast.show { transform:translateX(-50%) translateY(0); }
+
+/* Hide scrollbars for cleaner look but keep functionality */
+::-webkit-scrollbar { width:8px; height:8px; }
+::-webkit-scrollbar-thumb { background:var(--line); border-radius:4px; }
+::-webkit-scrollbar-thumb:hover { background:var(--ink2); }
+</style>
+</head>
+<body>
+<header>
+    <a href="#" class="logo">🗓️ PosterC4l</a>
+    <div class="controls">
+        <button class="btn secondary" onclick="changeMonth(-1)">←</button>
+        <div class="month-display" id="monthDisplay"></div>
+        <button class="btn secondary" onclick="changeMonth(1)">→</button>
+        <button class="btn secondary" onclick="goToToday()">Today</button>
+    </div>
+    <div style="display:flex; gap:8px;">
+        <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importData(event)">
+        <button class="btn secondary icon" onclick="document.getElementById('importFile').click()" title="Import Data">📥</button>
+        <button class="btn secondary icon" onclick="exportData()" title="Export Data">📤</button>
+        <button class="btn secondary icon" onclick="toggleTheme()" id="themeBtn" title="Toggle Theme">🌙</button>
+    </div>
+</header>
+<div class="cal-area">
+    <table id="calendar">
+        <thead>
+            <tr>
+                <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
+            </tr>
+        </thead>
+        <tbody id="calBody"></tbody>
+    </table>
+</div>
+<div class="toast" id="toast">Saved successfully!</div>
+
+<script>
+// --- State & Data Management ---
+let currentDate = new Date();
+let calData = JSON.parse(localStorage.getItem('posterc4l-cal-data')) || {};
+const calBody = document.getElementById('calBody');
+const monthDisplay = document.getElementById('monthDisplay');
+const toast = document.getElementById('toast');
+
+// --- Theme Management ---
+function applyTheme(theme) {
+    if (theme === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('themeBtn').textContent = '☀️';
+    } else {
+        document.body.classList.remove('dark-mode');
+        document.getElementById('themeBtn').textContent = '🌙';
+    }
+    localStorage.setItem('pc4-theme', theme);
+}
+
+function toggleTheme() {
+    const isDark = document.body.classList.contains('dark-mode');
+    applyTheme(isDark ? 'light' : 'dark');
+}
+
+// Apply theme on load
+const savedTheme = localStorage.getItem('pc4-theme') || 'light';
+applyTheme(savedTheme);
+
+// --- Calendar Rendering ---
+function renderCal() {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    
+    monthDisplay.textContent = `${monthNames[month]} ${year}`;
+    
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = new Date();
+    
+    calBody.innerHTML = '';
+    let row = calBody.insertRow();
+    
+    // Add empty cells for days before the 1st of the month
+    for(let i=0; i<firstDay; i++) {
+        let emptyCell = row.insertCell();
+        emptyCell.classList.add('weekend');
+        if(i === 0 || i === 6) emptyCell.classList.add('weekend'); // Keep weekend styling logic simple
+    }
+    
+    // Add days of the month
+    for(let d=1; d<=daysInMonth; d++) {
+        if(row.cells.length === 7) row = calBody.insertRow();
+        
+        let cell = row.insertCell();
+        let dayOfWeek = new Date(year, month, d).getDay();
+        
+        if(dayOfWeek === 0 || dayOfWeek === 6) cell.classList.add('weekend');
+        
+        // Check if it's today
+        if(year === today.getFullYear() && month === today.getMonth() && d === today.getDate()) {
+            cell.classList.add('today');
+        }
+        
+        // Generate unique key for this date
+        const dateKey = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const savedContent = calData[dateKey] || '';
+        
+        cell.innerHTML = `
+            <div class="day-num">${d}</div>
+            <div class="cell-content" contenteditable="true" data-date="${dateKey}" data-placeholder="Add note...">${savedContent}</div>
+        `;
+    }
+    
+    // Attach event listeners to all editable cells
+    document.querySelectorAll('.cell-content').forEach(div => {
+        div.addEventListener('blur', (e) => {
+            const dateKey = e.target.getAttribute('data-date');
+            const content = e.target.innerText.trim();
+            
+            if(content) {
+                calData[dateKey] = content;
+            } else {
+                delete calData[dateKey]; // Remove empty entries to save space
+            }
+            saveData(true);
+        });
+    });
+}
+
+// --- Navigation ---
+function changeMonth(dir) {
+    currentDate.setMonth(currentDate.getMonth() + dir);
+    renderCal();
+}
+
+function goToToday() {
+    currentDate = new Date();
+    renderCal();
+}
+
+// Keyboard shortcuts (Arrow keys to navigate months)
+document.addEventListener('keydown', (e) => {
+    if(e.target.classList.contains('cell-content')) return; // Don't trigger if typing in a cell
+    if(e.key === 'ArrowLeft') changeMonth(-1);
+    if(e.key === 'ArrowRight') changeMonth(1);
+});
+
+// --- Data Persistence ---
+function saveData(silent = false) {
+    localStorage.setItem('posterc4l-cal-data', JSON.stringify(calData));
+    if(!silent) showToast('Calendar saved locally!');
+}
+
+function exportData() {
+    const dataStr = JSON.stringify(calData, null, 2);
+    const blob = new Blob([dataStr], {type: "application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `posterc4l-backup-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Calendar exported!');
+}
+
+function importData(event) {
+    const file = event.target.files[0];
+    if(!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            calData = JSON.parse(e.target.result);
+            localStorage.setItem('posterc4l-cal-data', JSON.stringify(calData));
+            renderCal();
+            showToast('Calendar imported successfully!');
+        } catch (err) {
+            showToast('Error: Invalid backup file', true);
+        }
+    };
+    reader.readAsText(file);
+}
+
+// --- Toast Notification ---
+let toastTimeout;
+function showToast(message, isError = false) {
+    toast.textContent = message;
+    toast.style.background = isError ? '#EF4444' : 'var(--ink)';
+    toast.classList.add('show');
+    
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
+// Initial Render
+renderCal();
+</script>
+</body>
+</html>
