@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="version" content="2.0">
+<meta name="version" content="2.1">
 <title>PosterQR — QR Code Generator</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -34,7 +34,7 @@ header {
     border-bottom:1px solid var(--line); position:sticky; top:0; z-index:100;
 }
 .header-left { display:flex; align-items:center; gap:12px; }
-.logo { font-family:'Bricolage Grotesque'; font-weight:800; font-size:20px; color:var(--accent); text-decoration:none; letter-spacing:-.02em; }
+.logo { font-family:'Bricolage Grotesque'; font-weight:800; font-size:20px; color:var(--accent); text-decoration:none; letter-spacing:-.02em; cursor:pointer; }
 .version-badge { font-size:11px; font-weight:600; color:var(--ink3); background:var(--surface2); padding:3px 8px; border-radius:20px; border:1px solid var(--line); }
 .header-right { display:flex; align-items:center; gap:8px; }
 
@@ -142,7 +142,7 @@ input[type="range"]::-moz-range-thumb { width:18px; height:18px; background:var(
 .qr-info h3 { font-family:'Bricolage Grotesque'; font-weight:700; font-size:16px; color:var(--ink); margin-bottom:2px; }
 .qr-info p { font-size:12px; color:var(--ink3); max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
-.actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.actions { display:grid; grid-template-columns:1fr; gap:10px; }
 .action-btn {
     display:flex; align-items:center; justify-content:center; gap:8px;
     padding:12px 16px; border-radius:var(--radius-sm); border:1px solid var(--line);
@@ -150,7 +150,7 @@ input[type="range"]::-moz-range-thumb { width:18px; height:18px; background:var(
     cursor:pointer; transition:all var(--t);
 }
 .action-btn:hover { border-color:var(--accent); color:var(--accent); transform:translateY(-1px); }
-.action-btn.primary { background:var(--accent); color:#fff; border-color:var(--accent); grid-column:1/-1; }
+.action-btn.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
 .action-btn.primary:hover { background:var(--accent-hover); color:#fff; }
 .action-btn svg { width:16px; height:16px; }
 
@@ -173,8 +173,8 @@ input[type="range"]::-moz-range-thumb { width:18px; height:18px; background:var(
 
 <header>
     <div class="header-left">
-        <a href="index.html" class="logo">PosterQR</a>
-        <span class="version-badge">v2.0</span>
+        <span class="logo">PosterQR</span>
+        <span class="version-badge">v2.1</span>
     </div>
     <div class="header-right">
         <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">
@@ -258,7 +258,7 @@ input[type="range"]::-moz-range-thumb { width:18px; height:18px; background:var(
             </div>
             <div class="qr-info">
                 <h3 id="qrTypeLabel">URL</h3>
-                <p id="qrContentPreview">posterqr.app</p>
+                <p id="qrContentPreview">Enter text to generate...</p>
             </div>
         </div>
         <div class="actions">
@@ -269,10 +269,6 @@ input[type="range"]::-moz-range-thumb { width:18px; height:18px; background:var(
             <button class="action-btn" onclick="copyQRImage()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                 Copy Image
-            </button>
-            <button class="action-btn" onclick="shareQR()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-                Share Link
             </button>
         </div>
     </div>
@@ -295,7 +291,7 @@ let debounceTimer = null;
 const qrTypes = {
     url: {
         label: 'URL', icon: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
-        fields: [{ id: 'url', label: 'Website URL', placeholder: 'https://example.com', type: 'input', value: 'https://posterqr.app' }],
+        fields: [{ id: 'url', label: 'Website URL', placeholder: 'https://example.com', type: 'input', value: '' }],
         build: d => d.url || ' ',
         preview: d => d.url || '—'
     },
@@ -582,59 +578,6 @@ async function copyQRImage() {
     }
 }
 
-// ─── Share via URL ───
-function shareQR() {
-    const data = getFormData();
-    const state = { type: currentType, data, fg: fgColor, bg: bgColor, size: currentSize, ec: ecLevel };
-    const encoded = btoa(JSON.stringify(state));
-    const url = `${window.location.origin}${window.location.pathname}?s=${encoded}`;
-    navigator.clipboard.writeText(url).then(() => {
-        showToast('Share link copied to clipboard!');
-    }).catch(() => {
-        showToast('Could not copy link');
-    });
-}
-
-// ─── Load from Share URL ───
-function loadFromUrl() {
-    const params = new URLSearchParams(window.location.search);
-    const s = params.get('s');
-    if (s) {
-        try {
-            const state = JSON.parse(atob(s));
-            currentType = state.type || 'url';
-            fgColor = state.fg || '#000000';
-            bgColor = state.bg || '#FFFFFF';
-            currentSize = state.size || 300;
-            ecLevel = state.ec || QRCode.CorrectLevel.H;
-            // Update UI controls
-            fgColorInput.value = fgColor;
-            bgColorInput.value = bgColor;
-            fgHexInput.value = fgColor.toUpperCase();
-            bgHexInput.value = bgColor.toUpperCase();
-            sizeSlider.value = currentSize;
-            sizeValue.textContent = currentSize + 'px';
-            document.querySelectorAll('.ec-btn').forEach(b => b.classList.toggle('active', b.dataset.ec === ['L','M','Q','H'][ecLevel]));
-            // Build tabs and fields
-            buildTypeTabs();
-            buildFields();
-            // Fill field values
-            setTimeout(() => {
-                Object.entries(state.data).forEach(([key, value]) => {
-                    const el = fieldsContainer.querySelector(`[data-field-id="${key}"]`);
-                    if (el) {
-                        if (el.type === 'checkbox') el.checked = value;
-                        else el.value = value;
-                    }
-                });
-                generateQR();
-            }, 50);
-            return true;
-        } catch(e) { return false; }
-    }
-    return false;
-}
-
 // ─── Logo Upload ───
 logoFileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
@@ -726,7 +669,6 @@ function updateThemeIcon(isDark) {
 
 // ─── Keyboard Shortcuts ───
 document.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); shareQR(); }
     if ((e.ctrlKey || e.metaKey) && e.key === 'd') { e.preventDefault(); downloadQR(); }
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); downloadQR(); }
 });
@@ -741,10 +683,8 @@ if (localStorage.getItem('pqr-theme') === 'dark') {
     updateThemeIcon(false);
 }
 
-if (!loadFromUrl()) {
-    buildTypeTabs();
-    buildFields();
-}
+buildTypeTabs();
+buildFields();
 buildPresets();
 generateQR();
 </script>
