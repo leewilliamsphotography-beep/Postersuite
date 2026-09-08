@@ -475,6 +475,13 @@ body.locked-mode .stage { overflow-y: auto; height: 100vh; padding-top: 20px; }
         <label for="fontSel">Reading font</label>
         <select id="fontSel"><option value="lexend">Lexend</option><option value="atkinson">Atkinson Hyperlegible</option></select>
       </div>
+      <div class="field" style="margin-bottom: 18px;">
+        <label>Custom Font (.ttf / .otf)</label>
+        <div style="display:flex; gap:8px;">
+          <button class="btn small" id="fontUploadBtn" style="flex:1; border-color:var(--line); background:var(--paper);"><i data-lucide="upload"></i> Upload</button>
+          <button class="btn small danger" id="fontRemoveBtn" style="flex:1;" hidden><i data-lucide="trash-2"></i> Remove</button>
+        </div>
+      </div>
       <div class="field">
         <label>Spacing & Margins</label>
         <div class="slider-row"><label>Between lines</label><input type="range" id="lineSpacingSlider" min="5" max="60" value="22"><span id="lsVal">22px</span></div>
@@ -626,7 +633,7 @@ const dragAttr = isTouchDevice ? '' : 'draggable="true"';
 
 const API_BASES=['https://api.arasaac.org/api','https://api.arasaac.org/api/v1'];
 const STATIC='https://static.arasaac.org/pictograms';
-const LS_KEY='postera11y.doc.v14'; 
+const LS_KEY='postera11y.doc.v15'; 
 const LS_DRAFTS='postera11y.drafts';
 const LS_DARK='postera11y.dark';
 const LS_FAV='postera11y.favorites';
@@ -668,7 +675,7 @@ const THEME_STYLES = {
 
 let uidSeq=1;
 const uid=()=>'w'+(uidSeq++)+Date.now().toString(36);
-function newDoc(){return{title:'',subtitle:'',lang:'en',symSize:80,symStyle:'8px',titleColor:'#1A1D21',subColor:'#50545C',lblColor:'#1A1D21',font:'lexend',format:'portrait',theme:'default',listStyle:'none',logo:'',watermark:'',showText:true,skipSmall:true,grammarColors:false,showMeanings:false,strictGrid:false,altLines:false,inkSaver:false,lineSpacing:22,cardSpacing:16,useQR:false,qrUrl:'',hc:false,locked:false,lines:[]}}
+function newDoc(){return{title:'',subtitle:'',lang:'en',symSize:80,symStyle:'8px',titleColor:'#1A1D21',subColor:'#50545C',lblColor:'#1A1D21',font:'lexend',customFont:'',customFontName:'',format:'portrait',theme:'default',listStyle:'none',logo:'',watermark:'',showText:true,skipSmall:true,grammarColors:false,showMeanings:false,strictGrid:false,altLines:false,inkSaver:false,lineSpacing:22,cardSpacing:16,useQR:false,qrUrl:'',hc:false,locked:false,lines:[]}}
 let doc=newDoc();
 
 const pagesContainer=$('#pagesContainer'),linesEl=$('#lines'),composeInput=$('#composeInput'),previewEl=$('#preview'),
@@ -808,7 +815,13 @@ function tokenize(text,lang){
 }
 
 let saveT=null;
-function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(LS_KEY,JSON.stringify(doc))}catch(e){}},350);}
+function save(){clearTimeout(saveT);saveT=setTimeout(()=>{
+    try{localStorage.setItem(LS_KEY,JSON.stringify(doc))}catch(e){
+        if(e.name === 'QuotaExceededError') {
+            toast('Storage limit reached. Remove custom images/fonts or use Share link.', 'alert');
+        }
+    }
+},350);}
 
 function addLine(text){
   text=(text||'').trim();
@@ -908,10 +921,32 @@ function applyLineClasses(){
         el.classList.toggle('alt-lines', !!doc.altLines);
         el.classList.toggle('ink-saver', !!doc.inkSaver);
         el.classList.toggle('has-watermark', !!doc.watermark);
+        
+        el.classList.remove('f-lexend','f-atkinson');
+        if(doc.font === 'custom' && doc.customFont) {
+            el.style.fontFamily = `'${doc.customFontName}', sans-serif`;
+        } else {
+            el.style.fontFamily = '';
+            el.classList.add('f-'+doc.font);
+        }
     });
     $$('.sheet .lines').forEach(el => {
         el.className = 'lines' + (doc.showText ? '' : ' hideLbl') + (doc.strictGrid ? ' strict-grid' : '');
     });
+}
+
+function applyCustomFont() {
+    let styleTag = $('#custom-font-style');
+    if (!styleTag) {
+        styleTag = document.createElement('style');
+        styleTag.id = 'custom-font-style';
+        document.head.append(styleTag);
+    }
+    if (doc.customFont && doc.customFontName) {
+        styleTag.innerHTML = `@font-face { font-family: '${doc.customFontName}'; src: url(${doc.customFont}) format('truetype'); }`;
+    } else {
+        styleTag.innerHTML = '';
+    }
 }
 
 let currentPageIndex = 0;
@@ -939,6 +974,7 @@ function renderAll(){
   else { wmEl.src = ''; }
   
   applyLock(doc.locked);
+  applyCustomFont();
   applyLineClasses(); 
   renderLines(); 
   syncStyleControls(); 
@@ -975,6 +1011,9 @@ function repaginate() {
     p1.style.setProperty('--card-gap', (doc.cardSpacing||16) + 'px');
     p1.style.setProperty('--sym-size', (doc.symSize||80) + 'px');
     p1.style.setProperty('--sym-radius', doc.symStyle || '8px');
+    p1.style.setProperty('--t-color', doc.titleColor || '#1A1D21');
+    p1.style.setProperty('--s-color', doc.subColor || '#50545C');
+    p1.style.setProperty('--l-color', doc.lblColor || '#1A1D21');
     
     const isLandscape = doc.format === 'landscape';
     const sheetHeight = isLandscape ? 721 : 1020;
@@ -1105,6 +1144,17 @@ function syncStyleControls(){
   $('#titleColor').value = doc.titleColor || '#1A1D21';
   $('#subColor').value = doc.subColor || '#50545C';
   $('#lblColor').value = doc.lblColor || '#1A1D21';
+  
+  // Handle custom font dropdown option
+  const customOpt = $('#fontSel option[value="custom"]');
+  if (customOpt) customOpt.remove();
+  if (doc.customFont) {
+      const opt = new Option(doc.customFontName || 'Custom Font', 'custom');
+      $('#fontSel').append(opt);
+  }
+  $('#fontSel').value = doc.font;
+  $('#fontRemoveBtn').hidden = !doc.customFont;
+  
   $$('#listSeg button').forEach(b=>b.classList.toggle('on',b.dataset.list===doc.listStyle));
   $('#showTextTog').checked=doc.showText;
   $('#skipTog').checked=!doc.skipSmall; 
@@ -1820,7 +1870,7 @@ document.addEventListener('click',e=>{
 });
 function applyTpl(k){
   const t=TEMPLATES[k];
-  const keep={lang:doc.lang,symSize:doc.symSize,symStyle:doc.symStyle,titleColor:doc.titleColor,subColor:doc.subColor,lblColor:doc.lblColor,font:doc.font,format:doc.format,theme:doc.theme,listStyle:doc.listStyle,logo:doc.logo,watermark:doc.watermark,showText:doc.showText,skipSmall:doc.skipSmall,grammarColors:doc.grammarColors,showMeanings:doc.showMeanings,strictGrid:doc.strictGrid,altLines:doc.altLines,inkSaver:doc.inkSaver,lineSpacing:doc.lineSpacing,cardSpacing:doc.cardSpacing,hc:doc.hc,useQR:doc.useQR,qrUrl:doc.qrUrl};
+  const keep={lang:doc.lang,symSize:doc.symSize,symStyle:doc.symStyle,titleColor:doc.titleColor,subColor:doc.subColor,lblColor:doc.lblColor,font:doc.font,customFont:doc.customFont,customFontName:doc.customFontName,format:doc.format,theme:doc.theme,listStyle:doc.listStyle,logo:doc.logo,watermark:doc.watermark,showText:doc.showText,skipSmall:doc.skipSmall,grammarColors:doc.grammarColors,showMeanings:doc.showMeanings,strictGrid:doc.strictGrid,altLines:doc.altLines,inkSaver:doc.inkSaver,lineSpacing:doc.lineSpacing,cardSpacing:doc.cardSpacing,hc:doc.hc,useQR:doc.useQR,qrUrl:doc.qrUrl};
   pushHistory();
   doc=Object.assign(newDoc(),keep,{title:t.title,subtitle:t.subtitle,lines:[]});
   renderAll();save();
@@ -1831,8 +1881,7 @@ function applyTpl(k){
 /* ============ style controls ============ */
  $('#fontSel').onchange=()=>{
   pushHistory(); doc.font=$('#fontSel').value;
-  $$('.paginated-sheet').forEach(s => { s.classList.remove('f-lexend','f-atkinson');s.classList.add('f-'+doc.font); });
-  save();
+  applyLineClasses(); save();
 };
  $('#sheetFormat').onchange=()=>{
   pushHistory(); doc.format=$('#sheetFormat').value;
@@ -1875,6 +1924,35 @@ function applyTpl(k){
     input.click();
 };
  $('#wmRemoveBtn').onclick = () => { pushHistory(); doc.watermark = ''; renderAll(); save(); };
+
+// Custom Font Upload
+ $('#fontUploadBtn').onclick = () => {
+    const input = document.createElement('input'); input.type = 'file'; input.accept = '.ttf,.otf';
+    input.onchange = e => {
+        const file = e.target.files[0]; if(!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+            pushHistory();
+            doc.customFont = ev.target.result;
+            doc.customFontName = file.name.replace(/\.[^/.]+$/, ""); // Remove extension
+            doc.font = 'custom';
+            applyCustomFont();
+            renderAll(); save();
+            toast('Custom font loaded: ' + doc.customFontName, 'check');
+        };
+        reader.readAsDataURL(file);
+    };
+    input.click();
+};
+ $('#fontRemoveBtn').onclick = () => {
+    pushHistory();
+    doc.customFont = '';
+    doc.customFontName = '';
+    doc.font = 'lexend';
+    applyCustomFont();
+    renderAll(); save();
+    toast('Custom font removed.', 'info');
+};
 
  $('#showTextTog').onchange=e=>{pushHistory();doc.showText=e.target.checked;applyLineClasses();scheduleRepaginate();save();};
  $('#skipTog').onchange=e=>{ pushHistory(); doc.skipSmall=!e.target.checked; save();buildPreview(); toast('Sentence mode ' + (e.target.checked ? 'ON' : 'OFF') + '. Applies to new lines added.'); };
@@ -1927,8 +2005,8 @@ langSel.onchange=()=>{
 const tourSteps = [
   { el: '#composeInput', title: 'Step 1: Write a Line', text: 'Type a sentence here. The app will automatically find symbols for the key words.' },
   { el: '#addBtn', title: 'Step 2: Add to Poster', text: 'Click here to add your line to the poster. You can also just press Enter.' },
-  { el: '.panel:nth-child(4)', title: 'Step 3: Customize', text: 'Change the symbol size, shape, spacing, colors, and themes here to make your poster perfect.' },
-  { el: '.actions', title: 'Step 4: Export', text: 'When you\'re done, export your poster as a PDF, Word document, or PowerPoint!' }
+  { el: '.panel:nth-child(4)', title: 'Step 3: Customize', text: 'Change the symbol size, shape, spacing, colors, themes, and even upload custom fonts here to make your poster perfect.' },
+  { el: '.actions', title: 'Step 4: Export', text: 'When you\'re done, export your poster as a PDF, Word document, PowerPoint, or ZIP file!' }
 ];
 let currentStep = 0;
 const tourOverlay = $('#tourOverlay');
@@ -2033,7 +2111,9 @@ function sanitize(o){
   d.titleColor = o.titleColor || '#1A1D21';
   d.subColor = o.subColor || '#50545C';
   d.lblColor = o.lblColor || '#1A1D21';
-  d.font=['lexend','atkinson'].indexOf(o.font)>-1?o.font:'lexend';
+  d.font=['lexend','atkinson','custom'].indexOf(o.font)>-1?o.font:'lexend';
+  d.customFont = typeof o.customFont === 'string' ? o.customFont.slice(0, 500000) : ''; 
+  d.customFontName = typeof o.customFontName === 'string' ? o.customFontName.slice(0, 50) : '';
   d.format=o.format === 'landscape' ? 'landscape' : 'portrait';
   const validThemes = ['default', 'spring', 'summer', 'autumn', 'winter', 'medical', 'cafe'];
   d.theme = validThemes.indexOf(o.theme) > -1 ? o.theme : 'default';
@@ -2148,9 +2228,12 @@ function generateHtmlContent(d) {
     });
 
     let wmHtml = d.watermark ? `<img src="${d.watermark}" class="watermark" alt="">` : '';
+    let fontFace = d.customFont ? `@font-face { font-family: '${d.customFontName}'; src: url(${d.customFont}) format('truetype'); }` : '';
+    let fontFamily = d.font === 'custom' && d.customFont ? `'${d.customFontName}', sans-serif` : (d.font === 'atkinson' ? `'Atkinson Hyperlegible', sans-serif` : `'Lexend', sans-serif`);
     
     return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(d.title||'Poster')}</title><style>
-    body{font-family:'Lexend',Arial,sans-serif;background:${bg};color:${titleC};margin:0;padding:40px;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+    ${fontFace}
+    body{font-family:${fontFamily};background:${bg};color:${titleC};margin:0;padding:40px;display:flex;flex-direction:column;align-items:center;min-height:100vh}
     .container{max-width:800px;width:100%;text-align:center;position:relative;z-index:1;}
     h1{font-size:38px;margin:0 0 8px;color:${titleC}} h3{font-size:18px;font-weight:normal;color:${subC};margin:0 0 20px}
     .ex-line{display:flex;align-items:flex-start;justify-content:center;margin-bottom:30px;flex-wrap:wrap;gap:10px 15px}
@@ -2376,6 +2459,7 @@ function boot(){
     try{ const raw=localStorage.getItem(LS_KEY); if(raw){const o=sanitize(JSON.parse(raw));if(o)doc=o;} }catch(e){}
   }
   history = [JSON.stringify(doc)]; hIndex = 0; updateUndoRedoBtns();
+  applyCustomFont(); // Ensure custom font is injected before render
   renderAll(); renderDrafts(); renderQuickAccess();
   const pending=[];
   doc.lines.forEach(l=>l.items.forEach(it=>{if(!it.textOnly&&it.state!=='ok'&&it.id==null&&!it.customImg)pending.push(it);}));

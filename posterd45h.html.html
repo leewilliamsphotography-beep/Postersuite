@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Lexend:wght@400;500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style id="custom-fonts-style"></style>
 <style>
 /* ---------- foundations ---------- */
 :root{
@@ -382,6 +383,12 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
         <button class="fmt-btn" data-cmd="justifyRight" title="Align Right"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/></svg></button>
         <button class="fmt-btn" data-cmd="justifyFull" title="Justify"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
       </div>
+      <div class="format-bar" style="margin-top:8px; border-style:dashed; padding: 6px;">
+        <button class="btn small" id="uploadFontBtn" style="flex:1; border-color:var(--line); background:var(--surface); display:flex; gap:6px; align-items:center;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px; height:14px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload Custom Font
+        </button>
+      </div>
     </section>
 
     <section class="panel">
@@ -543,6 +550,7 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
 
 <button id="exitPresentBtn" class="btn accent" hidden>Exit Presentation</button>
 <input type="file" id="imageUpload" class="hidden" accept="image/*" style="display:none;">
+<input type="file" id="fontUpload" accept=".ttf,.otf,.woff,.woff2" style="display:none;">
 <div id="toasts" aria-live="polite"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -558,6 +566,7 @@ const toKebab = (str) => str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').to
 const LS_KEY='posterd45h.doc.carehome.v8';
 const LS_DRAFTS='posterd45h.drafts';
 const LS_DARK='posterd45h.dark';
+const LS_FONTS='posterd45h.fonts';
 
 const BADGES = {
   'Vegan': { bg: '#10B981', color: '#FFFFFF' },
@@ -1070,6 +1079,59 @@ imageUpload.onchange = (e) => {
   reader.readAsDataURL(file);
 };
 
+// Custom Font Uploader Logic
+let customFonts = [];
+const fontUpload = $('#fontUpload');
+const uploadFontBtn = $('#uploadFontBtn');
+const fontSel = $('#fontSel');
+
+function loadCustomFonts() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(LS_FONTS) || '[]');
+    customFonts = stored;
+    const styleTag = document.getElementById('custom-fonts-style');
+    styleTag.innerHTML = '';
+    customFonts.forEach(f => {
+      const format = f.dataUrl.includes('data:font/ttf') ? 'truetype' : (f.dataUrl.includes('data:font/woff2') ? 'woff2' : (f.dataUrl.includes('data:font/woff') ? 'woff' : 'opentype'));
+      styleTag.innerHTML += `@font-face { font-family: '${f.name}'; src: url('${f.dataUrl}') format('${format}'); }\n`;
+      if(!fontSel.querySelector(`option[value="${f.name}"]`)) {
+        const opt = new Option(f.name + ' (Custom)', f.name);
+        fontSel.add(opt);
+      }
+    });
+  } catch(e) { console.error("Error loading fonts", e); }
+}
+
+uploadFontBtn.onclick = () => fontUpload.click();
+
+fontUpload.onchange = (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const dataUrl = ev.target.result;
+    // Extract font name from file name, remove extension and spaces
+    let fontName = file.name.replace(/\.[^/.]+$/, "").replace(/[\s\-.]+/g, '');
+    
+    customFonts.push({ name: fontName, dataUrl: dataUrl });
+    
+    // Try to save to localStorage
+    try {
+      localStorage.setItem(LS_FONTS, JSON.stringify(customFonts));
+      toast('Custom font saved!');
+    } catch(err) {
+      toast('Font too large to save permanently. Available for this session only.', 'alert');
+    }
+    
+    // Reload fonts to apply
+    loadCustomFonts();
+    fontSel.value = fontName;
+    // Trigger change to apply to selected text
+    fontSel.dispatchEvent(new Event('change'));
+  };
+  reader.readAsDataURL(file);
+};
+
 // Apply Templates
 ['tpls','tplsEmpty'].forEach(id => { 
   $('#'+id).innerHTML = Object.keys(TEMPLATES).map(k => `<button data-tpl="${k}">${esc(TEMPLATES[k].name)}</button>`).join(''); 
@@ -1156,7 +1218,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
- $('#fontSel').onchange = (e) => {
+fontSel.onchange = (e) => {
   if(applyAllChk.checked) formatAllBlocks('fontName', e.target.value);
   else document.execCommand('fontName', false, e.target.value);
   pushHistory();
@@ -1387,6 +1449,7 @@ function boot(){
   }
   
   history = [JSON.stringify(doc)]; hIndex = 0; updateUndoRedoBtns();
+  loadCustomFonts(); // Load custom fonts on boot
   renderAll();
   renderDrafts();
 }
