@@ -1,1 +1,752 @@
-COMING SOON
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="version" content="2.0">
+<title>PosterQR — QR Code Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root {
+    --paper:#F8F9FA; --surface:#FFFFFF; --surface2:#F1F3F5;
+    --ink:#1A1D21; --ink2:#50545C; --ink3:#8B8F96;
+    --line:#E3E5E8; --line2:#D1D5DB;
+    --accent:#475569; --accent-hover:#334155;
+    --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.04);
+    --shadow-lg:0 4px 24px rgba(0,0,0,.08),0 12px 48px rgba(0,0,0,.06);
+    --radius:12px; --radius-sm:8px; --t:.2s cubic-bezier(.4,0,.2,1);
+}
+body.dark-mode {
+    --paper:#0F0F0F; --surface:#1A1A1A; --surface2:#252525;
+    --ink:#E8E8E8; --ink2:#A0A0A0; --ink3:#707070;
+    --line:#2A2A2A; --line2:#3A3A3A;
+    --accent:#94A3B8; --accent-hover:#CBD5E1;
+    --shadow:0 1px 3px rgba(0,0,0,.3),0 4px 12px rgba(0,0,0,.2);
+    --shadow-lg:0 4px 24px rgba(0,0,0,.4),0 12px 48px rgba(0,0,0,.3);
+}
+* { box-sizing:border-box; margin:0; padding:0; font-family:'Lexend',sans-serif; }
+body { background:var(--paper); color:var(--ink); min-height:100vh; transition:background var(--t),color var(--t); }
+
+header {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 24px; background:var(--surface);
+    border-bottom:1px solid var(--line); position:sticky; top:0; z-index:100;
+}
+.header-left { display:flex; align-items:center; gap:12px; }
+.logo { font-family:'Bricolage Grotesque'; font-weight:800; font-size:20px; color:var(--accent); text-decoration:none; letter-spacing:-.02em; }
+.version-badge { font-size:11px; font-weight:600; color:var(--ink3); background:var(--surface2); padding:3px 8px; border-radius:20px; border:1px solid var(--line); }
+.header-right { display:flex; align-items:center; gap:8px; }
+
+.icon-btn {
+    width:38px; height:38px; display:flex; align-items:center; justify-content:center;
+    background:var(--surface2); border:1px solid var(--line); border-radius:var(--radius-sm);
+    cursor:pointer; color:var(--ink2); transition:all var(--t);
+}
+.icon-btn:hover { background:var(--surface); color:var(--ink); border-color:var(--line2); }
+.icon-btn svg { width:18px; height:18px; }
+
+.main { max-width:1200px; margin:0 auto; padding:32px 24px; display:grid; grid-template-columns:1fr 1fr; gap:32px; align-items:start; }
+@media (max-width:900px) { .main { grid-template-columns:1fr; } }
+
+.config-panel {
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius); padding:24px; box-shadow:var(--shadow);
+}
+.panel-title { font-family:'Bricolage Grotesque'; font-weight:700; font-size:12px; color:var(--ink3); text-transform:uppercase; letter-spacing:.08em; margin-bottom:14px; }
+
+.type-tabs { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:24px; }
+.type-tab {
+    padding:8px 14px; border-radius:var(--radius-sm); border:1px solid var(--line);
+    background:var(--surface); color:var(--ink2); font-size:13px; font-weight:500;
+    cursor:pointer; transition:all var(--t); display:flex; align-items:center; gap:6px;
+}
+.type-tab:hover { border-color:var(--line2); color:var(--ink); }
+.type-tab.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+.type-tab svg { width:14px; height:14px; }
+
+.fields { display:flex; flex-direction:column; gap:14px; margin-bottom:20px; }
+.field { display:flex; flex-direction:column; gap:6px; }
+.field label { font-size:13px; font-weight:500; color:var(--ink2); }
+.field input,.field textarea,.field select {
+    background:var(--surface2); border:1px solid var(--line); border-radius:var(--radius-sm);
+    padding:10px 14px; font-size:14px; color:var(--ink); outline:none; transition:all var(--t); width:100%;
+}
+.field input:focus,.field textarea:focus,.field select:focus { border-color:var(--accent); background:var(--surface); }
+.field textarea { resize:vertical; min-height:72px; font-family:inherit; }
+.field-row { display:flex; gap:12px; }
+.field-row .field { flex:1; }
+.checkbox-field { display:flex; align-items:center; gap:8px; cursor:pointer; }
+.checkbox-field input { width:16px; height:16px; accent-color:var(--accent); }
+.checkbox-field label { font-size:14px; color:var(--ink); cursor:pointer; }
+
+.divider { height:1px; background:var(--line); margin:20px 0; }
+
+.color-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.color-label { font-size:13px; font-weight:500; color:var(--ink2); }
+.color-picker-wrap { display:flex; align-items:center; gap:8px; }
+.color-picker { width:36px; height:36px; border:2px solid var(--line); border-radius:var(--radius-sm); cursor:pointer; background:none; padding:0; }
+.color-picker::-webkit-color-swatch-wrapper { padding:0; }
+.color-picker::-webkit-color-swatch { border:none; border-radius:4px; }
+.color-picker::-moz-color-swatch { border:none; border-radius:4px; }
+.color-hex { font-family:monospace; font-size:13px; color:var(--ink2); width:78px; background:var(--surface2); border:1px solid var(--line); border-radius:6px; padding:6px 8px; text-align:center; outline:none; }
+
+.presets { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.preset { width:32px; height:32px; border-radius:var(--radius-sm); border:2px solid var(--line); cursor:pointer; transition:all var(--t); }
+.preset:hover { transform:scale(1.1); border-color:var(--accent); }
+.preset.active { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent); }
+
+.slider-row { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+.slider-header { display:flex; justify-content:space-between; align-items:center; }
+.slider-value { font-size:13px; font-weight:600; color:var(--accent); font-family:monospace; }
+input[type="range"] { -webkit-appearance:none; appearance:none; width:100%; height:6px; background:var(--surface2); border-radius:3px; outline:none; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:18px; height:18px; background:var(--accent); border-radius:50%; cursor:pointer; border:3px solid var(--surface); box-shadow:0 1px 4px rgba(0,0,0,.2); }
+input[type="range"]::-moz-range-thumb { width:18px; height:18px; background:var(--accent); border-radius:50%; cursor:pointer; border:3px solid var(--surface); }
+
+.ec-buttons { display:flex; gap:4px; background:var(--surface2); border-radius:var(--radius-sm); padding:3px; }
+.ec-btn { flex:1; padding:7px 12px; border:none; background:none; color:var(--ink2); font-size:13px; font-weight:600; border-radius:6px; cursor:pointer; transition:all var(--t); }
+.ec-btn.active { background:var(--surface); color:var(--ink); box-shadow:0 1px 3px rgba(0,0,0,.1); }
+
+.logo-upload { display:flex; align-items:center; gap:12px; }
+.logo-preview { width:48px; height:48px; border:2px dashed var(--line2); border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; overflow:hidden; background:var(--surface2); flex-shrink:0; }
+.logo-preview img { width:100%; height:100%; object-fit:contain; }
+.logo-preview.has-logo { border-style:solid; border-color:var(--line); }
+.upload-btn { flex:1; padding:10px 14px; background:var(--surface2); border:1px dashed var(--line2); border-radius:var(--radius-sm); color:var(--ink2); font-size:13px; font-weight:500; cursor:pointer; text-align:center; transition:all var(--t); }
+.upload-btn:hover { border-color:var(--accent); color:var(--accent); }
+.remove-logo { font-size:12px; color:var(--ink3); cursor:pointer; background:none; border:none; text-decoration:underline; padding:4px; }
+
+.preview-panel { position:sticky; top:80px; display:flex; flex-direction:column; gap:16px; }
+.qr-card { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:32px; box-shadow:var(--shadow-lg); display:flex; flex-direction:column; align-items:center; gap:20px; }
+
+.qr-wrapper {
+    position:relative; display:inline-block; background:#fff; padding:24px;
+    border-radius:var(--radius); box-shadow:0 2px 8px rgba(0,0,0,.08); overflow:hidden;
+}
+.qr-wrapper.generating::after {
+    content:''; position:absolute; left:0; right:0; top:0; height:3px;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent);
+    animation:scan .5s ease-out;
+}
+@keyframes scan { from { top:0; opacity:1; } to { top:100%; opacity:0; } }
+
+#qrcode { position:relative; display:flex; align-items:center; justify-content:center; }
+#qrcode canvas,#qrcode img { display:block; border-radius:4px; }
+.qr-logo-overlay {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:22%; height:22%; background:#fff; padding:6%; border-radius:8px; display:none;
+}
+.qr-logo-overlay img { width:100%; height:100%; object-fit:contain; }
+.qr-logo-overlay.visible { display:block; }
+
+.qr-info { text-align:center; }
+.qr-info h3 { font-family:'Bricolage Grotesque'; font-weight:700; font-size:16px; color:var(--ink); margin-bottom:2px; }
+.qr-info p { font-size:12px; color:var(--ink3); max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+.actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.action-btn {
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    padding:12px 16px; border-radius:var(--radius-sm); border:1px solid var(--line);
+    background:var(--surface); color:var(--ink); font-size:14px; font-weight:600;
+    cursor:pointer; transition:all var(--t);
+}
+.action-btn:hover { border-color:var(--accent); color:var(--accent); transform:translateY(-1px); }
+.action-btn.primary { background:var(--accent); color:#fff; border-color:var(--accent); grid-column:1/-1; }
+.action-btn.primary:hover { background:var(--accent-hover); color:#fff; }
+.action-btn svg { width:16px; height:16px; }
+
+.toast {
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(100px);
+    background:var(--ink); color:var(--surface); padding:12px 24px; border-radius:var(--radius-sm);
+    font-size:14px; font-weight:500; box-shadow:var(--shadow-lg); z-index:1000;
+    opacity:0; transition:all .3s cubic-bezier(.4,0,.2,1); pointer-events:none;
+}
+.toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+
+@keyframes fadeInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.config-panel { animation:fadeInUp .4s ease-out; }
+.preview-panel { animation:fadeInUp .4s ease-out .1s both; }
+
+@media (max-width:600px) { .main { padding:16px; } .actions { grid-template-columns:1fr; } .field-row { flex-direction:column; } .qr-card { padding:20px; } }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="header-left">
+        <a href="index.html" class="logo">PosterQR</a>
+        <span class="version-badge">v2.0</span>
+    </div>
+    <div class="header-right">
+        <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">
+            <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+        <button class="icon-btn" onclick="window.print()" title="Print QR">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        </button>
+    </div>
+</header>
+
+<div class="main">
+    <!-- Config Panel -->
+    <div class="config-panel">
+        <div class="panel-title">Content Type</div>
+        <div class="type-tabs" id="typeTabs"></div>
+
+        <div class="fields" id="fieldsContainer"></div>
+
+        <div class="divider"></div>
+        <div class="panel-title">Colors</div>
+        <div class="color-row">
+            <span class="color-label">Foreground</span>
+            <div class="color-picker-wrap">
+                <input type="text" class="color-hex" id="fgHex" value="#000000" maxlength="7">
+                <input type="color" class="color-picker" id="fgColor" value="#000000">
+            </div>
+        </div>
+        <div class="color-row">
+            <span class="color-label">Background</span>
+            <div class="color-picker-wrap">
+                <input type="text" class="color-hex" id="bgHex" value="#FFFFFF" maxlength="7">
+                <input type="color" class="color-picker" id="bgColor" value="#FFFFFF">
+            </div>
+        </div>
+        <div class="presets" id="presets"></div>
+
+        <div class="divider"></div>
+        <div class="panel-title">Options</div>
+        <div class="slider-row">
+            <div class="slider-header">
+                <span class="color-label">Size</span>
+                <span class="slider-value" id="sizeValue">300px</span>
+            </div>
+            <input type="range" id="sizeSlider" min="128" max="512" step="16" value="300">
+        </div>
+        <div class="slider-row">
+            <div class="slider-header">
+                <span class="color-label">Error Correction</span>
+            </div>
+            <div class="ec-buttons" id="ecButtons">
+                <button class="ec-btn" data-ec="L">L</button>
+                <button class="ec-btn" data-ec="M">M</button>
+                <button class="ec-btn" data-ec="Q">Q</button>
+                <button class="ec-btn active" data-ec="H">H</button>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="panel-title">Logo (Center Image)</div>
+        <div class="logo-upload">
+            <div class="logo-preview" id="logoPreview">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:.3"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>
+            </div>
+            <label class="upload-btn">
+                Upload Logo
+                <input type="file" accept="image/*" id="logoFile" style="display:none">
+            </label>
+            <button class="remove-logo" id="removeLogo" style="display:none" onclick="removeLogo()">Remove</button>
+        </div>
+    </div>
+
+    <!-- Preview Panel -->
+    <div class="preview-panel">
+        <div class="qr-card">
+            <div class="qr-wrapper" id="qrWrapper">
+                <div id="qrcode"></div>
+                <div class="qr-logo-overlay" id="logoOverlay">
+                    <img id="logoOverlayImg" src="" alt="">
+                </div>
+            </div>
+            <div class="qr-info">
+                <h3 id="qrTypeLabel">URL</h3>
+                <p id="qrContentPreview">posterqr.app</p>
+            </div>
+        </div>
+        <div class="actions">
+            <button class="action-btn primary" onclick="downloadQR()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download PNG
+            </button>
+            <button class="action-btn" onclick="copyQRImage()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy Image
+            </button>
+            <button class="action-btn" onclick="shareQR()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                Share Link
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── State ───
+let currentType = 'url';
+let fgColor = '#000000';
+let bgColor = '#FFFFFF';
+let currentSize = 300;
+let ecLevel = QRCode.CorrectLevel.H;
+let logoDataUrl = null;
+let qrInstance = null;
+let debounceTimer = null;
+
+// ─── QR Type Definitions ───
+const qrTypes = {
+    url: {
+        label: 'URL', icon: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+        fields: [{ id: 'url', label: 'Website URL', placeholder: 'https://example.com', type: 'input', value: 'https://posterqr.app' }],
+        build: d => d.url || ' ',
+        preview: d => d.url || '—'
+    },
+    text: {
+        label: 'Text', icon: '<polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/>',
+        fields: [{ id: 'text', label: 'Text content', placeholder: 'Any text...', type: 'textarea', value: '' }],
+        build: d => d.text || ' ',
+        preview: d => d.text || '—'
+    },
+    wifi: {
+        label: 'WiFi', icon: '<path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>',
+        fields: [
+            { id: 'ssid', label: 'Network name (SSID)', placeholder: 'MyWiFi', type: 'input', value: '' },
+            { id: 'password', label: 'Password', placeholder: 'password', type: 'input', value: '' },
+            { id: 'encryption', label: 'Encryption', type: 'select', options: ['WPA','WEP','nopass'], value: 'WPA' },
+            { id: 'hidden', label: 'Hidden network?', type: 'checkbox', value: false }
+        ],
+        build: d => `WIFI:T:${d.encryption};S:${escapeQR(d.ssid)};P:${escapeQR(d.password)};${d.hidden==='true'||d.hidden===true?'H:true;':''};`,
+        preview: d => `SSID: ${d.ssid || '—'}`
+    },
+    email: {
+        label: 'Email', icon: '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
+        fields: [
+            { id: 'email', label: 'Email address', placeholder: 'name@example.com', type: 'input', value: '' },
+            { id: 'subject', label: 'Subject', placeholder: 'Hello', type: 'input', value: '' },
+            { id: 'body', label: 'Message', placeholder: 'Body text...', type: 'textarea', value: '' }
+        ],
+        build: d => `mailto:${d.email}?subject=${encodeURIComponent(d.subject||'')}&body=${encodeURIComponent(d.body||'')}`,
+        preview: d => d.email || '—'
+    },
+    sms: {
+        label: 'SMS', icon: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+        fields: [
+            { id: 'phone', label: 'Phone number', placeholder: '+1234567890', type: 'input', value: '' },
+            { id: 'message', label: 'Message', placeholder: 'Hello!', type: 'textarea', value: '' }
+        ],
+        build: d => `smsto:${d.phone}:${d.message}`,
+        preview: d => d.phone || '—'
+    },
+    phone: {
+        label: 'Phone', icon: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+        fields: [{ id: 'phone', label: 'Phone number', placeholder: '+1234567890', type: 'input', value: '' }],
+        build: d => `tel:${d.phone}`,
+        preview: d => d.phone || '—'
+    },
+    vcard: {
+        label: 'Contact', icon: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+        fields: [
+            { id: 'name', label: 'Full name', placeholder: 'John Doe', type: 'input', value: '' },
+            { id: 'phone', label: 'Phone', placeholder: '+1234567890', type: 'input', value: '' },
+            { id: 'email', label: 'Email', placeholder: 'john@example.com', type: 'input', value: '' },
+            { id: 'org', label: 'Organization', placeholder: 'Company Inc.', type: 'input', value: '' }
+        ],
+        build: d => `BEGIN:VCARD\nVERSION:3.0\nFN:${d.name}\nORG:${d.org}\nTEL:${d.phone}\nEMAIL:${d.email}\nEND:VCARD`,
+        preview: d => d.name || '—'
+    }
+};
+
+// ─── Color Presets ───
+const presets = [
+    { name: 'Classic', fg: '#000000', bg: '#FFFFFF' },
+    { name: 'Midnight', fg: '#1E293B', bg: '#F8FAFC' },
+    { name: 'Forest', fg: '#166534', bg: '#F0FDF4' },
+    { name: 'Ocean', fg: '#1E40AF', bg: '#EFF6FF' },
+    { name: 'Sunset', fg: '#C2410C', bg: '#FFF7ED' },
+    { name: 'Rose', fg: '#BE123C', bg: '#FFF1F2' },
+    { name: 'Mono Dark', fg: '#FFFFFF', bg: '#1A1A1A' },
+    { name: 'Slate', fg: '#334155', bg: '#F1F5F9' }
+];
+
+// ─── DOM Elements ───
+const qrcodeElement = document.getElementById('qrcode');
+const qrWrapper = document.getElementById('qrWrapper');
+const fieldsContainer = document.getElementById('fieldsContainer');
+const typeTabsContainer = document.getElementById('typeTabs');
+const presetsContainer = document.getElementById('presets');
+const fgColorInput = document.getElementById('fgColor');
+const bgColorInput = document.getElementById('bgColor');
+const fgHexInput = document.getElementById('fgHex');
+const bgHexInput = document.getElementById('bgHex');
+const sizeSlider = document.getElementById('sizeSlider');
+const sizeValue = document.getElementById('sizeValue');
+const logoFileInput = document.getElementById('logoFile');
+const logoPreview = document.getElementById('logoPreview');
+const logoOverlay = document.getElementById('logoOverlay');
+const logoOverlayImg = document.getElementById('logoOverlayImg');
+const removeLogoBtn = document.getElementById('removeLogo');
+const qrTypeLabel = document.getElementById('qrTypeLabel');
+const qrContentPreview = document.getElementById('qrContentPreview');
+const toast = document.getElementById('toast');
+
+// ─── Helper Functions ───
+function escapeQR(str) {
+    return (str || '').replace(/([\\;,:"])/g, '\\$1');
+}
+
+function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+function getFormData() {
+    const inputs = fieldsContainer.querySelectorAll('[data-field-id]');
+    const data = {};
+    inputs.forEach(input => {
+        const id = input.getAttribute('data-field-id');
+        if (input.type === 'checkbox') data[id] = input.checked;
+        else data[id] = input.value;
+    });
+    return data;
+}
+
+// ─── Build Type Tabs ───
+function buildTypeTabs() {
+    typeTabsContainer.innerHTML = '';
+    Object.entries(qrTypes).forEach(([key, type]) => {
+        const tab = document.createElement('button');
+        tab.className = 'type-tab' + (key === currentType ? ' active' : '');
+        tab.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${type.icon}</svg> ${type.label}`;
+        tab.onclick = () => switchType(key);
+        typeTabsContainer.appendChild(tab);
+    });
+}
+
+// ─── Build Fields ───
+function buildFields() {
+    const type = qrTypes[currentType];
+    fieldsContainer.innerHTML = '';
+    type.fields.forEach(field => {
+        const fieldEl = document.createElement('div');
+        fieldEl.className = 'field';
+        if (field.type === 'checkbox') {
+            fieldEl.innerHTML = `
+                <label class="checkbox-field">
+                    <input type="checkbox" data-field-id="${field.id}" ${field.value ? 'checked' : ''}>
+                    <span>${field.label}</span>
+                </label>`;
+        } else if (field.type === 'select') {
+            const options = field.options.map(o => `<option value="${o}" ${o === field.value ? 'selected' : ''}>${o}</option>`).join('');
+            fieldEl.innerHTML = `<label>${field.label}</label><select data-field-id="${field.id}">${options}</select>`;
+        } else if (field.type === 'textarea') {
+            fieldEl.innerHTML = `<label>${field.label}</label><textarea data-field-id="${field.id}" placeholder="${field.placeholder}">${field.value || ''}</textarea>`;
+        } else {
+            fieldEl.innerHTML = `<label>${field.label}</label><input type="text" data-field-id="${field.id}" placeholder="${field.placeholder}" value="${field.value || ''}">`;
+        }
+        fieldsContainer.appendChild(fieldEl);
+    });
+
+    // Attach listeners
+    fieldsContainer.querySelectorAll('input, textarea, select').forEach(el => {
+        el.addEventListener('input', debounceGenerate);
+        el.addEventListener('change', debounceGenerate);
+    });
+}
+
+// ─── Build Presets ───
+function buildPresets() {
+    presetsContainer.innerHTML = '';
+    presets.forEach(preset => {
+        const el = document.createElement('div');
+        el.className = 'preset';
+        el.style.background = `linear-gradient(135deg, ${preset.fg} 50%, ${preset.bg} 50%)`;
+        el.title = preset.name;
+        el.onclick = () => applyPreset(preset);
+        presetsContainer.appendChild(el);
+    });
+}
+
+function applyPreset(preset) {
+    fgColor = preset.fg;
+    bgColor = preset.bg;
+    fgColorInput.value = preset.fg;
+    bgColorInput.value = preset.bg;
+    fgHexInput.value = preset.fg.toUpperCase();
+    bgHexInput.value = preset.bg.toUpperCase();
+    document.querySelectorAll('.preset').forEach(p => p.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    generateQR();
+}
+
+// ─── Switch Type ───
+function switchType(key) {
+    currentType = key;
+    document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    buildFields();
+    generateQR();
+}
+
+// ─── Generate QR ───
+function debounceGenerate() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(generateQR, 150);
+}
+
+function generateQR() {
+    const type = qrTypes[currentType];
+    const data = getFormData();
+    const text = type.build(data);
+
+    qrTypeLabel.textContent = type.label;
+    qrContentPreview.textContent = type.preview(data);
+
+    qrcodeElement.innerHTML = '';
+    qrInstance = new QRCode(qrcodeElement, {
+        text: text,
+        width: currentSize,
+        height: currentSize,
+        colorDark: fgColor,
+        colorLight: bgColor,
+        correctLevel: ecLevel
+    });
+
+    // Logo overlay
+    if (logoDataUrl) {
+        logoOverlayImg.src = logoDataUrl;
+        logoOverlay.classList.add('visible');
+    } else {
+        logoOverlay.classList.remove('visible');
+    }
+
+    // Scan animation
+    qrWrapper.classList.remove('generating');
+    void qrWrapper.offsetWidth;
+    qrWrapper.classList.add('generating');
+}
+
+// ─── Download QR ───
+function downloadQR() {
+    const canvas = qrcodeElement.querySelector('canvas');
+    const img = qrcodeElement.querySelector('img');
+    if (!canvas && !img) { showToast('Nothing to download'); return; }
+
+    const exportCanvas = document.createElement('canvas');
+    const padding = 40;
+    exportCanvas.width = currentSize + padding * 2;
+    exportCanvas.height = currentSize + padding * 2;
+    const ctx = exportCanvas.getContext('2d');
+
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+
+    if (canvas) ctx.drawImage(canvas, padding, padding, currentSize, currentSize);
+    else if (img) ctx.drawImage(img, padding, padding, currentSize, currentSize);
+
+    if (logoDataUrl) {
+        const logoImg = new Image();
+        logoImg.onload = function() {
+            const logoSize = currentSize * 0.22;
+            const logoX = padding + (currentSize - logoSize) / 2;
+            const logoY = padding + (currentSize - logoSize) / 2;
+            const bgPad = logoSize * 0.12;
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(logoX - bgPad, logoY - bgPad, logoSize + bgPad * 2, logoSize + bgPad * 2);
+            ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
+            triggerDownload(exportCanvas);
+        };
+        logoImg.src = logoDataUrl;
+    } else {
+        triggerDownload(exportCanvas);
+    }
+}
+
+function triggerDownload(canvas) {
+    const link = document.createElement('a');
+    link.download = `posterqr-${currentType}-${Date.now()}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('QR code downloaded!');
+}
+
+// ─── Copy QR to Clipboard ───
+async function copyQRImage() {
+    const canvas = qrcodeElement.querySelector('canvas');
+    if (!canvas) { showToast('Nothing to copy'); return; }
+    try {
+        canvas.toBlob(async (blob) => {
+            await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+            showToast('QR copied to clipboard!');
+        });
+    } catch(e) {
+        showToast('Clipboard not supported');
+    }
+}
+
+// ─── Share via URL ───
+function shareQR() {
+    const data = getFormData();
+    const state = { type: currentType, data, fg: fgColor, bg: bgColor, size: currentSize, ec: ecLevel };
+    const encoded = btoa(JSON.stringify(state));
+    const url = `${window.location.origin}${window.location.pathname}?s=${encoded}`;
+    navigator.clipboard.writeText(url).then(() => {
+        showToast('Share link copied to clipboard!');
+    }).catch(() => {
+        showToast('Could not copy link');
+    });
+}
+
+// ─── Load from Share URL ───
+function loadFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const s = params.get('s');
+    if (s) {
+        try {
+            const state = JSON.parse(atob(s));
+            currentType = state.type || 'url';
+            fgColor = state.fg || '#000000';
+            bgColor = state.bg || '#FFFFFF';
+            currentSize = state.size || 300;
+            ecLevel = state.ec || QRCode.CorrectLevel.H;
+            // Update UI controls
+            fgColorInput.value = fgColor;
+            bgColorInput.value = bgColor;
+            fgHexInput.value = fgColor.toUpperCase();
+            bgHexInput.value = bgColor.toUpperCase();
+            sizeSlider.value = currentSize;
+            sizeValue.textContent = currentSize + 'px';
+            document.querySelectorAll('.ec-btn').forEach(b => b.classList.toggle('active', b.dataset.ec === ['L','M','Q','H'][ecLevel]));
+            // Build tabs and fields
+            buildTypeTabs();
+            buildFields();
+            // Fill field values
+            setTimeout(() => {
+                Object.entries(state.data).forEach(([key, value]) => {
+                    const el = fieldsContainer.querySelector(`[data-field-id="${key}"]`);
+                    if (el) {
+                        if (el.type === 'checkbox') el.checked = value;
+                        else el.value = value;
+                    }
+                });
+                generateQR();
+            }, 50);
+            return true;
+        } catch(e) { return false; }
+    }
+    return false;
+}
+
+// ─── Logo Upload ───
+logoFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        logoDataUrl = event.target.result;
+        logoPreview.innerHTML = `<img src="${logoDataUrl}" alt="Logo">`;
+        logoPreview.classList.add('has-logo');
+        removeLogoBtn.style.display = 'inline';
+        generateQR();
+        showToast('Logo added!');
+    };
+    reader.readAsDataURL(file);
+});
+
+function removeLogo() {
+    logoDataUrl = null;
+    logoFileInput.value = '';
+    logoPreview.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:.3"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>';
+    logoPreview.classList.remove('has-logo');
+    removeLogoBtn.style.display = 'none';
+    generateQR();
+}
+
+// ─── Color Controls ───
+fgColorInput.addEventListener('input', (e) => {
+    fgColor = e.target.value;
+    fgHexInput.value = fgColor.toUpperCase();
+    generateQR();
+});
+bgColorInput.addEventListener('input', (e) => {
+    bgColor = e.target.value;
+    bgHexInput.value = bgColor.toUpperCase();
+    generateQR();
+});
+fgHexInput.addEventListener('input', (e) => {
+    let val = e.target.value;
+    if (!val.startsWith('#')) val = '#' + val;
+    if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+        fgColor = val;
+        fgColorInput.value = val;
+        generateQR();
+    }
+});
+bgHexInput.addEventListener('input', (e) => {
+    let val = e.target.value;
+    if (!val.startsWith('#')) val = '#' + val;
+    if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+        bgColor = val;
+        bgColorInput.value = val;
+        generateQR();
+    }
+});
+
+// ─── Size Slider ───
+sizeSlider.addEventListener('input', (e) => {
+    currentSize = parseInt(e.target.value);
+    sizeValue.textContent = currentSize + 'px';
+    debounceGenerate();
+});
+
+// ─── Error Correction ───
+document.querySelectorAll('.ec-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.ec-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const ecMap = { L: QRCode.CorrectLevel.L, M: QRCode.CorrectLevel.M, Q: QRCode.CorrectLevel.Q, H: QRCode.CorrectLevel.H };
+        ecLevel = ecMap[btn.dataset.ec];
+        generateQR();
+    });
+});
+
+// ─── Dark Mode ───
+function toggleTheme() {
+    document.documentElement.classList.toggle('dark-mode');
+    const isDark = document.documentElement.classList.contains('dark-mode');
+    localStorage.setItem('pqr-theme', isDark ? 'dark' : 'light');
+    updateThemeIcon(isDark);
+}
+function updateThemeIcon(isDark) {
+    const icon = document.getElementById('themeIcon');
+    if (isDark) {
+        icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+    } else {
+        icon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+    }
+}
+
+// ─── Keyboard Shortcuts ───
+document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); shareQR(); }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'd') { e.preventDefault(); downloadQR(); }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); downloadQR(); }
+});
+
+// ─── Init ───
+const params = new URLSearchParams(window.location.search);
+if (params.get('theme') === 'dark') localStorage.setItem('pqr-theme', 'dark');
+if (localStorage.getItem('pqr-theme') === 'dark') {
+    document.documentElement.classList.add('dark-mode');
+    updateThemeIcon(true);
+} else {
+    updateThemeIcon(false);
+}
+
+if (!loadFromUrl()) {
+    buildTypeTabs();
+    buildFields();
+}
+buildPresets();
+generateQR();
+</script>
+</body>
+</html>
