@@ -7,27 +7,31 @@
     <style>
         /* --- Theme Definitions --- */
         :root {
-            --pc-bg: #F0FDF4; --pc-surface: #FFFFFF; --pc-primary: #10B981;
+            --pc-bg: #F8F9FA; --pc-surface: #FFFFFF; --pc-primary: #10B981;
             --pc-primary-dark: #047857; --pc-border: #D1D5DB; --pc-border-light: #E5E7EB;
-            --pc-text: #1A1D21; --pc-text-muted: #6B7280; --pc-highlight: #ECFDF5; --pc-ribbon-bg: #F9FAFB;
+            --pc-grid-line: #E5E7EB; --pc-text: #1A1D21; --pc-text-muted: #6B7280; 
+            --pc-highlight: #ECFDF5; --pc-ribbon-bg: #F3F4F6;
             --pc-fill-handle: #10B981; --color-scheme: light;
         }
         body[data-theme="dark"] {
             --pc-bg: #111827; --pc-surface: #1F2937; --pc-primary: #10B981;
             --pc-primary-dark: #34D399; --pc-border: #374151; --pc-border-light: #4B5563;
-            --pc-text: #F9FAFB; --pc-text-muted: #9CA3AF; --pc-highlight: #064E3B; --pc-ribbon-bg: #111827;
+            --pc-grid-line: #374151; --pc-text: #F9FAFB; --pc-text-muted: #9CA3AF; 
+            --pc-highlight: #064E3B; --pc-ribbon-bg: #111827;
             --pc-fill-handle: #34D399; --color-scheme: dark;
         }
         body[data-theme="midnight"] {
             --pc-bg: #0f172a; --pc-surface: #1e293b; --pc-primary: #10b981;
             --pc-primary-dark: #34d399; --pc-border: #334155; --pc-border-light: #475569;
-            --pc-text: #e2e8f0; --pc-text-muted: #94a3b8; --pc-highlight: #064e3b; --pc-ribbon-bg: #172033;
+            --pc-grid-line: #334155; --pc-text: #e2e8f0; --pc-text-muted: #94a3b8; 
+            --pc-highlight: #064e3b; --pc-ribbon-bg: #172033;
             --pc-fill-handle: #10b981; --color-scheme: dark;
         }
         body[data-theme="forest"] {
             --pc-bg: #052e2b; --pc-surface: #0c3b35; --pc-primary: #34d399;
             --pc-primary-dark: #6ee7b7; --pc-border: #0f513b; --pc-border-light: #155e44;
-            --pc-text: #d1fae5; --pc-text-muted: #9ca3af; --pc-highlight: #08403a; --pc-ribbon-bg: #073631;
+            --pc-grid-line: #155e44; --pc-text: #d1fae5; --pc-text-muted: #9ca3af; 
+            --pc-highlight: #08403a; --pc-ribbon-bg: #073631;
             --pc-fill-handle: #34d399; --color-scheme: dark;
         }
 
@@ -35,7 +39,7 @@
         body { background-color: var(--pc-bg); color: var(--pc-text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; transition: background-color 0.2s, color 0.2s; }
 
         /* --- Navbar --- */
-        .navbar { display: flex; align-items: center; justify-content: space-between; padding: 0.4rem 1rem; background-color: var(--pc-surface); border-bottom: 1px solid var(--pc-border-light); box-shadow: 0 1px 3px rgba(0,0,0,0.05); z-index: 10; }
+        .navbar { display: flex; align-items: center; justify-content: space-between; padding: 0.4rem 1rem; background-color: var(--pc-surface); border-bottom: 1px solid var(--pc-border-light); z-index: 10; }
         .nav-left { display: flex; align-items: center; gap: 1rem; }
         .logo { width: 32px; height: 32px; }
         .brand-name { font-size: 1.2rem; font-weight: 700; color: var(--pc-primary-dark); }
@@ -50,8 +54,6 @@
         .btn-ribbon:hover { background-color: var(--pc-highlight); border: 1px solid var(--pc-border-light); padding: calc(0.3rem - 1px) calc(0.5rem - 1px); }
         .btn-ribbon.active { background-color: var(--pc-highlight); border: 1px solid var(--pc-primary); padding: calc(0.3rem - 1px) calc(0.5rem - 1px); }
         .btn-ribbon i { font-size: 1.1rem; } .btn-ribbon span { font-size: 0.7rem; }
-        .icon-btn { background: transparent; border: none; color: var(--pc-text-muted); cursor: pointer; padding: 0.4rem; border-radius: 4px; display: flex; align-items: center; }
-        .icon-btn:hover { background-color: var(--pc-highlight); color: var(--pc-primary); }
 
         .ribbon { display: flex; align-items: stretch; padding: 0.2rem 1rem; background-color: var(--pc-ribbon-bg); border-bottom: 1px solid var(--pc-border); overflow-x: auto; }
         .ribbon-group { display: flex; flex-direction: column; padding: 0.2rem 0.5rem; border-right: 1px solid var(--pc-border-light); }
@@ -66,31 +68,52 @@
         .formula-bar:focus { outline: none; border-color: var(--pc-primary); box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); }
         
         .grid-wrapper { flex: 1; overflow: auto; position: relative; background-color: var(--pc-surface); }
-        table { border-collapse: collapse; width: max-content; table-layout: fixed; }
-        th, td { border: 1px solid var(--pc-border); padding: 0; margin: 0; position: relative; background: var(--pc-surface); color: var(--pc-text); }
-        th.corner { width: 40px; height: 24px; background-color: var(--pc-ribbon-bg); position: sticky; top: 0; left: 0; z-index: 4; }
-        th.col-header { min-width: 100px; width: 100px; height: 24px; background-color: var(--pc-ribbon-bg); color: var(--pc-text-muted); font-weight: 500; font-size: 0.75rem; position: sticky; top: 0; z-index: 3; text-align: center; user-select: none; }
-        th.row-header { width: 40px; background-color: var(--pc-ribbon-bg); color: var(--pc-text-muted); font-weight: 500; font-size: 0.75rem; position: sticky; left: 0; z-index: 3; text-align: center; padding: 4px 0; user-select: none; }
         
-        .freeze-row th.col-header, .freeze-row td { position: sticky; top: 24px; z-index: 2; }
-        .freeze-col th.row-header, .freeze-col td { position: sticky; left: 40px; z-index: 2; }
+        /* Custom Scrollbars for Excel feel */
+        .grid-wrapper::-webkit-scrollbar { width: 12px; height: 12px; }
+        .grid-wrapper::-webkit-scrollbar-track { background: var(--pc-ribbon-bg); border-left: 1px solid var(--pc-border-light); }
+        .grid-wrapper::-webkit-scrollbar-thumb { background: var(--pc-border); border: 3px solid var(--pc-ribbon-bg); border-radius: 6px; }
+        .grid-wrapper::-webkit-scrollbar-thumb:hover { background: var(--pc-text-muted); }
+        .grid-wrapper::-webkit-scrollbar-corner { background: var(--pc-ribbon-bg); }
+
+        table { border-collapse: collapse; width: max-content; table-layout: fixed; }
+        th, td { border: 1px solid var(--pc-grid-line); padding: 0; margin: 0; position: relative; background: var(--pc-surface); color: var(--pc-text); }
+        
+        th.corner { width: 40px; height: 22px; background-color: var(--pc-ribbon-bg); position: sticky; top: 0; left: 0; z-index: 4; border-right: 1px solid var(--pc-border); border-bottom: 1px solid var(--pc-border); }
+        th.col-header { min-width: 100px; width: 100px; height: 22px; background-color: var(--pc-ribbon-bg); color: var(--pc-text-muted); font-weight: 500; font-size: 0.75rem; position: sticky; top: 0; z-index: 3; text-align: center; user-select: none; cursor: pointer; border-bottom: 1px solid var(--pc-border); }
+        th.row-header { width: 40px; background-color: var(--pc-ribbon-bg); color: var(--pc-text-muted); font-weight: 500; font-size: 0.75rem; position: sticky; left: 0; z-index: 3; text-align: center; padding: 4px 0; user-select: none; cursor: pointer; border-right: 1px solid var(--pc-border); }
+        
+        th.col-header:hover, th.row-header:hover { background-color: #e5e7eb; }
+        body[data-theme="dark"] th.col-header:hover, body[data-theme="dark"] th.row-header:hover { background-color: #374151; }
+
+        /* Freeze Panes Logic */
+        .freeze-row th.col-header, .freeze-row td { position: sticky; top: 22px; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .freeze-col th.row-header, .freeze-col td { position: sticky; left: 40px; z-index: 2; box-shadow: 2px 0 4px rgba(0,0,0,0.1); }
         .freeze-row.freeze-col th.corner { z-index: 5; }
+        .freeze-row.freeze-col td:first-child { z-index: 3; }
         
         .col-resizer { width: 4px; height: 100%; position: absolute; right: -2px; top: 0; cursor: col-resize; z-index: 4; }
         .col-resizer:hover, .col-resizer.active { background-color: var(--pc-primary); }
-        td.cell { height: 24px; overflow: hidden; }
-        .cell-content { width: 100%; height: 100%; padding: 2px 4px; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: clip; display: flex; align-items: center; color: var(--pc-text); }
-        .active-cell { outline: 2px solid var(--pc-primary); outline-offset: -2px; z-index: 1; }
-        .row-header.active, .col-header.active { background-color: var(--pc-primary); color: white; }
-        .selected-range { background-color: rgba(16, 185, 129, 0.1) !important; }
-        .hidden-input { position: absolute; border: none; outline: 2px solid var(--pc-primary); padding: 1px 3px; font-size: 0.85rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: none; z-index: 10; background: var(--pc-surface); color: var(--pc-text); }
         
-        #fillHandle { position: absolute; width: 8px; height: 8px; background: var(--pc-fill-handle); border: 1px solid var(--pc-surface); cursor: crosshair; z-index: 20; display: none; }
+        td.cell { height: 22px; overflow: hidden; }
+        .cell-content { width: 100%; height: 100%; padding: 0 4px; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: clip; display: flex; align-items: center; color: var(--pc-text); }
+        
+        /* Excel-like Selection Box */
+        .selected-range { background-color: rgba(16, 185, 129, 0.1) !important; border-color: transparent !important; }
+        .selection-box { position: absolute; border: 2px solid var(--pc-primary); background: transparent; pointer-events: none; z-index: 5; box-sizing: border-box; }
+        .active-cell { outline: 2px solid var(--pc-primary); outline-offset: -2px; z-index: 6; background: var(--pc-surface) !important; }
+        
+        .row-header.active, .col-header.active { background-color: var(--pc-primary) !important; color: white; }
+        
+        .hidden-input { position: absolute; border: none; outline: 2px solid var(--pc-primary); padding: 0 4px; font-size: 0.8rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: none; z-index: 10; background: var(--pc-surface); color: var(--pc-text); box-sizing: border-box; }
+        .hidden-input:focus { outline: 2px solid var(--pc-primary); }
+        
+        #fillHandle { position: absolute; width: 7px; height: 7px; background: var(--pc-fill-handle); border: 1px solid var(--pc-surface); cursor: crosshair; z-index: 20; display: none; box-sizing: content-box; }
         #fillHandle:hover { background: var(--pc-primary-dark); }
 
         /* --- Select & Inputs --- */
         select { background-color: var(--pc-surface); color: var(--pc-text); border: 1px solid var(--pc-border); padding: 0.3rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer; }
-        input[type="color"] { background: transparent; border: 1px solid var(--pc-border); border-radius: 4px; width: 30px; height: 30px; cursor: pointer; }
+        input[type="color"] { background: transparent; border: 1px solid var(--pc-border); border-radius: 4px; width: 30px; height: 30px; cursor: pointer; padding: 2px; }
         
         /* --- Modals & Menus --- */
         .context-menu { position: fixed; background: var(--pc-surface); border: 1px solid var(--pc-border); border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 100; min-width: 180px; display: none; }
@@ -118,7 +141,7 @@
         .tab.active { background-color: var(--pc-surface); border: 1px solid var(--pc-border); border-bottom: none; color: var(--pc-primary-dark); font-weight: 600; }
 
         /* Markdown & Rich Cells */
-        .md-h1 { font-size: 1.2rem; font-weight: bold; } .md-h2 { font-size: 1rem; font-weight: bold; }
+        .md-h1 { font-size: 1.1rem; font-weight: bold; } .md-h2 { font-size: 0.9rem; font-weight: bold; }
         .md-ul { list-style: disc; margin-left: 15px; } .md-strong { font-weight: bold; } .md-em { font-style: italic; }
         .progress-bar-track { width: 90%; height: 8px; background: var(--pc-border-light); border-radius: 4px; overflow: hidden; }
         .progress-bar-fill { height: 100%; background: var(--pc-primary); border-radius: 4px; }
@@ -203,6 +226,7 @@
     <div class="grid-wrapper" id="gridWrapper">
         <table id="spreadsheet"></table>
         <input type="text" class="hidden-input" id="cellEditor">
+        <div class="selection-box" id="selectionBox"></div>
         <div id="fillHandle"></div>
     </div>
 
@@ -247,12 +271,14 @@
         let selectedRange = { startRow: 0, startCol: 0, endRow: 0, endCol: 0 };
         let isSelecting = false, isFilling = false, currentModalAction = null;
         let fileHandle = null, peer = null, conn = null, isApplyingRemoteData = false;
+        let isFormulaBarFocused = false;
 
         const table = document.getElementById('spreadsheet');
         const gridWrapper = document.getElementById('gridWrapper');
         const cellEditor = document.getElementById('cellEditor');
         const formulaBar = document.getElementById('formulaBar');
         const fillHandle = document.getElementById('fillHandle');
+        const selectionBox = document.getElementById('selectionBox');
 
         const commands = [
             { title: "Format: Bold", action: () => applyStyle('b', true) },
@@ -379,6 +405,12 @@
             document.querySelectorAll('.cell').forEach(td => {
                 td.addEventListener('mousedown', (e) => {
                     if (e.button === 2) return;
+                    // If formula bar is focused, append cell ID instead of selecting
+                    if (isFormulaBarFocused) {
+                        formulaBar.value += td.dataset.id;
+                        formulaBar.focus();
+                        return;
+                    }
                     isSelecting = true;
                     activeCell = { row: parseInt(td.dataset.row), col: parseInt(td.dataset.col) };
                     selectedRange = { ...activeCell, endRow: activeCell.row, endCol: activeCell.col };
@@ -395,6 +427,42 @@
                     updateActiveCellUI(); showContextMenu(e.clientX, e.clientY);
                 });
             });
+
+            // Row & Column Header Selections
+            document.querySelectorAll('.col-header').forEach(th => {
+                th.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('col-resizer')) return;
+                    const c = parseInt(th.dataset.col);
+                    activeCell = { row: 0, col: c };
+                    selectedRange = { startRow: 0, startCol: c, endRow: ROWS - 1, endCol: c };
+                    updateSelectionUI(); updateActiveCellUI();
+                });
+                th.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    const c = parseInt(th.dataset.col);
+                    activeCell = { row: 0, col: c };
+                    selectedRange = { startRow: 0, startCol: c, endRow: ROWS - 1, endCol: c };
+                    updateSelectionUI(); updateActiveCellUI();
+                    openModal('insert', 'col'); // Quick insert for col
+                });
+            });
+            document.querySelectorAll('.row-header').forEach(th => {
+                th.addEventListener('click', (e) => {
+                    const r = parseInt(th.dataset.row);
+                    activeCell = { row: r, col: 0 };
+                    selectedRange = { startRow: r, startCol: 0, endRow: r, endCol: COLS - 1 };
+                    updateSelectionUI(); updateActiveCellUI();
+                });
+                th.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    const r = parseInt(th.dataset.row);
+                    activeCell = { row: r, col: 0 };
+                    selectedRange = { startRow: r, startCol: 0, endRow: r, endCol: COLS - 1 };
+                    updateSelectionUI(); updateActiveCellUI();
+                    openModal('insert', 'row'); // Quick insert for row
+                });
+            });
+
             document.querySelectorAll('.col-resizer').forEach(h => h.addEventListener('mousedown', startColResize));
             document.addEventListener('mouseup', handleMouseUp);
             document.addEventListener('click', (e) => { if (!e.target.closest('#contextMenu') && !e.target.closest('.cell')) document.getElementById('contextMenu').style.display = 'none'; });
@@ -441,8 +509,26 @@
             const maxR = Math.max(selectedRange.startRow, selectedRange.endRow);
             const minC = Math.min(selectedRange.startCol, selectedRange.endCol);
             const maxC = Math.max(selectedRange.startCol, selectedRange.endCol);
-            for (let r = minR; r <= maxR; r++) for (let c = minC; c <= maxC; c++) {
-                document.querySelector(`td[data-row="${r}"][data-col="${c}"]`)?.classList.add('selected-range');
+            
+            for (let r = minR; r <= maxR; r++) {
+                for (let c = minC; c <= maxC; c++) {
+                    document.querySelector(`td[data-row="${r}"][data-col="${c}"]`)?.classList.add('selected-range');
+                }
+            }
+            
+            // Draw the Excel-like Selection Box
+            const startTd = document.querySelector(`td[data-row="${minR}"][data-col="${minC}"]`);
+            const endTd = document.querySelector(`td[data-row="${maxR}"][data-col="${maxC}"]`);
+            if (startTd && endTd) {
+                const gridRect = gridWrapper.getBoundingClientRect();
+                const sRect = startTd.getBoundingClientRect();
+                const eRect = endTd.getBoundingClientRect();
+                
+                selectionBox.style.display = 'block';
+                selectionBox.style.left = `${sRect.left - gridRect.left + gridWrapper.scrollLeft}px`;
+                selectionBox.style.top = `${sRect.top - gridRect.top + gridWrapper.scrollTop}px`;
+                selectionBox.style.width = `${eRect.right - sRect.left}px`;
+                selectionBox.style.height = `${eRect.bottom - sRect.top}px`;
             }
             positionFillHandle();
         }
@@ -457,7 +543,6 @@
                 document.querySelector(`th.row-header[data-row="${activeCell.row}"]`)?.classList.add('active');
                 document.querySelector(`th.col-header[data-col="${activeCell.col}"]`)?.classList.add('active');
             }
-            positionFillHandle();
         }
 
         function positionFillHandle() {
@@ -681,7 +766,6 @@
                 conn.on('data', handleRemoteData); conn.on('close', () => statusEl.textContent = "Live: Disconnected");
             });
         }
-        // FIX: Explicitly wired the Share Live button here
         document.getElementById('btnShareLive').onclick = startP2PSharing;
 
         function joinP2PSession(hostId) {
@@ -697,6 +781,10 @@
                 recalculateAndRender(); isApplyingRemoteData = false;
             }
         }
+
+        // --- Formula Bar Crosshair ---
+        formulaBar.addEventListener('focus', () => isFormulaBarFocused = true);
+        formulaBar.addEventListener('blur', () => setTimeout(() => isFormulaBarFocused = false, 200)); // Delay so grid click registers
 
         // --- Global Keys ---
         document.addEventListener('keydown', (e) => {
@@ -735,6 +823,10 @@
 
         // --- Init ---
         createGrid();
+        // Add event listener to redraw selection box on scroll/resize
+        gridWrapper.addEventListener('scroll', updateSelectionUI);
+        window.addEventListener('resize', updateSelectionUI);
+        
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('peer')) joinP2PSession(urlParams.get('peer'));
     </script>
