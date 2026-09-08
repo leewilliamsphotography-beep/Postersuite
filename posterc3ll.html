@@ -3,329 +3,666 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="1.5"> <!-- Hardcoded Meta Version -->
-    <title>PosterC3ll - Spreadsheet</title>
+    <meta name="version" content="1.5">
+    <title>PosterC3ll - Pro Logo Studio</title>
     <style>
-        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; display: flex; flex-direction: column; height: 100vh; background: #ffffff; color: #333333; overflow: hidden; }
-        
+        :root {
+            --bg: #f8f9fa; --surface: #ffffff; --primary: #10b981; --primary-dark: #047857;
+            --border: #e5e7eb; --text: #1f2937; --text-muted: #6b7280;
+            --highlight: #ecfdf5; --canvas-bg: #ffffff;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
         /* Navbar */
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; background: #ffffff; border-bottom: 1px solid #e5e7eb; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; background: var(--surface); border-bottom: 1px solid var(--border); z-index: 10; }
         .nav-left { display: flex; align-items: center; gap: 10px; }
-        .logo { width: 28px; height: 28px; }
-        .brand-name { font-size: 18px; font-weight: 700; color: #047857; }
-        .nav-badge { font-size: 12px; color: #6b7280; background: #ecfdf5; padding: 4px 8px; border-radius: 4px; border: 1px solid #a7f3d0; }
+        .logo-icon { width: 28px; height: 28px; }
+        .brand-name { font-size: 18px; font-weight: 700; color: var(--primary-dark); }
+        .nav-badge { font-size: 12px; color: var(--text-muted); background: var(--highlight); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--primary); }
+        .btn { background: var(--surface); color: var(--text); border: 1px solid var(--border); padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .btn:hover { background: var(--highlight); border-color: var(--primary); color: var(--primary-dark); }
+        .btn-primary { background: var(--primary); color: white; border: none; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-group { display: flex; gap: 4px; }
 
-        /* Ribbon */
-        .ribbon { display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: #f9fafb; border-bottom: 1px solid #e5e7eb; }
-        .btn-ribbon { padding: 6px 10px; border: 1px solid transparent; background: transparent; border-radius: 4px; cursor: pointer; font-size: 14px; color: #333; }
-        .btn-ribbon:hover { background: #f3f4f6; border-color: #e5e7eb; }
+        /* Main Layout */
+        .workspace { display: flex; flex: 1; overflow: hidden; }
         
-        /* Toolbar */
-        .toolbar { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: #ffffff; border-bottom: 1px solid #e5e7eb; }
-        #cellName { border: 1px solid #d1d5db; padding: 6px; border-radius: 4px; width: 60px; text-align: center; font-weight: bold; font-size: 14px; color: #047857; background: #ecfdf5; }
-        .fx-label { font-style: italic; font-weight: bold; color: #6b7280; margin-left: 10px; }
-        #formulaBar { flex: 1; border: 1px solid #d1d5db; padding: 6px; border-radius: 4px; font-family: monospace; font-size: 14px; outline: none; }
-        #formulaBar:focus { border-color: #10b981; box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); }
+        /* Left Panel */
+        .left-panel { width: 220px; background: var(--surface); border-right: 1px solid var(--border); padding: 16px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+        .panel-title { font-size: 12px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; font-weight: 700; }
+        .element-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px; border: 1px solid var(--border); background: var(--surface); border-radius: 4px; cursor: pointer; font-size: 14px; text-align: left; }
+        .element-btn:hover { background: var(--highlight); border-color: var(--primary); color: var(--primary-dark); }
 
-        /* Grid */
-        #gridContainer { flex: 1; overflow: auto; position: relative; background: #ffffff; }
-        table { border-collapse: collapse; table-layout: fixed; }
-        th, td { border: 1px solid #e5e7eb; padding: 0; margin: 0; }
-        th { background: #f9fafb; color: #6b7280; font-weight: 500; font-size: 12px; padding: 4px; min-width: 40px; text-align: center; cursor: pointer; }
-        td { min-width: 100px; width: 100px; height: 24px; overflow: hidden; font-size: 13px; position: relative; vertical-align: middle; }
-        .cell-content { padding: 0 4px; height: 24px; line-height: 24px; white-space: nowrap; overflow: hidden; width: 100%; text-overflow: clip; }
-        td.active-cell { outline: 2px solid #10b981; outline-offset: -2px; z-index: 2; position: relative; background: #ffffff !important; }
-        
-        #cellEditor { position: absolute; border: none; outline: 2px solid #10b981; padding: 0 4px; font-size: 13px; display: none; z-index: 10; background: #ffffff; box-sizing: border-box; line-height: 24px; font-family: 'Segoe UI', Arial, sans-serif; color: #333; }
-        input[type="color"] { width: 30px; height: 30px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer; padding: 2px; background: #fff; }
+        /* Canvas Area */
+        .canvas-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f3f4f6; position: relative; overflow: auto; padding: 40px; }
+        #canvasWrapper { background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border: 1px solid var(--border); position: relative; }
+        #svgCanvas { width: 500px; height: 500px; display: block; background-image: linear-gradient(45deg, #f9fafb 25%, transparent 25%), linear-gradient(-45deg, #f9fafb 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f9fafb 75%), linear-gradient(-45deg, transparent 75%, #f9fafb 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px; }
+        #boundingBox { fill: none; stroke: var(--primary); stroke-width: 1.5; stroke-dasharray: 4 4; pointer-events: none; display: none; }
+
+        /* Right Panel */
+        .right-panel { width: 280px; background: var(--surface); border-left: 1px solid var(--border); padding: 16px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
+        .prop-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+        input[type="text"], input[type="number"], select { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 14px; outline: none; background: var(--surface); color: var(--text); }
+        input[type="text"]:focus, input[type="number"]:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); }
+        input[type="color"] { width: 100%; height: 36px; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; padding: 2px; background: var(--surface); }
+        input[type="range"] { width: 100%; cursor: pointer; }
+        .row { display: flex; gap: 8px; }
+        .row > div { flex: 1; }
+        .btn-icon { flex: 1; padding: 8px; border: 1px solid var(--border); background: var(--surface); border-radius: 4px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+        .btn-icon:hover { background: var(--highlight); border-color: var(--primary); color: var(--primary-dark); }
+        .delete-btn { background: #fee2e2; color: #ef4444; border-color: #fecaca; }
+        .delete-btn:hover { background: #fecaca; color: #dc2626; border-color: #fca5a5; }
     </style>
 </head>
 <body>
 
-    <svg width="0" height="0" style="position:absolute;">
-        <defs>
-            <linearGradient id="cbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F0FDF4"/><stop offset="1" stop-color="#DCFCE7"/></linearGradient>
-            <radialGradient id="cpinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#6EE7B7"/><stop offset="1" stop-color="#10B981"/></radialGradient>
-            <filter id="cshadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter>
-        </defs>
-    </svg>
-
     <nav class="navbar">
         <div class="nav-left">
-            <svg class="logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="28" fill="url(#cbgGrad)"/><rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/><path d="M38 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/><circle cx="38" cy="42" r="2.5" fill="#10B981"/><circle cx="82" cy="42" r="2.5" fill="#10B981"/><rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#cshadow)"/><circle cx="60" cy="62" r="16" fill="#ECFDF5"/><g fill="none" stroke="#047857" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="51" y="53" width="18" height="18" rx="2"/><line x1="51" y1="59" x2="69" y2="59"/><line x1="51" y1="65" x2="69" y2="65"/><line x1="57" y1="53" x2="57" y2="71"/><line x1="63" y1="53" x2="63" y2="71"/></g><rect x="57" y="59" width="6" height="6" fill="#047857" stroke="none"/><rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#10B981"/><circle cx="60" cy="20" r="7" fill="url(#cpinGrad)" filter="url(#cshadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/></svg>
+            <svg class="logo-icon" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="28" fill="#F0FDF4"/><path d="M38 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/><circle cx="60" cy="20" r="7" fill="#10B981"/><rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" stroke="#e5e7eb"/><rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#10B981"/></svg>
             <span class="brand-name">PosterC3ll</span>
+            <div class="nav-badge">Pro Studio</div>
         </div>
-        <div class="nav-badge">Version 1.5 | Account-Free & Local</div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <div class="btn-group">
+                <button class="btn" onclick="undo()" title="Undo (Ctrl+Z)">↶</button>
+                <button class="btn" onclick="redo()" title="Redo (Ctrl+Y)">↷</button>
+            </div>
+            <button class="btn" onclick="clearCanvas()">Clear All</button>
+            <button class="btn" onclick="exportPNG()">Export PNG</button>
+            <button class="btn btn-primary" onclick="exportSVG()">Export SVG</button>
+        </div>
     </nav>
 
-    <div class="ribbon">
-        <button class="btn-ribbon" style="font-weight:bold;" onclick="applyFormat('fontWeight', 'bold')">B</button>
-        <button class="btn-ribbon" style="font-style:italic;" onclick="applyFormat('fontStyle', 'italic')">I</button>
-        <button class="btn-ribbon" style="text-decoration:underline;" onclick="applyFormat('textDecoration', 'underline')">U</button>
-        <div style="width: 1px; height: 20px; background: #e5e7eb; margin: 0 5px;"></div>
-        <input type="color" id="bgColorPicker" onchange="applyFormat('backgroundColor', this.value)" title="Fill Color">
-        <input type="color" id="txtColorPicker" onchange="applyFormat('color', this.value)" title="Font Color" value="#333333">
-        <div style="width: 1px; height: 20px; background: #e5e7eb; margin: 0 5px;"></div>
-        <button class="btn-ribbon" onclick="applyFormat('textAlign', 'left')">Left</button>
-        <button class="btn-ribbon" onclick="applyFormat('textAlign', 'center')">Center</button>
-        <button class="btn-ribbon" onclick="applyFormat('textAlign', 'right')">Right</button>
-    </div>
+    <div class="workspace">
+        <!-- Left Panel -->
+        <div class="left-panel">
+            <div class="panel-title">Shapes</div>
+            <button class="element-btn" onclick="addShape('rect')">⬛ Square</button>
+            <button class="element-btn" onclick="addShape('circle')">⭕ Circle</button>
+            <button class="element-btn" onclick="addShape('triangle')">🔺 Triangle</button>
+            <button class="element-btn" onclick="addShape('star')">⭐ Star</button>
+            <button class="element-btn" onclick="addShape('line')">➖ Line</button>
+            
+            <div class="panel-title" style="margin-top: 20px;">Text & Actions</div>
+            <button class="element-btn" onclick="addText()">📝 Add Text</button>
+            <button class="element-btn" onclick="duplicateElement(getElById(selectedId))">📃 Duplicate (Ctrl+D)</button>
 
-    <div class="toolbar">
-        <input type="text" id="cellName" readonly>
-        <span class="fx-label">fx</span>
-        <input type="text" id="formulaBar" onkeydown="if(event.key==='Enter'){applyFormulaBar();}">
-    </div>
+            <div class="panel-title" style="margin-top: 20px;">Artboard</div>
+            <div class="prop-group">
+                <label>Canvas BG</label>
+                <input type="color" id="canvasBgPicker" value="#ffffff" onchange="setCanvasBg(this.value)">
+            </div>
 
-    <div id="gridContainer">
-        <table id="sheet">
-            <thead id="sheetHead"></thead>
-            <tbody id="sheetBody"></tbody>
-        </table>
-        <input type="text" id="cellEditor">
+            <div class="panel-title" style="margin-top: 20px;">Templates</div>
+            <button class="element-btn" onclick="loadTemplate()">✨ Load Demo Logo</button>
+        </div>
+
+        <!-- Center Canvas -->
+        <div class="canvas-area">
+            <div id="canvasWrapper">
+                <svg id="svgCanvas" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+                    <rect id="boundingBox" x="0" y="0" width="0" height="0"></rect>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel" id="rightPanel">
+            <div class="panel-title">Properties</div>
+            <div id="propertiesContent" style="display:flex; flex-direction:column; gap:16px; height:100%;">
+                <p style="color: var(--text-muted); font-size: 14px; text-align: center; margin-top: 20px;">Select an element to edit it.<br><br>Hold <b>Alt</b> + Drag to duplicate.</p>
+            </div>
+        </div>
     </div>
 
     <script>
-        const APP_VERSION = "1.5"; // Hardcoded JS version variable
-        var ROWS = 50, COLS = 26;
-        var sheetData = {};
-        var activeRow = 0, activeCol = 0;
-        var activeEl = null;
-        var isEditing = false;
+        var svgCanvas = document.getElementById('svgCanvas');
+        var boundingBox = document.getElementById('boundingBox');
+        var svgNS = "http://www.w3.org/2000/svg";
+        var elements = [];
+        var selectedId = null;
+        var isDragging = false;
+        var isDuplicating = false; // Alt+Drag state
+        var dragOffset = { x: 0, y: 0 };
 
-        var sheetHead = document.getElementById('sheetHead');
-        var sheetBody = document.getElementById('sheetBody');
-        var gridContainer = document.getElementById('gridContainer');
-        var cellEditor = document.getElementById('cellEditor');
-        var cellNameInput = document.getElementById('cellName');
-        var formulaBar = document.getElementById('formulaBar');
+        var history = [];
+        var historyIndex = -1;
 
-        function getCellId(r, c) { return String.fromCharCode(65 + c) + (r + 1); }
+        function genId() { return 'el-' + Math.random().toString(36).substr(2, 9); }
 
-        function initGrid() {
-            var headHtml = '<tr><th></th>';
-            for (var c = 0; c < COLS; c++) {
-                headHtml += '<th>' + String.fromCharCode(65 + c) + '</th>';
-            }
-            headHtml += '</tr>';
-            sheetHead.innerHTML = headHtml;
-
-            var bodyHtml = '';
-            for (var r = 0; r < ROWS; r++) {
-                bodyHtml += '<tr><th>' + (r + 1) + '</th>';
-                for (var c = 0; c < COLS; c++) {
-                    var id = getCellId(r, c);
-                    // Using inline onclick is the most bulletproof way to handle grid clicks in JS
-                    bodyHtml += '<td id="cell_' + id + '" onclick="selectCell(' + r + ', ' + c + ')" ondblclick="editCell(' + r + ', ' + c + ')"><div class="cell-content"></div></td>';
-                }
-                bodyHtml += '</tr>';
-            }
-            sheetBody.innerHTML = bodyHtml;
-            
-            selectCell(0, 0);
-        }
-
-        function selectCell(r, c) {
-            if (activeEl) activeEl.classList.remove('active-cell');
-            activeRow = r;
-            activeCol = c;
-            var id = getCellId(r, c);
-            activeEl = document.getElementById('cell_' + id);
-            if (activeEl) activeEl.classList.add('active-cell');
-            
-            cellNameInput.value = id;
-            var data = sheetData[id] || { v: '', s: {} };
-            formulaBar.value = data.v || '';
-        }
-
-        function editCell(r, c) {
-            var id = getCellId(r, c);
-            var td = document.getElementById('cell_' + id);
-            var rect = td.getBoundingClientRect();
-            var containerRect = gridContainer.getBoundingClientRect();
-            
-            cellEditor.style.display = 'block';
-            cellEditor.style.left = (rect.left - containerRect.left + gridContainer.scrollLeft) + 'px';
-            cellEditor.style.top = (rect.top - containerRect.top + gridContainer.scrollTop) + 'px';
-            cellEditor.style.width = rect.width + 'px';
-            cellEditor.style.height = rect.height + 'px';
-            
-            var data = sheetData[id] || { v: '', s: {} };
-            cellEditor.value = data.v || '';
-            cellEditor.focus();
-            cellEditor.select();
-            isEditing = true;
-            
-            cellEditor.onblur = function() { saveEdit(r, c); isEditing = false; };
-            cellEditor.onkeydown = function(e) {
-                if (e.key === 'Enter') { e.preventDefault(); saveEdit(r, c); selectCell(Math.min(ROWS-1, r+1), c); }
-                else if (e.key === 'Tab') { e.preventDefault(); saveEdit(r, c); selectCell(r, Math.min(COLS-1, c+1)); }
-                else if (e.key === 'Escape') { cellEditor.style.display = 'none'; isEditing = false; }
-            };
-        }
-
-        function saveEdit(r, c) {
-            if (cellEditor.style.display === 'none') return;
-            var id = getCellId(r, c);
-            if (!sheetData[id]) sheetData[id] = { v: '', s: {} };
-            sheetData[id].v = cellEditor.value;
-            cellEditor.style.display = 'none';
-            renderCell(r, c);
-            saveData();
-            recalculateAll();
-        }
-
-        function applyFormulaBar() {
-            var id = getCellId(activeRow, activeCol);
-            if (!sheetData[id]) sheetData[id] = { v: '', s: {} };
-            sheetData[id].v = formulaBar.value;
-            renderCell(activeRow, activeCol);
-            saveData();
-            recalculateAll();
-            selectCell(Math.min(ROWS-1, activeRow+1), activeCol);
-        }
-
-        function renderCell(r, c) {
-            var id = getCellId(r, c);
-            var el = document.getElementById('cell_' + id);
-            if (!el) return;
-            
-            var contentDiv = el.querySelector('.cell-content');
-            if (!contentDiv) return;
-            
-            var data = sheetData[id] || { v: '', s: {} };
-            var style = data.s || {};
-            
-            el.style.fontWeight = style.fontWeight || 'normal';
-            el.style.fontStyle = style.fontStyle || 'normal';
-            el.style.textDecoration = style.textDecoration || 'none';
-            el.style.backgroundColor = style.backgroundColor || 'transparent';
-            el.style.color = style.color || '#333333';
-            el.style.textAlign = style.textAlign || 'left';
-            
-            var val = data.v;
-            if (val !== undefined && val !== '' && typeof val === 'string' && val.startsWith('=')) {
-                try {
-                    val = evalFormula(val.substring(1));
-                    if (typeof val === 'number' && isNaN(val)) val = '';
-                } catch (e) {
-                    val = '#ERROR!';
-                }
-            }
-            contentDiv.textContent = val;
-        }
-
-        function evalFormula(formula) {
-            formula = formula.replace(/SUM\(([^)]+)\)/gi, function(match, range) {
-                var parts = range.split(':');
-                return sumRange(parts[0], parts[1]);
-            });
-            formula = formula.replace(/([A-Z]+)([0-9]+)/g, function(match, col, row) {
-                var id = col + row;
-                if (sheetData[id] && sheetData[id].v !== undefined) {
-                    var val = sheetData[id].v;
-                    if (typeof val === 'string' && val.startsWith('=')) val = evalFormula(val.substring(1));
-                    return parseFloat(val) || 0;
-                }
-                return 0;
-            });
-            if (!/^[0-9+\-*/().\s]+$/.test(formula)) throw new Error("Invalid");
-            return Function('"use strict";return (' + formula + ')')();
-        }
-
-        function sumRange(start, end) {
-            var sM = start.match(/([A-Z]+)([0-9]+)/);
-            var eM = end.match(/([A-Z]+)([0-9]+)/);
-            if (!sM || !eM) return 0;
-            var sum = 0;
-            for (var r = parseInt(sM[2])-1; r < parseInt(eM[2]); r++) {
-                for (var c = sM[1].charCodeAt(0)-65; c <= eM[1].charCodeAt(0)-65; c++) {
-                    var id = String.fromCharCode(65+c) + (r+1);
-                    if (sheetData[id] && sheetData[id].v !== undefined) {
-                        var val = parseFloat(sheetData[id].v);
-                        if (!isNaN(val)) sum += val;
+        // --- Initialization ---
+        function init() {
+            try {
+                var saved = localStorage.getItem('posterC3llLogoPro');
+                if (saved) {
+                    var data = JSON.parse(saved);
+                    if (data && Array.isArray(data)) {
+                        elements = data;
+                        renderAllElements();
+                        if (data.canvasBg) setCanvasBg(data.canvasBg);
+                        saveHistory();
+                        return;
                     }
                 }
-            }
-            return sum;
+            } catch (e) { console.error("Corrupted logo data", e); }
+            loadTemplate();
         }
 
-        function recalculateAll() {
-            for (var r = 0; r < ROWS; r++) {
-                for (var c = 0; c < COLS; c++) {
-                    renderCell(r, c);
+        function renderAllElements() {
+            while (svgCanvas.firstChild && svgCanvas.firstChild !== boundingBox) {
+                svgCanvas.removeChild(svgCanvas.firstChild);
+            }
+            elements.forEach(function(el) {
+                createSvgNode(el);
+            });
+            selectElement(null);
+        }
+
+        function createSvgNode(el) {
+            var node;
+            if (el.type === 'rect') node = document.createElementNS(svgNS, 'rect');
+            else if (el.type === 'circle') node = document.createElementNS(svgNS, 'ellipse');
+            else if (el.type === 'text') node = document.createElementNS(svgNS, 'text');
+            else node = document.createElementNS(svgNS, 'polygon');
+            
+            svgCanvas.insertBefore(node, boundingBox);
+            el.node = node;
+            attachEvents(node, el.id);
+            renderElement(el);
+        }
+
+        function renderElement(el) {
+            var d = el.data;
+            var node = el.node;
+            if (!node) return;
+
+            var cx = d.x + d.w / 2;
+            var cy = d.y + d.h / 2;
+            
+            // Pro Transform: translate to center, rotate, scale(flip), translate back
+            var flipX = d.flipX ? -1 : 1;
+            var flipY = d.flipY ? -1 : 1;
+            var transform = 'translate(' + cx + ',' + cy + ') rotate(' + (d.rotation || 0) + ') scale(' + flipX + ',' + flipY + ') translate(' + (-cx) + ',' + (-cy) + ')';
+            node.setAttribute('transform', transform);
+            node.setAttribute('opacity', d.opacity !== undefined ? d.opacity : 1);
+
+            if (el.type === 'rect') {
+                node.setAttribute('x', d.x); node.setAttribute('y', d.y);
+                node.setAttribute('width', d.w); node.setAttribute('height', d.h);
+                node.setAttribute('rx', d.radius || 0);
+                node.setAttribute('fill', d.color);
+            } else if (el.type === 'circle') {
+                node.setAttribute('cx', cx); node.setAttribute('cy', cy);
+                node.setAttribute('rx', Math.max(1, d.w / 2)); node.setAttribute('ry', Math.max(1, d.h / 2));
+                node.setAttribute('fill', d.color);
+            } else if (el.type === 'text') {
+                node.setAttribute('x', cx); node.setAttribute('y', cy);
+                node.setAttribute('fill', d.color);
+                node.setAttribute('font-size', Math.max(8, d.h * 0.8));
+                node.setAttribute('font-family', 'Arial, sans-serif');
+                node.setAttribute('font-weight', 'bold');
+                node.setAttribute('font-style', d.italic ? 'italic' : 'normal');
+                node.setAttribute('text-anchor', 'middle');
+                node.setAttribute('dominant-baseline', 'central');
+                node.textContent = d.text;
+            } else if (el.type === 'triangle') {
+                node.setAttribute('points', cx + ',' + d.y + ' ' + d.x + ',' + (d.y + d.h) + ' ' + (d.x + d.w) + ',' + (d.y + d.h));
+                node.setAttribute('fill', d.color);
+            } else if (el.type === 'star') {
+                node.setAttribute('points', getStarPoints(cx, cy, Math.max(1, d.w/2), Math.max(1, d.w/4)));
+                node.setAttribute('fill', d.color);
+            } else if (el.type === 'line') {
+                node.setAttribute('points', d.x + ',' + cy + ' ' + (d.x + d.w) + ',' + cy);
+                node.setAttribute('stroke', d.color);
+                node.setAttribute('stroke-width', Math.max(1, d.h));
+                node.setAttribute('fill', 'none');
+                node.setAttribute('stroke-linecap', 'round');
+            }
+
+            if (el.type !== 'line' && el.type !== 'text') {
+                if (d.strokeWidth > 0) {
+                    node.setAttribute('stroke', d.strokeColor || '#000000');
+                    node.setAttribute('stroke-width', d.strokeWidth);
+                } else {
+                    node.removeAttribute('stroke');
                 }
             }
+
+            // Lock/Hide States
+            if (d.hidden) node.style.display = 'none';
+            if (d.locked) node.style.pointerEvents = 'none';
         }
 
-        function applyFormat(prop, val) {
-            var id = getCellId(activeRow, activeCol);
-            if (!sheetData[id]) sheetData[id] = { v: '', s: {} };
-            if (!sheetData[id].s) sheetData[id].s = {};
-            
-            // Toggle for bold/italic/underline
-            if (prop === 'fontWeight' || prop === 'fontStyle' || prop === 'textDecoration') {
-                sheetData[id].s[prop] = (sheetData[id].s[prop] === val) ? '' : val;
-            } else {
-                sheetData[id].s[prop] = val;
+        function getStarPoints(cx, cy, outerR, innerR) {
+            var points = '';
+            for (var i = 0; i < 10; i++) {
+                var r = i % 2 === 0 ? outerR : innerR;
+                var angle = (Math.PI / 5) * i - Math.PI / 2;
+                points += (cx + r * Math.cos(angle)) + ',' + (cy + r * Math.sin(angle)) + ' ';
             }
+            return points.trim();
+        }
+
+        // --- Add Elements ---
+        function addShape(type) {
+            var id = genId();
+            var data = { x: 200, y: 200, w: 100, h: 100, color: '#10b981', rotation: 0, opacity: 1, radius: 8, strokeWidth: 0, strokeColor: '#000000', flipX: false, flipY: false, locked: false, hidden: false };
+            if (type === 'line') data.h = 10;
+            if (type === 'circle') data.radius = 0;
             
-            renderCell(activeRow, activeCol);
-            saveData();
+            var el = { id: id, type: type, data: data };
+            elements.push(el);
+            createSvgNode(el);
+            selectElement(id);
+            saveLocal(); saveHistory();
         }
 
-        function saveData() {
-            localStorage.setItem('posterC3llData', JSON.stringify(sheetData));
+        function addText() {
+            var id = genId();
+            var data = { x: 150, y: 230, w: 200, h: 40, color: '#1f2937', text: 'Your Text', rotation: 0, opacity: 1, strokeWidth: 0, strokeColor: '#000000', italic: false, flipX: false, flipY: false, locked: false, hidden: false };
+            var el = { id: id, type: 'text', data: data };
+            elements.push(el);
+            createSvgNode(el);
+            selectElement(id);
+            saveLocal(); saveHistory();
         }
 
-        function loadData() {
-            var data = localStorage.getItem('posterC3llData');
-            if (data) {
-                try {
-                    sheetData = JSON.parse(data);
-                    recalculateAll();
-                } catch(e) {
-                    console.error("Data corrupted. Resetting.");
-                    localStorage.removeItem('posterC3llData');
-                    sheetData = {};
+        function duplicateElement(el) {
+            if (!el) return;
+            var newData = JSON.parse(JSON.stringify(el.data));
+            newData.x += 20; newData.y += 20;
+            newData.locked = false; newData.hidden = false; // Ensure clone is visible/editable
+            var newEl = { id: genId(), type: el.type, data: newData };
+            elements.push(newEl);
+            createSvgNode(newEl);
+            selectElement(newEl.id);
+            saveLocal(); saveHistory();
+        }
+
+        // --- Dragging & Pro Alt+Drag ---
+        function attachEvents(node, id) {
+            node.addEventListener('mousedown', function(e) {
+                e.stopPropagation();
+                var el = getElById(id);
+                if (!el || el.data.locked || el.data.hidden) return;
+
+                var targetEl = el;
+                if (e.altKey) {
+                    isDuplicating = true;
+                    targetEl = duplicateElement(el);
+                } else {
+                    selectElement(id);
                 }
-            }
+
+                isDragging = true;
+
+                var pt = svgCanvas.createSVGPoint();
+                pt.x = e.clientX; pt.y = e.clientY;
+                var svgP = pt.matrixTransform(svgCanvas.getScreenCTM().inverse());
+
+                dragOffset.x = svgP.x - targetEl.data.x;
+                dragOffset.y = svgP.y - targetEl.data.y;
+            });
         }
 
-        // Global Keyboard Navigation
-        document.addEventListener('keydown', function(e) {
-            if (isEditing || document.activeElement === formulaBar) return;
-            
-            var r = activeRow, c = activeCol;
-            var moved = false;
-            
-            if (e.key === 'ArrowRight') { c = Math.min(COLS-1, c+1); moved = true; }
-            else if (e.key === 'ArrowLeft') { c = Math.max(0, c-1); moved = true; }
-            else if (e.key === 'ArrowDown' || e.key === 'Enter') { r = Math.min(ROWS-1, r+1); moved = true; e.preventDefault(); }
-            else if (e.key === 'ArrowUp') { r = Math.max(0, r-1); moved = true; }
-            else if (e.key === 'Delete' || e.key === 'Backspace') {
-                var id = getCellId(r, c);
-                if (sheetData[id]) {
-                    sheetData[id].v = '';
-                    renderCell(r, c);
-                    saveData();
-                }
-                e.preventDefault();
-            } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
-                editCell(r, c);
-                cellEditor.value = e.key;
-                e.preventDefault();
-            }
-            
-            if (moved) {
-                selectCell(r, c);
-                e.preventDefault();
+        svgCanvas.addEventListener('mousedown', function(e) {
+            if (e.target === svgCanvas || e.target === boundingBox) {
+                selectElement(null);
             }
         });
 
-        // Initialize immediately
-        initGrid();
-        loadData();
+        window.addEventListener('mousemove', function(e) {
+            if (!isDragging || !selectedId) return;
+
+            var pt = svgCanvas.createSVGPoint();
+            pt.x = e.clientX; pt.y = e.clientY;
+            var svgP = pt.matrixTransform(svgCanvas.getScreenCTM().inverse());
+
+            var el = getElById(selectedId);
+            if (!el) return;
+
+            el.data.x = svgP.x - dragOffset.x;
+            el.data.y = svgP.y - dragOffset.y;
+            renderElement(el);
+            updateBoundingBox(el);
+            updatePropertiesUI(); 
+        });
+
+        window.addEventListener('mouseup', function() {
+            if (isDragging) { 
+                isDragging = false; 
+                isDuplicating = false;
+                saveLocal(); saveHistory(); 
+            }
+        });
+
+        // --- Selection & Properties ---
+        function getElById(id) { return elements.find(function(e) { return e.id === id; }); }
+
+        function selectElement(id) {
+            var el = id ? getElById(id) : null;
+            if (el && (el.data.locked || el.data.hidden)) {
+                selectedId = null;
+                boundingBox.style.display = 'none';
+                updatePropertiesUI();
+                return;
+            }
+
+            selectedId = id;
+            if (selectedId) {
+                updateBoundingBox(el);
+            } else {
+                boundingBox.style.display = 'none';
+            }
+            updatePropertiesUI();
+        }
+
+        function updateBoundingBox(el) {
+            if (!el) return;
+            boundingBox.style.display = 'block';
+            boundingBox.setAttribute('x', el.data.x - 2);
+            boundingBox.setAttribute('y', el.data.y - 2);
+            boundingBox.setAttribute('width', el.data.w + 4);
+            boundingBox.setAttribute('height', el.data.h + 4);
+            
+            var cx = el.data.x + el.data.w / 2;
+            var cy = el.data.y + el.data.h / 2;
+            var flipX = el.data.flipX ? -1 : 1;
+            var flipY = el.data.flipY ? -1 : 1;
+            var transform = 'translate(' + cx + ',' + cy + ') rotate(' + (el.data.rotation || 0) + ') scale(' + flipX + ',' + flipY + ') translate(' + (-cx) + ',' + (-cy) + ')';
+            boundingBox.setAttribute('transform', transform);
+        }
+
+        function updatePropertiesUI() {
+            var panel = document.getElementById('propertiesContent');
+            if (!selectedId) {
+                panel.innerHTML = '<p style="color: var(--text-muted); font-size: 14px; text-align: center; margin-top: 20px;">Select an element to edit it.<br><br>Hold <b>Alt</b> + Drag to duplicate.</p>';
+                return;
+            }
+
+            var el = getElById(selectedId);
+            var d = el.data;
+            var html = '';
+
+            if (el.type === 'text') {
+                html += '<div class="prop-group"><label>Text</label><input type="text" value="' + d.text + '" oninput="updateProp(\'text\', this.value)"></div>';
+                html += '<div class="row"><button class="btn-icon" onclick="toggleBoolProp(\'italic\')" style="' + (d.italic ? 'background:var(--highlight);border-color:var(--primary);color:var(--primary-dark);' : '') + '">𝐼 Italic</button></div>';
+            }
+
+            html += '<div class="prop-group"><label>Color</label><input type="color" value="' + d.color + '" oninput="updateProp(\'color\', this.value)"></div>';
+            
+            html += '<div class="row">';
+            html += '<div class="prop-group"><label>X</label><input type="number" value="' + Math.round(d.x) + '" oninput="updateProp(\'x\', parseFloat(this.value))"></div>';
+            html += '<div class="prop-group"><label>Y</label><input type="number" value="' + Math.round(d.y) + '" oninput="updateProp(\'y\', parseFloat(this.value))"></div>';
+            html += '</div>';
+
+            html += '<div class="row">';
+            html += '<div class="prop-group"><label>Width</label><input type="number" value="' + Math.round(d.w) + '" oninput="updateProp(\'w\', Math.max(10, parseFloat(this.value)))"></div>';
+            html += '<div class="prop-group"><label>Height</label><input type="number" value="' + Math.round(d.h) + '" oninput="updateProp(\'h\', Math.max(10, parseFloat(this.value)))"></div>';
+            html += '</div>';
+
+            if (el.type === 'rect') {
+                html += '<div class="prop-group"><label>Corner Radius (' + (d.radius || 0) + 'px)</label><input type="range" min="0" max="50" value="' + (d.radius || 0) + '" oninput="updateProp(\'radius\', parseFloat(this.value))"></div>';
+            }
+
+            html += '<div class="prop-group"><label>Rotation (' + Math.round(d.rotation || 0) + '°)</label><input type="range" min="0" max="360" value="' + (d.rotation || 0) + '" oninput="updateProp(\'rotation\', parseFloat(this.value))"></div>';
+            html += '<div class="prop-group"><label>Opacity (' + Math.round((d.opacity !== undefined ? d.opacity : 1) * 100) + '%)</label><input type="range" min="0" max="1" step="0.1" value="' + (d.opacity !== undefined ? d.opacity : 1) + '" oninput="updateProp(\'opacity\', parseFloat(this.value))"></div>';
+
+            if (el.type !== 'text' && el.type !== 'line') {
+                html += '<div class="row">';
+                html += '<div class="prop-group"><label>Border Color</label><input type="color" value="' + (d.strokeColor || '#000000') + '" oninput="updateProp(\'strokeColor\', this.value)"></div>';
+                html += '<div class="prop-group"><label>Border Width</label><input type="number" value="' + (d.strokeWidth || 0) + '" oninput="updateProp(\'strokeWidth\', Math.max(0, parseFloat(this.value)))"></div>';
+                html += '</div>';
+            }
+
+            // Pro Transform Buttons
+            html += '<div class="prop-group"><label>Transform</label><div class="row">';
+            html += '<button class="btn-icon" onclick="rotate90()" title="Rotate 90°">⟳</button>';
+            html += '<button class="btn-icon" onclick="toggleBoolProp(\'flipX\')" title="Flip Horizontal" style="' + (d.flipX ? 'background:var(--highlight);border-color:var(--primary);color:var(--primary-dark);' : '') + '">⇋</button>';
+            html += '<button class="btn-icon" onclick="toggleBoolProp(\'flipY\')" title="Flip Vertical" style="' + (d.flipY ? 'background:var(--highlight);border-color:var(--primary);color:var(--primary-dark);' : '') + '">⇵</button>';
+            html += '</div></div>';
+
+            html += '<div class="prop-group"><label>Align to Canvas</label><div class="row">';
+            html += '<button class="btn-icon" onclick="alignElement(\'left')" title="Align Left">⬅</button>';
+            html += '<button class="btn-icon" onclick="alignElement(\'center_h\')" title="Center Horizontally">↔</button>';
+            html += '<button class="btn-icon" onclick="alignElement(\'right\')" title="Align Right">➡</button>';
+            html += '</div></div>';
+            
+            html += '<div class="prop-group"><label>Layers & Visibility</label><div class="row">';
+            html += '<button class="btn-icon" onclick="toggleBoolProp(\'hidden\')" title="Hide Element" style="' + (d.hidden ? 'background:var(--highlight);border-color:var(--primary);color:var(--primary-dark);' : '') + '">👁</button>';
+            html += '<button class="btn-icon" onclick="toggleBoolProp(\'locked\')" title="Lock Element" style="' + (d.locked ? 'background:var(--highlight);border-color:var(--primary);color:var(--primary-dark);' : '') + '">🔒</button>';
+            html += '</div></div>';
+
+            html += '<div class="row"><button class="btn-icon" onclick="moveLayer(1)">Forwards</button><button class="btn-icon" onclick="moveLayer(-1)">Backwards</button></div>';
+
+            html += '<button class="btn delete-btn" onclick="deleteElement()">Delete Element</button>';
+            panel.innerHTML = html;
+        }
+
+        function updateProp(prop, val) {
+            var el = getElById(selectedId);
+            if (!el) return;
+            el.data[prop] = val;
+            renderElement(el);
+            updateBoundingBox(el);
+            if (prop === 'rotation' || prop === 'opacity' || prop === 'radius') updatePropertiesUI(); 
+            saveLocal();
+        }
+
+        function toggleBoolProp(prop) {
+            var el = getElById(selectedId);
+            if (!el) return;
+            el.data[prop] = !el.data[prop];
+            renderElement(el);
+            updateBoundingBox(el);
+            updatePropertiesUI();
+            saveLocal(); saveHistory();
+        }
+
+        function rotate90() {
+            var el = getElById(selectedId);
+            if (!el) return;
+            el.data.rotation = (el.data.rotation + 90) % 360;
+            renderElement(el);
+            updateBoundingBox(el);
+            updatePropertiesUI();
+            saveLocal(); saveHistory();
+        }
+
+        function alignElement(type) {
+            var el = getElById(selectedId);
+            if (!el) return;
+            if (type === 'left') el.data.x = 0;
+            else if (type === 'right') el.data.x = 500 - el.data.w;
+            else if (type === 'center_h') el.data.x = (500 - el.data.w) / 2;
+            
+            renderElement(el);
+            updateBoundingBox(el);
+            updatePropertiesUI();
+            saveLocal(); saveHistory();
+        }
+
+        function moveLayer(dir) {
+            var index = elements.findIndex(function(e) { return e.id === selectedId; });
+            if (index === -1) return;
+            var el = elements[index];
+            elements.splice(index, 1);
+            
+            var newIndex = index + dir;
+            if (newIndex < 0) newIndex = 0;
+            if (newIndex > elements.length) newIndex = elements.length;
+            
+            elements.splice(newIndex, 0, el);
+            renderAllElements();
+            selectElement(el.id);
+            saveLocal(); saveHistory();
+        }
+
+        function deleteElement() {
+            if (!selectedId) return;
+            var index = elements.findIndex(function(e) { return e.id === selectedId; });
+            if (index !== -1) {
+                var el = elements[index];
+                if (el.node) svgCanvas.removeChild(el.node);
+                elements.splice(index, 1);
+                selectElement(null);
+                saveLocal(); saveHistory();
+            }
+        }
+
+        // --- Canvas Actions ---
+        function setCanvasBg(color) {
+            document.getElementById('canvasWrapper').style.background = color;
+            document.getElementById('svgCanvas').style.backgroundImage = 'none';
+            document.getElementById('canvasBgPicker').value = color;
+            var data = elements.map(function(el) { return { id: el.id, type: el.type, data: el.data }; });
+            data.canvasBg = color;
+            localStorage.setItem('posterC3llLogoPro', JSON.stringify(data));
+        }
+
+        function clearCanvas() {
+            if (confirm("Clear all elements from the canvas?")) {
+                elements = [];
+                while (svgCanvas.firstChild && svgCanvas.firstChild !== boundingBox) {
+                    svgCanvas.removeChild(svgCanvas.firstChild);
+                }
+                selectElement(null);
+                saveLocal(); saveHistory();
+            }
+        }
+
+        function loadTemplate() {
+            elements = [
+                { id: genId(), type: 'circle', data: { x: 170, y: 100, w: 160, h: 160, color: '#10b981', rotation: 0, opacity: 1, strokeWidth: 0, flipX: false, flipY: false, locked: false, hidden: false } },
+                { id: genId(), type: 'text', data: { x: 100, y: 300, w: 300, h: 60, color: '#1f2937', text: 'POSTER', rotation: 0, opacity: 1, strokeWidth: 0, italic: false, flipX: false, flipY: false, locked: false, hidden: false } },
+                { id: genId(), type: 'text', data: { x: 100, y: 360, w: 300, h: 60, color: '#047857', text: 'C3LL', rotation: 0, opacity: 1, strokeWidth: 0, italic: false, flipX: false, flipY: false, locked: false, hidden: false } },
+                { id: genId(), type: 'rect', data: { x: 100, y: 430, w: 300, h: 4, color: '#10b981', rotation: 0, opacity: 1, radius: 2, strokeWidth: 0, flipX: false, flipY: false, locked: false, hidden: false } }
+            ];
+            renderAllElements();
+            saveLocal(); saveHistory();
+        }
+
+        // --- Exports ---
+        function getCleanSVGString() {
+            selectElement(null);
+            var clone = svgCanvas.cloneNode(true);
+            var bb = clone.querySelector('#boundingBox');
+            if (bb) clone.removeChild(bb);
+            
+            // Add background rect if set
+            var bg = document.getElementById('canvasWrapper').style.background;
+            if (bg && bg !== '#ffffff' && bg !== 'white') {
+                var bgRect = document.createElementNS(svgNS, 'rect');
+                bgRect.setAttribute('width', 500); bgRect.setAttribute('height', 500);
+                bgRect.setAttribute('fill', bg);
+                clone.insertBefore(bgRect, clone.firstChild);
+            }
+
+            var serializer = new XMLSerializer();
+            var svgString = serializer.serializeToString(clone);
+            if (!svgString.startsWith('<?xml')) {
+                svgString = '<?xml version="1.0" encoding="UTF-8"?>\n' + svgString;
+            }
+            return svgString;
+        }
+
+        function exportSVG() {
+            var svgString = getCleanSVGString();
+            var blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url; a.download = "PosterC3ll_Logo.svg";
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function exportPNG() {
+            var svgString = getCleanSVGString();
+            var blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+            var url = URL.createObjectURL(blob);
+            
+            var img = new Image();
+            img.onload = function() {
+                var canvas = document.createElement('canvas');
+                canvas.width = 1000; canvas.height = 1000;
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, 1000, 1000);
+                
+                canvas.toBlob(function(pngBlob) {
+                    var pngUrl = URL.createObjectURL(pngBlob);
+                    var a = document.createElement('a');
+                    a.href = pngUrl; a.download = "PosterC3ll_Logo.png";
+                    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                    URL.revokeObjectURL(pngUrl);
+                    URL.revokeObjectURL(url);
+                }, 'image/png');
+            };
+            img.src = url;
+        }
+
+        // --- Undo / Redo ---
+        function saveHistory() {
+            history = history.slice(0, historyIndex + 1);
+            var cleanData = elements.map(function(el) { return { id: el.id, type: el.type, data: el.data }; });
+            cleanData.canvasBg = document.getElementById('canvasBgPicker').value;
+            history.push(JSON.stringify(cleanData));
+            if (history.length > 50) history.shift();
+            historyIndex = history.length - 1;
+        }
+
+        function undo() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                var data = JSON.parse(history[historyIndex]);
+                elements = data;
+                if (data.canvasBg) setCanvasBg(data.canvasBg);
+                renderAllElements();
+                saveLocal();
+            }
+        }
+
+        function redo() {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                var data = JSON.parse(history[historyIndex]);
+                elements = data;
+                if (data.canvasBg) setCanvasBg(data.canvasBg);
+                renderAllElements();
+                saveLocal();
+            }
+        }
+
+        // --- Save / Load ---
+        function saveLocal() {
+            var cleanData = elements.map(function(el) { return { id: el.id, type: el.type, data: el.data }; });
+            cleanData.canvasBg = document.getElementById('canvasBgPicker').value;
+            localStorage.setItem('posterC3llLogoPro', JSON.stringify(cleanData));
+        }
+
+        // --- Pro Keyboard Shortcuts ---
+        document.addEventListener('keydown', function(e) {
+            if (document.activeElement.tagName === 'INPUT') return;
+            var isCtrl = e.ctrlKey || e.metaKey;
+
+            if (isCtrl && e.key === 'z') { e.preventDefault(); undo(); return; }
+            if (isCtrl && e.key === 'y') { e.preventDefault(); redo(); return; }
+            if (isCtrl && e.key === 'd') { e.preventDefault(); if(selectedId) duplicateElement(getElById(selectedId)); return; }
+            if (isCtrl && e.key === ']') { e.preventDefault(); moveLayer(1); return; }
+            if (isCtrl && e.key === '[') { e.preventDefault(); moveLayer(-1); return; }
+
+            if (!selectedId) return;
+
+            if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); deleteElement(); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); updateProp('y', getElById(selectedId).data.y - (e.shiftKey ? 10 : 1)); }
+            else if (e.key === 'ArrowDown') { e.preventDefault(); updateProp('y', getElById(selectedId).data.y + (e.shiftKey ? 10 : 1)); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); updateProp('x', getElById(selectedId).data.x - (e.shiftKey ? 10 : 1)); }
+            else if (e.key === 'ArrowRight') { e.preventDefault(); updateProp('x', getElById(selectedId).data.x + (e.shiftKey ? 10 : 1)); }
+        });
+
+        init();
     </script>
 </body>
 </html>
