@@ -1,25 +1,13 @@
 {
-  "name": "postersuite",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "poster5ync",
+  "version": "2.0.0",
+  "description": "Open source, account-free collaborative document editor",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/leewilliamsphotography-beep/Postersuite.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/leewilliamsphotography-beep/Postersuite/issues"
-  },
-  "homepage": "https://github.com/leewilliamsphotography-beep/Postersuite#readme",
   "dependencies": {
-    "express": "^5.2.1",
-    "socket.io": "^4.8.3"
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2"
   }
 }

@@ -33,7 +33,7 @@ io.on('connection', (socket) => {
         }
     });
 
-    // When a user edits the poster
+    // When a user edits the document
     socket.on('save-doc', (data) => {
         documents[data.docId] = data.doc;
         // Broadcast to everyone else viewing the same URL
@@ -47,5 +47,5 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`Poster5ync is running on http://localhost:${3000}`);
+    console.log(`Poster5ync is running on http://localhost:${PORT}`);
 });
