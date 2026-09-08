@@ -79,7 +79,6 @@
         .card p { color: var(--ink2); line-height: 1.6; margin-bottom: 24px; flex-grow: 1; font-size: 0.95rem; }
         .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 1.1rem; padding: 16px 24px; border-radius: 12px; text-decoration: none; transition: background 0.2s; cursor: pointer; border: none; width: 100%; }
         .btn-a11y { background: var(--accent-a11y); color: #fff; } .card:hover .btn-a11y { background: #B23E17; } .btn-design { background: var(--accent-design); color: #fff; } .card:hover .btn-design { background: #1d4ed8; } .btn-quick { background: var(--accent-quick); color: #fff; } .card:hover .btn-quick { background: #0e9c6b; } .btn-sync { background: var(--accent-sync); color: #fff; } .card:hover .btn-sync { background: #7C3AED; } .btn-cell { background: var(--accent-cell); color: #fff; } .card:hover .btn-cell { background: #047857; } .btn-pr3s { background: var(--accent-pr3s); color: #fff; } .card:hover .btn-pr3s { background: #D97706; } .btn-c4l { background: var(--accent-c4l); color: #fff; } .card:hover .btn-c4l { background: #0891B2; } .btn-f0rm { background: var(--accent-f0rm); color: #fff; } .card:hover .btn-f0rm { background: #BE123C; } .btn-qr { background: var(--accent-qr); color: #fff; } .card:hover .btn-qr { background: #334155; }
-        .quick-print-card { max-width: 100%; flex-basis: 100%; border-style: dashed; } .quick-print-card .card-header { margin-top: 0; }
         .kb-hint { text-align: center; color: var(--ink2); font-size: 0.85rem; margin-bottom: 40px; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
         kbd { background: var(--surface); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; padding: 2px 8px; font-family: monospace; font-size: 0.9rem; color: var(--ink); }
         footer { text-align: center; padding: 24px; background: var(--surface); border-top: 1px solid var(--line); color: var(--ink2); font-size: 0.9rem; }
@@ -108,19 +107,6 @@
         .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--ink); color: var(--paper); padding: 12px 24px; border-radius: 999px; font-weight: 600; z-index: 300; transition: transform 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
-        #blankPrintArea { display: none; flex-direction: column; width: 210mm; height: 297mm; padding: 15mm; background: #fff; box-sizing: border-box; color: #1A1D21; }
-        .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #1A1D21; padding-bottom: 15px; margin-bottom: 20px; }
-        .print-logo-group { display: flex; gap: 12px; align-items: center; }
-        .print-logo-group svg { width: 40px; height: 40px; }
-        .print-title-box { flex: 1; margin-left: 20px; border: 2px dashed #50545C; border-radius: 8px; height: 50px; }
-        .print-sub-box { width: 40%; border: 2px dashed #50545C; border-radius: 8px; height: 35px; margin-bottom: 25px; align-self: flex-end; }
-        .print-img-box { width: 100%; height: 100px; border: 2px dashed #50545C; border-radius: 8px; margin-bottom: 30px; }
-        .print-lines { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .p-line { border-bottom: 2px solid #1A1D21; height: 40px; position: relative; }
-        .p-line::after { content: ''; position: absolute; left: 0; right: 0; top: 20px; border-bottom: 1.5px dotted #94a3b8; }
-        .print-footer { margin-top: 30px; border-top: 2px solid #1A1D21; height: 20px; }
-
-        @media print { @page { size: A4 portrait; margin: 0; } body * { visibility: hidden; } #blankPrintArea, #blankPrintArea * { visibility: visible; } #blankPrintArea { display: flex !important; position: absolute; left: 0; top: 0; width: 210mm; height: 297mm; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }
         @media (max-width: 600px) { header { padding: 12px 16px; } .logo span { display: none; } nav { gap: 12px; } nav a, nav button { font-size: 0.85rem; } .nav-text { display: none; } .hero h1 { font-size: 2.2rem; } .footer-links { flex-direction: column; gap: 8px; } }
     </style>
 </head>
@@ -278,7 +264,7 @@
             <button class="btn btn-sync" onclick="event.stopPropagation(); openApp('poster5ync.html', 'sync');">Launch Text Editor</button>
         </div>
 
-        <!-- 4. PosterC3ll Card (Updated to Logo Maker) -->
+        <!-- 4. PosterC3ll Card (Logo Maker) -->
         <div class="card" tabindex="0" role="button" onclick="openApp('posterc3ll.html', 'cell')" onkeydown="if(event.key==='Enter')openApp('posterc3ll.html', 'cell')">
             <span id="resumeBadge_cell" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
             <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('posterc3ll.html');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
@@ -426,19 +412,6 @@
             <p>A utility tool to bridge physical and digital. Paste a link to instantly generate a high-contrast, accessible QR code poster for care home signage and notices.</p>
             <button class="btn btn-qr" onclick="event.stopPropagation(); openApp('posterqr.html', 'qr');">Launch QR Generator</button>
         </div>
-
-        <!-- 9. Quick Print Card -->
-        <div class="card quick-print-card" tabindex="0" role="button" onclick="quickPrintBlank()" onkeydown="if(event.key==='Enter')quickPrintBlank()">
-            <div class="card-header">
-                <div class="card-icon icon-quick">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent-quick)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-                </div>
-                <div class="title-group"><h2>Quick Print Blank Template</h2></div>
-            </div>
-            <span class="tag tag-quick">Best for: Handwritten Rush Notices</span>
-            <p>Need to handwrite a notice right now? Click here to instantly print a beautifully structured A4 worksheet with handwriting guidelines, title boxes, and image areas. No designer needed.</p>
-            <button class="btn btn-quick" onclick="event.stopPropagation(); quickPrintBlank();">Print Blank A4 Sheet</button>
-        </div>
     </div>
 
     <div class="kb-hint">
@@ -451,7 +424,6 @@
         <span><kbd>6</kbd> C4l</span>
         <span><kbd>7</kbd> F0rm</span>
         <span><kbd>8</kbd> QR</span>
-        <span><kbd>9</kbd> Quick Print</span>
     </div>
 
     <footer>
@@ -461,23 +433,6 @@
             <a href="mailto:leewilliamswork2029@gmail.com?subject=Poster%20Suite%20Feedback&body=Hi%20Lee%2C%0A%0AI%27ve%20been%20using%20Poster%20Suite%20and%20I%20wanted%20to%20share%20some%20feedback%3A%0A%0A">Contact & Feedback</a>
         </div>
     </footer>
-
-    <!-- Hidden Printable Area -->
-    <div id="blankPrintArea">
-        <div class="print-header">
-            <div class="print-logo-group">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="40" height="40"><defs><linearGradient id="pbg" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.55" stop-color="#F2F6FB"/><stop offset="1" stop-color="#E3EAF4"/></linearGradient><radialGradient id="ppin" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FF9BB5"/><stop offset="1" stop-color="#E13A66"/></radialGradient></defs><rect width="120" height="120" rx="26" fill="url(#pbg)"/><rect x="32" y="41" width="56" height="64" rx="8" fill="#FFFFFF" stroke="#1B2A4A" stroke-width="2"/><circle cx="60" cy="69" r="19" fill="#EAF1FA"/><g fill="none" stroke="#1B2A4A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M51.5 61 L60 68 L68.5 61"/><path d="M60 63.5 L60 74.5"/><path d="M54 84 L60 74.5 L66 84"/></g><circle cx="60" cy="57.5" r="5" fill="#1B2A4A"/><circle cx="60" cy="21" r="6.5" fill="url(#ppin)"/></svg>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="40" height="40"><defs><linearGradient id="dbg" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F8FAFC"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient><radialGradient id="dpin" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FF8A65"/><stop offset="1" stop-color="#D14C1E"/></radialGradient></defs><rect width="120" height="120" rx="28" fill="url(#dbg)"/><rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" stroke="#1A1D21" stroke-width="2"/><circle cx="60" cy="62" r="16" fill="#F1F5F9"/><path d="M53 62 L58 68 L68 56" fill="none" stroke="#D14C1E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="60" cy="20" r="7" fill="url(#dpin)"/></svg>
-            </div>
-            <div class="print-title-box"></div>
-        </div>
-        <div class="print-sub-box"></div>
-        <div class="print-img-box"></div>
-        <div class="print-lines">
-            <div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div><div class="p-line"></div>
-        </div>
-        <div class="print-footer"></div>
-    </div>
 
     <!-- Welcome Modal -->
     <div id="welcomeOverlay" class="modal-overlay" onclick="closeModal(event, 'welcomeOverlay')">
@@ -556,7 +511,7 @@
                 <li><b>PosterQR (v1.0):</b> An instant, high-contrast QR code generator.</li>
                 <li><b>PosterC3ll Update:</b> Transformed into a fully-fledged Logo Maker!</li>
                 <li><b>Theme Sync:</b> Dark Mode and Calm Mode now carry over into the apps automatically.</li>
-                <li><b>Keyboard Shortcuts:</b> Press 1 through 9 to launch tools instantly.</li>
+                <li><b>Keyboard Shortcuts:</b> Press 1 through 8 to launch tools instantly.</li>
             </ul>
             <button class="btn btn-sync" style="margin-top: 10px;" onclick="closeModal(false, 'whatsNewOverlay')">Close</button>
         </div>
@@ -615,7 +570,6 @@
             document.getElementById('appOverlay').style.display = 'none';
             document.body.style.overflow = 'auto';
         }
-        function quickPrintBlank() { window.print(); }
         function openModal(id) {
             document.getElementById(id).classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -646,10 +600,9 @@
             if (e.key === '6') openApp('posterc4l.html', 'c4l');
             if (e.key === '7') openApp('posterf0rm.html', 'f0rm');
             if (e.key === '8') openApp('posterqr.html', 'qr');
-            if (e.key === '9') quickPrintBlank();
         });
 
-        const CURRENT_VERSION = '2.1'; // Bumped for PosterC3ll update
+        const CURRENT_VERSION = '2.1'; 
         function openWhatsNew() {
             openModal('whatsNewOverlay');
             localStorage.setItem('postersuite-seen-version', CURRENT_VERSION);
