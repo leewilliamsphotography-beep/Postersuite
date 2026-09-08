@@ -6,252 +6,114 @@
     <title>PosterC3ll - Open Source Spreadsheet</title>
     <style>
         :root {
-            /* Colors extracted from your SVG logo */
             --pc-bg: #F0FDF4;
             --pc-surface: #FFFFFF;
             --pc-primary: #10B981;
             --pc-primary-dark: #047857;
-            --pc-border: #E5E7EB;
+            --pc-border: #D1D5DB;
+            --pc-border-light: #E5E7EB;
             --pc-text: #1A1D21;
             --pc-text-muted: #6B7280;
             --pc-highlight: #ECFDF5;
+            --pc-ribbon-bg: #F9FAFB;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
 
-        body {
-            background-color: var(--pc-bg);
-            color: var(--pc-text);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+        body { background-color: var(--pc-bg); color: var(--pc-text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
         /* --- Navbar --- */
-        .navbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.5rem 1rem;
-            background-color: var(--pc-surface);
-            border-bottom: 1px solid var(--pc-border);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            z-index: 10;
-        }
+        .navbar { display: flex; align-items: center; justify-content: space-between; padding: 0.4rem 1rem; background-color: var(--pc-surface); border-bottom: 1px solid var(--pc-border-light); box-shadow: 0 1px 3px rgba(0,0,0,0.05); z-index: 10; }
+        .nav-left { display: flex; align-items: center; gap: 1rem; }
+        .logo { width: 32px; height: 32px; }
+        .brand-name { font-size: 1.2rem; font-weight: 700; color: var(--pc-primary-dark); }
+        .nav-actions { display: flex; gap: 0.5rem; }
+        
+        /* --- Buttons --- */
+        .btn { background-color: var(--pc-surface); color: var(--pc-text); border: 1px solid var(--pc-border); padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: all 0.15s ease; display: flex; align-items: center; gap: 0.4rem; }
+        .btn:hover { background-color: var(--pc-highlight); border-color: var(--pc-primary); color: var(--pc-primary-dark); }
+        .btn-primary { background-color: var(--pc-primary); color: white; border: none; }
+        .btn-primary:hover { background-color: var(--pc-primary-dark); color: white; }
+        .btn-ribbon { padding: 0.3rem 0.5rem; font-size: 0.8rem; border: none; background: transparent; border-radius: 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--pc-text); }
+        .btn-ribbon:hover { background-color: var(--pc-highlight); border: 1px solid var(--pc-border-light); padding: calc(0.3rem - 1px) calc(0.5rem - 1px); /* offset for border */ }
+        .btn-ribbon.active { background-color: var(--pc-highlight); border: 1px solid var(--pc-primary); padding: calc(0.3rem - 1px) calc(0.5rem - 1px); }
+        .btn-ribbon i { font-size: 1.1rem; }
+        .btn-ribbon span { font-size: 0.7rem; }
 
-        .nav-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
+        /* --- Excel-like Ribbon --- */
+        .ribbon { display: flex; align-items: stretch; gap: 0; padding: 0.2rem 1rem; background-color: var(--pc-ribbon-bg); border-bottom: 1px solid var(--pc-border); overflow-x: auto; }
+        .ribbon-group { display: flex; flex-direction: column; padding: 0.2rem 0.5rem; border-right: 1px solid var(--pc-border-light); }
+        .ribbon-group-content { display: flex; gap: 0.2rem; align-items: center; flex: 1; }
+        .ribbon-group-label { text-align: center; font-size: 0.65rem; color: var(--pc-text-muted); margin-top: 0.2rem; }
+        .separator { width: 1px; background-color: var(--pc-border); margin: 0 0.5rem; }
 
-        .logo {
-            width: 32px;
-            height: 32px;
-        }
-
-        .brand-name {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--pc-primary-dark);
-        }
-
-        .nav-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .btn {
-            background-color: var(--pc-surface);
-            color: var(--pc-text);
-            border: 1px solid var(--pc-border);
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .btn:hover {
-            background-color: var(--pc-highlight);
-            border-color: var(--pc-primary);
-            color: var(--pc-primary-dark);
-        }
-
-        .btn-primary {
-            background-color: var(--pc-primary);
-            color: white;
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--pc-primary-dark);
-            color: white;
-        }
-
-        /* --- Toolbar --- */
-        .toolbar {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background-color: var(--pc-surface);
-            border-bottom: 1px solid var(--pc-border);
-        }
-
-        .toolbar input[type="text"] {
-            border: 1px solid var(--pc-border);
-            padding: 0.4rem;
-            border-radius: 4px;
-            width: 60px;
-            text-align: center;
-            font-weight: bold;
-            color: var(--pc-primary-dark);
-            background-color: var(--pc-highlight);
-        }
-
-        .formula-bar {
-            flex: 1;
-            border: 1px solid var(--pc-border);
-            padding: 0.4rem;
-            border-radius: 4px;
-            font-family: monospace;
-        }
-
-        .formula-bar:focus {
-            outline: none;
-            border-color: var(--pc-primary);
-            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
-        }
+        /* --- Toolbar (Formula Bar) --- */
+        .toolbar { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 1rem; background-color: var(--pc-surface); border-bottom: 1px solid var(--pc-border); }
+        .name-box { border: 1px solid var(--pc-border); padding: 0.35rem; border-radius: 4px; width: 80px; text-align: center; font-weight: bold; font-size: 0.8rem; color: var(--pc-primary-dark); background-color: var(--pc-highlight); }
+        .fx-label { font-style: italic; font-weight: bold; color: var(--pc-text-muted); font-family: serif; }
+        .formula-bar { flex: 1; border: 1px solid var(--pc-border); padding: 0.35rem; border-radius: 4px; font-family: monospace; font-size: 0.9rem; }
+        .formula-bar:focus { outline: none; border-color: var(--pc-primary); box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); }
 
         /* --- Grid Container --- */
-        .grid-wrapper {
-            flex: 1;
-            overflow: auto;
-            position: relative;
-            background-color: var(--pc-surface);
-        }
+        .grid-wrapper { flex: 1; overflow: auto; position: relative; background-color: var(--pc-surface); }
+        table { border-collapse: collapse; width: max-content; table-layout: fixed; }
+        th, td { border: 1px solid var(--pc-border); padding: 0; margin: 0; position: relative; }
+        
+        /* Headers */
+        th.corner { width: 40px; height: 24px; background-color: var(--pc-ribbon-bg); position: sticky; top: 0; left: 0; z-index: 3; border-right: 1px solid var(--pc-border); border-bottom: 1px solid var(--pc-border); }
+        th.col-header { min-width: 100px; width: 100px; height: 24px; background-color: var(--pc-ribbon-bg); color: var(--pc-text-muted); font-weight: 500; font-size: 0.75rem; position: sticky; top: 0; z-index: 2; text-align: center; cursor: pointer; user-select: none; }
+        th.row-header { width: 40px; background-color: var(--pc-ribbon-bg); color: var(--pc-text-muted); font-weight: 500; font-size: 0.75rem; position: sticky; left: 0; z-index: 2; text-align: center; padding: 4px 0; cursor: pointer; user-select: none; }
 
-        table {
-            border-collapse: collapse;
-            width: max-content;
-            table-layout: fixed;
-        }
+        /* Resizing Handles */
+        .col-resizer { width: 4px; height: 100%; position: absolute; right: 0; top: 0; cursor: col-resize; z-index: 4; }
+        .col-resizer:hover, .col-resizer.active { background-color: var(--pc-primary); }
 
-        th, td {
-            border: 1px solid var(--pc-border);
-            padding: 0;
-            margin: 0;
-        }
+        /* Cells */
+        td.cell { height: 24px; background-color: var(--pc-surface); overflow: hidden; }
+        .cell-content { width: 100%; height: 100%; padding: 2px 4px; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: clip; display: flex; align-items: center; }
+        
+        /* Active Cell */
+        .active-cell { outline: 2px solid var(--pc-primary); outline-offset: -2px; z-index: 1; }
+        .row-header.active, .col-header.active { background-color: var(--pc-primary); color: white; }
+        
+        /* Selected Range */
+        .selected-range { background-color: rgba(16, 185, 129, 0.1) !important; }
 
-        /* Corner cell */
-        th.corner {
-            width: 40px;
-            height: 28px;
-            background-color: var(--pc-highlight);
-            position: sticky;
-            top: 0;
-            left: 0;
-            z-index: 3;
-        }
+        /* Hidden input for typing */
+        .hidden-input { position: absolute; border: none; outline: 2px solid var(--pc-primary); padding: 1px 3px; font-size: 0.85rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: none; z-index: 5; background: white; }
 
-        /* Column headers (A, B, C...) */
-        th.col-header {
-            width: 100px;
-            height: 28px;
-            background-color: var(--pc-highlight);
-            color: var(--pc-text-muted);
-            font-weight: 600;
-            font-size: 0.8rem;
-            position: sticky;
-            top: 0;
-            z-index: 2;
-            text-align: center;
-        }
+        /* --- Context Menu --- */
+        .context-menu { position: fixed; background: white; border: 1px solid var(--pc-border); border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 100; min-width: 180px; display: none; }
+        .context-menu button { display: block; width: 100%; text-align: left; padding: 0.5rem 1rem; border: none; background: transparent; font-size: 0.85rem; cursor: pointer; }
+        .context-menu button:hover { background-color: var(--pc-highlight); color: var(--pc-primary-dark); }
+        .context-menu hr { border: 0; border-top: 1px solid var(--pc-border-light); margin: 0.2rem 0; }
 
-        /* Row headers (1, 2, 3...) */
-        th.row-header {
-            width: 40px;
-            background-color: var(--pc-highlight);
-            color: var(--pc-text-muted);
-            font-weight: 600;
-            font-size: 0.8rem;
-            position: sticky;
-            left: 0;
-            z-index: 2;
-            text-align: center;
-            padding: 4px 0;
-        }
+        /* --- Sheet Tabs --- */
+        .sheet-tabs { display: flex; align-items: center; gap: 0.2rem; padding: 0.2rem 1rem; background-color: var(--pc-ribbon-bg); border-top: 1px solid var(--pc-border); }
+        .tab { padding: 0.3rem 0.8rem; font-size: 0.8rem; border: 1px solid transparent; border-radius: 4px 4px 0 0; cursor: pointer; color: var(--pc-text-muted); }
+        .tab.active { background-color: white; border: 1px solid var(--pc-border); border-bottom: none; color: var(--pc-primary-dark); font-weight: 600; }
+        .add-tab { cursor: pointer; color: var(--pc-primary); font-size: 1.2rem; padding: 0 0.5rem; }
 
-        /* Data cells */
-        td.cell {
-            height: 26px;
-            width: 100px;
-            background-color: var(--pc-surface);
-        }
-
-        .cell-input {
-            width: 100%;
-            height: 100%;
-            border: none;
-            padding: 0 4px;
-            font-size: 0.875rem;
-            background-color: transparent;
-            outline: none;
-        }
-
-        /* Active Cell Styling */
-        .active-cell {
-            border: 2px solid var(--pc-primary);
-            box-shadow: inset 0 0 0 1px white;
-        }
-
-        .row-header.active, .col-header.active {
-            background-color: var(--pc-primary);
-            color: white;
-        }
-
-        /* Footer */
-        .footer {
-            padding: 0.3rem 1rem;
-            background-color: var(--pc-surface);
-            border-top: 1px solid var(--pc-border);
-            font-size: 0.75rem;
-            color: var(--pc-text-muted);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .save-indicator {
-            color: var(--pc-primary-dark);
-            font-weight: 600;
-        }
-
+        /* --- Modal (Insert/Delete) --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 200; }
+        .modal { background: white; padding: 1.5rem; border-radius: 8px; width: 300px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .modal h3 { margin-bottom: 1rem; color: var(--pc-primary-dark); }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem; }
+        .modal label { display: flex; align-items: center; gap: 0.5rem; margin: 0.5rem 0; font-size: 0.9rem; cursor: pointer; }
     </style>
+    <!-- Using Lucide icons for the Ribbon -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
-    <!-- Embedded SVG Logo -->
+    <!-- Embedded SVG Logo Defs -->
     <svg width="0" height="0" style="position:absolute;">
         <defs>
             <linearGradient id="cbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
-                <stop offset="0" stop-color="#FFFFFF"/>
-                <stop offset="0.5" stop-color="#F0FDF4"/>
-                <stop offset="1" stop-color="#DCFCE7"/>
+                <stop offset="0" stop-color="#FFFFFF"/> <stop offset="0.5" stop-color="#F0FDF4"/> <stop offset="1" stop-color="#DCFCE7"/>
             </linearGradient>
             <radialGradient id="cpinGrad" cx="0.35" cy="0.3" r="0.8">
-                <stop offset="0" stop-color="#6EE7B7"/>
-                <stop offset="1" stop-color="#10B981"/>
+                <stop offset="0" stop-color="#6EE7B7"/> <stop offset="1" stop-color="#10B981"/>
             </radialGradient>
             <filter id="cshadow" x="-20%" y="-20%" width="140%" height="140%">
                 <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/>
@@ -262,264 +124,582 @@
     <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-left">
-            <!-- SVG injected here via JS to keep HTML clean, but directly embedded for simplicity -->
             <svg class="logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-                <rect width="120" height="120" rx="28" fill="url(#cbgGrad)"/>
-                <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
-                <path d="M38 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>
-                <path d="M82 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>
-                <circle cx="38" cy="42" r="2.5" fill="#10B981"/>
-                <circle cx="82" cy="42" r="2.5" fill="#10B981"/>
-                <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#cshadow)"/>
-                <circle cx="60" cy="62" r="16" fill="#ECFDF5"/>
-                <g fill="none" stroke="#047857" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="51" y="53" width="18" height="18" rx="2"/>
-                    <line x1="51" y1="59" x2="69" y2="59"/>
-                    <line x1="51" y1="65" x2="69" y2="65"/>
-                    <line x1="57" y1="53" x2="57" y2="71"/>
-                    <line x1="63" y1="53" x2="63" y2="71"/>
-                </g>
-                <rect x="57" y="59" width="6" height="6" fill="#047857" stroke="none"/>
-                <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/>
-                <rect x="48" y="94" width="24" height="5" rx="2.5" fill="#10B981"/>
-                <circle cx="60" cy="20" r="7" fill="url(#cpinGrad)" filter="url(#cshadow)"/>
-                <circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
+                <rect width="120" height="120" rx="28" fill="url(#cbgGrad)"/> <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/> <path d="M38 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/> <path d="M82 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/> <circle cx="38" cy="42" r="2.5" fill="#10B981"/> <circle cx="82" cy="42" r="2.5" fill="#10B981"/> <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#cshadow)"/> <circle cx="60" cy="62" r="16" fill="#ECFDF5"/> <g fill="none" stroke="#047857" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"> <rect x="51" y="53" width="18" height="18" rx="2"/> <line x1="51" y1="59" x2="69" y2="59"/> <line x1="51" y1="65" x2="69" y2="65"/> <line x1="57" y1="53" x2="57" y2="71"/> <line x1="63" y1="53" x2="63" y2="71"/> </g> <rect x="57" y="59" width="6" height="6" fill="#047857" stroke="none"/> <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/> <rect x="48" y="94" width="24" height="5" rx="2.5" fill="#10B981"/> <circle cx="60" cy="20" r="7" fill="url(#cpinGrad)" filter="url(#cshadow)"/> <circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
             </svg>
             <span class="brand-name">PosterC3ll</span>
         </div>
         <div class="nav-actions">
-            <button class="btn" id="btnOpen">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V8.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z"/></svg>
-                Open
-            </button>
-            <button class="btn btn-primary" id="btnSave">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M11.5 1a.5.5 0 0 1 0 1h-4a.5.5 0 0 1 0-1zM3.71 4.46a.5.5 0 0 1 .708 0L8 8.043l3.582-3.583a.5.5 0 1 1 .708.708L8.707 8.75a.5.5 0 0 1-.708 0L3.71 5.168a.5.5 0 0 1 0-.708z"/><path d="M.5 12a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V12.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V12.5a.5.5 0 0 1 .5-.5z"/></svg>
-                Save to Device
-            </button>
+            <button class="btn" id="btnOpen"> Open </button>
+            <button class="btn btn-primary" id="btnSave"> Save to Device </button>
             <input type="file" id="fileInput" accept=".json" style="display:none">
         </div>
     </nav>
 
-    <!-- Toolbar -->
+    <!-- Excel-like Ribbon -->
+    <div class="ribbon">
+        <!-- Font Group -->
+        <div class="ribbon-group">
+            <div class="ribbon-group-content">
+                <button class="btn-ribbon" id="btn-bold"><i data-lucide="bold"></i><span>Bold</span></button>
+                <button class="btn-ribbon" id="btn-italic"><i data-lucide="italic"></i><span>Italic</span></button>
+                <button class="btn-ribbon" id="btn-underline"><i data-lucide="underline"></i><span>Underline</span></button>
+                <div class="separator"></div>
+                <input type="color" id="fontColor" value="#1A1D21" style="width: 30px; height: 30px; border: none; cursor: pointer;" title="Font Color">
+                <input type="color" id="bgColor" value="#FFFFFF" style="width: 30px; height: 30px; border: none; cursor: pointer;" title="Fill Color">
+            </div>
+            <div class="ribbon-group-label">Font</div>
+        </div>
+
+        <!-- Alignment Group -->
+        <div class="ribbon-group">
+            <div class="ribbon-group-content">
+                <button class="btn-ribbon active" id="btn-align-left" data-align="left"><i data-lucide="align-left"></i><span>Left</span></button>
+                <button class="btn-ribbon" id="btn-align-center" data-align="center"><i data-lucide="align-center"></i><span>Center</span></button>
+                <button class="btn-ribbon" id="btn-align-right" data-align="right"><i data-lucide="align-right"></i><span>Right</span></button>
+            </div>
+            <div class="ribbon-group-label">Alignment</div>
+        </div>
+
+        <!-- Number Group -->
+        <div class="ribbon-group">
+            <div class="ribbon-group-content">
+                <button class="btn-ribbon" id="btn-currency"><i data-lucide="dollar-sign"></i><span>Currency</span></button>
+                <button class="btn-ribbon" id="btn-percent"><i data-lucide="percent"></i><span>Percent</span></button>
+            </div>
+            <div class="ribbon-group-label">Number</div>
+        </div>
+        
+        <!-- Cells Group -->
+        <div class="ribbon-group">
+            <div class="ribbon-group-content">
+                <button class="btn-ribbon" id="btn-insert"><i data-lucide="insert"></i><span>Insert</span></button>
+                <button class="btn-ribbon" id="btn-delete"><i data-lucide="trash-2"></i><span>Delete</span></button>
+            </div>
+            <div class="ribbon-group-label">Cells</div>
+        </div>
+    </div>
+
+    <!-- Formula Toolbar -->
     <div class="toolbar">
-        <input type="text" id="activeCellDisplay" value="A1" readonly>
-        <input type="text" class="formula-bar" id="formulaBar" placeholder="Enter value or formula...">
+        <div class="name-box" id="activeCellDisplay">A1</div>
+        <span class="fx-label">fx</span>
+        <input type="text" class="formula-bar" id="formulaBar" placeholder="Enter value or formula (e.g., =A1+B1 or =SUM(A1:A3))">
     </div>
 
     <!-- Grid -->
     <div class="grid-wrapper" id="gridWrapper">
-        <table id="spreadsheet">
-            <!-- Grid generated by JavaScript -->
-        </table>
+        <table id="spreadsheet"></table>
+        <input type="text" class="hidden-input" id="cellEditor">
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <span>Open Source & Account-Free</span>
-        <span class="save-indicator" id="saveStatus">Auto-saved locally</span>
-    </footer>
+    <!-- Sheet Tabs -->
+    <div class="sheet-tabs">
+        <div class="tab active">Sheet1</div>
+        <div class="add-tab">+</div>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <button id="ctx-insert-cells">Insert Cells...</button>
+        <button id="ctx-delete-cells">Delete Cells...</button>
+        <hr>
+        <button id="ctx-clear-content">Clear Contents</button>
+        <button id="ctx-format-bold">Toggle Bold</button>
+    </div>
+
+    <!-- Insert/Delete Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h3 id="modalTitle">Insert</h3>
+            <label><input type="radio" name="dir" value="row" checked> Entire Row</label>
+            <label><input type="radio" name="dir" value="col"> Entire Column</label>
+            <div class="modal-actions">
+                <button class="btn" id="modalCancel">Cancel</button>
+                <button class="btn btn-primary" id="modalConfirm">OK</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // --- Configuration ---
+        lucide.createIcons();
+        
+        // --- Configuration & State ---
         const ROWS = 50;
         const COLS = 26; // A-Z
-        
-        // --- State Management (Account-Free Local Storage) ---
-        let sheetData = {};
+        let sheetData = {}; // "A1": { v: "Hello", s: { b: true, i: false, u: false, bg: "#fff", c: "#000", a: "left", fmt: "currency" } }
         let activeCell = { row: 0, col: 0 };
+        let selectedRange = { startRow: 0, startCol: 0, endRow: 0, endCol: 0 };
+        let isSelecting = false;
+        let currentModalAction = null; // 'insert' or 'delete'
 
-        // Load from local storage on startup
+        // Load from local storage
         const savedLocal = localStorage.getItem('posterC3llData');
         if (savedLocal) {
-            try {
-                sheetData = JSON.parse(savedLocal);
-            } catch (e) {
-                console.error("Failed to load local data", e);
-            }
+            try { sheetData = JSON.parse(savedLocal); } catch (e) { console.error("Failed to load local data", e); }
         }
 
-        // --- Grid Generation ---
+        // --- DOM Elements ---
         const table = document.getElementById('spreadsheet');
+        const cellEditor = document.getElementById('cellEditor');
+        const formulaBar = document.getElementById('formulaBar');
 
+        // --- Grid Generation ---
         function createGrid() {
             let html = '<tr><th class="corner"></th>';
-            
-            // Column Headers (A, B, C...)
             for (let c = 0; c < COLS; c++) {
-                html += `<th class="col-header" id="col-${c}">${String.fromCharCode(65 + c)}</th>`;
+                const width = sheetData._colWidths?.[c] || 100;
+                html += `<th class="col-header" data-col="${c}" style="min-width:${width}px; width:${width}px;">${String.fromCharCode(65 + c)}<div class="col-resizer" data-col="${c}"></div></th>`;
             }
             html += '</tr>';
 
-            // Rows
             for (let r = 0; r < ROWS; r++) {
-                html += `<tr><th class="row-header" id="row-${r}">${r + 1}</th>`;
-                
+                html += `<tr><th class="row-header" data-row="${r}">${r + 1}</th>`;
                 for (let c = 0; c < COLS; c++) {
                     const cellId = `${String.fromCharCode(65 + c)}${r + 1}`;
-                    const value = sheetData[cellId] || '';
-                    html += `
-                        <td class="cell" data-row="${r}" data-col="${c}">
-                            <input type="text" class="cell-input" data-cell-id="${cellId}" value="${value}" />
-                        </td>
-                    `;
+                    const cellData = sheetData[cellId] || {};
+                    const styleStr = getCellStyleString(cellData.s || {});
+                    const displayValue = getCellDisplayValue(cellId, cellData);
+                    
+                    html += `<td class="cell" data-row="${r}" data-col="${c}" data-id="${cellId}">
+                                 <div class="cell-content" style="${styleStr}">${displayValue}</div>
+                             </td>`;
                 }
                 html += '</tr>';
             }
-
             table.innerHTML = html;
-            attachCellListeners();
-            updateActiveCellDisplay();
+            attachGridListeners();
+            updateActiveCellUI();
         }
 
-        // --- Cell Interactions ---
-        function attachCellListeners() {
-            const inputs = document.querySelectorAll('.cell-input');
-            
-            inputs.forEach(input => {
-                input.addEventListener('focus', (e) => {
-                    const td = e.target.parentElement;
-                    activeCell = {
-                        row: parseInt(td.dataset.row),
-                        col: parseInt(td.dataset.col)
-                    };
-                    updateActiveCellDisplay();
-                    document.getElementById('formulaBar').value = e.target.value;
-                });
-
-                input.addEventListener('input', (e) => {
-                    const cellId = e.target.dataset.cellId;
-                    sheetData[cellId] = e.target.value;
-                    if (activeCell.row == e.target.parentElement.dataset.row && activeCell.col == e.target.parentElement.dataset.col) {
-                         document.getElementById('formulaBar').value = e.target.value;
-                    }
-                    saveLocally();
-                });
-
-                // Prevent navigation keys from doing weird things
-                input.addEventListener('keydown', handleKeyNavigation);
-            });
+        // --- Styling & Value Resolution ---
+        function getCellStyleString(s) {
+            let str = '';
+            if (s.b) str += 'font-weight:bold; ';
+            if (s.i) str += 'font-style:italic; ';
+            if (s.u) str += 'text-decoration:underline; ';
+            if (s.bg) str += `background-color:${s.bg}; `;
+            if (s.c) str += `color:${s.c}; `;
+            if (s.a) str += `justify-content:${s.a}; `;
+            return str;
         }
 
-        function updateActiveCellDisplay() {
-            // Remove previous active classes
-            document.querySelectorAll('.active-cell, .active').forEach(el => {
-                el.classList.remove('active-cell', 'active');
-            });
-
-            const cellId = `${String.fromCharCode(65 + activeCell.col)}${activeCell.row + 1}`;
-            document.getElementById('activeCellDisplay').value = cellId;
+        function getCellDisplayValue(id, data) {
+            if (!data.v) return '';
+            let val = data.v;
             
-            const activeInput = document.querySelector(`[data-cell-id="${cellId}"]`);
-            if (activeInput) {
-                activeInput.parentElement.classList.add('active-cell');
-                document.getElementById(`col-${activeCell.col}`).classList.add('active');
-                document.getElementById(`row-${activeCell.row}`).classList.add('active');
+            // Formula evaluation
+            if (typeof val === 'string' && val.startsWith('=')) {
+                try {
+                    val = evaluateFormula(val.substring(1));
+                    if (isNaN(val)) return '';
+                    if (data.s && data.s.fmt === 'currency') return `$${parseFloat(val).toFixed(2)}`;
+                    if (data.s && data.s.fmt === 'percent') return `${(parseFloat(val) * 100).toFixed(0)}%`;
+                } catch (e) {
+                    return '#ERROR!';
+                }
             }
+            if (data.s && data.s.fmt === 'currency' && !isNaN(val)) return `$${parseFloat(val).toFixed(2)}`;
+            if (data.s && data.s.fmt === 'percent' && !isNaN(val)) return `${(parseFloat(val) * 100).toFixed(0)}%`;
+            return val;
+        }
+
+        // --- Basic Formula Engine ---
+        function evaluateFormula(formula) {
+            // 1. Handle SUM(A1:B2)
+            formula = formula.replace(/SUM\(([^)]+)\)/gi, (match, rangeStr) => {
+                const [start, end] = rangeStr.split(':');
+                return sumRange(start, end);
+            });
+
+            // 2. Replace cell references (A1, B2) with their numeric values
+            formula = formula.replace(/([A-Z]+[0-9]+)/g, (match, cellId) => {
+                const cellData = sheetData[cellId.toUpperCase()];
+                if (!cellData || !cellData.v) return '0';
+                let val = cellData.v;
+                if (typeof val === 'string' && val.startsWith('=')) val = evaluateFormula(val.substring(1));
+                return parseFloat(val) || 0;
+            });
+
+            // 3. Evaluate the math string safely
+            if (!/^[0-9+\-*/().\s]+$/.test(formula)) throw new Error("Invalid characters");
+            return Function('"use strict";return (' + formula + ')')();
+        }
+
+        function sumRange(start, end) {
+            const startMatch = start.match(/([A-Z]+)([0-9]+)/);
+            const endMatch = end.match(/([A-Z]+)([0-9]+)/);
+            if (!startMatch || !endMatch) return 0;
+
+            const startCol = startMatch[1].charCodeAt(0) - 65;
+            const startRow = parseInt(startMatch[2]) - 1;
+            const endCol = endMatch[1].charCodeAt(0) - 65;
+            const endRow = parseInt(endMatch[2]) - 1;
+
+            let sum = 0;
+            for (let r = startRow; r <= endRow; r++) {
+                for (let c = startCol; c <= endCol; c++) {
+                    const id = `${String.fromCharCode(65 + c)}${r + 1}`;
+                    const val = sheetData[id]?.v;
+                    if (val && !isNaN(val)) sum += parseFloat(val);
+                }
+            }
+            return sum;
+        }
+
+        // --- Listeners & Interactions ---
+        function attachGridListeners() {
+            document.querySelectorAll('.cell').forEach(td => {
+                td.addEventListener('mousedown', (e) => {
+                    if (e.button === 2) return; // Right click handled separately
+                    isSelecting = true;
+                    activeCell = { row: parseInt(td.dataset.row), col: parseInt(td.dataset.col) };
+                    selectedRange = { ...activeCell, endRow: activeCell.row, endCol: activeCell.col };
+                    updateSelectionUI();
+                    updateActiveCellUI();
+                    formulaBar.value = sheetData[td.dataset.id]?.v || '';
+                });
+                td.addEventListener('mouseenter', (e) => {
+                    if (isSelecting) {
+                        selectedRange.endRow = parseInt(td.dataset.row);
+                        selectedRange.endCol = parseInt(td.dataset.col);
+                        updateSelectionUI();
+                    }
+                });
+                td.addEventListener('dblclick', (e) => startEditing(td));
+                td.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    activeCell = { row: parseInt(td.dataset.row), col: parseInt(td.dataset.col) };
+                    updateActiveCellUI();
+                    showContextMenu(e.clientX, e.clientY);
+                });
+            });
+
+            document.querySelectorAll('.col-resizer').forEach(handle => {
+                handle.addEventListener('mousedown', startColResize);
+            });
+
+            document.addEventListener('mouseup', () => {
+                isSelecting = false;
+                if (cellEditor.style.display !== 'none') return;
+            });
+            
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('#contextMenu') && !e.target.closest('.cell')) {
+                    document.getElementById('contextMenu').style.display = 'none';
+                }
+            });
+        }
+
+        function startEditing(td) {
+            const rect = td.getBoundingClientRect();
+            const gridRect = document.getElementById('gridWrapper').getBoundingClientRect();
+            
+            cellEditor.style.display = 'block';
+            cellEditor.style.left = `${rect.left - gridRect.left + gridWrapper.scrollLeft}px`;
+            cellEditor.style.top = `${rect.top - gridRect.top + gridWrapper.scrollTop}px`;
+            cellEditor.style.width = `${rect.width}px`;
+            cellEditor.style.height = `${rect.height}px`;
+            
+            const cellId = td.dataset.id;
+            cellEditor.value = sheetData[cellId]?.v || '';
+            cellEditor.focus();
+            cellEditor.select();
+
+            cellEditor.onblur = () => saveCellEdit(td);
+            cellEditor.onkeydown = (e) => {
+                if (e.key === 'Enter') { e.preventDefault(); saveCellEdit(td); moveActiveCell(1, 0); }
+                else if (e.key === 'Tab') { e.preventDefault(); saveCellEdit(td); moveActiveCell(0, 1); }
+                else if (e.key === 'Escape') { cellEditor.style.display = 'none'; }
+            };
+        }
+
+        function saveCellEdit(td) {
+            if (cellEditor.style.display === 'none') return;
+            const cellId = td.dataset.id;
+            if (!sheetData[cellId]) sheetData[cellId] = { s: {} };
+            sheetData[cellId].v = cellEditor.value;
+            cellEditor.style.display = 'none';
+            saveLocally();
+            recalculateAndRender();
+        }
+
+        function moveActiveCell(rOffset, cOffset) {
+            activeCell.row = Math.min(ROWS - 1, Math.max(0, activeCell.row + rOffset));
+            activeCell.col = Math.min(COLS - 1, Math.max(0, activeCell.col + cOffset));
+            selectedRange = { ...activeCell, endRow: activeCell.row, endCol: activeCell.col };
+            updateSelectionUI();
+            updateActiveCellUI();
+            const id = `${String.fromCharCode(65 + activeCell.col)}${activeCell.row + 1}`;
+            formulaBar.value = sheetData[id]?.v || '';
+        }
+
+        // --- UI Updates ---
+        function updateSelectionUI() {
+            document.querySelectorAll('.selected-range').forEach(el => el.classList.remove('selected-range'));
+            const minR = Math.min(selectedRange.startRow, selectedRange.endRow);
+            const maxR = Math.max(selectedRange.startRow, selectedRange.endRow);
+            const minC = Math.min(selectedRange.startCol, selectedRange.endCol);
+            const maxC = Math.max(selectedRange.startCol, selectedRange.endCol);
+            
+            for (let r = minR; r <= maxR; r++) {
+                for (let c = minC; c <= maxC; c++) {
+                    const td = document.querySelector(`td[data-row="${r}"][data-col="${c}"]`);
+                    if (td) td.classList.add('selected-range');
+                }
+            }
+        }
+
+        function updateActiveCellUI() {
+            document.querySelectorAll('.active-cell, .active').forEach(el => el.classList.remove('active-cell', 'active'));
+            const cellId = `${String.fromCharCode(65 + activeCell.col)}${activeCell.row + 1}`;
+            document.getElementById('activeCellDisplay').textContent = cellId;
+            
+            const activeTd = document.querySelector(`td[data-row="${activeCell.row}"][data-col="${activeCell.col}"]`);
+            if (activeTd) {
+                activeTd.classList.add('active-cell');
+                document.querySelector(`th.row-header[data-row="${activeCell.row}"]`)?.classList.add('active');
+                document.querySelector(`th.col-header[data-col="${activeCell.col}"]`)?.classList.add('active');
+            }
+        }
+
+        function recalculateAndRender() {
+            // Only update content to prevent losing scroll state
+            document.querySelectorAll('.cell').forEach(td => {
+                const id = td.dataset.id;
+                const data = sheetData[id] || {};
+                const contentDiv = td.querySelector('.cell-content');
+                contentDiv.style.cssText = getCellStyleString(data.s || {});
+                contentDiv.textContent = getCellDisplayValue(id, data);
+            });
+        }
+
+        // --- Ribbon Actions ---
+        function applyStyle(styleKey, value) {
+            const minR = Math.min(selectedRange.startRow, selectedRange.endRow);
+            const maxR = Math.max(selectedRange.startRow, selectedRange.endRow);
+            const minC = Math.min(selectedRange.startCol, selectedRange.endCol);
+            const maxC = Math.max(selectedRange.startCol, selectedRange.endCol);
+
+            for (let r = minR; r <= maxR; r++) {
+                for (let c = minC; c <= maxC; c++) {
+                    const id = `${String.fromCharCode(65 + c)}${r + 1}`;
+                    if (!sheetData[id]) sheetData[id] = { v: '', s: {} };
+                    if (!sheetData[id].s) sheetData[id].s = {};
+                    sheetData[id].s[styleKey] = value;
+                }
+            }
+            saveLocally();
+            recalculateAndRender();
+        }
+
+        document.getElementById('btn-bold').onclick = () => applyStyle('b', true);
+        document.getElementById('btn-italic').onclick = () => applyStyle('i', true);
+        document.getElementById('btn-underline').onclick = () => applyStyle('u', true);
+        document.getElementById('fontColor').oninput = (e) => applyStyle('c', e.target.value);
+        document.getElementById('bgColor').oninput = (e) => applyStyle('bg', e.target.value);
+        
+        document.querySelectorAll('[id^="btn-align-"]').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('[id^="btn-align-"]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                applyStyle('a', btn.dataset.align);
+            };
+        });
+
+        document.getElementById('btn-currency').onclick = () => applyStyle('fmt', 'currency');
+        document.getElementById('btn-percent').onclick = () => applyStyle('fmt', 'percent');
+
+        // --- Context Menu ---
+        function showContextMenu(x, y) {
+            const menu = document.getElementById('contextMenu');
+            menu.style.display = 'block';
+            menu.style.left = `${x}px`;
+            menu.style.top = `${y}px`;
+        }
+        document.getElementById('ctx-clear-content').onclick = () => {
+            applyStyle('v', ''); // Hack to clear, better implementation would delete key
+            const minR = Math.min(selectedRange.startRow, selectedRange.endRow);
+            const maxR = Math.max(selectedRange.startRow, selectedRange.endRow);
+            const minC = Math.min(selectedRange.startCol, selectedRange.endCol);
+            const maxC = Math.max(selectedRange.startCol, selectedRange.endCol);
+            for (let r = minR; r <= maxR; r++) for (let c = minC; c <= maxC; c++) {
+                delete sheetData[`${String.fromCharCode(65 + c)}${r + 1}`].v;
+            }
+            document.getElementById('contextMenu').style.display = 'none';
+            recalculateAndRender();
+            saveLocally();
+        };
+
+        // --- Insert/Delete Rows & Cols ---
+        document.getElementById('btn-insert').onclick = () => openModal('insert');
+        document.getElementById('btn-delete').onclick = () => openModal('delete');
+        document.getElementById('ctx-insert-cells').onclick = () => openModal('insert');
+        document.getElementById('ctx-delete-cells').onclick = () => openModal('delete');
+
+        function openModal(action) {
+            currentModalAction = action;
+            document.getElementById('modalTitle').textContent = action === 'insert' ? 'Insert' : 'Delete';
+            document.getElementById('modalOverlay').style.display = 'flex';
+            document.getElementById('contextMenu').style.display = 'none';
+        }
+
+        document.getElementById('modalCancel').onclick = () => document.getElementById('modalOverlay').style.display = 'none';
+        document.getElementById('modalConfirm').onclick = () => {
+            const dir = document.querySelector('input[name="dir"]:checked').value;
+            if (currentModalAction === 'insert') insertRowOrCol(dir);
+            else deleteRowOrCol(dir);
+            document.getElementById('modalOverlay').style.display = 'none';
+        };
+
+        function insertRowOrCol(dir) {
+            if (dir === 'row') {
+                // Shift all rows down
+                for (let r = ROWS - 1; r > activeCell.row; r--) {
+                    for (let c = 0; c < COLS; c++) {
+                        const oldId = `${String.fromCharCode(65 + c)}${r}`;
+                        const newId = `${String.fromCharCode(65 + c)}${r + 1}`;
+                        if (sheetData[oldId]) sheetData[newId] = sheetData[oldId];
+                    }
+                }
+                // Clear current row
+                for (let c = 0; c < COLS; c++) delete sheetData[`${String.fromCharCode(65 + c)}${activeCell.row + 1}`];
+            } else {
+                for (let c = COLS - 1; c > activeCell.col; c--) {
+                    for (let r = 0; r < ROWS; r++) {
+                        const oldId = `${String.fromCharCode(64 + c)}${r + 1}`; // 64 because 65 is A. If c=2 (C), we want B.
+                        const newId = `${String.fromCharCode(65 + c)}${r + 1}`;
+                        if (sheetData[oldId]) sheetData[newId] = sheetData[oldId];
+                    }
+                }
+                for (let r = 0; r < ROWS; r++) delete sheetData[`${String.fromCharCode(65 + activeCell.col)}${r + 1}`];
+            }
+            saveLocally();
+            createGrid();
+        }
+
+        function deleteRowOrCol(dir) {
+            if (dir === 'row') {
+                for (let r = activeCell.row; r < ROWS - 1; r++) {
+                    for (let c = 0; c < COLS; c++) {
+                        const nextId = `${String.fromCharCode(65 + c)}${r + 2}`;
+                        const currId = `${String.fromCharCode(65 + c)}${r + 1}`;
+                        if (sheetData[nextId]) sheetData[currId] = sheetData[nextId];
+                        else delete sheetData[currId];
+                    }
+                }
+            } else {
+                for (let c = activeCell.col; c < COLS - 1; c++) {
+                    for (let r = 0; r < ROWS; r++) {
+                        const nextId = `${String.fromCharCode(66 + c)}${r + 1}`; // 66 is B
+                        const currId = `${String.fromCharCode(65 + c)}${r + 1}`;
+                        if (sheetData[nextId]) sheetData[currId] = sheetData[nextId];
+                        else delete sheetData[currId];
+                    }
+                }
+            }
+            saveLocally();
+            createGrid();
+        }
+
+        // --- Column Resizing ---
+        function startColResize(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            const handle = e.target;
+            handle.classList.add('active');
+            const startX = e.clientX;
+            const colIdx = parseInt(handle.dataset.col);
+            const th = document.querySelector(`th.col-header[data-col="${colIdx}"]`);
+            const startWidth = th.offsetWidth;
+
+            function onMouseMove(moveEvent) {
+                const newWidth = Math.max(40, startWidth + (moveEvent.clientX - startX));
+                th.style.minWidth = `${newWidth}px`;
+                th.style.width = `${newWidth}px`;
+            }
+            function onMouseUp() {
+                handle.classList.remove('active');
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+                if (!sheetData._colWidths) sheetData._colWidths = {};
+                sheetData._colWidths[colIdx] = th.offsetWidth;
+                saveLocally();
+            }
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
         }
 
         // --- Formula Bar Sync ---
-        document.getElementById('formulaBar').addEventListener('input', (e) => {
-            const cellId = `${String.fromCharCode(65 + activeCell.col)}${activeCell.row + 1}`;
-            const activeInput = document.querySelector(`[data-cell-id="${cellId}"]`);
-            if (activeInput) {
-                activeInput.value = e.target.value;
-                sheetData[cellId] = e.target.value;
+        formulaBar.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const cellId = `${String.fromCharCode(65 + activeCell.col)}${activeCell.row + 1}`;
+                if (!sheetData[cellId]) sheetData[cellId] = { s: {} };
+                sheetData[cellId].v = formulaBar.value;
                 saveLocally();
+                recalculateAndRender();
+                moveActiveCell(1, 0);
             }
         });
 
-        // --- Keyboard Navigation (Arrow keys, Tab, Enter) ---
-        function handleKeyNavigation(e) {
-            const currentRow = activeCell.row;
-            const currentCol = activeCell.col;
-            let nextRow = currentRow;
-            let nextCol = currentCol;
-
-            if (e.key === 'ArrowRight' && e.target.selectionStart === e.target.value.length) {
-                nextCol = Math.min(COLS - 1, currentCol + 1);
-            } else if (e.key === 'ArrowLeft' && e.target.selectionStart === 0) {
-                nextCol = Math.max(0, currentCol - 1);
-            } else if (e.key === 'ArrowDown') {
-                nextRow = Math.min(ROWS - 1, currentRow + 1);
-            } else if (e.key === 'ArrowUp') {
-                nextRow = Math.max(0, currentRow - 1);
-            } else if (e.key === 'Enter') {
-                e.preventDefault();
-                nextRow = Math.min(ROWS - 1, currentRow + 1);
-            } else if (e.key === 'Tab') {
-                e.preventDefault();
-                nextCol = e.shiftKey ? Math.max(0, currentCol - 1) : Math.min(COLS - 1, currentCol + 1);
-            } else {
-                return; // Don't intercept normal typing
-            }
-
-            if (nextRow !== currentRow || nextCol !== currentCol) {
-                e.preventDefault();
-                activeCell = { row: nextRow, col: nextCol };
-                const nextCellId = `${String.fromCharCode(65 + nextCol)}${nextRow + 1}`;
-                const nextInput = document.querySelector(`[data-cell-id="${nextCellId}"]`);
-                if (nextInput) {
-                    nextInput.focus();
-                    nextInput.select();
+        // --- Keyboard Nav ---
+        document.addEventListener('keydown', (e) => {
+            if (cellEditor.style.display === 'block' || document.activeElement === formulaBar) return;
+            if (e.key === 'ArrowRight') moveActiveCell(0, 1);
+            else if (e.key === 'ArrowLeft') moveActiveCell(0, -1);
+            else if (e.key === 'ArrowDown' || e.key === 'Enter') { e.preventDefault(); moveActiveCell(1, 0); }
+            else if (e.key === 'ArrowUp') moveActiveCell(-1, 0);
+            else if (e.key === 'Delete' || e.key === 'Backspace') {
+                document.getElementById('ctx-clear-content').click();
+            } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+                // Start typing immediately
+                const td = document.querySelector(`td[data-row="${activeCell.row}"][data-col="${activeCell.col}"]`);
+                if (td) {
+                    startEditing(td);
+                    cellEditor.value = e.key;
+                    // place cursor at end
+                    setTimeout(() => { cellEditor.setSelectionRange(cellEditor.value.length, cellEditor.value.length); }, 0);
                 }
-                updateActiveCellDisplay();
             }
-        }
+        });
 
-        // --- Account-Free Saving Mechanisms ---
-
-        // 1. Auto-save to Local Storage
+        // --- Account-Free Saving ---
         let saveTimeout;
         function saveLocally() {
             clearTimeout(saveTimeout);
-            document.getElementById('saveStatus').textContent = 'Saving...';
-            
             saveTimeout = setTimeout(() => {
                 localStorage.setItem('posterC3llData', JSON.stringify(sheetData));
-                document.getElementById('saveStatus').textContent = 'Auto-saved locally';
-            }, 500);
+            }, 300);
         }
 
-        // 2. Save to Device as JSON File
         document.getElementById('btnSave').addEventListener('click', () => {
             const dataStr = JSON.stringify(sheetData, null, 2);
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
-            
             const a = document.createElement('a');
-            a.href = url;
-            a.download = "PosterC3ll-Sheet.json";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            a.href = url; a.download = "PosterC3ll-Sheet.json";
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
             URL.revokeObjectURL(url);
         });
 
-        // 3. Open from Device
-        document.getElementById('btnOpen').addEventListener('click', () => {
-            document.getElementById('fileInput').click();
-        });
-
+        document.getElementById('btnOpen').addEventListener('click', () => document.getElementById('fileInput').click());
         document.getElementById('fileInput').addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = (event) => {
                 try {
                     sheetData = JSON.parse(event.target.result);
                     localStorage.setItem('posterC3llData', JSON.stringify(sheetData));
-                    createGrid(); // Rebuild grid with new data
+                    createGrid();
                     alert("PosterC3ll sheet loaded successfully!");
-                } catch (err) {
-                    alert("Invalid PosterC3ll file format.");
-                }
+                } catch (err) { alert("Invalid PosterC3ll file format."); }
             };
             reader.readAsText(file);
-            e.target.value = ''; // Reset input
+            e.target.value = '';
         });
 
-        // Initialize the app
+        // --- Init ---
         createGrid();
     </script>
 </body>
