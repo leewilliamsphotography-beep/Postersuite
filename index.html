@@ -16,11 +16,13 @@
             --accent-a11y: #D14C1E; --accent-design: #2563EB; --accent-quick: #10B981;
             --accent-sync: #8B5CF6; --accent-cell: #059669; --accent-pr3s: #F59E0B;
             --accent-c4l: #06B6D4; --accent-f0rm: #E11D48; --accent-qr: #475569;
+            --accent-m1nd: #4F46E5; /* Indigo for PosterM1nd */
             --focus: #2563EB; --hero-glow: rgba(139, 92, 246, 0.05);
         }
         body.dark-mode {
             --paper: #121212; --surface: #1E1E1E; --ink: #E8E8E8; --ink2: #A0A0A0;
             --line: #333333; --line2: #262626; --hero-glow: rgba(139, 92, 246, 0.15);
+            --accent-m1nd: #818CF8;
         }
         body.calm-mode {
             --paper: #F7F7F2; --surface: #FFFFFF; --ink: #595959; --ink2: #8c8c8c;
@@ -28,6 +30,7 @@
             --accent-a11y: #C8825E; --accent-design: #7C9CB8; --accent-quick: #6BAE8E;
             --accent-sync: #A98BE0; --accent-cell: #6BAE8E; --accent-pr3s: #D3A76A;
             --accent-c4l: #6CBFCB; --accent-f0rm: #C97B89; --accent-qr: #7A8896;
+            --accent-m1nd: #8A86C4;
             --hero-glow: transparent;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Lexend', sans-serif; }
@@ -70,15 +73,15 @@
         .resume-badge svg { width: 12px; height: 12px; }
         .card-header { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; margin-top: 20px; }
         .card-icon { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center; flex-shrink: 0; overflow: hidden; }
-        .icon-a11y, .icon-design, .icon-quick, .icon-sync, .icon-cell, .icon-pr3s, .icon-c4l, .icon-f0rm, .icon-qr { background: transparent; padding: 0; }
+        .icon-a11y, .icon-design, .icon-quick, .icon-sync, .icon-cell, .icon-pr3s, .icon-c4l, .icon-f0rm, .icon-qr, .icon-m1nd { background: transparent; padding: 0; }
         .title-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .card h2 { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.6rem; color: var(--ink); }
         .version-badge { font-size: 0.7rem; font-weight: 700; color: var(--ink2); background: var(--line2); padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line); line-height: 1; }
         .tag { display: inline-block; font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; margin-bottom: 16px; width: fit-content; }
-        .tag-a11y { background: rgba(209, 76, 30, 0.15); color: var(--accent-a11y); } .tag-design { background: rgba(37, 99, 235, 0.15); color: var(--accent-design); } .tag-quick { background: rgba(16, 185, 129, 0.15); color: var(--accent-quick); } .tag-sync { background: rgba(139, 92, 246, 0.15); color: var(--accent-sync); } .tag-cell { background: rgba(5, 150, 105, 0.15); color: var(--accent-cell); } .tag-pr3s { background: rgba(245, 158, 11, 0.15); color: var(--accent-pr3s); } .tag-c4l { background: rgba(6, 182, 212, 0.15); color: var(--accent-c4l); } .tag-f0rm { background: rgba(225, 29, 72, 0.15); color: var(--accent-f0rm); } .tag-qr { background: rgba(71, 85, 105, 0.15); color: var(--accent-qr); }
+        .tag-a11y { background: rgba(209, 76, 30, 0.15); color: var(--accent-a11y); } .tag-design { background: rgba(37, 99, 235, 0.15); color: var(--accent-design); } .tag-quick { background: rgba(16, 185, 129, 0.15); color: var(--accent-quick); } .tag-sync { background: rgba(139, 92, 246, 0.15); color: var(--accent-sync); } .tag-cell { background: rgba(5, 150, 105, 0.15); color: var(--accent-cell); } .tag-pr3s { background: rgba(245, 158, 11, 0.15); color: var(--accent-pr3s); } .tag-c4l { background: rgba(6, 182, 212, 0.15); color: var(--accent-c4l); } .tag-f0rm { background: rgba(225, 29, 72, 0.15); color: var(--accent-f0rm); } .tag-qr { background: rgba(71, 85, 105, 0.15); color: var(--accent-qr); } .tag-m1nd { background: rgba(79, 70, 229, 0.15); color: var(--accent-m1nd); }
         .card p { color: var(--ink2); line-height: 1.6; margin-bottom: 24px; flex-grow: 1; font-size: 0.95rem; }
         .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 1.1rem; padding: 16px 24px; border-radius: 12px; text-decoration: none; transition: background 0.2s; cursor: pointer; border: none; width: 100%; }
-        .btn-a11y { background: var(--accent-a11y); color: #fff; } .card:hover .btn-a11y { background: #B23E17; } .btn-design { background: var(--accent-design); color: #fff; } .card:hover .btn-design { background: #1d4ed8; } .btn-quick { background: var(--accent-quick); color: #fff; } .card:hover .btn-quick { background: #0e9c6b; } .btn-sync { background: var(--accent-sync); color: #fff; } .card:hover .btn-sync { background: #7C3AED; } .btn-cell { background: var(--accent-cell); color: #fff; } .card:hover .btn-cell { background: #047857; } .btn-pr3s { background: var(--accent-pr3s); color: #fff; } .card:hover .btn-pr3s { background: #D97706; } .btn-c4l { background: var(--accent-c4l); color: #fff; } .card:hover .btn-c4l { background: #0891B2; } .btn-f0rm { background: var(--accent-f0rm); color: #fff; } .card:hover .btn-f0rm { background: #BE123C; } .btn-qr { background: var(--accent-qr); color: #fff; } .card:hover .btn-qr { background: #334155; }
+        .btn-a11y { background: var(--accent-a11y); color: #fff; } .card:hover .btn-a11y { background: #B23E17; } .btn-design { background: var(--accent-design); color: #fff; } .card:hover .btn-design { background: #1d4ed8; } .btn-quick { background: var(--accent-quick); color: #fff; } .card:hover .btn-quick { background: #0e9c6b; } .btn-sync { background: var(--accent-sync); color: #fff; } .card:hover .btn-sync { background: #7C3AED; } .btn-cell { background: var(--accent-cell); color: #fff; } .card:hover .btn-cell { background: #047857; } .btn-pr3s { background: var(--accent-pr3s); color: #fff; } .card:hover .btn-pr3s { background: #D97706; } .btn-c4l { background: var(--accent-c4l); color: #fff; } .card:hover .btn-c4l { background: #0891B2; } .btn-f0rm { background: var(--accent-f0rm); color: #fff; } .card:hover .btn-f0rm { background: #BE123C; } .btn-qr { background: var(--accent-qr); color: #fff; } .card:hover .btn-qr { background: #334155; } .btn-m1nd { background: var(--accent-m1nd); color: #fff; } .card:hover .btn-m1nd { background: #4338CA; }
         .kb-hint { text-align: center; color: var(--ink2); font-size: 0.85rem; margin-bottom: 40px; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
         kbd { background: var(--surface); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; padding: 2px 8px; font-family: monospace; font-size: 0.9rem; color: var(--ink); }
         footer { text-align: center; padding: 24px; background: var(--surface); border-top: 1px solid var(--line); color: var(--ink2); font-size: 0.9rem; }
@@ -114,7 +117,6 @@
 
     <header>
         <div class="logo">
-            <!-- New Modernized Logo -->
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Poster Suite Logo">
               <defs>
                 <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FB923C"/><stop offset="1" stop-color="#C2410C"/></linearGradient>
@@ -178,7 +180,7 @@
 
     <div class="hero">
         <h1>Which tool do you need today?</h1>
-        <p>An offline-first, accessible alternative to mainstream office software. From accessible posters and rapid notices to documents, logos, and presentations—no accounts, no tracking, ever.</p>
+        <p>An offline-first, accessible alternative to mainstream office software. From accessible posters and rapid notices to documents, logos, mind maps, and presentations—no accounts, no tracking, ever.</p>
     </div>
 
     <div class="container">
@@ -278,7 +280,6 @@
                       <circle cx="38" cy="42" r="2.5" fill="#10B981"/><circle cx="82" cy="42" r="2.5" fill="#10B981"/>
                       <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#cshadow)"/>
                       <circle cx="60" cy="62" r="16" fill="#ECFDF5"/>
-                      <!-- Logo / Vector Design Icon (Overlapping Circle & Square) -->
                       <circle cx="56" cy="60" r="8" fill="#10B981" />
                       <rect x="58" y="58" width="14" height="14" rx="3" fill="#047857" opacity="0.9"/>
                       <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#10B981"/>
@@ -306,7 +307,6 @@
                       <circle cx="38" cy="42" r="2.5" fill="#F59E0B"/><circle cx="82" cy="42" r="2.5" fill="#F59E0B"/>
                       <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#p3shadow)"/>
                       <circle cx="60" cy="62" r="16" fill="#FFF7E6"/>
-                      <!-- Presentation Play Icon -->
                       <path d="M56 56 L68 62 L56 68 Z" fill="#D97706" stroke="none"/>
                       <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#F59E0B"/>
                       <circle cx="60" cy="20" r="7" fill="url(#p3pinGrad)" filter="url(#p3shadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
@@ -333,7 +333,6 @@
                       <circle cx="38" cy="42" r="2.5" fill="#06B6D4"/><circle cx="82" cy="42" r="2.5" fill="#06B6D4"/>
                       <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#c4shadow)"/>
                       <circle cx="60" cy="62" r="16" fill="#ECFFFF"/>
-                      <!-- Calendar Icon -->
                       <rect x="51" y="52" width="18" height="16" rx="2" fill="none" stroke="#0E7490" stroke-width="2.5"/>
                       <line x1="51" y1="57" x2="69" y2="57" stroke="#0E7490" stroke-width="2.5"/>
                       <rect x="56" y="61" width="4" height="4" fill="#0E7490" rx="1"/>
@@ -362,7 +361,6 @@
                       <circle cx="38" cy="42" r="2.5" fill="#E11D48"/><circle cx="82" cy="42" r="2.5" fill="#E11D48"/>
                       <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#f0shadow)"/>
                       <circle cx="60" cy="62" r="16" fill="#FFF5F7"/>
-                      <!-- Form/Checklist Icon -->
                       <rect x="51" y="52" width="6" height="6" rx="1" fill="none" stroke="#9F1239" stroke-width="2"/>
                       <polyline points="52 55 54 57 56 54" fill="none" stroke="#9F1239" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                       <line x1="60" y1="55" x2="69" y2="55" stroke="#9F1239" stroke-width="2" stroke-linecap="round"/>
@@ -393,7 +391,6 @@
                       <circle cx="38" cy="42" r="2.5" fill="#475569"/><circle cx="82" cy="42" r="2.5" fill="#475569"/>
                       <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#qrshadow)"/>
                       <circle cx="60" cy="62" r="16" fill="#F8FAFC"/>
-                      <!-- QR Code Icon -->
                       <rect x="50" y="52" width="8" height="8" rx="1" fill="none" stroke="#0F172A" stroke-width="2"/>
                       <rect x="52" y="54" width="4" height="4" fill="#0F172A"/>
                       <rect x="62" y="52" width="8" height="8" rx="1" fill="none" stroke="#0F172A" stroke-width="2"/>
@@ -412,6 +409,41 @@
             <p>A utility tool to bridge physical and digital. Paste a link to instantly generate a high-contrast, accessible QR code poster for care home signage and notices.</p>
             <button class="btn btn-qr" onclick="event.stopPropagation(); openApp('posterqr.html', 'qr');">Launch QR Generator</button>
         </div>
+
+        <!-- 9. PosterM1nd Card -->
+        <div class="card" tabindex="0" role="button" onclick="openApp('posterm1nd.html', 'm1nd')" onkeydown="if(event.key==='Enter')openApp('posterm1nd.html', 'm1nd')">
+            <span id="resumeBadge_m1nd" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
+            <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('posterm1nd.html');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
+            <div class="card-header">
+                <div class="card-icon icon-m1nd">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterM1nd Logo">
+                      <defs><linearGradient id="mbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#EEF2FF"/><stop offset="1" stop-color="#E0E7FF"/></linearGradient><radialGradient id="mpinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#A5B4FC"/><stop offset="1" stop-color="#4F46E5"/></radialGradient><filter id="mshadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs>
+                      <rect width="120" height="120" rx="28" fill="url(#mbgGrad)"/>
+                      <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
+                      <path d="M38 42 L60 24" fill="none" stroke="#4F46E5" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#4F46E5" stroke-width="3" stroke-linecap="round"/>
+                      <circle cx="38" cy="42" r="2.5" fill="#4F46E5"/><circle cx="82" cy="42" r="2.5" fill="#4F46E5"/>
+                      <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#mshadow)"/>
+                      <circle cx="60" cy="62" r="16" fill="#EEF2FF"/>
+                      <!-- Mind Map / Flowchart Icon -->
+                      <rect x="54" y="58" width="12" height="8" rx="2" fill="#4F46E5"/>
+                      <path d="M54 62 L48 54" fill="none" stroke="#312E81" stroke-width="2" stroke-linecap="round"/>
+                      <path d="M54 62 L48 70" fill="none" stroke="#312E81" stroke-width="2" stroke-linecap="round"/>
+                      <path d="M66 62 L72 54" fill="none" stroke="#312E81" stroke-width="2" stroke-linecap="round"/>
+                      <path d="M66 62 L72 70" fill="none" stroke="#312E81" stroke-width="2" stroke-linecap="round"/>
+                      <circle cx="46" cy="52" r="3" fill="#312E81"/>
+                      <circle cx="46" cy="72" r="3" fill="#312E81"/>
+                      <circle cx="74" cy="52" r="3" fill="#312E81"/>
+                      <circle cx="74" cy="72" r="3" fill="#312E81"/>
+                      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#4F46E5"/>
+                      <circle cx="60" cy="20" r="7" fill="url(#mpinGrad)" filter="url(#mshadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
+                    </svg>
+                </div>
+                <div class="title-group"><h2>PosterM1nd</h2><span id="versionM1nd" class="version-badge">v1.0</span></div>
+            </div>
+            <span class="tag tag-m1nd">Best for: Mind Maps & Flowcharts</span>
+            <p>An offline-first diagramming tool. Map out care plans, brainstorm visually, and create accessible flowcharts for emergency procedures or daily routines.</p>
+            <button class="btn btn-m1nd" onclick="event.stopPropagation(); openApp('posterm1nd.html', 'm1nd');">Launch Mind Mapper</button>
+        </div>
     </div>
 
     <div class="kb-hint">
@@ -424,6 +456,7 @@
         <span><kbd>6</kbd> C4l</span>
         <span><kbd>7</kbd> F0rm</span>
         <span><kbd>8</kbd> QR</span>
+        <span><kbd>9</kbd> M1nd</span>
     </div>
 
     <footer>
@@ -444,9 +477,10 @@
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="6"/><rect x="11" y="11" width="10" height="10" rx="2"/></svg>
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><line x1="12" y1="9" x2="12" y2="6"></line><line x1="12" y1="15" x2="12" y2="18"></line><line x1="9" y1="12" x2="6" y2="12"></line><line x1="15" y1="12" x2="18" y2="12"></line></svg>
             </div>
             <h2 style="justify-content: center;">Welcome to Poster Suite! 👋</h2>
-            <p>Your offline-first, accessible alternative to mainstream office software. Whether you need accessible posters, rapid notices, text documents, logos, or presentations, we have a tool tailored for you.</p>
+            <p>Your offline-first, accessible alternative to mainstream office software. Whether you need accessible posters, rapid notices, text documents, logos, mind maps, or presentations, we have a tool tailored for you.</p>
             <p style="font-size: 0.9rem; color: var(--ink2);">Tip: If you find bright screens overwhelming, try our Sensory-Friendly "Calm Mode" in the top right corner!</p>
             <button class="btn btn-sync" style="margin-top: 10px;" onclick="closeModal(false, 'welcomeOverlay')">Get Started</button>
         </div>
@@ -504,14 +538,15 @@
             <h2>What's New? 🚀</h2>
             <p>Here are the latest updates and improvements to Poster Suite:</p>
             <ul>
-                <li><b>The Mega Suite Update:</b> We've added 4 brand new tools to the Suite!</li>
+                <li><b>PosterM1nd (v1.0):</b> A brand new tool for offline mind maps and flowcharts!</li>
+                <li><b>The Mega Suite Update:</b> We've added 5 brand new tools to the Suite!</li>
                 <li><b>PosterPr3s (v1.0):</b> An offline-first presentation maker.</li>
                 <li><b>PosterC4l (v1.0):</b> A visual calendar and schedule generator.</li>
                 <li><b>PosterF0rm (v1.0):</b> An accessible, offline form builder.</li>
                 <li><b>PosterQR (v1.0):</b> An instant, high-contrast QR code generator.</li>
                 <li><b>PosterC3ll Update:</b> Transformed into a fully-fledged Logo Maker!</li>
                 <li><b>Theme Sync:</b> Dark Mode and Calm Mode now carry over into the apps automatically.</li>
-                <li><b>Keyboard Shortcuts:</b> Press 1 through 8 to launch tools instantly.</li>
+                <li><b>Keyboard Shortcuts:</b> Press 1 through 9 to launch tools instantly.</li>
             </ul>
             <button class="btn btn-sync" style="margin-top: 10px;" onclick="closeModal(false, 'whatsNewOverlay')">Close</button>
         </div>
@@ -559,6 +594,7 @@
                 if (appId === 'c4l') document.getElementById('resumeBadge_c4l').style.display = 'flex';
                 if (appId === 'f0rm') document.getElementById('resumeBadge_f0rm').style.display = 'flex';
                 if (appId === 'qr') document.getElementById('resumeBadge_qr').style.display = 'flex';
+                if (appId === 'm1nd') document.getElementById('resumeBadge_m1nd').style.display = 'flex';
             }
             document.getElementById('appOverlay').style.display = 'block';
             document.body.style.overflow = 'hidden';
@@ -600,9 +636,10 @@
             if (e.key === '6') openApp('posterc4l.html', 'c4l');
             if (e.key === '7') openApp('posterf0rm.html', 'f0rm');
             if (e.key === '8') openApp('posterqr.html', 'qr');
+            if (e.key === '9') openApp('posterm1nd.html', 'm1nd');
         });
 
-        const CURRENT_VERSION = '2.1'; 
+        const CURRENT_VERSION = '2.2'; // Bumped for PosterM1nd addition
         function openWhatsNew() {
             openModal('whatsNewOverlay');
             localStorage.setItem('postersuite-seen-version', CURRENT_VERSION);
@@ -666,7 +703,8 @@
                     { url: 'posterpr3s.html', id: 'versionPr3s' },
                     { url: 'posterc4l.html', id: 'versionC4l' },
                     { url: 'posterf0rm.html', id: 'versionF0rm' },
-                    { url: 'posterqr.html', id: 'versionQr' }
+                    { url: 'posterqr.html', id: 'versionQr' },
+                    { url: 'posterm1nd.html', id: 'versionM1nd' }
                 ];
                 
                 for (const item of fetchMap) {
