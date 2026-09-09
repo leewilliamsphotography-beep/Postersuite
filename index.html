@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Poster Suite | Free & Accessible Design Tools</title>
-    <!-- New Modernized Favicon -->
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23FB923C'/%3E%3Cstop offset='1' stop-color='%23C2410C'/%3E%3C/linearGradient%3E%3ClinearGradient id='g2' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2360A5FA'/%3E%3Cstop offset='1' stop-color='%231D4ED8'/%3E%3C/linearGradient%3E%3ClinearGradient id='g3' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2334D399'/%3E%3Cstop offset='1' stop-color='%23047857'/%3E%3C/linearGradient%3E%3ClinearGradient id='g4' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23A78BFA'/%3E%3Cstop offset='1' stop-color='%236D28D9'/%3E%3C/linearGradient%3E%3ClinearGradient id='gloss' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23FFFFFF' stop-opacity='0.4'/%3E%3Cstop offset='0.5' stop-color='%23FFFFFF' stop-opacity='0.05'/%3E%3Cstop offset='1' stop-color='%23FFFFFF' stop-opacity='0'/%3E%3C/linearGradient%3E%3Cfilter id='s' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='0' dy='4' stdDeviation='4' flood-color='%231A1D21' flood-opacity='0.15'/%3E%3C/filter%3E%3C/defs%3E%3Cg filter='url(%23s)'%3E%3Crect x='16' y='16' width='40' height='40' rx='12' fill='url(%23g1)'/%3E%3Crect x='64' y='16' width='40' height='40' rx='12' fill='url(%23g2)'/%3E%3Crect x='16' y='64' width='40' height='40' rx='12' fill='url(%23g3)'/%3E%3Crect x='64' y='64' width='40' height='40' rx='12' fill='url(%23g4)'/%3E%3C/g%3E%3Cg%3E%3Crect x='16' y='16' width='40' height='40' rx='12' fill='url(%23gloss)'/%3E%3Crect x='64' y='16' width='40' height='40' rx='12' fill='url(%23gloss)'/%3E%3Crect x='16' y='64' width='40' height='40' rx='12' fill='url(%23gloss)'/%3E%3Crect x='64' y='64' width='40' height='40' rx='12' fill='url(%23gloss)'/%3E%3C/g%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,7 +15,7 @@
             --accent-a11y: #D14C1E; --accent-design: #2563EB; --accent-quick: #10B981;
             --accent-sync: #8B5CF6; --accent-cell: #059669; --accent-pr3s: #F59E0B;
             --accent-c4l: #06B6D4; --accent-f0rm: #E11D48; --accent-qr: #475569;
-            --accent-m1nd: #4F46E5; /* Indigo for PosterM1nd */
+            --accent-m1nd: #4F46E5;
             --focus: #2563EB; --hero-glow: rgba(139, 92, 246, 0.05);
         }
         body.dark-mode {
@@ -107,10 +106,29 @@
         @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
         .close-btn { position: fixed; bottom: 24px; right: 24px; z-index: 101; background: var(--surface); border: 1px solid var(--line); color: var(--ink); padding: 12px 24px; border-radius: 999px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: 'Bricolage Grotesque', sans-serif; display: flex; align-items: center; gap: 8px; opacity: 0.75; transition: opacity 0.2s ease, transform 0.2s ease; }
         .close-btn:hover { opacity: 1; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
-        .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--ink); color: var(--paper); padding: 12px 24px; border-radius: 999px; font-weight: 600; z-index: 300; transition: transform 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        
+        /* App Switcher Styles */
+        .switcher-btn { position: fixed; top: 24px; left: 24px; z-index: 101; background: var(--surface); border: 1px solid var(--line); color: var(--ink); padding: 8px; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 8px; font-family: 'Bricolage Grotesque'; font-weight: 700; }
+        .switcher-btn:hover { background: var(--line2); }
+        .switcher-dropdown { position: fixed; top: 70px; left: 24px; z-index: 102; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); padding: 8px; display: none; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 300px; }
+        .switcher-dropdown.active { display: grid; }
+        .switcher-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; color: var(--ink); text-decoration: none; }
+        .switcher-item:hover { background: var(--line2); }
+        .switcher-item svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+        /* Command Palette Styles */
+        #commandPalette { z-index: 300; }
+        .cmd-input { width: 100%; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; font-size: 16px; color: var(--ink); outline: none; margin-bottom: 16px; }
+        .cmd-input:focus { border-color: var(--accent-sync); }
+        .cmd-results { max-height: 300px; overflow-y: auto; }
+        .cmd-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; cursor: pointer; color: var(--ink2); }
+        .cmd-item.active, .cmd-item:hover { background: var(--line2); color: var(--ink); }
+        .cmd-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--ink); color: var(--paper); padding: 12px 24px; border-radius: 999px; font-weight: 600; z-index: 400; transition: transform 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
-        @media (max-width: 600px) { header { padding: 12px 16px; } .logo span { display: none; } nav { gap: 12px; } nav a, nav button { font-size: 0.85rem; } .nav-text { display: none; } .hero h1 { font-size: 2.2rem; } .footer-links { flex-direction: column; gap: 8px; } }
+        @media (max-width: 600px) { header { padding: 12px 16px; } .logo span { display: none; } nav { gap: 12px; } nav a, nav button { font-size: 0.85rem; } .nav-text { display: none; } .hero h1 { font-size: 2.2rem; } .footer-links { flex-direction: column; gap: 8px; } .switcher-dropdown { width: calc(100% - 48px); grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -184,28 +202,12 @@
     </div>
 
     <div class="container">
-        <!-- 1. PosterA11y Card -->
+        <!-- 1. PosterA11y -->
         <div class="card" tabindex="0" role="button" onclick="openApp('postera11y.html', 'a11y')" onkeydown="if(event.key==='Enter')openApp('postera11y.html', 'a11y')">
             <span id="resumeBadge_a11y" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
             <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('postera11y.html');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
             <div class="card-header">
-                <div class="card-icon icon-a11y">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-labelledby="pi-title-l pi-desc-l" focusable="false">
-                      <title id="pi-title-l">PosterA11y icon (light)</title>
-                      <desc id="pi-desc-l">A white poster hangs from a pink pushpin on amber strings. On the poster, a navy figure stands with open arms inside a pale blue circle, above two short grey text lines.</desc>
-                      <defs><linearGradient id="bgGradL" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.55" stop-color="#F2F6FB"/><stop offset="1" stop-color="#E3EAF4"/></linearGradient><radialGradient id="pinGradL" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FF9BB5"/><stop offset="1" stop-color="#E13A66"/></radialGradient><filter id="posterShadowL" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1B2A4A" flood-opacity="0.16"/></filter><filter id="pinShadowL" x="-60%" y="-60%" width="220%" height="220%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#1B2A4A" flood-opacity="0.25"/></filter></defs>
-                      <rect width="120" height="120" rx="26" fill="url(#bgGradL)"/>
-                      <rect x="1.5" y="1.5" width="117" height="117" rx="24.5" fill="none" stroke="#1B2A4A" stroke-opacity="0.1"/>
-                      <path d="M34.3 43.3 L57.8 26.5" fill="none" stroke="#F2A93B" stroke-width="3" stroke-linecap="round"/><path d="M85.7 43.3 L62.2 26.5" fill="none" stroke="#F2A93B" stroke-width="3" stroke-linecap="round"/>
-                      <rect x="32" y="41" width="56" height="64" rx="8" fill="#FFFFFF" filter="url(#posterShadowL)"/>
-                      <circle cx="34.3" cy="43.3" r="2.4" fill="url(#pinGradL)"/><circle cx="85.7" cy="43.3" r="2.4" fill="url(#pinGradL)"/>
-                      <circle cx="60" cy="69" r="19" fill="#EAF1FA"/>
-                      <g fill="none" stroke="#1B2A4A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M51.5 61 L60 68 L68.5 61"/><path d="M60 63.5 L60 74.5"/><path d="M54 84 L60 74.5 L66 84"/></g>
-                      <circle cx="60" cy="57.5" r="5" fill="#1B2A4A"/>
-                      <rect x="40" y="91" width="40" height="4" rx="2" fill="#C5D1E5"/><rect x="48" y="97" width="24" height="4" rx="2" fill="#C5D1E5"/>
-                      <circle cx="60" cy="21" r="6.5" fill="url(#pinGradL)" filter="url(#pinShadowL)"/><circle cx="57.9" cy="19.1" r="1.7" fill="#FFFFFF" opacity="0.85"/>
-                    </svg>
-                </div>
+                <div class="card-icon icon-a11y"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterA11y icon"><defs><linearGradient id="bgGradL" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.55" stop-color="#F2F6FB"/><stop offset="1" stop-color="#E3EAF4"/></linearGradient><radialGradient id="pinGradL" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FF9BB5"/><stop offset="1" stop-color="#E13A66"/></radialGradient><filter id="posterShadowL" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1B2A4A" flood-opacity="0.16"/></filter><filter id="pinShadowL" x="-60%" y="-60%" width="220%" height="220%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#1B2A4A" flood-opacity="0.25"/></filter></defs><rect width="120" height="120" rx="26" fill="url(#bgGradL)"/><rect x="1.5" y="1.5" width="117" height="117" rx="24.5" fill="none" stroke="#1B2A4A" stroke-opacity="0.1"/><path d="M34.3 43.3 L57.8 26.5" fill="none" stroke="#F2A93B" stroke-width="3" stroke-linecap="round"/><path d="M85.7 43.3 L62.2 26.5" fill="none" stroke="#F2A93B" stroke-width="3" stroke-linecap="round"/><rect x="32" y="41" width="56" height="64" rx="8" fill="#FFFFFF" filter="url(#posterShadowL)"/><circle cx="34.3" cy="43.3" r="2.4" fill="url(#pinGradL)"/><circle cx="85.7" cy="43.3" r="2.4" fill="url(#pinGradL)"/><circle cx="60" cy="69" r="19" fill="#EAF1FA"/><g fill="none" stroke="#1B2A4A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M51.5 61 L60 68 L68.5 61"/><path d="M60 63.5 L60 74.5"/><path d="M54 84 L60 74.5 L66 84"/></g><circle cx="60" cy="57.5" r="5" fill="#1B2A4A"/><rect x="40" y="91" width="40" height="4" rx="2" fill="#C5D1E5"/><rect x="48" y="97" width="24" height="4" rx="2" fill="#C5D1E5"/><circle cx="60" cy="21" r="6.5" fill="url(#pinGradL)" filter="url(#pinShadowL)"/><circle cx="57.9" cy="19.1" r="1.7" fill="#FFFFFF" opacity="0.85"/></svg></div>
                 <div class="title-group"><h2>PosterA11y</h2><span id="versionA11y" class="version-badge">v1.0</span></div>
             </div>
             <span class="tag tag-a11y">Best for: Easy Read & Symbols</span>
@@ -213,25 +215,12 @@
             <button class="btn btn-a11y" onclick="event.stopPropagation(); openApp('postera11y.html', 'a11y');">Launch Accessible Maker</button>
         </div>
         
-        <!-- 2. PosterD45h Card -->
+        <!-- 2. PosterD45h -->
         <div class="card" tabindex="0" role="button" onclick="openApp('posterd45h.html', 'd45h')" onkeydown="if(event.key==='Enter')openApp('posterd45h.html', 'd45h')">
             <span id="resumeBadge_d45h" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
             <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('posterd45h.html');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
             <div class="card-header">
-                <div class="card-icon icon-design">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterD45h Logo">
-                      <defs><linearGradient id="bgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F8FAFC"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient><radialGradient id="pinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FF8A65"/><stop offset="1" stop-color="#D14C1E"/></radialGradient><filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs>
-                      <rect width="120" height="120" rx="28" fill="url(#bgGrad)"/>
-                      <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
-                      <path d="M38 42 L60 24" fill="none" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/>
-                      <circle cx="38" cy="42" r="2.5" fill="#3B82F6"/><circle cx="82" cy="42" r="2.5" fill="#3B82F6"/>
-                      <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#shadow)"/>
-                      <circle cx="60" cy="62" r="16" fill="#F1F5F9"/>
-                      <path d="M53 62 L58 68 L68 56" fill="none" stroke="#D14C1E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#64748B"/>
-                      <circle cx="60" cy="20" r="7" fill="url(#pinGrad)" filter="url(#shadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
-                    </svg>
-                </div>
+                <div class="card-icon icon-design"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterD45h Logo"><defs><linearGradient id="bgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F8FAFC"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient><radialGradient id="pinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FF8A65"/><stop offset="1" stop-color="#D14C1E"/></radialGradient><filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs><rect width="120" height="120" rx="28" fill="url(#bgGrad)"/><rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/><path d="M38 42 L60 24" fill="none" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/><circle cx="38" cy="42" r="2.5" fill="#3B82F6"/><circle cx="82" cy="42" r="2.5" fill="#3B82F6"/><rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#shadow)"/><circle cx="60" cy="62" r="16" fill="#F1F5F9"/><path d="M53 62 L58 68 L68 56" fill="none" stroke="#D14C1E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#64748B"/><circle cx="60" cy="20" r="7" fill="url(#pinGrad)" filter="url(#shadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/></svg></div>
                 <div class="title-group"><h2>PosterD45h</h2><span id="versionD45h" class="version-badge">v1.0</span></div>
             </div>
             <span class="tag tag-design">Best for: Quick Notices & Menus</span>
@@ -239,26 +228,12 @@
             <button class="btn btn-design" onclick="event.stopPropagation(); openApp('posterd45h.html', 'd45h');">Launch Design Maker</button>
         </div>
 
-        <!-- 3. Poster5ync Card -->
+        <!-- 3. Poster5ync -->
         <div class="card" tabindex="0" role="button" onclick="openApp('poster5ync.html', 'sync')" onkeydown="if(event.key==='Enter')openApp('poster5ync.html', 'sync')">
             <span id="resumeBadge_sync" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
             <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('poster5ync.html');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
             <div class="card-header">
-                <div class="card-icon icon-sync">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="Poster5ync Logo">
-                      <defs><linearGradient id="sbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F8F8FE"/><stop offset="1" stop-color="#ECECF7"/></linearGradient><radialGradient id="spinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#C4B5FD"/><stop offset="1" stop-color="#8B5CF6"/></radialGradient><filter id="sshadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs>
-                      <rect width="120" height="120" rx="28" fill="url(#sbgGrad)"/>
-                      <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
-                      <path d="M38 42 L60 24" fill="none" stroke="#8B5CF6" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#8B5CF6" stroke-width="3" stroke-linecap="round"/>
-                      <circle cx="38" cy="42" r="2.5" fill="#8B5CF6"/><circle cx="82" cy="42" r="2.5" fill="#8B5CF6"/>
-                      <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#sshadow)"/>
-                      <circle cx="60" cy="62" r="16" fill="#F3F0FF"/>
-                      <path d="M55 54 L50 58 L55 62" fill="none" stroke="#6D28D9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M50 58 A 10 10 0 0 1 60 48" fill="none" stroke="#6D28D9" stroke-width="4" stroke-linecap="round"/>
-                      <path d="M65 70 L70 66 L65 62" fill="none" stroke="#6D28D9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M70 66 A 10 10 0 0 1 60 76" fill="none" stroke="#6D28D9" stroke-width="4" stroke-linecap="round"/>
-                      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#8B5CF6"/>
-                      <circle cx="60" cy="20" r="7" fill="url(#spinGrad)" filter="url(#sshadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
-                    </svg>
-                </div>
+                <div class="card-icon icon-sync"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="Poster5ync Logo"><defs><linearGradient id="sbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F8F8FE"/><stop offset="1" stop-color="#ECECF7"/></linearGradient><radialGradient id="spinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#C4B5FD"/><stop offset="1" stop-color="#8B5CF6"/></radialGradient><filter id="sshadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs><rect width="120" height="120" rx="28" fill="url(#sbgGrad)"/><rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/><path d="M38 42 L60 24" fill="none" stroke="#8B5CF6" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#8B5CF6" stroke-width="3" stroke-linecap="round"/><circle cx="38" cy="42" r="2.5" fill="#8B5CF6"/><circle cx="82" cy="42" r="2.5" fill="#8B5CF6"/><rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#sshadow)"/><circle cx="60" cy="62" r="16" fill="#F3F0FF"/><path d="M55 54 L50 58 L55 62" fill="none" stroke="#6D28D9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M50 58 A 10 10 0 0 1 60 48" fill="none" stroke="#6D28D9" stroke-width="4" stroke-linecap="round"/><path d="M65 70 L70 66 L65 62" fill="none" stroke="#6D28D9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M70 66 A 10 10 0 0 1 60 76" fill="none" stroke="#6D28D9" stroke-width="4" stroke-linecap="round"/><rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#8B5CF6"/><circle cx="60" cy="20" r="7" fill="url(#spinGrad)" filter="url(#sshadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/></svg></div>
                 <div class="title-group"><h2>Poster5ync</h2><span id="versionSync" class="version-badge">v1.0</span></div>
             </div>
             <span class="tag tag-sync">Best for: Notes & Documents</span>
@@ -266,26 +241,12 @@
             <button class="btn btn-sync" onclick="event.stopPropagation(); openApp('poster5ync.html', 'sync');">Launch Text Editor</button>
         </div>
 
-        <!-- 4. PosterC3ll Card (Logo Maker) -->
+        <!-- 4. PosterC3ll -->
         <div class="card" tabindex="0" role="button" onclick="openApp('posterc3ll.html', 'cell')" onkeydown="if(event.key==='Enter')openApp('posterc3ll.html', 'cell')">
             <span id="resumeBadge_cell" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
             <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('posterc3ll.html');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
             <div class="card-header">
-                <div class="card-icon icon-cell">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterC3ll Logo Maker">
-                      <defs><linearGradient id="cbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F0FDF4"/><stop offset="1" stop-color="#DCFCE7"/></linearGradient><radialGradient id="cpinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#6EE7B7"/><stop offset="1" stop-color="#10B981"/></radialGradient><filter id="cshadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs>
-                      <rect width="120" height="120" rx="28" fill="url(#cbgGrad)"/>
-                      <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
-                      <path d="M38 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>
-                      <circle cx="38" cy="42" r="2.5" fill="#10B981"/><circle cx="82" cy="42" r="2.5" fill="#10B981"/>
-                      <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#cshadow)"/>
-                      <circle cx="60" cy="62" r="16" fill="#ECFDF5"/>
-                      <circle cx="56" cy="60" r="8" fill="#10B981" />
-                      <rect x="58" y="58" width="14" height="14" rx="3" fill="#047857" opacity="0.9"/>
-                      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#10B981"/>
-                      <circle cx="60" cy="20" r="7" fill="url(#cpinGrad)" filter="url(#cshadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
-                    </svg>
-                </div>
+                <div class="card-icon icon-cell"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterC3ll Logo Maker"><defs><linearGradient id="cbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F0FDF4"/><stop offset="1" stop-color="#DCFCE7"/></linearGradient><radialGradient id="cpinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#6EE7B7"/><stop offset="1" stop-color="#10B981"/></radialGradient><filter id="cshadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs><rect width="120" height="120" rx="28" fill="url(#cbgGrad)"/><rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/><path d="M38 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/><circle cx="38" cy="42" r="2.5" fill="#10B981"/><circle cx="82" cy="42" r="2.5" fill="#10B981"/><rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#cshadow)"/><circle cx="60" cy="62" r="16" fill="#ECFDF5"/><circle cx="56" cy="60" r="8" fill="#10B981" /><rect x="58" y="58" width="14" height="14" rx="3" fill="#047857" opacity="0.9"/><rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#10B981"/><circle cx="60" cy="20" r="7" fill="url(#cpinGrad)" filter="url(#cshadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/></svg></div>
                 <div class="title-group"><h2>PosterC3ll</h2><span id="versionCell" class="version-badge">v1.0</span></div>
             </div>
             <span class="tag tag-cell">Best for: Branding & Logos</span>
@@ -293,25 +254,12 @@
             <button class="btn btn-cell" onclick="event.stopPropagation(); openApp('posterc3ll.html', 'cell');">Launch Logo Maker</button>
         </div>
 
-        <!-- 5. PosterPr3s Card -->
+        <!-- 5. PosterPr3s -->
         <div class="card" tabindex="0" role="button" onclick="openApp('posterpr3s.html', 'pr3s')" onkeydown="if(event.key==='Enter')openApp('posterpr3s.html', 'pr3s')">
             <span id="resumeBadge_pr3s" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
             <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('posterpr3s.html');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
             <div class="card-header">
-                <div class="card-icon icon-pr3s">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterPr3s Logo">
-                      <defs><linearGradient id="p3bgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#FFFBEB"/><stop offset="1" stop-color="#FEF3C7"/></linearGradient><radialGradient id="p3pinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FCD34D"/><stop offset="1" stop-color="#F59E0B"/></radialGradient><filter id="p3shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs>
-                      <rect width="120" height="120" rx="28" fill="url(#p3bgGrad)"/>
-                      <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
-                      <path d="M38 42 L60 24" fill="none" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/>
-                      <circle cx="38" cy="42" r="2.5" fill="#F59E0B"/><circle cx="82" cy="42" r="2.5" fill="#F59E0B"/>
-                      <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#p3shadow)"/>
-                      <circle cx="60" cy="62" r="16" fill="#FFF7E6"/>
-                      <path d="M56 56 L68 62 L56 68 Z" fill="#D97706" stroke="none"/>
-                      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#F59E0B"/>
-                      <circle cx="60" cy="20" r="7" fill="url(#p3pinGrad)" filter="url(#p3shadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
-                    </svg>
-                </div>
+                <div class="card-icon icon-pr3s"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterPr3s Logo"><defs><linearGradient id="p3bgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#FFFBEB"/><stop offset="1" stop-color="#FEF3C7"/></linearGradient><radialGradient id="p3pinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FCD34D"/><stop offset="1" stop-color="#F59E0B"/></radialGradient><filter id="p3shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs><rect width="120" height="120" rx="28" fill="url(#p3bgGrad)"/><rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/><path d="M38 42 L60 24" fill="none" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/><circle cx="38" cy="42" r="2.5" fill="#F59E0B"/><circle cx="82" cy="42" r="2.5" fill="#F59E0B"/><rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#p3shadow)"/><circle cx="60" cy="62" r="16" fill="#FFF7E6"/><path d="M56 56 L68 62 L56 68 Z" fill="#D97706" stroke="none"/><rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#F59E0B"/><circle cx="60" cy="20" r="7" fill="url(#p3pinGrad)" filter="url(#p3shadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/></svg></div>
                 <div class="title-group"><h2>PosterPr3s</h2><span id="versionPr3s" class="version-badge">v1.0</span></div>
             </div>
             <span class="tag tag-pr3s">Best for: Slides & Talks</span>
@@ -319,27 +267,12 @@
             <button class="btn btn-pr3s" onclick="event.stopPropagation(); openApp('posterpr3s.html', 'pr3s');">Launch Presentation Maker</button>
         </div>
 
-        <!-- 6. PosterC4l Card -->
+        <!-- 6. PosterC4l -->
         <div class="card" tabindex="0" role="button" onclick="openApp('posterc4l.html', 'c4l')" onkeydown="if(event.key==='Enter')openApp('posterc4l.html', 'c4l')">
             <span id="resumeBadge_c4l" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
             <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('posterc4l.html');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
             <div class="card-header">
-                <div class="card-icon icon-c4l">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterC4l Logo">
-                      <defs><linearGradient id="c4bgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#ECFEFF"/><stop offset="1" stop-color="#CFFAFE"/></linearGradient><radialGradient id="c4pinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#67E8F9"/><stop offset="1" stop-color="#06B6D4"/></radialGradient><filter id="c4shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs>
-                      <rect width="120" height="120" rx="28" fill="url(#c4bgGrad)"/>
-                      <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
-                      <path d="M38 42 L60 24" fill="none" stroke="#06B6D4" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#06B6D4" stroke-width="3" stroke-linecap="round"/>
-                      <circle cx="38" cy="42" r="2.5" fill="#06B6D4"/><circle cx="82" cy="42" r="2.5" fill="#06B6D4"/>
-                      <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#c4shadow)"/>
-                      <circle cx="60" cy="62" r="16" fill="#ECFFFF"/>
-                      <rect x="51" y="52" width="18" height="16" rx="2" fill="none" stroke="#0E7490" stroke-width="2.5"/>
-                      <line x1="51" y1="57" x2="69" y2="57" stroke="#0E7490" stroke-width="2.5"/>
-                      <rect x="56" y="61" width="4" height="4" fill="#0E7490" rx="1"/>
-                      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#06B6D4"/>
-                      <circle cx="60" cy="20" r="7" fill="url(#c4pinGrad)" filter="url(#c4shadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
-                    </svg>
-                </div>
+                <div class="card-icon icon-c4l"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterC4l Logo"><defs><linearGradient id="c4bgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#ECFEFF"/><stop offset="1" stop-color="#CFFAFE"/></linearGradient><radialGradient id="c4pinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#67E8F9"/><stop offset="1" stop-color="#06B6D4"/></radialGradient><filter id="c4shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs><rect width="120" height="120" rx="28" fill="url(#c4bgGrad)"/><rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/><path d="M38 42 L60 24" fill="none" stroke="#06B6D4" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#06B6D4" stroke-width="3" stroke-linecap="round"/><circle cx="38" cy="42" r="2.5" fill="#06B6D4"/><circle cx="82" cy="42" r="2.5" fill="#06B6D4"/><rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#c4shadow)"/><circle cx="60" cy="62" r="16" fill="#ECFFFF"/><rect x="51" y="52" width="18" height="16" rx="2" fill="none" stroke="#0E7490" stroke-width="2.5"/><line x1="51" y1="57" x2="69" y2="57" stroke="#0E7490" stroke-width="2.5"/><rect x="56" y="61" width="4" height="4" fill="#0E7490" rx="1"/><rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#06B6D4"/><circle cx="60" cy="20" r="7" fill="url(#c4pinGrad)" filter="url(#c4shadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/></svg></div>
                 <div class="title-group"><h2>PosterC4l</h2><span id="versionC4l" class="version-badge">v1.0</span></div>
             </div>
             <span class="tag tag-c4l">Best for: Schedules & Visual Routines</span>
@@ -347,29 +280,12 @@
             <button class="btn btn-c4l" onclick="event.stopPropagation(); openApp('posterc4l.html', 'c4l');">Launch Calendar Maker</button>
         </div>
 
-        <!-- 7. PosterF0rm Card -->
+        <!-- 7. PosterF0rm -->
         <div class="card" tabindex="0" role="button" onclick="openApp('posterf0rm.html', 'f0rm')" onkeydown="if(event.key==='Enter')openApp('posterf0rm.html', 'f0rm')">
             <span id="resumeBadge_f0rm" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
             <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('posterf0rm.html');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
             <div class="card-header">
-                <div class="card-icon icon-f0rm">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterF0rm Logo">
-                      <defs><linearGradient id="f0bgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#FFF1F2"/><stop offset="1" stop-color="#FFE4E6"/></linearGradient><radialGradient id="f0pinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FDA4AF"/><stop offset="1" stop-color="#E11D48"/></radialGradient><filter id="f0shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs>
-                      <rect width="120" height="120" rx="28" fill="url(#f0bgGrad)"/>
-                      <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
-                      <path d="M38 42 L60 24" fill="none" stroke="#E11D48" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#E11D48" stroke-width="3" stroke-linecap="round"/>
-                      <circle cx="38" cy="42" r="2.5" fill="#E11D48"/><circle cx="82" cy="42" r="2.5" fill="#E11D48"/>
-                      <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#f0shadow)"/>
-                      <circle cx="60" cy="62" r="16" fill="#FFF5F7"/>
-                      <rect x="51" y="52" width="6" height="6" rx="1" fill="none" stroke="#9F1239" stroke-width="2"/>
-                      <polyline points="52 55 54 57 56 54" fill="none" stroke="#9F1239" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                      <line x1="60" y1="55" x2="69" y2="55" stroke="#9F1239" stroke-width="2" stroke-linecap="round"/>
-                      <rect x="51" y="62" width="6" height="6" rx="1" fill="none" stroke="#9F1239" stroke-width="2"/>
-                      <line x1="60" y1="65" x2="65" y2="65" stroke="#9F1239" stroke-width="2" stroke-linecap="round"/>
-                      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#E11D48"/>
-                      <circle cx="60" cy="20" r="7" fill="url(#f0pinGrad)" filter="url(#f0shadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
-                    </svg>
-                </div>
+                <div class="card-icon icon-f0rm"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterF0rm Logo"><defs><linearGradient id="f0bgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#FFF1F2"/><stop offset="1" stop-color="#FFE4E6"/></linearGradient><radialGradient id="f0pinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FDA4AF"/><stop offset="1" stop-color="#E11D48"/></radialGradient><filter id="f0shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs><rect width="120" height="120" rx="28" fill="url(#f0bgGrad)"/><rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/><path d="M38 42 L60 24" fill="none" stroke="#E11D48" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#E11D48" stroke-width="3" stroke-linecap="round"/><circle cx="38" cy="42" r="2.5" fill="#E11D48"/><circle cx="82" cy="42" r="2.5" fill="#E11D48"/><rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#f0shadow)"/><circle cx="60" cy="62" r="16" fill="#FFF5F7"/><rect x="51" y="52" width="6" height="6" rx="1" fill="none" stroke="#9F1239" stroke-width="2"/><polyline points="52 55 54 57 56 54" fill="none" stroke="#9F1239" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="60" y1="55" x2="69" y2="55" stroke="#9F1239" stroke-width="2" stroke-linecap="round"/><rect x="51" y="62" width="6" height="6" rx="1" fill="none" stroke="#9F1239" stroke-width="2"/><line x1="60" y1="65" x2="65" y2="65" stroke="#9F1239" stroke-width="2" stroke-linecap="round"/><rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#E11D48"/><circle cx="60" cy="20" r="7" fill="url(#f0pinGrad)" filter="url(#f0shadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/></svg></div>
                 <div class="title-group"><h2>PosterF0rm</h2><span id="versionF0rm" class="version-badge">v1.0</span></div>
             </div>
             <span class="tag tag-f0rm">Best for: Surveys & Intake</span>
@@ -377,32 +293,12 @@
             <button class="btn btn-f0rm" onclick="event.stopPropagation(); openApp('posterf0rm.html', 'f0rm');">Launch Form Builder</button>
         </div>
 
-        <!-- 8. PosterQR Card -->
+        <!-- 8. PosterQR -->
         <div class="card" tabindex="0" role="button" onclick="openApp('posterqr.html', 'qr')" onkeydown="if(event.key==='Enter')openApp('posterqr.html', 'qr')">
             <span id="resumeBadge_qr" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
             <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('posterqr.html');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
             <div class="card-header">
-                <div class="card-icon icon-qr">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterQR Logo">
-                      <defs><linearGradient id="qrbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F8FAFC"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient><radialGradient id="qrpinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#94A3B8"/><stop offset="1" stop-color="#475569"/></radialGradient><filter id="qrshadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs>
-                      <rect width="120" height="120" rx="28" fill="url(#qrbgGrad)"/>
-                      <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
-                      <path d="M38 42 L60 24" fill="none" stroke="#475569" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#475569" stroke-width="3" stroke-linecap="round"/>
-                      <circle cx="38" cy="42" r="2.5" fill="#475569"/><circle cx="82" cy="42" r="2.5" fill="#475569"/>
-                      <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#qrshadow)"/>
-                      <circle cx="60" cy="62" r="16" fill="#F8FAFC"/>
-                      <rect x="50" y="52" width="8" height="8" rx="1" fill="none" stroke="#0F172A" stroke-width="2"/>
-                      <rect x="52" y="54" width="4" height="4" fill="#0F172A"/>
-                      <rect x="62" y="52" width="8" height="8" rx="1" fill="none" stroke="#0F172A" stroke-width="2"/>
-                      <rect x="64" y="54" width="4" height="4" fill="#0F172A"/>
-                      <rect x="50" y="64" width="8" height="8" rx="1" fill="none" stroke="#0F172A" stroke-width="2"/>
-                      <rect x="52" y="66" width="4" height="4" fill="#0F172A"/>
-                      <rect x="62" y="62" width="4" height="4" fill="#0F172A"/>
-                      <rect x="64" y="68" width="4" height="4" fill="#0F172A"/>
-                      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#475569"/>
-                      <circle cx="60" cy="20" r="7" fill="url(#qrpinGrad)" filter="url(#qrshadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
-                    </svg>
-                </div>
+                <div class="card-icon icon-qr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterQR Logo"><defs><linearGradient id="qrbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F8FAFC"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient><radialGradient id="qrpinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#94A3B8"/><stop offset="1" stop-color="#475569"/></radialGradient><filter id="qrshadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs><rect width="120" height="120" rx="28" fill="url(#qrbgGrad)"/><rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/><path d="M38 42 L60 24" fill="none" stroke="#475569" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#475569" stroke-width="3" stroke-linecap="round"/><circle cx="38" cy="42" r="2.5" fill="#475569"/><circle cx="82" cy="42" r="2.5" fill="#475569"/><rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#qrshadow)"/><circle cx="60" cy="62" r="16" fill="#F8FAFC"/><rect x="50" y="52" width="8" height="8" rx="1" fill="none" stroke="#0F172A" stroke-width="2"/><rect x="52" y="54" width="4" height="4" fill="#0F172A"/><rect x="62" y="52" width="8" height="8" rx="1" fill="none" stroke="#0F172A" stroke-width="2"/><rect x="64" y="54" width="4" height="4" fill="#0F172A"/><rect x="50" y="64" width="8" height="8" rx="1" fill="none" stroke="#0F172A" stroke-width="2"/><rect x="52" y="66" width="4" height="4" fill="#0F172A"/><rect x="62" y="62" width="4" height="4" fill="#0F172A"/><rect x="64" y="68" width="4" height="4" fill="#0F172A"/><rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#475569"/><circle cx="60" cy="20" r="7" fill="url(#qrpinGrad)" filter="url(#qrshadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/></svg></div>
                 <div class="title-group"><h2>PosterQR</h2><span id="versionQr" class="version-badge">v1.0</span></div>
             </div>
             <span class="tag tag-qr">Best for: Links & Signage</span>
@@ -410,34 +306,12 @@
             <button class="btn btn-qr" onclick="event.stopPropagation(); openApp('posterqr.html', 'qr');">Launch QR Generator</button>
         </div>
 
-        <!-- 9. PosterM1nd Card -->
+        <!-- 9. PosterM1nd -->
         <div class="card" tabindex="0" role="button" onclick="openApp('posterm1nd.html', 'm1nd')" onkeydown="if(event.key==='Enter')openApp('posterm1nd.html', 'm1nd')">
             <span id="resumeBadge_m1nd" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
             <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('posterm1nd.html');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
             <div class="card-header">
-                <div class="card-icon icon-m1nd">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterM1nd Logo">
-                      <defs><linearGradient id="mbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#EEF2FF"/><stop offset="1" stop-color="#E0E7FF"/></linearGradient><radialGradient id="mpinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#A5B4FC"/><stop offset="1" stop-color="#4F46E5"/></radialGradient><filter id="mshadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs>
-                      <rect width="120" height="120" rx="28" fill="url(#mbgGrad)"/>
-                      <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
-                      <path d="M38 42 L60 24" fill="none" stroke="#4F46E5" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#4F46E5" stroke-width="3" stroke-linecap="round"/>
-                      <circle cx="38" cy="42" r="2.5" fill="#4F46E5"/><circle cx="82" cy="42" r="2.5" fill="#4F46E5"/>
-                      <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#mshadow)"/>
-                      <circle cx="60" cy="62" r="16" fill="#EEF2FF"/>
-                      <!-- Mind Map / Flowchart Icon -->
-                      <rect x="54" y="58" width="12" height="8" rx="2" fill="#4F46E5"/>
-                      <path d="M54 62 L48 54" fill="none" stroke="#312E81" stroke-width="2" stroke-linecap="round"/>
-                      <path d="M54 62 L48 70" fill="none" stroke="#312E81" stroke-width="2" stroke-linecap="round"/>
-                      <path d="M66 62 L72 54" fill="none" stroke="#312E81" stroke-width="2" stroke-linecap="round"/>
-                      <path d="M66 62 L72 70" fill="none" stroke="#312E81" stroke-width="2" stroke-linecap="round"/>
-                      <circle cx="46" cy="52" r="3" fill="#312E81"/>
-                      <circle cx="46" cy="72" r="3" fill="#312E81"/>
-                      <circle cx="74" cy="52" r="3" fill="#312E81"/>
-                      <circle cx="74" cy="72" r="3" fill="#312E81"/>
-                      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#4F46E5"/>
-                      <circle cx="60" cy="20" r="7" fill="url(#mpinGrad)" filter="url(#mshadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
-                    </svg>
-                </div>
+                <div class="card-icon icon-m1nd"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterM1nd Logo"><defs><linearGradient id="mbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#EEF2FF"/><stop offset="1" stop-color="#E0E7FF"/></linearGradient><radialGradient id="mpinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#A5B4FC"/><stop offset="1" stop-color="#4F46E5"/></radialGradient><filter id="mshadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs><rect width="120" height="120" rx="28" fill="url(#mbgGrad)"/><rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/><path d="M38 42 L60 24" fill="none" stroke="#4F46E5" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#4F46E5" stroke-width="3" stroke-linecap="round"/><circle cx="38" cy="42" r="2.5" fill="#4F46E5"/><circle cx="82" cy="42" r="2.5" fill="#4F46E5"/><rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#mshadow)"/><circle cx="60" cy="62" r="16" fill="#EEF2FF"/><rect x="54" y="58" width="12" height="8" rx="2" fill="#4F46E5"/><path d="M54 62 L48 54" fill="none" stroke="#312E81" stroke-width="2" stroke-linecap="round"/><path d="M54 62 L48 70" fill="none" stroke="#312E81" stroke-width="2" stroke-linecap="round"/><path d="M66 62 L72 54" fill="none" stroke="#312E81" stroke-width="2" stroke-linecap="round"/><path d="M66 62 L72 70" fill="none" stroke="#312E81" stroke-width="2" stroke-linecap="round"/><circle cx="46" cy="52" r="3" fill="#312E81"/><circle cx="46" cy="72" r="3" fill="#312E81"/><circle cx="74" cy="52" r="3" fill="#312E81"/><circle cx="74" cy="72" r="3" fill="#312E81"/><rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#4F46E5"/><circle cx="60" cy="20" r="7" fill="url(#mpinGrad)" filter="url(#mshadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/></svg></div>
                 <div class="title-group"><h2>PosterM1nd</h2><span id="versionM1nd" class="version-badge">v1.0</span></div>
             </div>
             <span class="tag tag-m1nd">Best for: Mind Maps & Flowcharts</span>
@@ -457,6 +331,7 @@
         <span><kbd>7</kbd> F0rm</span>
         <span><kbd>8</kbd> QR</span>
         <span><kbd>9</kbd> M1nd</span>
+        <span><kbd>Ctrl + K</kbd> Command</span>
     </div>
 
     <footer>
@@ -464,24 +339,45 @@
         <div class="footer-links">
             <a onclick="openModal('accessibilityOverlay')">Accessibility Statement</a>
             <a href="mailto:leewilliamswork2029@gmail.com?subject=Poster%20Suite%20Feedback&body=Hi%20Lee%2C%0A%0AI%27ve%20been%20using%20Poster%20Suite%20and%20I%20wanted%20to%20share%20some%20feedback%3A%0A%0A">Contact & Feedback</a>
+            <a onclick="backupData()">Backup Data</a>
+            <a onclick="document.getElementById('restoreFile').click()">Restore Data</a>
+            <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="restoreData(event)">
         </div>
     </footer>
+
+    <!-- App Overlay with Switcher -->
+    <div id="appOverlay" class="app-overlay">
+        <div id="loader" class="loader"></div>
+        
+        <!-- App Switcher -->
+        <div class="switcher-btn" onclick="toggleSwitcher()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            Suite
+        </div>
+        <div id="switcherDropdown" class="switcher-dropdown"></div>
+
+        <button class="close-btn" onclick="closeApp()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="6"></line></svg>
+            Back to Suite
+        </button>
+        <iframe id="appFrame" src=""></iframe>
+    </div>
+
+    <!-- Command Palette -->
+    <div id="commandPalette" class="modal-overlay" onclick="if(event.target.id==='commandPalette') closeModal(false, 'commandPalette')">
+        <div class="modal-box" style="max-width: 500px; padding: 24px;" onclick="event.stopPropagation()">
+            <input type="text" class="cmd-input" id="cmdInput" placeholder="Type a command or search tools..." oninput="filterCommands()" onkeydown="handleCmdKeypress(event)">
+            <div class="cmd-results" id="cmdResults"></div>
+        </div>
+    </div>
 
     <!-- Welcome Modal -->
     <div id="welcomeOverlay" class="modal-overlay" onclick="closeModal(event, 'welcomeOverlay')">
         <div class="modal-box" style="text-align: center;" onclick="event.stopPropagation()">
             <button class="modal-close" onclick="closeModal(false, 'welcomeOverlay')">&times;</button>
-            <div style="display: flex; justify-content: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#D14C1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="6"/><rect x="11" y="11" width="10" height="10" rx="2"/></svg>
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><line x1="12" y1="9" x2="12" y2="6"></line><line x1="12" y1="15" x2="12" y2="18"></line><line x1="9" y1="12" x2="6" y2="12"></line><line x1="15" y1="12" x2="18" y2="12"></line></svg>
-            </div>
             <h2 style="justify-content: center;">Welcome to Poster Suite! 👋</h2>
             <p>Your offline-first, accessible alternative to mainstream office software. Whether you need accessible posters, rapid notices, text documents, logos, mind maps, or presentations, we have a tool tailored for you.</p>
-            <p style="font-size: 0.9rem; color: var(--ink2);">Tip: If you find bright screens overwhelming, try our Sensory-Friendly "Calm Mode" in the top right corner!</p>
+            <p style="font-size: 0.9rem; color: var(--ink2);">Tip: Press <kbd>Ctrl + K</kbd> to quickly find tools, or try our Sensory-Friendly "Calm Mode" in the top right corner!</p>
             <button class="btn btn-sync" style="margin-top: 10px;" onclick="closeModal(false, 'welcomeOverlay')">Get Started</button>
         </div>
     </div>
@@ -538,28 +434,15 @@
             <h2>What's New? 🚀</h2>
             <p>Here are the latest updates and improvements to Poster Suite:</p>
             <ul>
+                <li><b>Command Palette:</b> Press <kbd>Ctrl + K</kbd> to instantly search and launch tools.</li>
+                <li><b>App Switcher:</b> A floating grid button in the app overlay lets you jump between tools instantly.</li>
+                <li><b>Master Backup & Restore:</b> Safely back up all your offline documents and restore them on any computer.</li>
+                <li><b>Live Theme Sync:</b> Dark Mode and Calm Mode now sync to apps instantly via PostMessage.</li>
                 <li><b>PosterM1nd (v1.0):</b> A brand new tool for offline mind maps and flowcharts!</li>
-                <li><b>The Mega Suite Update:</b> We've added 5 brand new tools to the Suite!</li>
-                <li><b>PosterPr3s (v1.0):</b> An offline-first presentation maker.</li>
-                <li><b>PosterC4l (v1.0):</b> A visual calendar and schedule generator.</li>
-                <li><b>PosterF0rm (v1.0):</b> An accessible, offline form builder.</li>
-                <li><b>PosterQR (v1.0):</b> An instant, high-contrast QR code generator.</li>
                 <li><b>PosterC3ll Update:</b> Transformed into a fully-fledged Logo Maker!</li>
-                <li><b>Theme Sync:</b> Dark Mode and Calm Mode now carry over into the apps automatically.</li>
-                <li><b>Keyboard Shortcuts:</b> Press 1 through 9 to launch tools instantly.</li>
             </ul>
             <button class="btn btn-sync" style="margin-top: 10px;" onclick="closeModal(false, 'whatsNewOverlay')">Close</button>
         </div>
-    </div>
-
-    <!-- App Overlay -->
-    <div id="appOverlay" class="app-overlay">
-        <div id="loader" class="loader"></div>
-        <button class="close-btn" onclick="closeApp()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="6"></line></svg>
-            Back to Suite
-        </button>
-        <iframe id="appFrame" src=""></iframe>
     </div>
 
     <!-- Toast -->
@@ -570,6 +453,34 @@
         const appFrame = document.getElementById('appFrame');
         const loader = document.getElementById('loader');
 
+        // App definitions for Switcher & Command Palette
+        const apps = [
+            { name: 'PosterA11y', url: 'postera11y.html', id: 'a11y', color: 'var(--accent-a11y)' },
+            { name: 'PosterD45h', url: 'posterd45h.html', id: 'd45h', color: 'var(--accent-design)' },
+            { name: 'Poster5ync', url: 'poster5ync.html', id: 'sync', color: 'var(--accent-sync)' },
+            { name: 'PosterC3ll', url: 'posterc3ll.html', id: 'cell', color: 'var(--accent-cell)' },
+            { name: 'PosterPr3s', url: 'posterpr3s.html', id: 'pr3s', color: 'var(--accent-pr3s)' },
+            { name: 'PosterC4l', url: 'posterc4l.html', id: 'c4l', color: 'var(--accent-c4l)' },
+            { name: 'PosterF0rm', url: 'posterf0rm.html', id: 'f0rm', color: 'var(--accent-f0rm)' },
+            { name: 'PosterQR', url: 'posterqr.html', id: 'qr', color: 'var(--accent-qr)' },
+            { name: 'PosterM1nd', url: 'posterm1nd.html', id: 'm1nd', color: 'var(--accent-m1nd)' }
+        ];
+
+        // Populate App Switcher Dropdown
+        const switcherDropdown = document.getElementById('switcherDropdown');
+        apps.forEach(app => {
+            const item = document.createElement('a');
+            item.className = 'switcher-item';
+            item.onclick = () => { openApp(app.url, app.id); toggleSwitcher(); };
+            item.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="${app.color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle></svg> ${app.name}`;
+            switcherDropdown.appendChild(item);
+        });
+
+        function toggleSwitcher() {
+            switcherDropdown.classList.toggle('active');
+        }
+
+        // Open App Logic
         function getAppUrl(url) {
             const params = new URLSearchParams();
             if (document.body.classList.contains('dark-mode')) params.append('theme', 'dark');
@@ -586,15 +497,7 @@
                 currentApp = finalUrl;
                 
                 document.querySelectorAll('.resume-badge').forEach(b => b.style.display = 'none');
-                if (appId === 'a11y') document.getElementById('resumeBadge_a11y').style.display = 'flex';
-                if (appId === 'd45h') document.getElementById('resumeBadge_d45h').style.display = 'flex';
-                if (appId === 'sync') document.getElementById('resumeBadge_sync').style.display = 'flex';
-                if (appId === 'cell') document.getElementById('resumeBadge_cell').style.display = 'flex';
-                if (appId === 'pr3s') document.getElementById('resumeBadge_pr3s').style.display = 'flex';
-                if (appId === 'c4l') document.getElementById('resumeBadge_c4l').style.display = 'flex';
-                if (appId === 'f0rm') document.getElementById('resumeBadge_f0rm').style.display = 'flex';
-                if (appId === 'qr') document.getElementById('resumeBadge_qr').style.display = 'flex';
-                if (appId === 'm1nd') document.getElementById('resumeBadge_m1nd').style.display = 'flex';
+                if (appId) document.getElementById(`resumeBadge_${appId}`).style.display = 'flex';
             }
             document.getElementById('appOverlay').style.display = 'block';
             document.body.style.overflow = 'hidden';
@@ -605,7 +508,10 @@
         function closeApp() {
             document.getElementById('appOverlay').style.display = 'none';
             document.body.style.overflow = 'auto';
+            switcherDropdown.classList.remove('active');
         }
+        
+        // Modals
         function openModal(id) {
             document.getElementById(id).classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -617,16 +523,78 @@
             }
         }
 
+        // Command Palette
+        const commands = [
+            ...apps.map(app => ({ name: `Launch ${app.name}`, type: 'app', action: () => openApp(app.url, app.id) })),
+            { name: 'Toggle Dark Mode', type: 'action', action: () => toggleTheme() },
+            { name: 'Toggle Calm Mode', type: 'action', action: () => toggleCalmMode() },
+            { name: 'Backup Data', type: 'action', action: () => backupData() },
+            { name: 'Restore Data', type: 'action', action: () => document.getElementById('restoreFile').click() },
+            { name: 'Open About', type: 'action', action: () => openModal('aboutOverlay') },
+            { name: 'Open Tips', type: 'action', action: () => openModal('tipsOverlay') },
+            { name: 'Open What\'s New', type: 'action', action: () => openWhatsNew() },
+        ];
+
+        let activeCmdIndex = 0;
+        function renderCommands(filter = '') {
+            const results = document.getElementById('cmdResults');
+            results.innerHTML = '';
+            const filtered = commands.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()));
+            activeCmdIndex = 0;
+            
+            if (filtered.length === 0) {
+                results.innerHTML = `<div style="padding: 16px; text-align: center; color: var(--ink2);">No commands found.</div>`;
+                return;
+            }
+
+            filtered.slice(0, 8).forEach((cmd, idx) => {
+                const item = document.createElement('div');
+                item.className = 'cmd-item' + (idx === 0 ? ' active' : '');
+                item.onclick = () => { cmd.action(); closeModal(false, 'commandPalette'); document.getElementById('cmdInput').value = ''; };
+                item.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 12 5 19 12"></polyline><line x1="12" y1="5" x2="12" y2="19"></line></svg> ${cmd.name}`;
+                results.appendChild(item);
+            });
+        }
+
+        function filterCommands() { renderCommands(document.getElementById('cmdInput').value); }
+        
+        function handleCmdKeypress(e) {
+            const items = document.querySelectorAll('.cmd-item');
+            if (e.key === 'ArrowDown') { e.preventDefault(); activeCmdIndex = Math.min(activeCmdIndex + 1, items.length - 1); updateActiveCmd(); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); activeCmdIndex = Math.max(activeCmdIndex - 1, 0); updateActiveCmd(); }
+            else if (e.key === 'Enter') { e.preventDefault(); items[activeCmdIndex]?.click(); }
+        }
+
+        function updateActiveCmd() {
+            document.querySelectorAll('.cmd-item').forEach((el, i) => el.classList.toggle('active', i === activeCmdIndex));
+        }
+
+        // Keyboard Shortcuts
         document.addEventListener('keydown', function(e) {
+            // Command Palette (Ctrl+K or Cmd+K)
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                if (document.getElementById('commandPalette').classList.contains('active')) {
+                    closeModal(false, 'commandPalette');
+                } else {
+                    renderCommands();
+                    openModal('commandPalette');
+                    setTimeout(() => document.getElementById('cmdInput').focus(), 50);
+                }
+                return;
+            }
+
             if(e.key === "Escape") {
                 document.querySelectorAll('.modal-overlay.active').forEach(modal => {
                     modal.classList.remove('active');
                     document.body.style.overflow = 'auto';
                 });
+                switcherDropdown.classList.remove('active');
             }
+            
             const isTyping = e.target.matches('input, textarea, [contenteditable="true"]');
             const modalOpen = document.querySelector('.modal-overlay.active');
-            if (isTyping || modalOpen) return;
+            if (isTyping || modalOpen || document.getElementById('appOverlay').style.display === 'block') return;
 
             if (e.key === '1') openApp('postera11y.html', 'a11y');
             if (e.key === '2') openApp('posterd45h.html', 'd45h');
@@ -639,7 +607,8 @@
             if (e.key === '9') openApp('posterm1nd.html', 'm1nd');
         });
 
-        const CURRENT_VERSION = '2.2'; // Bumped for PosterM1nd addition
+        // Versioning & What's New
+        const CURRENT_VERSION = '3.0'; // Major update for UX features
         function openWhatsNew() {
             openModal('whatsNewOverlay');
             localStorage.setItem('postersuite-seen-version', CURRENT_VERSION);
@@ -649,6 +618,7 @@
             document.getElementById('newDot').style.display = 'block';
         }
 
+        // Share Suite
         async function shareSuite() {
             const shareData = { title: 'Poster Suite', text: 'Check out these free, accessible poster making tools!', url: window.location.href };
             try {
@@ -662,6 +632,47 @@
             setTimeout(() => { toast.classList.remove("show"); }, 3000);
         }
 
+        // Backup & Restore
+        function backupData() {
+            const data = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                // Ignore Hub UI states, capture everything else (app data)
+                if (!key.startsWith('postersuite-')) {
+                    data[key] = localStorage.getItem(key);
+                }
+            }
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'poster-suite-backup.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Backup downloaded!');
+        }
+
+        function restoreData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    Object.keys(data).forEach(key => {
+                        localStorage.setItem(key, data[key]);
+                    });
+                    showToast('Data restored! Reloading...');
+                    setTimeout(() => location.reload(), 1500);
+                } catch (err) {
+                    alert('Invalid backup file.');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = ''; // Reset input
+        }
+
+        // Theme Management & Live Syncing
         const themeToggleBtn = document.getElementById('themeToggle');
         const themeIcon = document.getElementById('themeIcon');
         const sunIcon = `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
@@ -670,6 +681,8 @@
         function applyTheme(isDark) {
             if(isDark) { document.body.classList.add('dark-mode'); themeIcon.innerHTML = sunIcon; themeToggleBtn.classList.add('active'); localStorage.setItem('postersuite-theme', 'dark'); }
             else { document.body.classList.remove('dark-mode'); themeIcon.innerHTML = moonIcon; themeToggleBtn.classList.remove('active'); localStorage.setItem('postersuite-theme', 'light'); }
+            // Live sync to iframe
+            appFrame.contentWindow.postMessage({ type: 'theme-update', dark: isDark }, '*');
         }
         function toggleTheme() { applyTheme(!document.body.classList.contains('dark-mode')); }
 
@@ -677,9 +690,12 @@
         function applyCalmMode(isCalm) {
             if(isCalm) { document.body.classList.add('calm-mode'); calmToggleBtn.classList.add('active'); localStorage.setItem('postersuite-calm', 'true'); }
             else { document.body.classList.remove('calm-mode'); calmToggleBtn.classList.remove('active'); localStorage.setItem('postersuite-calm', 'false'); }
+            // Live sync to iframe
+            appFrame.contentWindow.postMessage({ type: 'calm-update', calm: isCalm }, '*');
         }
         function toggleCalmMode() { applyCalmMode(!document.body.classList.contains('calm-mode')); }
 
+        // Init
         const savedTheme = localStorage.getItem('postersuite-theme');
         const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         applyTheme(savedTheme ? savedTheme === 'dark' : prefersDark);
@@ -692,7 +708,7 @@
             localStorage.setItem('postersuite-welcomed', 'true');
         }
 
-        // --- Auto-Fetch App Versions (Ultra-Robust) ---
+        // Auto-Fetch App Versions
         async function fetchAppVersions() {
             try {
                 const fetchMap = [
