@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="description" content="PosterD45h — a rapid, accessible poster designer for care homes and learning disability support.">
 <meta name="theme-color" content="#F2F6FB">
-<meta name="version" content="1.0">
+<meta name="version" content="2.0">
 <title>PosterD45h — Rapid Poster Designer</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='26' fill='%23F2F6FB'/%3E%3Crect x='32' y='38' width='56' height='64' rx='10' fill='%23FFFFFF'/%3E%3Ccircle cx='60' cy='62' r='16' fill='%23F1F5F9'/%3E%3Cpath d='M53 62 L58 68 L68 56' fill='none' stroke='%23D14C1E' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='42' y='86' width='36' height='5' rx='2.5' fill='%231A1D21'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -201,6 +201,7 @@ body.presenting #exitPresentBtn { display: inline-flex; }
 .lines.two-col > .block[data-type="h1"] { grid-column: 1 / -1; }
 .lines.two-col > .block[data-type="h2"] { grid-column: 1 / -1; }
 .lines.two-col > .block[data-type="date"] { grid-column: 1 / -1; }
+.lines.two-col > .block[data-type="pagebreak"] { grid-column: 1 / -1; }
 
 .block{position:relative;outline:none;transition:all .15s; padding: 4px; border: 1px dashed transparent;}
 .block:hover{border-color:rgba(0,0,0,0.15)}
@@ -237,6 +238,22 @@ body.presenting #exitPresentBtn { display: inline-flex; }
 /* Clock Block */
 .block[data-type="clock"]{display:flex; flex-direction:column; align-items:center; gap:10px; padding:10px; cursor:pointer;}
 .clock-face{width:80px; height:80px;}
+
+/* Avatar Block */
+.block[data-type="avatar"]{display:flex; flex-direction:column; align-items:center; gap:10px; padding:10px; text-align:center;}
+.avatar-img{width:100px; height:100px; border-radius:50%; object-fit:cover; border:4px solid #E2E8F0; background-color:#f0f0f0; background-size:cover; background-position:center; display:grid; place-items:center; color:#999; font-size:12px; cursor:pointer;}
+
+/* Timer Block */
+.block[data-type="timer"]{display:flex; flex-direction:column; align-items:center; gap:10px; padding:10px; cursor:pointer;}
+.timer-face{position:relative; width:80px; height:80px;}
+.timer-face svg{transform:rotate(-90deg);}
+.timer-text{position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-weight:700; font-size:18px; color:#1A1D21;}
+.timer-flash { animation: flash 0.5s infinite alternate; }
+@keyframes flash { from { background-color: transparent; } to { background-color: #FEE2E2; } }
+
+/* Page Break Block */
+.block[data-type="pagebreak"] { width: 100%; height: 20px; border-top: 2px dashed #94A3B8; margin: 40px 0; position: relative; page-break-after: always; }
+.block[data-type="pagebreak"]::after { content: "Page Break"; position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 10px; font-size: 12px; color: #94A3B8; font-weight: 600; }
 
 /* Countdown Block */
 .block[data-type="countdown"]{text-align:center; padding:15px; background:#F0F9FF; border:1px solid #BAE6FD; border-radius:8px; color:#0369A1; font-weight:600; font-size:18px;}
@@ -406,9 +423,12 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
         <button class="block-btn" data-add="task"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Task / Check</button>
         <button class="block-btn" data-add="shape"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"/></svg>Divider</button>
         <button class="block-btn" data-add="image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Image</button>
+        <button class="block-btn" data-add="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Staff Avatar</button>
         <button class="block-btn" data-add="date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Auto Date</button>
         <button class="block-btn" data-add="clock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Visual Clock</button>
+        <button class="block-btn" data-add="timer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M5 3 2 6M22 6l-3-3"/></svg>Transition Timer</button>
         <button class="block-btn" data-add="countdown"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v2m5.66 2.34l-1.42 1.42M22 12h-2m-1.34 5.66l-1.42-1.42M12 20v2m-5.66-2.34l1.42-1.42M4 12H2m1.34-5.66l1.42 1.42"/><circle cx="12" cy="12" r="6"/></svg>Countdown</button>
+        <button class="block-btn" data-add="pagebreak" style="grid-column: span 2;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="6" rx="2"/><rect x="2" y="15" width="20" height="6" rx="2"/></svg>Page Break (Multi-Page)</button>
         <button class="block-btn" data-add="staffnote" style="grid-column: span 2;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Staff Note (Hidden on Print)</button>
       </div>
       <div class="field" style="margin-top:16px;">
@@ -435,19 +455,11 @@ body.dark-mode .toast{background:#E8E8E8;color:#121212} body.dark-mode .toast sv
         </select>
       </div>
       <div class="field">
-        <select id="iconSel">
-          <option value="">Insert Quick Icon...</option>
-          <option value="bus">Bus</option>
-          <option value="utensils">Food / Meal</option>
-          <option value="stethoscope">Doctor</option>
-          <option value="bath">Bath</option>
-          <option value="bed">Sleep</option>
-          <option value="footprints">Walk</option>
-          <option value="washing-machine">Wash Clothes</option>
-          <option value="phone">Phone</option>
-          <option value="pill">Medicine</option>
-          <option value="coffee">Tea / Coffee</option>
-        </select>
+        <label>Search Icon Library</label>
+        <div style="display:flex; gap:4px; align-items:center;">
+          <input type="text" id="iconSearchInput" placeholder="e.g. bus, bath, dog" style="flex:1; padding:8px; font-size:13px; border:1px solid var(--line); border-radius:4px;">
+          <button class="ibtn" id="iconSearchBtn" title="Search Icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+        </div>
       </div>
     </section>
 
@@ -563,7 +575,7 @@ const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const toKebab = (str) => str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
 
-const LS_KEY='posterd45h.doc.carehome.v8';
+const LS_KEY='posterd45h.doc.carehome.v9';
 const LS_DRAFTS='posterd45h.drafts';
 const LS_DARK='posterd45h.dark';
 const LS_FONTS='posterd45h.fonts';
@@ -592,6 +604,38 @@ function generateClockSVG(time) {
     <line x1="50" y1="50" x2="50" y2="15" stroke="#D14C1E" stroke-width="3" stroke-linecap="round" transform="rotate(${minAngle} 50 50)"/>
     <circle cx="50" cy="50" r="4" fill="#1A1D21"/>
   </svg>`;
+}
+
+function generateTimerSVG(minutes, remaining) {
+  const totalSecs = minutes * 60;
+  const circumference = 2 * Math.PI * 35;
+  const offset = circumference - (remaining / totalSecs) * circumference;
+  const m = Math.floor(remaining / 60);
+  const s = (remaining % 60).toString().padStart(2, '0');
+  return `<div class="timer-face">
+            <svg width="80" height="80" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="35" fill="none" stroke="#E2E8F0" stroke-width="6"/>
+              <circle cx="40" cy="40" r="35" fill="none" stroke="#D14C1E" stroke-width="6" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" stroke-linecap="round"/>
+            </svg>
+            <div class="timer-text">${m}:${s}</div>
+          </div>`;
+}
+
+function updateTimerUI(b) {
+  const el = document.querySelector(`.block[data-uid="${b.uid}"]`);
+  if(!el) return;
+  const totalSecs = b.minutes * 60;
+  const remaining = b.remaining;
+  const circumference = 2 * Math.PI * 35;
+  const offset = circumference - (remaining / totalSecs) * circumference;
+  const circle = el.querySelectorAll('circle')[1];
+  if(circle) circle.setAttribute('stroke-dashoffset', offset);
+  const text = el.querySelector('.timer-text');
+  if(text) {
+    const m = Math.floor(remaining / 60);
+    const s = (remaining % 60).toString().padStart(2, '0');
+    text.textContent = `${m}:${s}`;
+  }
 }
 
 function getCountdownText(dateStr, text) {
@@ -643,6 +687,7 @@ const TEMPLATES = {
     { type:'date' },
     { type:'clock', time:'09:00', text:'Morning: Reading time' },
     { type:'clock', time:'11:00', text:'Midday: Play outside' },
+    { type:'pagebreak' },
     { type:'clock', time:'12:30', text:'Lunch' },
     { type:'clock', time:'14:00', text:'Afternoon: Art and music' }
   ]},
@@ -710,7 +755,7 @@ function updateUndoRedoBtns() {
 let saveT=null;
 function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(LS_KEY,JSON.stringify(doc))}catch(e){}},350);}
 
-// Web Audio API for Choice Board Chime
+// Web Audio API for Choice Board Chime & Timer
 let audioCtx = null;
 function playChime() {
     try {
@@ -826,12 +871,33 @@ function blockHTML(b){
     return `<div class="block" data-type="date" data-uid="${b.uid}">Updated: ${dateStr}</div>` + getToolsHTML(b.uid, b.type);
   }
 
+  if(b.type === 'pagebreak'){
+    return `<div class="block" data-type="pagebreak" data-uid="${b.uid}"></div>` + getToolsHTML(b.uid, b.type);
+  }
+
   if(b.type === 'clock'){
     const time = b.time || '12:00';
     const text = b.text || 'Event';
     return `<div class="block" data-type="clock" data-uid="${b.uid}">
               ${generateClockSVG(time)}
               <span class="task-text" contenteditable="true" data-ph="Event">${esc(text)}</span>
+            </div>` + getToolsHTML(b.uid, b.type);
+  }
+
+  if(b.type === 'timer'){
+    const mins = b.minutes || 5;
+    const remaining = document.body.classList.contains('presenting') ? (b.remaining || mins * 60) : mins * 60;
+    return `<div class="block" data-type="timer" data-uid="${b.uid}">
+              ${generateTimerSVG(mins, remaining)}
+              <span class="task-text" contenteditable="true" data-ph="Timer Label">${esc(b.text || 'Time until next')}</span>
+            </div>` + getToolsHTML(b.uid, b.type);
+  }
+
+  if(b.type === 'avatar'){
+    const imgSrc = b.imgSrc ? `background-image:url('${b.imgSrc}');` : '';
+    return `<div class="block" data-type="avatar" data-uid="${b.uid}">
+              <div class="avatar-img" style="${imgSrc}">${b.imgSrc ? '' : 'Photo'}</div>
+              <span class="task-text" contenteditable="true" data-ph="Name & Role">${esc(b.text || 'Name')}</span>
             </div>` + getToolsHTML(b.uid, b.type);
   }
 
@@ -882,6 +948,9 @@ function blockHTML(b){
 
 function getToolsHTML(uidVal, type) {
   let extraBtns = '';
+  if(type === 'image' || type === 'avatar') {
+    extraBtns += `<button data-act="uploadImg" title="Upload Image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></button>`;
+  }
   if(type === 'image') {
     extraBtns += `<button data-act="resize" title="Resize Image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>`;
   }
@@ -927,6 +996,10 @@ function attachBlockListeners() {
         const current = b.imgSize || '100';
         const nextIndex = (sizes.indexOf(current) + 1) % sizes.length;
         b.imgSize = sizes[nextIndex];
+      } else if(act === 'uploadImg') {
+        currentUploadType = doc.blocks[index].type; // 'image' or 'avatar'
+        currentUploadUid = uidVal;
+        imageUpload.click();
       } else if(act === 'dividerStyle') {
         const b = doc.blocks[index];
         const styles = ['solid', 'dotted', 'dashed'];
@@ -998,6 +1071,33 @@ linesEl.addEventListener('click', (e) => {
     return;
   }
 
+  // Timer Edit Logic
+  const timerEl = e.target.closest('.block[data-type="timer"]');
+  if (timerEl && !e.target.classList.contains('task-text')) {
+    const uidVal = timerEl.dataset.uid;
+    const b = doc.blocks.find(x => x.uid === uidVal);
+    if(b) {
+      const newMins = prompt('Enter minutes for timer:', b.minutes || 5);
+      if (newMins !== null && !isNaN(newMins) && newMins > 0) {
+        b.minutes = parseInt(newMins);
+        b.remaining = b.minutes * 60;
+        pushHistory(); renderBlocks(); save();
+      }
+    }
+    return;
+  }
+
+  // Avatar Upload Logic
+  const avatarEl = e.target.closest('.block[data-type="avatar"] .avatar-img');
+  if (avatarEl) {
+    const block = avatarEl.closest('.block');
+    const uidVal = block.dataset.uid;
+    currentUploadType = 'avatar';
+    currentUploadUid = uidVal;
+    imageUpload.click();
+    return;
+  }
+
   // Countdown Edit Logic
   const countdownEl = e.target.closest('.block[data-type="countdown"]');
   if (countdownEl && !e.target.isContentEditable) {
@@ -1018,11 +1118,36 @@ linesEl.addEventListener('click', (e) => {
   }
 });
 
+// Paste Image from Clipboard
+document.addEventListener('paste', (e) => {
+    const items = (e.clipboardData || window.clipboardData).items;
+    for (let item of items) {
+        if (item.type.indexOf('image') !== -1) {
+            const file = item.getAsFile();
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const newBlock = { uid: uid(), type: 'image', imgSrc: ev.target.result, imgSize: '100' };
+                doc.blocks.push(newBlock);
+                pushHistory(); renderBlocks(); save();
+                toast('Image pasted from clipboard!');
+            };
+            reader.readAsDataURL(file);
+            e.preventDefault();
+            return;
+        }
+    }
+});
+
 // Add Block
+let currentUploadType = 'image';
+let currentUploadUid = null;
+
 document.querySelectorAll('[data-add]').forEach(btn => {
   btn.onclick = () => {
     const type = btn.dataset.add;
-    if(type === 'image') {
+    if(type === 'image' || type === 'avatar') {
+      currentUploadType = type;
+      currentUploadUid = null; // null means create new block on upload
       imageUpload.click();
       return;
     }
@@ -1030,12 +1155,44 @@ document.querySelectorAll('[data-add]').forEach(btn => {
     if(type === 'panel') newBlock.text = 'Enter text here...';
     if(type === 'task') newBlock.text = 'New task';
     if(type === 'staffnote') newBlock.text = 'Staff note: Internal use only.';
+    if(type === 'avatar') newBlock.text = 'Staff Name';
     if(type === 'clock') { newBlock.time = '12:00'; newBlock.text = 'Event'; }
+    if(type === 'timer') { newBlock.minutes = 5; newBlock.remaining = 300; newBlock.text = 'Time until next'; }
     if(type === 'countdown') { newBlock.date = new Date().toISOString().split('T')[0]; newBlock.text = 'Event'; }
     doc.blocks.push(newBlock);
     pushHistory(); renderBlocks(); save();
   };
 });
+
+// Image Upload Logic
+imageUpload.onchange = (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+        if(currentUploadUid) {
+            // Updating existing block
+            const b = doc.blocks.find(x => x.uid === currentUploadUid);
+            if(b) {
+                b.imgSrc = ev.target.result;
+                if(b.type === 'avatar') b.text = b.text || 'Staff Name';
+            }
+        } else {
+            // Creating new block
+            if(currentUploadType === 'avatar') {
+                const newBlock = { uid: uid(), type: 'avatar', imgSrc: ev.target.result, text: 'Staff Name' };
+                doc.blocks.push(newBlock);
+            } else {
+                const newBlock = { uid: uid(), type: 'image', imgSrc: ev.target.result, imgSize: '100' };
+                doc.blocks.push(newBlock);
+            }
+        }
+        pushHistory(); renderBlocks(); save();
+        imageUpload.value = '';
+        currentUploadUid = null;
+    };
+    reader.readAsDataURL(file);
+};
 
 // Quick Badges
  $('#badgeSel').onchange = (e) => {
@@ -1055,82 +1212,25 @@ document.querySelectorAll('[data-add]').forEach(btn => {
   e.target.value = '';
 };
 
-// Quick Icons
- $('#iconSel').onchange = (e) => {
-  if(!e.target.value) return;
-  const iconUrl = `https://api.iconify.design/lucide/${e.target.value}.svg?color=%23222`;
-  const newBlock = { uid: uid(), type: 'image', imgSrc: iconUrl, imgSize: '25', align: 'center' };
-  doc.blocks.push(newBlock);
-  pushHistory(); renderBlocks(); save();
-  e.target.value = '';
+// Searchable Icon Library
+const doIconSearch = () => {
+    const q = $('#iconSearchInput').value.trim().toLowerCase().replace(/\s+/g, '-');
+    if(!q) return;
+    const iconUrl = `https://api.iconify.design/lucide/${q}.svg?color=%23222`;
+    fetch(iconUrl).then(r => {
+        if(r.ok) {
+            const newBlock = { uid: uid(), type: 'image', imgSrc: iconUrl, imgSize: '25', align: 'center' };
+            doc.blocks.push(newBlock);
+            pushHistory(); renderBlocks(); save();
+            $('#iconSearchInput').value = '';
+            toast('Icon added!');
+        } else {
+            toast('Icon not found. Try another word.', 'alert');
+        }
+    }).catch(() => toast('Error searching for icon.', 'alert'));
 };
-
-// Image Upload
-imageUpload.onchange = (e) => {
-  const file = e.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    const newBlock = { uid: uid(), type: 'image', imgSrc: ev.target.result, imgSize: '100' };
-    doc.blocks.push(newBlock);
-    pushHistory(); renderBlocks(); save();
-    imageUpload.value = '';
-  };
-  reader.readAsDataURL(file);
-};
-
-// Custom Font Uploader Logic
-let customFonts = [];
-const fontUpload = $('#fontUpload');
-const uploadFontBtn = $('#uploadFontBtn');
-const fontSel = $('#fontSel');
-
-function loadCustomFonts() {
-  try {
-    const stored = JSON.parse(localStorage.getItem(LS_FONTS) || '[]');
-    customFonts = stored;
-    const styleTag = document.getElementById('custom-fonts-style');
-    styleTag.innerHTML = '';
-    customFonts.forEach(f => {
-      const format = f.dataUrl.includes('data:font/ttf') ? 'truetype' : (f.dataUrl.includes('data:font/woff2') ? 'woff2' : (f.dataUrl.includes('data:font/woff') ? 'woff' : 'opentype'));
-      styleTag.innerHTML += `@font-face { font-family: '${f.name}'; src: url('${f.dataUrl}') format('${format}'); }\n`;
-      if(!fontSel.querySelector(`option[value="${f.name}"]`)) {
-        const opt = new Option(f.name + ' (Custom)', f.name);
-        fontSel.add(opt);
-      }
-    });
-  } catch(e) { console.error("Error loading fonts", e); }
-}
-
-uploadFontBtn.onclick = () => fontUpload.click();
-
-fontUpload.onchange = (e) => {
-  const file = e.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    const dataUrl = ev.target.result;
-    // Extract font name from file name, remove extension and spaces
-    let fontName = file.name.replace(/\.[^/.]+$/, "").replace(/[\s\-.]+/g, '');
-    
-    customFonts.push({ name: fontName, dataUrl: dataUrl });
-    
-    // Try to save to localStorage
-    try {
-      localStorage.setItem(LS_FONTS, JSON.stringify(customFonts));
-      toast('Custom font saved!');
-    } catch(err) {
-      toast('Font too large to save permanently. Available for this session only.', 'alert');
-    }
-    
-    // Reload fonts to apply
-    loadCustomFonts();
-    fontSel.value = fontName;
-    // Trigger change to apply to selected text
-    fontSel.dispatchEvent(new Event('change'));
-  };
-  reader.readAsDataURL(file);
-};
+ $('#iconSearchBtn').onclick = doIconSearch;
+ $('#iconSearchInput').onkeydown = (e) => { if(e.key === 'Enter') doIconSearch(); };
 
 // Apply Templates
 ['tpls','tplsEmpty'].forEach(id => { 
@@ -1218,7 +1318,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-fontSel.onchange = (e) => {
+ $('#fontSel').onchange = (e) => {
   if(applyAllChk.checked) formatAllBlocks('fontName', e.target.value);
   else document.execCommand('fontName', false, e.target.value);
   pushHistory();
@@ -1236,6 +1336,55 @@ fontSel.onchange = (e) => {
   if(applyAllChk.checked) formatAllBlocks('hiliteColor', e.target.value);
   else document.execCommand('hiliteColor', false, e.target.value);
 });
+
+// Custom Font Uploader Logic
+let customFonts = [];
+const fontUpload = $('#fontUpload');
+const uploadFontBtn = $('#uploadFontBtn');
+const fontSel = $('#fontSel');
+
+function loadCustomFonts() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(LS_FONTS) || '[]');
+    customFonts = stored;
+    const styleTag = document.getElementById('custom-fonts-style');
+    styleTag.innerHTML = '';
+    customFonts.forEach(f => {
+      const format = f.dataUrl.includes('data:font/ttf') ? 'truetype' : (f.dataUrl.includes('data:font/woff2') ? 'woff2' : (f.dataUrl.includes('data:font/woff') ? 'woff' : 'opentype'));
+      styleTag.innerHTML += `@font-face { font-family: '${f.name}'; src: url('${f.dataUrl}') format('${format}'); }\n`;
+      if(!fontSel.querySelector(`option[value="${f.name}"]`)) {
+        const opt = new Option(f.name + ' (Custom)', f.name);
+        fontSel.add(opt);
+      }
+    });
+  } catch(e) { console.error("Error loading fonts", e); }
+}
+
+uploadFontBtn.onclick = () => fontUpload.click();
+
+fontUpload.onchange = (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const dataUrl = ev.target.result;
+    let fontName = file.name.replace(/\.[^/.]+$/, "").replace(/[\s\-.]+/g, '');
+    
+    customFonts.push({ name: fontName, dataUrl: dataUrl });
+    
+    try {
+      localStorage.setItem(LS_FONTS, JSON.stringify(customFonts));
+      toast('Custom font saved!');
+    } catch(err) {
+      toast('Font too large to save permanently. Available for this session only.', 'alert');
+    }
+    
+    loadCustomFonts();
+    fontSel.value = fontName;
+    fontSel.dispatchEvent(new Event('change'));
+  };
+  reader.readAsDataURL(file);
+};
 
 // Settings Listeners
  $('#sheetFormat').onchange = (e) => { doc.format = e.target.value; pushHistory(); renderAll(); save(); };
@@ -1323,18 +1472,49 @@ linesEl.addEventListener('focusin', (e) => {
   else toast('All text blocks pass the Easy Read check!', 'check');
 };
 
+let timerInterval = null;
+function startTimers() {
+    clearInterval(timerInterval);
+    let activeTimers = doc.blocks.filter(b => b.type === 'timer');
+    activeTimers.forEach(b => { b.remaining = b.minutes * 60; updateTimerUI(b); });
+    
+    if(activeTimers.length === 0) return;
+    
+    timerInterval = setInterval(() => {
+        let anyActive = false;
+        activeTimers.forEach(b => {
+            if(b.remaining > 0) {
+                anyActive = true;
+                b.remaining--;
+                updateTimerUI(b);
+                if(b.remaining <= 0) {
+                    playChime();
+                    const el = document.querySelector(`.block[data-uid="${b.uid}"]`);
+                    if(el) el.classList.add('timer-flash');
+                }
+            }
+        });
+        if(!anyActive) clearInterval(timerInterval);
+    }, 1000);
+}
+
  $('#presentBtn').onclick = () => {
   document.body.classList.add('presenting');
+  startTimers();
 };
  $('#exitPresentBtn').onclick = () => {
   document.body.classList.remove('presenting');
+  clearInterval(timerInterval);
+  document.querySelectorAll('.timer-flash').forEach(el => el.classList.remove('timer-flash'));
+  renderBlocks(); // reset timer UI to full
 };
 
  $('#pngBtn').onclick = async () => {
   document.querySelectorAll('.block-tools').forEach(t => t.style.display = 'none');
   document.querySelectorAll('.block').forEach(b => b.style.border = 'none');
-  document.querySelectorAll('.block[data-type="staffnote"]').forEach(b => b.style.display = 'none'); // Hide staff notes
-  document.querySelectorAll('.speak-btn').forEach(b => b.style.display = 'none'); // Hide speak buttons
+  document.querySelectorAll('.block[data-type="staffnote"]').forEach(b => b.style.display = 'none');
+  document.querySelectorAll('.block[data-type="pagebreak"]').forEach(b => b.style.display = 'none');
+  document.querySelectorAll('.speak-btn').forEach(b => b.style.display = 'none');
   
   toast('Rendering PNG…');
   try {
@@ -1346,8 +1526,8 @@ linesEl.addEventListener('focusin', (e) => {
     toast('PNG Exported!');
   } catch(e) { toast('PNG export failed.', 'alert'); }
   
-  // Restore visibility
   document.querySelectorAll('.block[data-type="staffnote"]').forEach(b => b.style.removeProperty('display'));
+  document.querySelectorAll('.block[data-type="pagebreak"]').forEach(b => b.style.removeProperty('display'));
   document.querySelectorAll('.block-tools').forEach(t => t.style.removeProperty('display'));
 };
 
@@ -1424,7 +1604,6 @@ function boot(){
   const isDark = localStorage.getItem(LS_DARK) === '1';
   applyDarkMode(isDark);
   
-  // Check for Share Link in URL
   if(location.hash.length > 1) {
     try {
       const hash = location.hash.substring(1);
@@ -1432,7 +1611,7 @@ function boot(){
       const obj = JSON.parse(str);
       doc = Object.assign(newDoc(), obj);
       if(!doc.blocks) doc.blocks = [];
-      history.replaceState(null, '', window.location.pathname); // clear hash
+      history.replaceState(null, '', window.location.pathname);
       setTimeout(() => toast('Loaded from share link!', 'check'), 300);
     } catch(e) { 
       console.error("Failed to load share link", e);
@@ -1449,7 +1628,7 @@ function boot(){
   }
   
   history = [JSON.stringify(doc)]; hIndex = 0; updateUndoRedoBtns();
-  loadCustomFonts(); // Load custom fonts on boot
+  loadCustomFonts();
   renderAll();
   renderDrafts();
 }
