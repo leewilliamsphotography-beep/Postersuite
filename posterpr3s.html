@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="version" content="1.0">
+<meta name="version" content="2.0">
 <title>PosterPr3s — Presentation Maker</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Lexend:wght@400;500;600&family=Playfair+Display:wght@700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <style>
 :root { --paper:#F8F9FA; --surface:#FFFFFF; --ink:#1A1D21; --ink2:#50545C; --line:#E3E5E8; --accent:#F59E0B; --shadow: 0 10px 30px rgba(0,0,0,0.08); --title-font: 'Bricolage Grotesque'; }
 body.dark-mode { --paper:#121212; --surface:#1E1E1E; --ink:#E8E8E8; --ink2:#A0A0A0; --line:#333333; --shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -57,9 +58,12 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
 .slide-body img { max-width: 100%; max-height: 250px; border-radius: 8px; margin: 10px 0; display: block; }
 body.dark-mode .slide-body pre { background: rgba(255,255,255,0.05); }
 
-/* Magic Layout Columns */
+/* Magic Layout & Charts */
 .magic-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
 .magic-quote { font-family: 'Playfair Display', serif; font-size: 32px; font-style: italic; text-align: center; color: var(--ink); }
+.chart-container { display: flex; gap: 15px; align-items: flex-end; height: 200px; padding: 20px 0; border-bottom: 2px solid var(--ink2); margin-top: 20px; }
+.chart-bar { flex: 1; background: var(--accent); border-radius: 6px 6px 0 0; transition: height 0.5s ease; display: flex; justify-content: center; align-items: flex-start; color: #fff; font-weight: bold; padding-top: 5px; font-size: 14px; position: relative; }
+.chart-bar span { position: absolute; bottom: -25px; color: var(--ink2); font-size: 12px; }
 
 /* Dynamic Gradients */
 .bg-sunset { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); }
@@ -100,6 +104,7 @@ body.dark-mode .slide-body pre { background: rgba(255,255,255,0.05); }
 .present-controls button.active { background: var(--accent); }
 .laser-pointer { position: fixed; width: 20px; height: 20px; border-radius: 50%; background: rgba(255, 0, 0, 0.8); pointer-events: none; z-index: 2000; display: none; box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.4); transform: translate(-50%, -50%); }
 .confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 1999; }
+.draw-canvas { position: fixed; inset: 0; z-index: 1998; cursor: crosshair; display: none; }
 
 /* Grid View */
 .grid-view { position: fixed; inset: 0; background: var(--paper); z-index: 1500; display: none; padding: 40px; overflow-y: auto; }
@@ -141,6 +146,7 @@ body.dark-mode .slide-body pre { background: rgba(255,255,255,0.05); }
         <button class="btn btn-secondary" onclick="toggleTheme()">🌓</button>
         <button class="btn btn-secondary" onclick="exportPDF()">⬇ PDF</button>
         <button class="btn btn-secondary" onclick="exportHTML()">📦 HTML</button>
+        <button class="btn btn-secondary" onclick="exportPPTX()" style="border-color: var(--accent); color: var(--accent);">⬇ PPTX</button>
         <button class="btn btn-secondary" onclick="generateShareLink()">🔗 Share</button>
         <button class="btn btn-secondary" onclick="addSlide()">+ Slide</button>
         <button class="btn" onclick="startPresentation()">▶ Present</button>
@@ -162,9 +168,10 @@ body.dark-mode .slide-body pre { background: rgba(255,255,255,0.05); }
             <button class="editor-btn" onclick="execCmd('justifyCenter')">⬌</button>
             <button class="editor-btn" onclick="execCmd('justifyRight')">➡</button>
             <div class="toolbar-divider"></div>
+            <button class="editor-btn wide" onclick="generateChart()" title="Type 'chart 10, 20, 30' then click">📊 Chart</button>
             <button class="editor-btn wide" onclick="magicLayout()" title="Auto-format text">✨ Magic Layout</button>
             <button class="editor-btn wide" onclick="summarizeText()" title="Turn selected text into bullets">📝 Summarize</button>
-            <button class="editor-btn wide" onclick="generateAgenda()" title="Generate Agenda from slide titles">📋 Agenda</button>
+            <button class="editor-btn wide" onclick="generateAgenda()" title="Generate Agenda">📋 Agenda</button>
             <div class="toolbar-divider"></div>
             <button class="editor-btn" onclick="changeBg('default')" title="Default">⬜</button>
             <button class="editor-btn" onclick="changeBg('bg-sunset')" title="Sunset">🌅</button>
@@ -233,11 +240,16 @@ body.dark-mode .slide-body pre { background: rgba(255,255,255,0.05); }
         <div class="present-title" id="presentTitle"></div>
         <div class="present-body" id="presentBody"></div>
     </div>
+    <canvas class="draw-canvas" id="drawCanvas"></canvas>
     <div class="present-controls">
         <button onclick="prevPresentSlide()">◀</button>
         <button onclick="toggleVoice()" id="voiceBtn" title="Voice Control (V)">🎤</button>
         <button onclick="triggerConfetti()" title="Confetti (C)">🎉</button>
-        <button onclick="toggleLaser()" title="Laser Pointer (L)">🔴</button>
+        <button onclick="toggleLaser()" id="laserBtn" title="Laser Pointer (L)">🔴</button>
+        <button onclick="toggleDraw('pen')" id="penBtn" title="Draw (D)">🖌️</button>
+        <button onclick="toggleDraw('highlighter')" id="highlightBtn" title="Highlight (H)">🖍️</button>
+        <button onclick="clearDrawing()" title="Clear Drawing">🧹</button>
+        <button onclick="toggleAutoPlay()" id="autoPlayBtn" title="Auto-Play (A)">⏳</button>
         <button onclick="exitPresentation()">✖</button>
         <button onclick="nextPresentSlide()">▶</button>
     </div>
@@ -263,6 +275,8 @@ const canvas = document.getElementById('canvas');
 const mainContainer = document.getElementById('mainContainer');
 const presentMode = document.getElementById('presentMode');
 const laserPointer = document.getElementById('laserPointer');
+const drawCanvas = document.getElementById('drawCanvas');
+const drawCtx = drawCanvas.getContext('2d');
 
 let audioCtx;
 function playClick() {
@@ -369,7 +383,28 @@ function changeBg(bg) { state.slides[state.currentSlide].bg = bg; canvas.classNa
 function toggleZenMode() { mainContainer.classList.toggle('zen-mode'); }
 function toggleNotes() { document.getElementById('notesPanel').classList.toggle('active'); }
 
-// --- MAGIC LAYOUT & AI TOOLS ---
+// --- CHARTS & MAGIC LAYOUT ---
+function generateChart() {
+    const sel = window.getSelection();
+    if (!sel.rangeCount || !sel.toString().trim().startsWith('chart ')) return showToast('Highlight text starting with "chart " (e.g., chart 10, 20, 30)');
+    
+    const text = sel.toString().replace('chart ', '');
+    const data = text.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+    if(data.length === 0) return showToast('No valid numbers found.');
+    
+    const maxVal = Math.max(...data);
+    const bars = data.map((val, i) => `<div class="chart-bar" style="height: 0%;" data-height="${(val/maxVal)*100}"><span>${val}</span></div>`).join('');
+    document.execCommand('insertHTML', false, `<div class="chart-container">${bars}</div>`);
+    
+    // Animate bars
+    setTimeout(() => {
+        document.querySelectorAll('.chart-bar').forEach(bar => {
+            bar.style.height = bar.dataset.height + '%';
+        });
+    }, 50);
+    syncContent();
+}
+
 function summarizeText() {
     const sel = window.getSelection();
     if (!sel.rangeCount || sel.toString().trim() === '') return showToast('Highlight text first!');
@@ -388,24 +423,15 @@ function generateAgenda() {
 function magicLayout() {
     const text = bodyArea.innerText.trim();
     const words = text.split(/\s+/);
-    
-    // If very short, make it a giant quote
-    if (words.length <= 15) {
-        bodyArea.innerHTML = `<p class="magic-quote">${text}</p>`;
-    } 
-    // If it has bullet points, put them in columns
+    if (words.length <= 15) { bodyArea.innerHTML = `<p class="magic-quote">${text}</p>`; } 
     else if (text.includes('\n')) {
         const items = text.split('\n').filter(t => t.trim() !== '').map(t => `<p>${t}</p>`).join('');
         bodyArea.innerHTML = `<div class="magic-grid">${items}</div>`;
-    } 
-    // Default: split into 3 columns based on sentences
-    else {
+    } else {
         const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
         const chunkSize = Math.ceil(sentences.length / 3);
         let cols = '';
-        for (let i = 0; i < 3; i++) {
-            cols += `<div>${sentences.slice(i * chunkSize, (i + 1) * chunkSize).join(' ')}</div>`;
-        }
+        for (let i = 0; i < 3; i++) { cols += `<div>${sentences.slice(i * chunkSize, (i + 1) * chunkSize).join(' ')}</div>`; }
         bodyArea.innerHTML = `<div class="magic-grid">${cols}</div>`;
     }
     syncContent();
@@ -418,7 +444,7 @@ function closeBrandKit() { document.getElementById('brandKitOverlay').style.disp
 function applyBrandKitStyles() { document.documentElement.style.setProperty('--accent', state.globalStyles.accent); document.documentElement.style.setProperty('--title-font', state.globalStyles.font); }
 function applyBrandKit() { state.globalStyles.accent = document.getElementById('brandColor').value; state.globalStyles.font = document.getElementById('brandFont').value; applyBrandKitStyles(); autoSave(); closeBrandKit(); showToast('Brand Kit applied globally!'); }
 
-// --- SHARING & EXPORT ---
+// --- EXPORTS & SHARING ---
 function generateShareLink() {
     const cleanState = JSON.parse(JSON.stringify(state));
     cleanState.slides.forEach(s => { s.body = s.body.replace(/<img[^>]*>/g, "[Image removed for sharing]"); });
@@ -432,13 +458,55 @@ function generateShareLink() {
 function exportHTML() {
     const data = btoa(encodeURIComponent(JSON.stringify(state)));
     const htmlContent = `<!DOCTYPE html><html><head><title>Presentation</title><style>body{margin:0;background:#000;overflow:hidden;font-family:sans-serif;}#slide{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;padding:5vw;box-sizing:border-box;}.title{font-size:4vw;color:#F59E0B;margin-bottom:2vw;font-weight:800;}.body{font-size:2vw;color:#fff;line-height:1.5;white-space:pre-wrap;}.sunset{background:linear-gradient(135deg,#ff9a9e 0%,#fecfef 100%)}.ocean{background:linear-gradient(120deg,#a1c4fd 0%,#c2e9fb 100%)}.forest{background:linear-gradient(120deg,#d4fc79 0%,#96e6a1 100%)}.midnight{background:linear-gradient(120deg,#2c3e50 0%,#4ca1af 100%)}</style></head><body><div id="slide"><div class="title" id="t"></div><div class="body" id="b"></div></div><script>const state=JSON.parse(decodeURIComponent(atob('${data}')));let i=0;const t=document.getElementById('t'),b=document.getElementById('b'),s=document.getElementById('slide');function render(){const sl=state.slides[i];s.className=sl.bg!=='default'?'bg-'+sl.bg:'';t.innerHTML=sl.title||'';b.innerHTML=sl.body||'';}document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')i=Math.min(i+1,state.slides.length-1);if(e.key==='ArrowLeft')i=Math.max(i-1,0);render();});render();<\/script></body></html>`;
-    
     const blob = new Blob([htmlContent], {type: 'text/html'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'presentation.html';
     a.click();
     showToast('📦 Standalone HTML exported!');
+}
+
+function exportPDF() {
+    const printArea = document.getElementById('print-area'); printArea.innerHTML = '';
+    state.slides.forEach(slide => {
+        const div = document.createElement('div');
+        div.className = 'print-slide slide-canvas ' + (slide.bg !== 'default' ? slide.bg : '');
+        div.style.setProperty('--accent', state.globalStyles.accent);
+        div.style.setProperty('--title-font', state.globalStyles.font);
+        div.innerHTML = `<div class="slide-title">${slide.title || ''}</div><div class="slide-body">${slide.body || ''}</div>`;
+        printArea.appendChild(div);
+    });
+    window.print(); closeCmdk();
+}
+
+function exportPPTX() {
+    let pptx = new PptxGenJS();
+    pptx.defineLayout({ name: 'CUSTOM', width: 10, height: 5.625 }); // 16:9
+    pptx.layout = 'CUSTOM';
+
+    state.slides.forEach(slide => {
+        let s = pptx.addSlide();
+        let bgColor = 'FFFFFF';
+        let textColor = '1A1D21';
+        let titleColor = 'F59E0B';
+
+        if(slide.bg === 'bg-sunset') bgColor = 'FECFEF';
+        else if(slide.bg === 'bg-ocean') bgColor = 'C2E9FB';
+        else if(slide.bg === 'bg-forest') bgColor = '96E6A1';
+        else if(slide.bg === 'bg-midnight') { bgColor = '2C3E50'; textColor = 'FFFFFF'; titleColor = 'FFFFFF'; }
+        
+        s.background = { color: bgColor };
+        
+        // Extract plain text for title and body
+        const titleText = slide.title.replace(/<[^>]*>?/gm, '');
+        const bodyText = slide.body.replace(/<[^>]*>?/gm, '\n').replace(/\n+/g, '\n').trim();
+        
+        if(titleText) s.addText(titleText, { x: 0.5, y: 0.5, w: 9, h: 1, fontSize: 32, color: titleColor, bold: true, fontFace: 'Arial' });
+        if(bodyText) s.addText(bodyText, { x: 0.5, y: 1.5, w: 9, h: 3.5, fontSize: 18, color: textColor, fontFace: 'Arial', valign: 'top' });
+    });
+
+    pptx.writeFile({ fileName: 'PosterPr3s_Presentation.pptx' });
+    showToast('📄 Exporting to PowerPoint...');
 }
 
 // --- SNAPSHOTS ---
@@ -493,25 +561,16 @@ bodyArea.addEventListener('keyup', (e) => {
 titleArea.addEventListener('keyup', () => { playClick(); syncContent(); });
 notesArea.addEventListener('keyup', syncContent);
 
-// --- PDF EXPORT ---
-function exportPDF() {
-    const printArea = document.getElementById('print-area'); printArea.innerHTML = '';
-    state.slides.forEach(slide => {
-        const div = document.createElement('div');
-        div.className = 'print-slide slide-canvas ' + (slide.bg !== 'default' ? slide.bg : '');
-        div.style.setProperty('--accent', state.globalStyles.accent);
-        div.style.setProperty('--title-font', state.globalStyles.font);
-        div.innerHTML = `<div class="slide-title">${slide.title || ''}</div><div class="slide-body">${slide.body || ''}</div>`;
-        printArea.appendChild(div);
-    });
-    window.print(); closeCmdk();
-}
-
 // --- PRESENT MODE ---
-let presentIndex = 0, presentTimerInterval, presentStartTime, laserOn = false;
-function startPresentation() { presentIndex = state.currentSlide; presentMode.style.display = 'flex'; renderPresentSlide(); presentStartTime = Date.now(); presentTimerInterval = setInterval(updateTimer, 1000); closeCmdk(); }
+let presentIndex = 0, presentTimerInterval, presentStartTime, laserOn = false, autoPlayOn = false, autoPlayInterval, drawMode = null;
+
+function startPresentation() {
+    presentIndex = state.currentSlide; presentMode.style.display = 'flex'; renderPresentSlide();
+    presentStartTime = Date.now(); presentTimerInterval = setInterval(updateTimer, 1000);
+    resizeDrawCanvas(); closeCmdk();
+}
 function updateTimer() { const e = Math.floor((Date.now() - presentStartTime) / 1000); document.getElementById('presentTimer').textContent = `${Math.floor(e / 60).toString().padStart(2, '0')}:${(e % 60).toString().padStart(2, '0')}`; }
-function exitPresentation() { presentMode.style.display = 'none'; clearInterval(presentTimerInterval); toggleLaser(false); toggleVoice(false); }
+function exitPresentation() { presentMode.style.display = 'none'; clearInterval(presentTimerInterval); toggleLaser(false); toggleVoice(false); toggleAutoPlay(false); clearDrawing(); }
 function renderPresentSlide() {
     const slide = state.slides[presentIndex];
     const pSlide = document.getElementById('presentSlide');
@@ -521,11 +580,59 @@ function renderPresentSlide() {
     document.getElementById('presentTitle').innerHTML = slide.title || "Untitled Slide";
     document.getElementById('presentBody').innerHTML = slide.body || "";
     document.getElementById('presentProgress').style.width = `${((presentIndex + 1) / state.slides.length) * 100}%`;
+    clearDrawing(); // Clear drawing when slide changes
 }
-function nextPresentSlide() { if (presentIndex < state.slides.length - 1) { presentIndex++; renderPresentSlide(); } }
+function nextPresentSlide() { if (presentIndex < state.slides.length - 1) { presentIndex++; renderPresentSlide(); } else if (autoPlayOn) { presentIndex = 0; renderPresentSlide(); } }
 function prevPresentSlide() { if (presentIndex > 0) { presentIndex--; renderPresentSlide(); } }
-function toggleLaser(forceState) { laserOn = forceState !== undefined ? forceState : !laserOn; laserPointer.style.display = laserOn ? 'block' : 'none'; }
+
+function toggleLaser(forceState) { laserOn = forceState !== undefined ? forceState : !laserOn; laserPointer.style.display = laserOn ? 'block' : 'none'; document.getElementById('laserBtn').classList.toggle('active', laserOn); }
 document.addEventListener('mousemove', (e) => { if (laserOn && presentMode.style.display === 'flex') { laserPointer.style.left = e.clientX + 'px'; laserPointer.style.top = e.clientY + 'px'; } });
+
+function toggleAutoPlay(forceState) {
+    autoPlayOn = forceState !== undefined ? forceState : !autoPlayOn;
+    document.getElementById('autoPlayBtn').classList.toggle('active', autoPlayOn);
+    if (autoPlayOn) {
+        autoPlayInterval = setInterval(() => {
+            if (presentIndex < state.slides.length - 1) { presentIndex++; renderPresentSlide(); }
+            else { presentIndex = 0; renderPresentSlide(); } // Loop
+        }, 5000);
+        showToast('⏳ Auto-play on (5s)');
+    } else {
+        clearInterval(autoPlayInterval);
+    }
+}
+
+// --- DRAWING / ANNOTATIONS ---
+function resizeDrawCanvas() { drawCanvas.width = window.innerWidth; drawCanvas.height = window.innerHeight; }
+window.addEventListener('resize', resizeDrawCanvas);
+
+function toggleDraw(mode) {
+    drawMode = (drawMode === mode) ? null : mode;
+    document.getElementById('penBtn').classList.toggle('active', drawMode === 'pen');
+    document.getElementById('highlightBtn').classList.toggle('active', drawMode === 'highlighter');
+    drawCanvas.style.display = drawMode ? 'block' : 'none';
+    if (drawMode === 'pen') drawCtx.globalCompositeOperation = 'source-over';
+    else if (drawMode === 'highlighter') drawCtx.globalCompositeOperation = 'multiply';
+}
+
+function clearDrawing() { drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height); }
+
+let isDrawing = false, lastX = 0, lastY = 0;
+drawCanvas.addEventListener('mousedown', (e) => { isDrawing = true; [lastX, lastY] = [e.offsetX, e.offsetY]; });
+drawCanvas.addEventListener('mouseup', () => isDrawing = false);
+drawCanvas.addEventListener('mouseleave', () => isDrawing = false);
+drawCanvas.addEventListener('mousemove', (e) => {
+    if (!isDrawing || !drawMode) return;
+    drawCtx.beginPath();
+    drawCtx.moveTo(lastX, lastY);
+    drawCtx.lineTo(e.offsetX, e.offsetY);
+    drawCtx.strokeStyle = state.globalStyles.accent;
+    drawCtx.lineWidth = drawMode === 'highlighter' ? 15 : 3;
+    drawCtx.lineCap = 'round';
+    drawCtx.globalAlpha = drawMode === 'highlighter' ? 0.3 : 1;
+    drawCtx.stroke();
+    [lastX, lastY] = [e.offsetX, e.offsetY];
+});
 
 // --- CONFETTI ---
 const confettiCanvas = document.getElementById('confettiCanvas');
@@ -536,25 +643,13 @@ window.addEventListener('resize', resizeConfetti); resizeConfetti();
 
 function triggerConfetti() {
     for (let i = 0; i < 150; i++) {
-        confettiParticles.push({
-            x: window.innerWidth / 2,
-            y: window.innerHeight / 2,
-            vx: (Math.random() - 0.5) * 20,
-            vy: (Math.random() - 0.5) * 20 - 5,
-            color: `hsl(${Math.random() * 360}, 100%, 50%)`,
-            size: Math.random() * 8 + 2,
-            life: 1
-        });
+        confettiParticles.push({ x: window.innerWidth / 2, y: window.innerHeight / 2, vx: (Math.random() - 0.5) * 20, vy: (Math.random() - 0.5) * 20 - 5, color: `hsl(${Math.random() * 360}, 100%, 50%)`, size: Math.random() * 8 + 2, life: 1 });
     }
 }
 function updateConfetti() {
     ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
     confettiParticles = confettiParticles.filter(p => p.life > 0);
-    confettiParticles.forEach(p => {
-        p.x += p.vx; p.y += p.vy; p.vy += 0.3; p.life -= 0.015;
-        ctx.globalAlpha = p.life; ctx.fillStyle = p.color;
-        ctx.fillRect(p.x, p.y, p.size, p.size);
-    });
+    confettiParticles.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += 0.3; p.life -= 0.015; ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, p.size, p.size); });
     requestAnimationFrame(updateConfetti);
 }
 updateConfetti();
@@ -564,38 +659,33 @@ let recognition = null, voiceOn = false;
 function toggleVoice(forceState) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return showToast('Voice control not supported in this browser.');
-    
     voiceOn = forceState !== undefined ? forceState : !voiceOn;
     document.getElementById('voiceBtn').classList.toggle('active', voiceOn);
-
     if (voiceOn) {
         recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = false;
-        recognition.lang = 'en-US';
-        
+        recognition.continuous = true; recognition.interimResults = false; recognition.lang = 'en-US';
         recognition.onresult = (event) => {
             const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase().trim();
             if (transcript.includes('next')) nextPresentSlide();
             else if (transcript.includes('previous') || transcript.includes('back')) prevPresentSlide();
             else if (transcript.includes('laser')) toggleLaser();
             else if (transcript.includes('confetti')) triggerConfetti();
+            else if (transcript.includes('pen')) toggleDraw('pen');
+            else if (transcript.includes('clear')) clearDrawing();
             else if (transcript.includes('exit')) exitPresentation();
         };
         recognition.start();
-        showToast('🎤 Voice control active. Say "next" or "previous".');
-    } else {
-        if (recognition) recognition.stop();
-        showToast('Voice control off.');
-    }
+        showToast('🎤 Voice control active. Say "next" or "pen".');
+    } else { if (recognition) recognition.stop(); showToast('Voice control off.'); }
 }
 
 // --- COMMAND PALETTE ---
 const commands = [
     { name: 'Add New Slide', action: addSlide }, { name: 'Start Presentation', action: startPresentation },
-    { name: 'Apply Magic Layout', action: magicLayout }, { name: 'Open Brand Kit', action: openBrandKit },
-    { name: 'Open Snapshots', action: openSnapshots }, { name: 'Generate Share Link', action: generateShareLink },
-    { name: 'Export to PDF', action: exportPDF }, { name: 'Export to HTML', action: exportHTML },
+    { name: 'Generate Chart', action: generateChart }, { name: 'Apply Magic Layout', action: magicLayout },
+    { name: 'Open Brand Kit', action: openBrandKit }, { name: 'Open Snapshots', action: openSnapshots },
+    { name: 'Generate Share Link', action: generateShareLink }, { name: 'Export to PDF', action: exportPDF },
+    { name: 'Export to HTML', action: exportHTML }, { name: 'Export to PowerPoint', action: exportPPTX },
     { name: 'Toggle Grid View', action: toggleGridView }, { name: 'Toggle Dark Mode', action: toggleTheme },
     { name: 'Toggle Zen Mode', action: toggleZenMode }, { name: 'Toggle Speaker Notes', action: toggleNotes },
     { name: 'Summarize Selected Text', action: summarizeText }, { name: 'Generate Agenda Slide', action: generateAgenda },
@@ -617,12 +707,15 @@ document.addEventListener('keydown', (e) => {
     if (document.getElementById('cmdkOverlay').style.display === 'flex') { if (e.key === 'Escape') closeCmdk(); return; }
     if (document.getElementById('gridView').classList.contains('active')) { if (e.key === 'Escape') toggleGridView(); return; }
     if (presentMode.style.display === 'flex') {
-        if (e.key === 'ArrowRight' || e.key === ' ') nextPresentSlide();
-        if (e.key === 'ArrowLeft') prevPresentSlide();
+        if (e.key === 'ArrowRight' || e.key === ' ') { if(!drawMode) nextPresentSlide(); }
+        if (e.key === 'ArrowLeft') { if(!drawMode) prevPresentSlide(); }
         if (e.key === 'Escape') exitPresentation();
         if (e.key === 'l' || e.key === 'L') toggleLaser();
         if (e.key === 'v' || e.key === 'V') toggleVoice();
         if (e.key === 'c' || e.key === 'C') triggerConfetti();
+        if (e.key === 'd' || e.key === 'D') toggleDraw('pen');
+        if (e.key === 'h' || e.key === 'H') toggleDraw('highlighter');
+        if (e.key === 'a' || e.key === 'A') toggleAutoPlay();
     } else if (!isTyping) {
         if (e.ctrlKey && e.key === 'Enter') { e.preventDefault(); startPresentation(); }
         if (e.ctrlKey && e.key === 'n') { e.preventDefault(); addSlide(); }
