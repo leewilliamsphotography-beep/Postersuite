@@ -1,23 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  window.addEventListener('message', function(event) {
-    if (event.data.type === 'theme-update') {
-        if (event.data.dark) {
-            document.documentElement.classList.add('dark-mode');
-            // Update the app's internal toggle state/localStorage if needed
-        } else {
-            document.documentElement.classList.remove('dark-mode');
-        }
-    }
-    if (event.data.type === 'calm-update') {
-        if (event.data.calm) {
-            document.documentElement.classList.add('calm-mode');
-        } else {
-            document.documentElement.classList.remove('calm-mode');
-        }
-    }
-});
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="description" content="PosterA11y — a free, open tool for making Easy Read posters and symbol-supported materials with ARASAAC pictograms.">
@@ -52,6 +35,25 @@
 body.dark-mode{
   --paper:#121212; --surface:#1E1E1E; --ink:#E8E8E8; --ink2:#A0A0A0;
   --line:#333333; --line2:#262626; --accent-soft:rgba(209,76,30,.25);
+}
+
+/* Calm Mode (triggered by postMessage) */
+body.calm-mode{
+  --paper:#f4f6f9;
+  --surface:#ffffff;
+  --ink:#3b4252;
+  --ink2:#6b7280;
+  --line:#e2e8f0;
+  --line2:#f1f5f9;
+  --accent:#7c8db5;
+  --accent-d:#64748b;
+  --accent-soft:rgba(124, 141, 181, 0.15);
+}
+body.calm-mode .topbar, body.calm-mode .rail, body.calm-mode .sheet {
+  box-shadow: none;
+}
+body.calm-mode .btn, body.calm-mode input, body.calm-mode select, body.calm-mode .seg, body.calm-mode .ibtn {
+  border-radius: 16px;
 }
 
 *{box-sizing:border-box}
@@ -113,6 +115,7 @@ button:focus-visible, .btn:focus-visible{outline-offset:1px}
 .rail{border-right:1px solid var(--line);padding:28px 24px 48px;position:sticky;top:var(--tb);height:calc(100vh - var(--tb));overflow-y:auto;background:var(--surface)}
 .stage{padding:48px 48px 96px;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:calc(100vh - var(--tb));background-color: #FDFDFD; background-image: linear-gradient(#EEEFEF 1px, transparent 1px), linear-gradient(90deg, #EEEFEF 1px, transparent 1px); background-size: 32px 32px;}
 body.dark-mode .stage{background-color: #0A0A0A; background-image: linear-gradient(#222 1px, transparent 1px), linear-gradient(90deg, #222 1px, transparent 1px);}
+body.calm-mode .stage{background-image:none; background-color:var(--paper);}
 
 /* ---------- rail panels ---------- */
 .panel{margin-bottom:32px}
@@ -1459,7 +1462,7 @@ document.addEventListener('click', e => {
             id: libItem.dataset.id || null,
             src: libItem.dataset.src,
             word: libItem.dataset.word,
-            isArasaac: libItem.dataset.isArasaac === 'true'
+            isArasaac: libItem.dataset.is-arasaac === 'true'
         };
         toggleFavorite(data);
         return;
@@ -2604,6 +2607,24 @@ function applyDarkMode(isDark) {
     refreshIcons();
 }
 darkToggleBtn.onclick = () => applyDarkMode(!document.body.classList.contains('dark-mode'));
+
+/* ============ External Message Listener (Theme/Calm updates) ============ */
+window.addEventListener('message', function(event) {
+    if (event.data.type === 'theme-update') {
+        if (event.data.dark) {
+            applyDarkMode(true);
+        } else {
+            applyDarkMode(false);
+        }
+    }
+    if (event.data.type === 'calm-update') {
+        if (event.data.calm) {
+            document.body.classList.add('calm-mode');
+        } else {
+            document.body.classList.remove('calm-mode');
+        }
+    }
+});
 
 /* ============ toasts ============ */
 const TOAST_ICONS={info:'info',check:'circle-check',alert:'triangle-alert'};
