@@ -1,23 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    window.addEventListener('message', function(event) {
-    if (event.data.type === 'theme-update') {
-        if (event.data.dark) {
-            document.documentElement.classList.add('dark-mode');
-            // Update the app's internal toggle state/localStorage if needed
-        } else {
-            document.documentElement.classList.remove('dark-mode');
-        }
-    }
-    if (event.data.type === 'calm-update') {
-        if (event.data.calm) {
-            document.documentElement.classList.add('calm-mode');
-        } else {
-            document.documentElement.classList.remove('calm-mode');
-        }
-    }
-});
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="version" content="3.0">
@@ -44,6 +27,23 @@ body.dark-mode {
     --shadow:0 1px 3px rgba(0,0,0,.3),0 4px 12px rgba(0,0,0,.2);
     --shadow-lg:0 4px 24px rgba(0,0,0,.4),0 12px 48px rgba(0,0,0,.3);
 }
+
+/* Calm Mode Enhancements */
+body.calm-mode {
+    --paper:#EAEFEB; --surface:#F2F4F1; --surface2:#E2E6DF;
+    --ink:#3C463F; --ink2:#5C6862; --ink3:#8A968F;
+    --line:#D2D6CF; --line2:#BFC4BA;
+    --accent:#5F7A65; --accent-hover:#4A6151; --danger:#B58484; --success:#6B8A6B;
+    --shadow:0 1px 3px rgba(60, 70, 63,.05),0 4px 12px rgba(60, 70, 63,.03);
+    --shadow-lg:0 4px 24px rgba(60, 70, 63,.05),0 12px 48px rgba(60, 70, 63,.04);
+}
+body.dark-mode.calm-mode {
+    --paper:#141A16; --surface:#1C2420; --surface2:#252E29;
+    --ink:#C8D4CD; --ink2:#9BA8A1; --ink3:#6F7B75;
+    --line:#2B342F; --line2:#3A443E;
+    --accent:#8FA597; --accent-hover:#A8BFB1;
+}
+
 * { box-sizing:border-box; margin:0; padding:0; font-family:'Lexend',sans-serif; }
 body { background:var(--paper); color:var(--ink); min-height:100vh; transition:background var(--t),color var(--t); }
 
@@ -678,8 +678,6 @@ function renderHistory() {
             buildTypeTabs();
             buildFields();
             setTimeout(() => {
-                // For simple URL/Text, we can try to map it back, but for complex types it's hard. 
-                // So we just update the QR code directly if we can't map fields.
                 const type = qrTypes[currentType];
                 const fields = type.fields;
                 if (fields.length === 1) {
@@ -765,15 +763,41 @@ document.getElementById('typeTabs').addEventListener('keydown', e => {
     }
 });
 
-// Theme Toggle
+// Internal Theme Toggle
 function toggleTheme() {
     document.documentElement.classList.toggle('dark-mode');
     const isDark = document.documentElement.classList.contains('dark-mode');
     localStorage.setItem('pqr-theme', isDark ? 'dark' : 'light');
+    updateThemeIcon(isDark);
+}
+
+function updateThemeIcon(isDark) {
     document.getElementById('themeIcon').innerHTML = isDark 
         ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
-        : '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>';
+        : '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
 }
+
+// ─── Cross-Window Messaging (Iframe Integration) ───
+window.addEventListener('message', function(event) {
+    if (event.data.type === 'theme-update') {
+        if (event.data.dark) {
+            document.documentElement.classList.add('dark-mode');
+            localStorage.setItem('pqr-theme', 'dark');
+            updateThemeIcon(true);
+        } else {
+            document.documentElement.classList.remove('dark-mode');
+            localStorage.setItem('pqr-theme', 'light');
+            updateThemeIcon(false);
+        }
+    }
+    if (event.data.type === 'calm-update') {
+        if (event.data.calm) {
+            document.documentElement.classList.add('calm-mode');
+        } else {
+            document.documentElement.classList.remove('calm-mode');
+        }
+    }
+});
 
 // Init
 if (localStorage.getItem('pqr-theme') === 'dark') toggleTheme();

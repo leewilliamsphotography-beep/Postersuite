@@ -1,31 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    window.addEventListener('message', function(event) {
-    if (event.data.type === 'theme-update') {
-        if (event.data.dark) {
-            document.documentElement.classList.add('dark-mode');
-            // Update the app's internal toggle state/localStorage if needed
-        } else {
-            document.documentElement.classList.remove('dark-mode');
-        }
-    }
-    if (event.data.type === 'calm-update') {
-        if (event.data.calm) {
-            document.documentElement.classList.add('calm-mode');
-        } else {
-            document.documentElement.classList.remove('calm-mode');
-        }
-    }
-});
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="version" content="2.0">
+<meta name="version" content="2.1">
 <title>PosterF0rm — Local Form Builder</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root { --paper:#F8F9FA; --surface:#FFFFFF; --ink:#1A1D21; --ink2:#50545C; --line:#E3E5E8; --accent:#E11D48; }
 :root.dark-mode { --paper:#121212; --surface:#1E1E1E; --ink:#E8E8E8; --ink2:#A0A0A0; --line:#333333; }
+/* New Calm Mode: Warm, soft, low-contrast */
+:root.calm-mode { --paper:#FDFBF7; --surface:#F5F0E8; --ink:#4A4A4A; --ink2:#7A7A7A; --line:#E0DAD0; --accent:#6B8E71; }
+:root.dark-mode.calm-mode { --paper:#1A1C1E; --surface:#242323; --ink:#D4CFC4; --ink2:#A09A8E; --line:#3A3833; --accent:#88A88E; }
+
 * { box-sizing:border-box; margin:0; padding:0; font-family:'Lexend',sans-serif; }
 body { background:var(--paper); color:var(--ink); height:100vh; display:flex; flex-direction:column; transition:background .2s; overflow: hidden; }
 
@@ -122,6 +109,25 @@ const params = new URLSearchParams(window.location.search);
 if (params.get('theme') === 'dark') localStorage.setItem('pf0-theme', 'dark');
 if (localStorage.getItem('pf0-theme') === 'dark') document.documentElement.classList.add('dark-mode');
 if (localStorage.getItem('pf0-accent')) document.documentElement.style.setProperty('--accent', localStorage.getItem('pf0-accent'));
+
+// Listen for parent window messages (iframe integration)
+window.addEventListener('message', function(event) {
+    if (event.data.type === 'theme-update') {
+        if (event.data.dark) {
+            document.documentElement.classList.add('dark-mode');
+            // Update the app's internal toggle state/localStorage if needed
+        } else {
+            document.documentElement.classList.remove('dark-mode');
+        }
+    }
+    if (event.data.type === 'calm-update') {
+        if (event.data.calm) {
+            document.documentElement.classList.add('calm-mode');
+        } else {
+            document.documentElement.classList.remove('calm-mode');
+        }
+    }
+});
 </script>
 </head>
 <body>
@@ -302,7 +308,6 @@ function togglePreview() {
     document.getElementById('previewBtn').innerText = isPreviewMode ? '✏️ Edit' : '👁️ Preview';
     
     if (isPreviewMode) {
-        // Add submit button if it doesn't exist
         if (!builder.querySelector('.submit-btn')) {
             const submitBtn = document.createElement('button');
             submitBtn.className = 'submit-btn';
@@ -310,7 +315,6 @@ function togglePreview() {
             submitBtn.onclick = submitForm;
             builder.appendChild(submitBtn);
         }
-        // Enable inputs
         builder.querySelectorAll('.field-input, input[type="text"], input[type="radio"], input[type="checkbox"], textarea').forEach(inp => {
             if(!inp.classList.contains('option-text')) inp.disabled = false;
         });
@@ -365,7 +369,7 @@ function openLogicModal(btn) {
     
     let currentIndex = 0;
     builder.querySelectorAll('.form-field').forEach(f => {
-        if (f === currentLogicField) return; // Can't depend on itself
+        if (f === currentLogicField) return;
         const label = f.querySelector('.field-label').innerText.replace(' *', '');
         const option = document.createElement('option');
         option.value = currentIndex;
@@ -374,7 +378,6 @@ function openLogicModal(btn) {
         currentIndex++;
     });
 
-    // Load existing logic
     if (currentLogicField.dataset.logic) {
         const logic = JSON.parse(currentLogicField.dataset.logic);
         select.value = logic.dependsOn;
@@ -417,7 +420,6 @@ function evaluateLogic() {
             const depField = fields[logic.dependsOn];
             let depValue = '';
             
-            // Determine dependent field's current value in preview
             if (depField.dataset.type === 'text' || depField.dataset.type === 'paragraph') {
                 depValue = depField.querySelector('.field-input').value;
             } else if (depField.dataset.type === 'radio') {
@@ -434,7 +436,6 @@ function evaluateLogic() {
     });
 }
 
-// Listen for inputs in preview mode to trigger logic
 builder.addEventListener('input', (e) => {
     if (isPreviewMode) evaluateLogic();
 });
@@ -446,7 +447,7 @@ function submitForm() {
     let isValid = true;
 
     fields.forEach(field => {
-        if (field.classList.contains('hidden-in-preview')) return; // Skip hidden fields
+        if (field.classList.contains('hidden-in-preview')) return;
         
         const label = field.querySelector('.field-label').innerText.replace(' *', '');
         const type = field.dataset.type;
@@ -465,7 +466,6 @@ function submitForm() {
             value = checkedVals.join(', ');
         }
 
-        // Simple required validation
         if (field.dataset.required === 'true' && !value) {
             isValid = false;
             field.style.border = '2px solid var(--accent)';
@@ -489,7 +489,6 @@ function submitForm() {
         document.getElementById('kioskThankYou').style.display = 'flex';
         setTimeout(() => {
             document.getElementById('kioskThankYou').style.display = 'none';
-            // reset form
             builder.querySelectorAll('.field-input, input[type="text"], input[type="radio"], input[type="checkbox"], textarea').forEach(inp => {
                 if(!inp.classList.contains('option-text')) {
                     inp.value = '';
@@ -500,7 +499,7 @@ function submitForm() {
         }, 4000);
     } else {
         showToast('Response saved locally!');
-        togglePreview(); // Exit preview
+        togglePreview();
     }
 }
 
@@ -688,7 +687,6 @@ function showToast(message) {
     setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-// Exit kiosk on Esc
 window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && isKioskMode) exitKiosk();
 });

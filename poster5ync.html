@@ -1,27 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  window.addEventListener('message', function(event) {
-    if (event.data.type === 'theme-update') {
-        if (event.data.dark) {
-            document.documentElement.classList.add('dark-mode');
-            // Update the app's internal toggle state/localStorage if needed
-        } else {
-            document.documentElement.classList.remove('dark-mode');
-        }
-    }
-    if (event.data.type === 'calm-update') {
-        if (event.data.calm) {
-            document.documentElement.classList.add('calm-mode');
-        } else {
-            document.documentElement.classList.remove('calm-mode');
-        }
-    }
-});
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="description" content="Poster5ync — a free, open source, offline document editor.">
-<meta name="version" content="2.0">
+<meta name="version" content="2.1">
 <title>Poster5ync — Docs</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='sbgGrad' x1='0' y1='0' x2='120' y2='120' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23FFFFFF'/%3E%3Cstop offset='0.5' stop-color='%23F8F8FE'/%3E%3Cstop offset='1' stop-color='%23ECECF7'/%3E%3C/linearGradient%3E%3CradialGradient id='spinGrad' cx='0.35' cy='0.3' r='0.8'%3E%3Cstop offset='0' stop-color='%23C4B5FD'/%3E%3Cstop offset='1' stop-color='%238B5CF6'/%3E%3C/radialGradient%3E%3Cfilter id='sshadow' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='0' dy='3' stdDeviation='3' flood-color='%231A1D21' flood-opacity='0.2'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='120' height='120' rx='28' fill='url(%23sbgGrad)'/%3E%3Crect x='1.5' y='1.5' width='117' height='117' rx='26.5' fill='none' stroke='%231A1D21' stroke-opacity='0.05'/%3E%3Cpath d='M38 42 L60 24' fill='none' stroke='%238B5CF6' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M82 42 L60 24' fill='none' stroke='%238B5CF6' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='38' cy='42' r='2.5' fill='%238B5CF6'/%3E%3Ccircle cx='82' cy='42' r='2.5' fill='%238B5CF6'/%3E%3Crect x='32' y='38' width='56' height='64' rx='10' fill='%23FFFFFF' filter='url(%23sshadow)'/%3E%3Ccircle cx='60' cy='62' r='16' fill='%23F3F0FF'/%3E%3Cpath d='M55 54 L50 58 L55 62' fill='none' stroke='%236D28D9' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M50 58 A 10 10 0 0 1 60 48' fill='none' stroke='%236D28D9' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M65 70 L70 66 L65 62' fill='none' stroke='%236D28D9' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M70 66 A 10 10 0 0 1 60 76' fill='none' stroke='%236D28D9' stroke-width='4' stroke-linecap='round'/%3E%3Crect x='42' y='86' width='36' height='5' rx='2.5' fill='%231A1D21'/%3E%3Crect x='48' y='94' width='24' height='5' rx='2.5' fill='%238B5CF6'/%3E%3Ccircle cx='60' cy='20' r='7' fill='url(%23spinGrad)' filter='url(%23sshadow)'/%3E%3Ccircle cx='57.5' cy='17.5' r='1.8' fill='%23FFFFFF' opacity='0.7'/%3E%3C/svg%3E">
 
@@ -35,7 +18,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 :root{--paper:#F8F9FA;--surface:#FFFFFF;--ink:#1A1D21;--ink2:#50545C;--line:#E3E5E8;--line2:#F0F1F3;--accent:#2563EB;--accent-d:#1d4ed8;--accent-soft:rgba(37,99,235,.1);--gd-bg:#E8EAED;--sidebar-w:260px}
-body.dark-mode{--paper:#121212;--surface:#1E1E1E;--ink:#E8E8E8;--ink2:#A0A0A0;--line:#333333;--line2:#262626;--accent-soft:rgba(37,99,235,.25);--gd-bg:#1A1A1A}
+
+/* Calm Mode (Warm, low-strain theme) */
+.calm-mode{--gd-bg:#EAE6DD;--surface:#F7F3EC;--paper:#F7F3EC;--ink:#3A352F;--ink2:#6A6258;--line:#E1DACA;--line2:#EFE9DC;--accent:#8A7355;--accent-soft:rgba(138,115,85,.15);--accent-d:#6F5C45}
+
+/* Dark Mode */
+.dark-mode{--paper:#121212;--surface:#1E1E1E;--ink:#E8E8E8;--ink2:#A0A0A0;--line:#333333;--line2:#262626;--accent-soft:rgba(37,99,235,.25);--gd-bg:#1A1A1A;--accent:#2563EB;--accent-d:#1d4ed8}
+
 *{box-sizing:border-box}[hidden]{display:none!important}html,body{margin:0;padding:0;height:100%}
 body{background:var(--gd-bg);color:var(--ink);font-family:'Roboto',Arial,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .2s,color .2s}
 button,input,select{font-family:inherit;color:inherit}::selection{background:var(--accent-soft)}
@@ -112,8 +101,14 @@ body.sidebar-closed .main-area{margin-left:0}
 .ql-editor a{color:var(--accent);cursor:pointer;}
 .ql-editor img{max-width:100%;border-radius:4px;margin:4px 0;}
 .ql-editor.ql-blank::before{color:#D1D5DB;font-style:normal;left:0;}
-body.dark-mode .sheet{background:#1E1E1E;}body.dark-mode .ql-container{color:#E8E8E8 !important;}
-body.dark-mode .ql-editor.ql-blank::before{color:#6B6B6B;}
+
+/* Theme-aware editor overrides */
+.dark-mode .sheet{background:#1E1E1E;}
+.dark-mode .ql-container{color:#E8E8E8 !important;}
+.dark-mode .ql-editor.ql-blank::before{color:#6B6B6B;}
+.calm-mode .sheet{background:#FBF8F1;box-shadow:0 1px 2px rgba(0,0,0,.05),0 10px 30px -10px rgba(138,115,85,0.15);}
+.calm-mode .ql-container{color:#3A352F !important;}
+.calm-mode .ql-editor.ql-blank::before{color:#B8AC96;}
 
 .ql-editor .ql-font-roboto { font-family: 'Roboto', sans-serif; }
 .ql-editor .ql-font-open-sans { font-family: 'Open Sans', sans-serif; }
@@ -150,7 +145,6 @@ body.focus-mode .ql-editor > *.active { opacity: 1; }
 .find-bar input:focus{border-color:var(--accent)}
 .find-bar .ibtn{width:28px;height:28px}
 
-/* Command Palette */
 .cmd-palette{position:fixed;top:25%;left:50%;transform:translateX(-50%);width:90%;max-width:500px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.2);z-index:300;display:none;flex-direction:column;overflow:hidden}
 .cmd-palette.open{display:flex}
 .cmd-input{width:100%;padding:16px;border:0;border-bottom:1px solid var(--line);font:400 16px 'Roboto';background:transparent;color:var(--ink);outline:none}
@@ -322,13 +316,11 @@ body.focus-mode .ql-editor > *.active { opacity: 1; }
   </div>
 </div>
 
-<!-- Command Palette -->
 <div class="cmd-palette" id="cmdPalette">
   <input type="text" class="cmd-input" id="cmdInput" placeholder="Type a command or search..." autocomplete="off">
   <div class="cmd-results" id="cmdResults"></div>
 </div>
 
-<!-- Modals & Overlays -->
 <div id="toasts" aria-live="polite"></div>
 <input type="file" id="fileInput" accept=".html,.json,.txt" style="display:none;">
 <input type="file" id="backupInput" accept=".p5ync" style="display:none;">
@@ -355,7 +347,7 @@ body.focus-mode .ql-editor > *.active { opacity: 1; }
     <div class="modal-body">
       <p><strong>Poster5ync</strong> is a 100% free, open-source, privacy-first document editor. All your work is stored locally on your device. No accounts, no tracking, no clouds.</p>
       <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
-      <p><strong>Version:</strong> <span id="appVersion">2.0</span></p>
+      <p><strong>Version:</strong> <span id="appVersion">2.1</span></p>
       <h4>Open Source Fonts</h4>
       <p>Roboto, Open Sans, Lato, Montserrat, Poppins, Oswald, Merriweather, Lora, Playfair Display, JetBrains Mono, Fira Code, Caveat (All under SIL Open Font License, 1.1)</p>
       <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
@@ -581,7 +573,6 @@ quill.on('text-change', () => {
   }
 });
 
-// Bidirectional Linking & Image Paste Handler
 quill.root.addEventListener('keydown', async (e) => {
   if (e.key === '[' && quill.getSelection()) {
     const sel = quill.getSelection();
@@ -673,7 +664,7 @@ fileInput.onchange = (e) => {
 };
  $('#clearBtn').onclick = () => { if (confirm('Clear current document?')) { quill.setContents([]); headerDocTitle.value = ''; save(); toast('Document cleared', 'info'); } };
 
-// --- Encrypted Backups (Zero-Knowledge Web Crypto API) ---
+// --- Encrypted Backups (Zero-Knowledge) ---
 async function deriveKey(password, salt) {
   const enc = new TextEncoder();
   const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
@@ -735,7 +726,7 @@ function toggleSidebar(force) { const sb = $('#sidebar'); let open = force !== u
 // --- Command Palette ---
 const cmdPalette = $('#cmdPalette'), cmdInput = $('#cmdInput'), cmdResults = $('#cmdResults');
 const commands = [
-  { title: 'Toggle Dark Mode', icon: 'moon', action: () => applyDarkMode(!document.body.classList.contains('dark-mode')) },
+  { title: 'Toggle Dark Mode', icon: 'moon', action: () => applyDarkMode(!document.documentElement.classList.contains('dark-mode')) },
   { title: 'Toggle Focus Mode', icon: 'eye', action: () => $('#focusBtn').click() },
   { title: 'New Document', icon: 'plus', action: createNewDoc },
   { title: 'Print / Save as PDF', icon: 'printer', action: () => window.print() },
@@ -810,8 +801,32 @@ let historyInterval = setInterval(async () => { if (quill.getText().trim().lengt
 
 // --- Dark Mode ---
 const darkToggleBtn = $('#darkToggleBtn');
-function applyDarkMode(isDark) { document.body.classList.toggle('dark-mode', isDark); localStorage.setItem('poster5ync.dark', isDark ? '1' : '0'); darkToggleBtn.innerHTML = isDark ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>'; darkToggleBtn.setAttribute('aria-pressed', isDark); refreshIcons(); }
-darkToggleBtn.onclick = () => applyDarkMode(!document.body.classList.contains('dark-mode'));
+function applyDarkMode(isDark) {
+  document.documentElement.classList.toggle('dark-mode', isDark);
+  localStorage.setItem('poster5ync.dark', isDark ? '1' : '0');
+  darkToggleBtn.innerHTML = isDark ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
+  darkToggleBtn.setAttribute('aria-pressed', isDark);
+  refreshIcons();
+}
+darkToggleBtn.onclick = () => applyDarkMode(!document.documentElement.classList.contains('dark-mode'));
+
+// --- Cross-Window Messaging (for iframes) ---
+window.addEventListener('message', function(event) {
+  if (event.data.type === 'theme-update') {
+    if (event.data.dark) {
+      applyDarkMode(true);
+    } else {
+      applyDarkMode(false);
+    }
+  }
+  if (event.data.type === 'calm-update') {
+    if (event.data.calm) {
+      document.documentElement.classList.add('calm-mode');
+    } else {
+      document.documentElement.classList.remove('calm-mode');
+    }
+  }
+});
 
 // --- Toasts ---
 function toast(msg, kind) {

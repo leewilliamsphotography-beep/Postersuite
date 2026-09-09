@@ -1,26 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    window.addEventListener('message', function(event) {
-    if (event.data.type === 'theme-update') {
-        if (event.data.dark) {
-            document.documentElement.classList.add('dark-mode');
-            // Update the app's internal toggle state/localStorage if needed
-        } else {
-            document.documentElement.classList.remove('dark-mode');
-        }
-    }
-    if (event.data.type === 'calm-update') {
-        if (event.data.calm) {
-            document.documentElement.classList.add('calm-mode');
-        } else {
-            document.documentElement.classList.remove('calm-mode');
-        }
-    }
-});
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="version" content="7.1">
+<meta name="version" content="7.2">
 <title>PosterC4l — Visual Calendar</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -1090,6 +1073,31 @@ document.addEventListener('keydown', (e) => {
 
 document.getElementById('cRepFreq').addEventListener('change', function() { document.getElementById('cRepDaysRow').style.display = this.value === 'weekly' ? 'flex' : 'none'; });
 document.querySelectorAll('#cRepDays button').forEach(btn => btn.addEventListener('click', function() { this.classList.toggle('active'); }));
+
+// --- iFrame Communication Listener ---
+window.addEventListener('message', function(event) {
+    if (event.data.type === 'theme-update') {
+        if (event.data.dark) {
+            document.documentElement.classList.add('dark-mode');
+            // Update the app's internal toggle state/localStorage
+            applyTheme('dark');
+            localStorage.setItem('pc4-theme', 'dark');
+        } else {
+            document.documentElement.classList.remove('dark-mode');
+            // Update the app's internal toggle state/localStorage
+            applyTheme('light');
+            localStorage.setItem('pc4-theme', 'light');
+        }
+    }
+    if (event.data.type === 'calm-update') {
+        if (event.data.calm) {
+            document.documentElement.classList.add('calm-mode');
+            // You can add logic here to switch to a calmer palette if needed
+        } else {
+            document.documentElement.classList.remove('calm-mode');
+        }
+    }
+});
 
 renderCal();
 </script>

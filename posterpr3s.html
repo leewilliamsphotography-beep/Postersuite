@@ -1,32 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    window.addEventListener('message', function(event) {
-    if (event.data.type === 'theme-update') {
-        if (event.data.dark) {
-            document.documentElement.classList.add('dark-mode');
-            // Update the app's internal toggle state/localStorage if needed
-        } else {
-            document.documentElement.classList.remove('dark-mode');
-        }
-    }
-    if (event.data.type === 'calm-update') {
-        if (event.data.calm) {
-            document.documentElement.classList.add('calm-mode');
-        } else {
-            document.documentElement.classList.remove('calm-mode');
-        }
-    }
-});
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="version" content="2.0">
+<meta name="version" content="1.0">
 <title>PosterPr3s — Presentation Maker</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Lexend:wght@400;500;600&family=Playfair+Display:wght@700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <style>
 :root { --paper:#F8F9FA; --surface:#FFFFFF; --ink:#1A1D21; --ink2:#50545C; --line:#E3E5E8; --accent:#F59E0B; --shadow: 0 10px 30px rgba(0,0,0,0.08); --title-font: 'Bricolage Grotesque'; }
 body.dark-mode { --paper:#121212; --surface:#1E1E1E; --ink:#E8E8E8; --ink2:#A0A0A0; --line:#333333; --shadow: 0 10px 30px rgba(0,0,0,0.5); }
+/* Calm Mode: Soft, low-contrast sepia/gray theme for reduced eye strain */
+body.calm-mode { --paper:#F3EDE2; --surface:#F9F5EC; --ink:#4F4A41; --ink2:#7A736A; --line:#E0D9CC; --accent:#A89376; --shadow: 0 10px 30px rgba(0,0,0,0.05); }
 * { box-sizing:border-box; margin:0; padding:0; font-family:'Lexend',sans-serif; }
 body { background:var(--paper); color:var(--ink); height:100vh; display:flex; flex-direction:column; transition:background .2s; overflow: hidden; }
 
@@ -743,8 +728,33 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-function toggleTheme() { document.documentElement.classList.toggle('dark-mode'); localStorage.setItem('pp3-theme', document.documentElement.classList.contains('dark-mode') ? 'dark' : 'light'); closeCmdk(); }
+function toggleTheme() { 
+    document.documentElement.classList.toggle('dark-mode'); 
+    localStorage.setItem('pp3-theme', document.documentElement.classList.contains('dark-mode') ? 'dark' : 'light'); 
+    closeCmdk(); 
+}
 function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
+
+// --- EXTERNAL EVENT LISTENER (e.g., from parent window/iframe) ---
+window.addEventListener('message', function(event) {
+    if (event.data.type === 'theme-update') {
+        if (event.data.dark) {
+            document.documentElement.classList.add('dark-mode');
+            // Update the app's internal toggle state/localStorage if needed
+            localStorage.setItem('pp3-theme', 'dark');
+        } else {
+            document.documentElement.classList.remove('dark-mode');
+            localStorage.setItem('pp3-theme', 'light');
+        }
+    }
+    if (event.data.type === 'calm-update') {
+        if (event.data.calm) {
+            document.documentElement.classList.add('calm-mode');
+        } else {
+            document.documentElement.classList.remove('calm-mode');
+        }
+    }
+});
 
 init();
 </script>

@@ -1,23 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    window.addEventListener('message', function(event) {
-    if (event.data.type === 'theme-update') {
-        if (event.data.dark) {
-            document.documentElement.classList.add('dark-mode');
-            // Update the app's internal toggle state/localStorage if needed
-        } else {
-            document.documentElement.classList.remove('dark-mode');
-        }
-    }
-    if (event.data.type === 'calm-update') {
-        if (event.data.calm) {
-            document.documentElement.classList.add('calm-mode');
-        } else {
-            document.documentElement.classList.remove('calm-mode');
-        }
-    }
-});
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="version" content="1.5">
@@ -73,6 +56,17 @@
         .btn-icon.active { background: var(--highlight); border-color: var(--primary); color: var(--primary-dark); }
         .delete-btn { background: #fee2e2; color: #ef4444; border-color: #fecaca; }
         .delete-btn:hover { background: #fecaca; color: #dc2626; border-color: #fca5a5; }
+
+        /* Cross-Frame Theme & Calm Mode Support */
+        .dark-mode { background: #111827; color: #f3f4f6; }
+        .dark-mode .navbar, .dark-mode .left-panel, .dark-mode .right-panel { background: #1f2937; border-color: #374151; color: #f3f4f6; }
+        .dark-mode .canvas-area { background: #0b0f19; }
+        .dark-mode #canvasWrapper { border-color: #374151; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .dark-mode .btn, .dark-mode .btn-icon, .dark-mode .element-btn { background: #374151; color: #f3f4f6; border-color: #4b5563; }
+        .dark-mode .btn:hover, .dark-mode .btn-icon:hover, .dark-mode .element-btn:hover { background: #4b5563; border-color: #10b981; color: #10b981; }
+        .dark-mode input[type="text"], .dark-mode input[type="number"], .dark-mode input[type="color"], .dark-mode select { background: #374151; color: #f3f4f6; border-color: #4b5563; }
+        .dark-mode .panel-title { color: #9ca3af; }
+        .calm-mode { filter: sepia(0.3) saturate(1.2) hue-rotate(-10deg); transition: filter 0.3s ease; }
     </style>
 </head>
 <body>
@@ -725,6 +719,25 @@
             else if (e.key === 'ArrowDown') { e.preventDefault(); updateProp('y', getElById(selectedId).data.y + (e.shiftKey ? 10 : 1)); }
             else if (e.key === 'ArrowLeft') { e.preventDefault(); updateProp('x', getElById(selectedId).data.x - (e.shiftKey ? 10 : 1)); }
             else if (e.key === 'ArrowRight') { e.preventDefault(); updateProp('x', getElById(selectedId).data.x + (e.shiftKey ? 10 : 1)); }
+        });
+
+        // --- Cross-Window Messaging (Theme & Calm Mode) ---
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'theme-update') {
+                if (event.data.dark) {
+                    document.documentElement.classList.add('dark-mode');
+                    // Update the app's internal toggle state/localStorage if needed
+                } else {
+                    document.documentElement.classList.remove('dark-mode');
+                }
+            }
+            if (event.data.type === 'calm-update') {
+                if (event.data.calm) {
+                    document.documentElement.classList.add('calm-mode');
+                } else {
+                    document.documentElement.classList.remove('calm-mode');
+                }
+            }
         });
 
         init();
