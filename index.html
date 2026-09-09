@@ -104,15 +104,19 @@
         .app-overlay iframe { width: 100%; height: 100%; border: none; }
         .loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; border: 5px solid var(--line); border-bottom-color: var(--accent-sync); border-radius: 50%; animation: spin 1s linear infinite; display: none; }
         @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
-        .close-btn { position: fixed; bottom: 24px; right: 24px; z-index: 101; background: var(--surface); border: 1px solid var(--line); color: var(--ink); padding: 12px 24px; border-radius: 999px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: 'Bricolage Grotesque', sans-serif; display: flex; align-items: center; gap: 8px; opacity: 0.75; transition: opacity 0.2s ease, transform 0.2s ease; }
-        .close-btn:hover { opacity: 1; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
         
-        /* App Switcher Styles */
-        .switcher-btn { position: fixed; top: 24px; left: 24px; z-index: 101; background: var(--surface); border: 1px solid var(--line); color: var(--ink); padding: 8px; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 8px; font-family: 'Bricolage Grotesque'; font-weight: 700; }
+        /* Floating Buttons (Bottom Corners) */
+        .close-btn, .switcher-btn { position: fixed; bottom: 24px; z-index: 101; background: var(--surface); border: 1px solid var(--line); color: var(--ink); padding: 12px 24px; border-radius: 999px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: 'Bricolage Grotesque', sans-serif; display: flex; align-items: center; gap: 8px; opacity: 0.85; transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s; }
+        .close-btn:hover, .switcher-btn:hover { opacity: 1; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
+        .close-btn { right: 24px; }
+        .switcher-btn { left: 24px; opacity: 0.75; }
         .switcher-btn:hover { background: var(--line2); }
-        .switcher-dropdown { position: fixed; top: 70px; left: 24px; z-index: 102; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); padding: 8px; display: none; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 300px; }
+        .switcher-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+        /* App Switcher Dropdown */
+        .switcher-dropdown { position: fixed; bottom: 80px; left: 24px; z-index: 102; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); padding: 8px; display: none; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 300px; }
         .switcher-dropdown.active { display: grid; }
-        .switcher-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; color: var(--ink); text-decoration: none; }
+        .switcher-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; color: var(--ink); text-decoration: none; font-size: 0.9rem; }
         .switcher-item:hover { background: var(--line2); }
         .switcher-item svg { width: 20px; height: 20px; flex-shrink: 0; }
 
@@ -128,7 +132,7 @@
         .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--ink); color: var(--paper); padding: 12px 24px; border-radius: 999px; font-weight: 600; z-index: 400; transition: transform 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
-        @media (max-width: 600px) { header { padding: 12px 16px; } .logo span { display: none; } nav { gap: 12px; } nav a, nav button { font-size: 0.85rem; } .nav-text { display: none; } .hero h1 { font-size: 2.2rem; } .footer-links { flex-direction: column; gap: 8px; } .switcher-dropdown { width: calc(100% - 48px); grid-template-columns: 1fr; } }
+        @media (max-width: 600px) { header { padding: 12px 16px; } .logo span { display: none; } nav { gap: 12px; } nav a, nav button { font-size: 0.85rem; } .nav-text { display: none; } .hero h1 { font-size: 2.2rem; } .footer-links { flex-direction: column; gap: 8px; } .switcher-dropdown { width: calc(100% - 48px); grid-template-columns: 1fr; } .switcher-btn, .close-btn { padding: 10px 16px; font-size: 0.85rem; } }
     </style>
 </head>
 <body>
@@ -349,17 +353,19 @@
     <div id="appOverlay" class="app-overlay">
         <div id="loader" class="loader"></div>
         
-        <!-- App Switcher -->
-        <div class="switcher-btn" onclick="toggleSwitcher()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        <!-- Floating App Switcher (Bottom Left) -->
+        <div class="switcher-btn" onclick="toggleSwitcher(event)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
             Suite
         </div>
         <div id="switcherDropdown" class="switcher-dropdown"></div>
 
+        <!-- Back to Suite Button (Bottom Right) -->
         <button class="close-btn" onclick="closeApp()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="6"></line></svg>
             Back to Suite
         </button>
+        
         <iframe id="appFrame" src=""></iframe>
     </div>
 
@@ -471,14 +477,22 @@
         apps.forEach(app => {
             const item = document.createElement('a');
             item.className = 'switcher-item';
-            item.onclick = () => { openApp(app.url, app.id); toggleSwitcher(); };
+            item.onclick = (e) => { e.preventDefault(); openApp(app.url, app.id); toggleSwitcher(); };
             item.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="${app.color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle></svg> ${app.name}`;
             switcherDropdown.appendChild(item);
         });
 
-        function toggleSwitcher() {
+        function toggleSwitcher(event) {
+            if (event) event.stopPropagation();
             switcherDropdown.classList.toggle('active');
         }
+        
+        // Hide switcher if clicked outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.switcher-btn') && !e.target.closest('.switcher-dropdown')) {
+                switcherDropdown.classList.remove('active');
+            }
+        });
 
         // Open App Logic
         function getAppUrl(url) {
@@ -626,8 +640,9 @@
                 else { await navigator.clipboard.writeText(window.location.href); showToast(); }
             } catch(err) { console.log("Share cancelled or failed"); }
         }
-        function showToast() {
+        function showToast(msg = 'Link copied to clipboard!') {
             const toast = document.getElementById("toast");
+            toast.textContent = msg;
             toast.classList.add("show");
             setTimeout(() => { toast.classList.remove("show"); }, 3000);
         }
