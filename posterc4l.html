@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="version" content="7.2">
+<meta name="version" content="7.3">
 <title>PosterC4l — Visual Calendar</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -540,11 +540,8 @@ function getHoliday(year, month, day) {
     if (month === 11 && day === 31) return "New Year's Eve";
 
     // Nth Monday Bank Holidays
-    // Early May Bank Holiday (1st Monday in May)
     if (month === 4 && day === getNthWeekday(year, 4, 1, 1)) return "May Day";
-    // Spring Bank Holiday (Last Monday in May)
     if (month === 4 && day === getLastWeekday(year, 4, 1)) return "Spring Bank Hol";
-    // Summer Bank Holiday (Last Monday in August)
     if (month === 7 && day === getLastWeekday(year, 7, 1)) return "Summer Bank Hol";
 
     // Easter Calculated Holidays
@@ -1025,7 +1022,13 @@ function changeMonth(dir) { currentDate.setMonth(currentDate.getMonth() + dir); 
 function goToToday() { currentDate = new Date(); renderCal(); showToast('Jumped to today!'); }
 function toggleView() { currentView = currentView === 'month' ? 'year' : 'month'; renderCal(); }
 function toggleDrawer() { document.getElementById('appDrawer').classList.toggle('show'); document.getElementById('drawerBackdrop').classList.toggle('show'); }
-function applyTheme(theme) { document.body.setAttribute('data-theme', theme); localStorage.setItem('pc4-theme', theme); }
+
+// --- FIX: Theme Management Updated to target <html> ---
+function applyTheme(theme) { 
+    document.documentElement.setAttribute('data-theme', theme); 
+    document.body.setAttribute('data-theme', theme);
+    localStorage.setItem('pc4-theme', theme); 
+}
 applyTheme(localStorage.getItem('pc4-theme') || 'light');
 
 function saveData(silent = false) { localStorage.setItem('posterc4l-cal-data', JSON.stringify(calData)); if(!silent) showToast('Calendar saved locally!'); }
@@ -1074,25 +1077,20 @@ document.addEventListener('keydown', (e) => {
 document.getElementById('cRepFreq').addEventListener('change', function() { document.getElementById('cRepDaysRow').style.display = this.value === 'weekly' ? 'flex' : 'none'; });
 document.querySelectorAll('#cRepDays button').forEach(btn => btn.addEventListener('click', function() { this.classList.toggle('active'); }));
 
-// --- iFrame Communication Listener ---
+// --- iFrame Communication Listener (FIXED) ---
 window.addEventListener('message', function(event) {
     if (event.data.type === 'theme-update') {
         if (event.data.dark) {
             document.documentElement.classList.add('dark-mode');
-            // Update the app's internal toggle state/localStorage
-            applyTheme('dark');
-            localStorage.setItem('pc4-theme', 'dark');
+            applyTheme('dark'); // Explicitly call applyTheme to set the data-theme attribute
         } else {
             document.documentElement.classList.remove('dark-mode');
-            // Update the app's internal toggle state/localStorage
-            applyTheme('light');
-            localStorage.setItem('pc4-theme', 'light');
+            applyTheme('light'); // Explicitly call applyTheme to set the data-theme attribute
         }
     }
     if (event.data.type === 'calm-update') {
         if (event.data.calm) {
             document.documentElement.classList.add('calm-mode');
-            // You can add logic here to switch to a calmer palette if needed
         } else {
             document.documentElement.classList.remove('calm-mode');
         }
