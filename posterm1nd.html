@@ -1,6 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    window.addEventListener('message', function(event) {
+    if (event.data.type === 'theme-update') {
+        if (event.data.dark) {
+            document.documentElement.classList.add('dark-mode');
+            // Update the app's internal toggle state/localStorage if needed
+        } else {
+            document.documentElement.classList.remove('dark-mode');
+        }
+    }
+    if (event.data.type === 'calm-update') {
+        if (event.data.calm) {
+            document.documentElement.classList.add('calm-mode');
+        } else {
+            document.documentElement.classList.remove('calm-mode');
+        }
+    }
+});
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Version meta tag -->
