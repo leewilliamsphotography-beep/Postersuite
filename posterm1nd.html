@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Version meta tag -->
-    <meta name="version" content="1.6.0">
+    <meta name="version" content="1.6.1">
     <title>PosterM1nd - Professional Mind Mapping</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,6 +26,7 @@
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
             --radius: 8px;
+            --nav-bg: rgba(255, 255, 255, 0.8);
         }
 
         /* High Contrast Theme */
@@ -41,10 +42,11 @@
             --border-dark: #666666;
             --canvas-bg: #111111;
             --canvas-dot: #333333;
+            --nav-bg: rgba(0, 0, 0, 0.9);
         }
 
-        /* Dark Mode (Triggered via postMessage) */
-        html.dark-mode {
+        /* Dark Mode (Triggered via UI or postMessage) */
+        body.dark-mode {
             --primary: #818CF8; /* Indigo 400 */
             --primary-hover: #6366F1;
             --primary-light: #1E1B4B; /* Indigo 950 */
@@ -54,15 +56,16 @@
             --text-muted: #94A3B8; /* Slate 400 */
             --border: #334155; /* Slate 700 */
             --border-dark: #475569; /* Slate 600 */
-            --canvas-bg: #1E293B;
+            --canvas-bg: #0F172A;
             --canvas-dot: #334155;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+            --nav-bg: rgba(15, 23, 42, 0.8);
         }
 
-        /* Calm Mode (Triggered via postMessage) */
-        html.calm-mode {
+        /* Calm Mode (Triggered via UI or postMessage) */
+        body.calm-mode {
             --primary: #A5B4FC; /* Soft Indigo */
             --primary-hover: #818CF8;
             --primary-light: #F5F3FF;
@@ -77,6 +80,7 @@
             --shadow-sm: none;
             --shadow-md: none;
             --shadow-lg: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+            --nav-bg: rgba(255, 251, 235, 0.9);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -96,24 +100,19 @@
         /* Navbar */
         nav {
             padding: 16px 0;
-            background: rgba(255, 255, 255, 0.8);
+            background: var(--nav-bg);
             backdrop-filter: blur(12px);
             position: sticky;
             top: 0;
             z-index: 100;
             border-bottom: 1px solid var(--border);
+            transition: background-color 0.3s, border-color 0.3s;
         }
-        body.high-contrast nav, html.dark-mode nav, html.calm-mode nav { 
-            background: rgba(255, 255, 255, 0.8); 
-        }
-        html.dark-mode nav { background: rgba(15, 23, 42, 0.8); }
-        html.calm-mode nav { background: rgba(255, 251, 235, 0.9); }
-        body.high-contrast nav { background: rgba(0, 0, 0, 0.9); }
 
         .nav-container { display: flex; justify-content: space-between; align-items: center; }
         .logo-area { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1.15rem; color: var(--text); letter-spacing: -0.5px; }
         .logo-area svg { width: 32px; height: 32px; }
-        .nav-links { display: flex; gap: 32px; align-items: center; }
+        .nav-links { display: flex; gap: 16px; align-items: center; }
         .nav-links a { text-decoration: none; color: var(--text-muted); font-weight: 500; font-size: 0.9rem; transition: color 0.2s; }
         .nav-links a:hover { color: var(--text); }
 
@@ -124,17 +123,18 @@
         }
         .btn-primary { background-color: var(--primary); color: white; box-shadow: var(--shadow-sm); }
         body.high-contrast .btn-primary { color: #000; }
+        body.dark-mode .btn-primary { color: #0F172A; }
         .btn-primary:hover { background-color: var(--primary-hover); transform: translateY(-1px); box-shadow: var(--shadow-md); }
         .btn-secondary { background-color: var(--bg); color: var(--text); border-color: var(--border-dark); }
         .btn-secondary:hover { background-color: var(--bg-subtle); border-color: var(--text-muted); }
         .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
         .btn-danger { color: #EF4444; background-color: #FEE2E2; border: 1px solid #FECACA; }
         body.high-contrast .btn-danger { color: #FF0000; background-color: #330000; border-color: #FF0000; }
+        body.dark-mode .btn-danger { color: #FCA5A5; background-color: #7F1D1D; border-color: #991B1B; }
         .btn-danger:hover { background-color: #FECACA; }
 
         /* Hero Section */
-        .hero { padding: 80px 0 120px; position: relative; overflow: hidden; background-color: var(--bg-subtle); border-bottom: 1px solid var(--border); }
-        body.high-contrast .hero { background-color: var(--bg); }
+        .hero { padding: 80px 0 120px; position: relative; overflow: hidden; background-color: var(--bg-subtle); border-bottom: 1px solid var(--border); transition: background-color 0.3s, border-color 0.3s; }
         
         .hero::before {
             content: ''; position: absolute; top: -10%; right: -10%; width: 600px; height: 600px;
@@ -168,6 +168,10 @@
             border-radius: 8px; font-weight: 600; color: var(--text); box-shadow: var(--shadow-md);
             animation: float 4s ease-in-out infinite; font-size: 0.9rem;
         }
+        body.dark-mode .node { background: #1E293B; }
+        body.calm-mode .node { background: #FFFBEB; }
+        body.high-contrast .node { background: #000; }
+
         .node-center { background: var(--primary); color: white; border-color: var(--primary-hover); z-index: 2; font-size: 1rem; }
         .node-1 { top: 15%; left: 10%; animation-delay: 0s; }
         .node-2 { top: 20%; right: 10%; animation-delay: 0.5s; }
@@ -184,7 +188,7 @@
         @keyframes dash { to { stroke-dashoffset: -1000; } }
 
         /* Features Section */
-        .features { padding: 80px 0; background-color: var(--bg); }
+        .features { padding: 80px 0; background-color: var(--bg); transition: background-color 0.3s; }
         .section-title { text-align: center; margin-bottom: 64px; }
         .section-title h2 { font-size: 2.25rem; margin-bottom: 12px; font-weight: 700; letter-spacing: -0.5px; }
         .section-title p { color: var(--text-muted); font-size: 1.05rem; max-width: 560px; margin: 0 auto; }
@@ -197,14 +201,13 @@
         .feature-card p { color: var(--text-muted); font-size: 0.9rem; }
 
         /* APP SECTION */
-        .app-section { padding: 80px 0; background-color: var(--bg-subtle); border-top: 1px solid var(--border); }
-        body.high-contrast .app-section { background-color: var(--bg); }
+        .app-section { padding: 80px 0; background-color: var(--bg-subtle); border-top: 1px solid var(--border); transition: background-color 0.3s, border-color 0.3s; }
         
         .app-wrapper { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-lg); overflow: hidden; }
         
-        .app-toolbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--bg); border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 12px; }
+        .app-toolbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--bg); border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 12px; transition: background-color 0.3s, border-color 0.3s; }
         .toolbar-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-        .toolbar-divider { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
+        .toolbar-divider { width: 1px; height: 24px; background: var(--border); margin: 0 4px; transition: background-color 0.3s; }
         
         select.toolbar-select {
             padding: 6px 28px 6px 12px; font-size: 0.85rem; border-radius: 6px; border: 1px solid var(--border-dark);
@@ -230,7 +233,7 @@
         .canvas-container {
             position: relative; width: 100%; height: 650px; background-color: var(--canvas-bg);
             background-image: radial-gradient(var(--canvas-dot) 1px, transparent 1px); background-size: 24px 24px;
-            overflow: hidden; cursor: default;
+            overflow: hidden; cursor: default; transition: background-color 0.3s;
         }
         .canvas-container.panning { cursor: grab !important; }
         .canvas-container.panning:active { cursor: grabbing !important; }
@@ -249,6 +252,8 @@
             transition: box-shadow 0.15s, filter 0.1s, outline 0.1s;
         }
         body.high-contrast .canvas-node { background: #000; color: #fff; }
+        body.dark-mode .canvas-node { background: #1E293B; color: #F8FAFC; }
+        body.calm-mode .canvas-node { background: #FFFBEB; color: #44403C; }
         
         .canvas-node.dragging { cursor: grabbing; z-index: 10; box-shadow: var(--shadow-lg); }
         
@@ -258,7 +263,6 @@
             outline-offset: 3px; 
             box-shadow: none; 
         }
-        body.high-contrast .canvas-node.selected { outline-color: var(--primary); }
 
         .canvas-node.connecting { background: var(--primary) !important; color: white !important; border-color: var(--primary-hover) !important; }
         .canvas-node[contenteditable="true"] { cursor: text; outline: 2px solid var(--primary); outline-offset: 3px; box-shadow: none; }
@@ -295,17 +299,13 @@
             outline: none;
             filter: drop-shadow(0 0 0 2px var(--primary)) drop-shadow(0 1px 2px rgba(0,0,0,0.1));
         }
-        body.high-contrast .canvas-node.selected.shape-diamond,
-        body.high-contrast .canvas-node.selected.shape-parallelogram,
-        body.high-contrast .canvas-node.selected.shape-hexagon,
-        body.high-contrast .canvas-node.selected.shape-document {
-            filter: drop-shadow(0 0 0 2px var(--primary));
-        }
 
         .node-icon { margin-right: 6px; font-size: 1rem; }
         
         #svg-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: visible; }
+        /* CSS handles stroke color automatically based on theme variables */
         #svg-canvas path { stroke: var(--primary); stroke-width: 1.5; fill: none; opacity: 0.8; }
+        #arrowhead polygon { fill: var(--primary); }
         
         #marquee-box {
             position: absolute; border: 1px solid var(--primary); background-color: rgba(99, 102, 241, 0.1);
@@ -319,7 +319,7 @@
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
-        footer { padding: 48px 0; border-top: 1px solid var(--border); color: var(--text-muted); text-align: center; font-size: 0.875rem; }
+        footer { padding: 48px 0; border-top: 1px solid var(--border); color: var(--text-muted); text-align: center; font-size: 0.875rem; transition: border-color 0.3s; }
 
         body.focus-mode nav, body.focus-mode .hero, body.focus-mode .features, body.focus-mode footer { display: none !important; }
         body.focus-mode .app-section { padding: 0; background: var(--canvas-bg); }
@@ -344,6 +344,7 @@
             .app-toolbar, nav, .hero, .features, footer { display: none !important; }
             .canvas-node { box-shadow: none; border: 1px solid #000; filter: none !important; }
             #svg-canvas path { stroke: #000 !important; }
+            #arrowhead polygon { fill: #000 !important; }
         }
     </style>
 </head>
@@ -388,6 +389,8 @@
             </div>
             <div class="nav-links">
                 <a href="#features">Features</a>
+                <button class="btn btn-secondary btn-sm" id="dark-toggle">Dark Mode</button>
+                <button class="btn btn-secondary btn-sm" id="calm-toggle">Calm Mode</button>
                 <button class="btn btn-secondary btn-sm" id="contrast-toggle">High Contrast</button>
             </div>
         </div>
@@ -545,10 +548,7 @@
                         <svg id="svg-canvas">
                             <defs>
                                 <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
-                                    <polygon points="0 0, 10 3.5, 0 7" fill="#6366F1" />
-                                </marker>
-                                <marker id="arrowhead-hc" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
-                                    <polygon points="0 0, 10 3.5, 0 7" fill="#FFD700" />
+                                    <polygon points="0 0, 10 3.5, 0 7" />
                                 </marker>
                             </defs>
                         </svg>
@@ -745,6 +745,8 @@
         const newMapBtn = document.getElementById('new-map-btn');
         const focusBtn = document.getElementById('focus-btn');
         const contrastToggle = document.getElementById('contrast-toggle');
+        const darkToggle = document.getElementById('dark-toggle');
+        const calmToggle = document.getElementById('calm-toggle');
         const toast = document.getElementById('toast');
 
         // --- Core Functions ---
@@ -1158,10 +1160,8 @@
                 const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                 const d = `M ${x1} ${y1} C ${x1 + dx/2} ${y1}, ${x2adj - dx/2} ${y2adj}, ${x2adj} ${y2adj}`;
                 path.setAttribute('d', d);
-                
-                const isHighContrast = document.body.classList.contains('high-contrast');
-                path.setAttribute('stroke', isHighContrast ? '#FFD700' : '#6366F1'); 
-                path.setAttribute('marker-end', isHighContrast ? 'url(#arrowhead-hc)' : 'url(#arrowhead)');
+                // Stroke and marker colors are now handled by CSS variables for instant theme switching
+                path.setAttribute('marker-end', 'url(#arrowhead)');
                 
                 svgCanvas.appendChild(path);
             });
@@ -1336,10 +1336,10 @@
 
         printBtn.addEventListener('click', () => window.print());
 
-        contrastToggle.addEventListener('click', () => {
-            document.body.classList.toggle('high-contrast');
-            renderEdges(); 
-        });
+        // UI Theme Toggles
+        contrastToggle.addEventListener('click', () => document.body.classList.toggle('high-contrast'));
+        darkToggle.addEventListener('click', () => document.body.classList.toggle('dark-mode'));
+        calmToggle.addEventListener('click', () => document.body.classList.toggle('calm-mode'));
 
         focusBtn.addEventListener('click', () => {
             document.body.classList.toggle('focus-mode');
@@ -1419,16 +1419,16 @@
         window.addEventListener('message', function(event) {
             if (event.data.type === 'theme-update') {
                 if (event.data.dark) {
-                    document.documentElement.classList.add('dark-mode');
+                    document.body.classList.add('dark-mode');
                 } else {
-                    document.documentElement.classList.remove('dark-mode');
+                    document.body.classList.remove('dark-mode');
                 }
             }
             if (event.data.type === 'calm-update') {
                 if (event.data.calm) {
-                    document.documentElement.classList.add('calm-mode');
+                    document.body.classList.add('calm-mode');
                 } else {
-                    document.documentElement.classList.remove('calm-mode');
+                    document.body.classList.remove('calm-mode');
                 }
             }
         });
