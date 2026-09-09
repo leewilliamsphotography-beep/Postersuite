@@ -10,7 +10,31 @@
             --bg: #f8f9fa; --surface: #ffffff; --primary: #10b981; --primary-dark: #047857;
             --border: #e5e7eb; --text: #1f2937; --text-muted: #6b7280;
             --highlight: #ecfdf5; --canvas-bg: #ffffff;
+            --canvas-area-bg: #f3f4f6; /* Added variable for canvas area */
         }
+
+        /* --- Dark & Calm Mode Overrides applied to the <html> tag --- */
+        html.dark-mode {
+            --bg: #0f172a; 
+            --surface: #1e293b; 
+            --primary: #10b981; 
+            --primary-dark: #34d399;
+            --border: #334155; 
+            --text: #f1f5f9; 
+            --text-muted: #94a3b8;
+            --highlight: #134e4a; 
+            --canvas-bg: #1e293b;
+            --canvas-area-bg: #020617;
+        }
+        html.dark-mode #svgCanvas {
+            background-image: linear-gradient(45deg, #1e293b 25%, transparent 25%), linear-gradient(-45deg, #1e293b 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1e293b 75%), linear-gradient(-45deg, transparent 75%, #1e293b 75%);
+            background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+        html.dark-mode .delete-btn { background: #7f1d1d; color: #f87171; border-color: #991b1b; }
+        html.dark-mode .delete-btn:hover { background: #991b1b; color: #fca5a5; border-color: #b91c1c; }
+
+        html.calm-mode { filter: sepia(0.3) saturate(1.2) brightness(0.95); transition: filter 0.3s ease; }
+
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
         body { background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
@@ -36,7 +60,7 @@
         .element-btn:hover { background: var(--highlight); border-color: var(--primary); color: var(--primary-dark); }
 
         /* Canvas Area */
-        .canvas-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f3f4f6; position: relative; overflow: auto; padding: 40px; }
+        .canvas-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--canvas-area-bg); position: relative; overflow: auto; padding: 40px; }
         #canvasWrapper { background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border: 1px solid var(--border); position: relative; }
         #svgCanvas { width: 500px; height: 500px; display: block; background-image: linear-gradient(45deg, #f9fafb 25%, transparent 25%), linear-gradient(-45deg, #f9fafb 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f9fafb 75%), linear-gradient(-45deg, transparent 75%, #f9fafb 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px; }
         #boundingBox { fill: none; stroke: var(--primary); stroke-width: 1.5; stroke-dasharray: 4 4; pointer-events: none; display: none; }
@@ -56,17 +80,6 @@
         .btn-icon.active { background: var(--highlight); border-color: var(--primary); color: var(--primary-dark); }
         .delete-btn { background: #fee2e2; color: #ef4444; border-color: #fecaca; }
         .delete-btn:hover { background: #fecaca; color: #dc2626; border-color: #fca5a5; }
-
-        /* Cross-Frame Theme & Calm Mode Support */
-        .dark-mode { background: #111827; color: #f3f4f6; }
-        .dark-mode .navbar, .dark-mode .left-panel, .dark-mode .right-panel { background: #1f2937; border-color: #374151; color: #f3f4f6; }
-        .dark-mode .canvas-area { background: #0b0f19; }
-        .dark-mode #canvasWrapper { border-color: #374151; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-        .dark-mode .btn, .dark-mode .btn-icon, .dark-mode .element-btn { background: #374151; color: #f3f4f6; border-color: #4b5563; }
-        .dark-mode .btn:hover, .dark-mode .btn-icon:hover, .dark-mode .element-btn:hover { background: #4b5563; border-color: #10b981; color: #10b981; }
-        .dark-mode input[type="text"], .dark-mode input[type="number"], .dark-mode input[type="color"], .dark-mode select { background: #374151; color: #f3f4f6; border-color: #4b5563; }
-        .dark-mode .panel-title { color: #9ca3af; }
-        .calm-mode { filter: sepia(0.3) saturate(1.2) hue-rotate(-10deg); transition: filter 0.3s ease; }
     </style>
 </head>
 <body>
@@ -722,11 +735,13 @@
         });
 
         // --- Cross-Window Messaging (Theme & Calm Mode) ---
+        // Added safety check to prevent errors if event.data is undefined
         window.addEventListener('message', function(event) {
+            if (!event.data) return; 
+            
             if (event.data.type === 'theme-update') {
                 if (event.data.dark) {
                     document.documentElement.classList.add('dark-mode');
-                    // Update the app's internal toggle state/localStorage if needed
                 } else {
                     document.documentElement.classList.remove('dark-mode');
                 }
