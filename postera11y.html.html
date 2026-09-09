@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="description" content="PosterA11y — a free, open tool for making Easy Read posters and symbol-supported materials with ARASAAC pictograms.">
 <meta name="theme-color" content="#F2F6FB">
-<meta name="version" content="1.0">
+<meta name="version" content="2.0">
 <title>PosterA11y — Easy Read posters with ARASAAC pictograms</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='26' fill='%23F2F6FB'/%3E%3Crect x='32' y='41' width='56' height='64' rx='8' fill='%23FFFFFF'/%3E%3Ccircle cx='60' cy='69' r='19' fill='%23EAF1FA'/%3E%3Cpath d='M51.5 61 L60 68 L68.5 61 M60 63.5 L60 74.5 M54 84 L60 74.5 L66 84' fill='none' stroke='%231B2A4A' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='60' cy='57.5' r='5' fill='%231B2A4A'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -84,7 +84,7 @@ button:focus-visible, .btn:focus-visible{outline-offset:1px}
 .ibtn:hover{background:var(--line2);color:var(--ink)}
 .ibtn.danger:hover{color:var(--accent);background:var(--accent-soft)}
 .ibtn svg{width:16px;height:16px}
-.mic-btn.recording{background:var(--accent);color:#fff;border-color:var(--accent);animation:mic-pulse 1.5s infinite}
+.mic-btn.recording, .speak-btn.recording{background:var(--accent);color:#fff;border-color:var(--accent);animation:mic-pulse 1.5s infinite}
 @keyframes mic-pulse{0%{box-shadow:0 0 0 0 rgba(209,76,30,.4)}70%{box-shadow:0 0 0 8px rgba(209,76,30,0)}100%{box-shadow:0 0 0 0 rgba(209,76,30,0)}}
 
 /* Print Options */
@@ -135,12 +135,15 @@ body.dark-mode .stage{background-color: #0A0A0A; background-image: linear-gradie
 .tpl button{font:600 13px var(--f-ui);padding:9px 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);cursor:pointer;color:var(--ink);transition:all .15s}
 .tpl button:hover{border-color:var(--ink);box-shadow:0 2px 4px rgba(0,0,0,0.05)}
 .field{margin:18px 0 0}
-.field>label{display:block;font:700 11px var(--f-ui);letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin-bottom:8px}
+.field>label{display:flex;justify-content:space-between;align-items:center;font:700 11px var(--f-ui);letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin-bottom:8px}
 .field select, .field input[type="text"]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font:400 14px var(--f-doc);cursor:pointer;outline:none;color:var(--ink)}
 .field select:focus, .field input[type="text"]:focus{border-color:var(--ink)}
 .color-grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:12px;margin-bottom:12px}
 .color-input-wrap{display:flex;flex-direction:column;gap:4px}
-.color-input-wrap span{font:600 11px var(--f-ui);color:var(--ink2)}
+.color-input-wrap span{font:600 11px var(--f-ui);color:var(--ink2);display:flex;justify-content:space-between}
+.contrast-ind{font:700 9px var(--f-ui);padding:2px 5px;border-radius:4px;margin-left:auto}
+.contrast-ind.aa{background:#dcfce7;color:#166534}
+.contrast-ind.fail{background:#fee2e2;color:#991b1b}
 .color-input-wrap input[type="color"]{width:100%;height:36px;border:1px solid var(--line);border-radius:8px;cursor:pointer;background:var(--surface);padding:2px}
 .seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--paper)}
 .seg button{flex:1;padding:9px 0;font:600 13px var(--f-ui);background:transparent;border:0;cursor:pointer;color:var(--ink2);transition:background .15s,color .15s}
@@ -184,10 +187,20 @@ body.dark-mode .stage{background-color: #0A0A0A; background-image: linear-gradie
 [contenteditable]:focus{background:var(--accent-soft);border-radius:6px}
 
 #brandLogo{display:none;max-height:60px;max-width:150px;width:auto;height:auto;margin:0 0 15px auto;align-self:flex-end;object-fit:contain;position:relative;z-index:1;}
-
 #watermarkImg{display:none;position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);width:60%;max-width:400px;height:auto;opacity:0.08;pointer-events:none;z-index:0;}
 .sheet.has-watermark #watermarkImg{display:block;}
 .sheet > *:not(#watermarkImg){position:relative;z-index:1;}
+
+/* Decorative Frames */
+.sheet.frame-stripe { border: 12px solid var(--accent); }
+.sheet.frame-dashed { border: 4px dashed var(--ink); }
+.sheet.frame-polaroid { border-width: 15px 15px 50px 15px; border-style: solid; border-color: #fff; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2); }
+
+/* Text Alignments */
+.sheet.text-left .line-cards { justify-content: flex-start; }
+.sheet.text-left .doc-title, .sheet.text-left .doc-sub { text-align: left; }
+.sheet.text-right .line-cards { justify-content: flex-end; }
+.sheet.text-right .doc-title, .sheet.text-right .doc-sub { text-align: right; }
 
 /* Themed Sheets */
 .sheet.theme-spring { background:#F0FFF4; border-top:12px solid #10B981; }
@@ -214,6 +227,7 @@ body.dark-mode .sheet.alt-lines .line:nth-child(even) { background-color: rgba(2
 .line{position:relative;padding:var(--line-gap) 42px var(--line-gap) 0;border-bottom:1px solid #F0F1F3;transition:background .15s; break-inside: avoid; page-break-inside: avoid;}
 .line:last-child{border-bottom:0}
 .line.drag-over{background:var(--accent-soft)}
+.line.speaking{background-color: rgba(37, 99, 235, 0.15); border-radius: 8px;}
 .line-cards{display:flex;flex-wrap:wrap;gap:var(--line-gap) var(--card-gap);align-items:flex-start;justify-content:center;}
 
 /* Strict Grid Layout */
@@ -236,7 +250,7 @@ body.dark-mode .sheet.alt-lines .line:nth-child(even) { background-color: rgba(2
 .card:active{cursor:grabbing}
 .card:hover{transform:translateY(-2px)}
 .card.dragging{opacity:0.35;transform:scale(0.95)}
-.card .sym{display:grid;place-items:center;background:#fff;border-radius:var(--sym-radius, 8px);overflow:hidden;border:3px solid transparent;box-sizing:content-box; width: var(--sym-size, 80px); height: var(--sym-size, 80px);}
+.card .sym{display:grid;place-items:center;background:var(--card-bg, #fff);border-radius:var(--sym-radius, 8px);overflow:hidden;border:3px solid transparent;box-sizing:content-box; width: var(--sym-size, 80px); height: var(--sym-size, 80px);}
 .card .sym img{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none}
 .card .lbl{font:600 14px/1.15 var(--f-doc);text-align:center;max-width:132px;overflow-wrap:break-word;word-break:break-word;outline:none;cursor:text;border:1px solid transparent;border-radius:4px;padding:0 2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--l-color);}
 .card .lbl:hover{border-color:var(--line)}
@@ -291,11 +305,16 @@ body.dark-mode .sheet.alt-lines .line:nth-child(even) { background-color: rgba(2
 .pop-body{min-height:40px}
 .pop-note{font:400 13.5px/1.55 var(--f-doc);color:var(--ink2);margin:4px 0}
 
-/* Popover Search */
+/* Popover Search & Colors */
 .pop-search{display:flex;gap:8px;margin-bottom:12px}
 .pop-search input{flex:1;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--paper);font:400 14px var(--f-doc);outline:none;color:var(--ink);transition:border-color .15s,box-shadow .15s}
 .pop-search input:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);background:var(--surface)}
 .pop-search button{flex:none}
+
+.pop-colors{display:flex;gap:6px;align-items:center;margin-bottom:12px}
+.pop-colors span{font:600 11px var(--f-ui);color:var(--ink2);margin-right:4px}
+.swatch{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);cursor:pointer;background:#fff;}
+.swatch.active{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
 
 .alts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-height:296px;overflow:auto;padding-right:2px}
 .alt{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 4px;background:var(--surface);border:1px solid var(--line);border-radius:8px;cursor:pointer}
@@ -394,6 +413,7 @@ body.locked-mode .stage { overflow-y: auto; height: 100vh; padding-top: 20px; }
     <div class="btn-group">
       <button class="btn ghost" id="undoBtn" title="Undo (Ctrl+Z)" disabled><i data-lucide="undo-2"></i></button>
       <button class="btn ghost" id="redoBtn" title="Redo (Ctrl+Y)" disabled><i data-lucide="redo-2"></i></button>
+      <button class="btn ghost speak-btn" id="speakBtn" title="Read Poster Aloud"><i data-lucide="volume-2"></i><span>Read</span></button>
       <button class="btn ghost" id="lockBtn" title="Lock / Presentation Mode"><i data-lucide="lock"></i></button>
       <button class="btn ghost" id="checkBtn" title="Accessibility Check"><i data-lucide="scan-line"></i></button>
       <button class="btn ghost" id="searchBtn" title="Search & Replace"><i data-lucide="search"></i></button>
@@ -452,12 +472,29 @@ body.locked-mode .stage { overflow-y: auto; height: 100vh; padding-top: 20px; }
     <section class="panel">
       <h2 class="k"><b>04</b>Poster style</h2>
       <div class="field">
-        <label>Text Colors</label>
+        <label>Text Colors <span id="contrastInd" class="contrast-ind fail">Fail</span></label>
         <div class="color-grid">
           <div class="color-input-wrap"><span>Title</span><input type="color" id="titleColor" value="#1A1D21"></div>
           <div class="color-input-wrap"><span>Subtitle</span><input type="color" id="subColor" value="#50545C"></div>
           <div class="color-input-wrap"><span>Labels</span><input type="color" id="lblColor" value="#1A1D21"></div>
         </div>
+      </div>
+      <div class="field">
+        <label>Text Alignment</label>
+        <div class="seg" id="alignSeg">
+          <button type="button" data-align="left"><i data-lucide="align-left"></i></button>
+          <button type="button" data-align="center" class="on"><i data-lucide="align-center"></i></button>
+          <button type="button" data-align="right"><i data-lucide="align-right"></i></button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="frameSel">Poster Frame</label>
+        <select id="frameSel">
+          <option value="none">None</option>
+          <option value="stripe">Thick Stripe</option>
+          <option value="dashed">Dashed Line</option>
+          <option value="polaroid">Polaroid</option>
+        </select>
       </div>
       <div class="field">
         <label>Symbol size</label>
@@ -633,7 +670,7 @@ const dragAttr = isTouchDevice ? '' : 'draggable="true"';
 
 const API_BASES=['https://api.arasaac.org/api','https://api.arasaac.org/api/v1'];
 const STATIC='https://static.arasaac.org/pictograms';
-const LS_KEY='postera11y.doc.v15'; 
+const LS_KEY='postera11y.doc.v16'; 
 const LS_DRAFTS='postera11y.drafts';
 const LS_DARK='postera11y.dark';
 const LS_FAV='postera11y.favorites';
@@ -675,7 +712,7 @@ const THEME_STYLES = {
 
 let uidSeq=1;
 const uid=()=>'w'+(uidSeq++)+Date.now().toString(36);
-function newDoc(){return{title:'',subtitle:'',lang:'en',symSize:80,symStyle:'8px',titleColor:'#1A1D21',subColor:'#50545C',lblColor:'#1A1D21',font:'lexend',customFont:'',customFontName:'',format:'portrait',theme:'default',listStyle:'none',logo:'',watermark:'',showText:true,skipSmall:true,grammarColors:false,showMeanings:false,strictGrid:false,altLines:false,inkSaver:false,lineSpacing:22,cardSpacing:16,useQR:false,qrUrl:'',hc:false,locked:false,lines:[]}}
+function newDoc(){return{title:'',subtitle:'',lang:'en',symSize:80,symStyle:'8px',titleColor:'#1A1D21',subColor:'#50545C',lblColor:'#1A1D21',textAlign:'center',frameStyle:'none',font:'lexend',customFont:'',customFontName:'',format:'portrait',theme:'default',listStyle:'none',logo:'',watermark:'',showText:true,skipSmall:true,grammarColors:false,showMeanings:false,strictGrid:false,altLines:false,inkSaver:false,lineSpacing:22,cardSpacing:16,useQR:false,qrUrl:'',hc:false,locked:false,lines:[]}}
 let doc=newDoc();
 
 const pagesContainer=$('#pagesContainer'),linesEl=$('#lines'),composeInput=$('#composeInput'),previewEl=$('#preview'),
@@ -834,7 +871,7 @@ function addLine(text){
               const toks = tokenize(l, doc.lang);
               const items = toks.filter(t => !t.skip).map(t => {
                   const isStop = (STOP[doc.lang] || new Set()).has(t.query) || t.query === '';
-                  return { uid: uid(), word: t.display, query: t.query||null, id: null, customImg: null, grammar: null, meaning: null, hidden:false, textOnly: !doc.skipSmall && isStop, state: (!doc.skipSmall && isStop) ? 'ok' : 'loading' };
+                  return { uid: uid(), word: t.display, query: t.query||null, id: null, customImg: null, grammar: null, meaning: null, bgColor: '#FFFFFF', hidden:false, textOnly: !doc.skipSmall && isStop, state: (!doc.skipSmall && isStop) ? 'ok' : 'loading' };
               });
               if(items.length) {
                   doc.lines.push({src: l, items: items, accessibilityWarning: false, audio: ''});
@@ -849,7 +886,7 @@ function addLine(text){
   const toks=tokenize(text,doc.lang);
   const items=toks.filter(t=>!t.skip).map(t=>{
     const isStop = (STOP[doc.lang] || new Set()).has(t.query) || t.query === '';
-    return { uid:uid(), word:t.display, query:t.query||null, id:null, customImg:null, grammar:null, meaning:null, hidden:false, textOnly: !doc.skipSmall && isStop, state: (!doc.skipSmall && isStop) ? 'ok' : 'loading' };
+    return { uid:uid(), word:t.display, query:t.query||null, id:null, customImg:null, grammar:null, meaning:null, bgColor:'#FFFFFF', hidden:false, textOnly: !doc.skipSmall && isStop, state: (!doc.skipSmall && isStop) ? 'ok' : 'loading' };
   });
   if(!items.length){toast('All small words — nothing to draw. Add a describing word or switch on “Sentence mode”.');return;}
   pushHistory();
@@ -874,7 +911,7 @@ async function resolveItem(item){
         item.grammar = getGrammarColor(split.part1.categories);
         item.meaning = kw1 ? (kw1.meaning || kw1.keyword) : null;
         item.state = 'ok';
-        const newItem = { uid: uid(), word: kw2 ? kw2.keyword : split.part2Str, query: split.part2Str, id: split.part2._id, customImg: null, grammar: getGrammarColor(split.part2.categories), meaning: kw2 ? (kw2.meaning || kw2.keyword) : null, hidden:false, textOnly: false, state: 'ok' };
+        const newItem = { uid: uid(), word: kw2 ? kw2.keyword : split.part2Str, query: split.part2Str, id: split.part2._id, customImg: null, grammar: getGrammarColor(split.part2.categories), meaning: kw2 ? (kw2.meaning || kw2.keyword) : null, bgColor: '#FFFFFF', hidden:false, textOnly: false, state: 'ok' };
         for(let i=0; i<doc.lines.length; i++) {
             const idx = doc.lines[i].items.indexOf(item);
             if (idx > -1) { doc.lines[i].items.splice(idx + 1, 0, newItem); break; }
@@ -918,6 +955,13 @@ function applyLineClasses(){
         el.style.setProperty('--t-color', doc.titleColor || '#1A1D21');
         el.style.setProperty('--s-color', doc.subColor || '#50545C');
         el.style.setProperty('--l-color', doc.lblColor || '#1A1D21');
+        
+        el.classList.remove('text-left', 'text-center', 'text-right');
+        el.classList.add('text-' + (doc.textAlign || 'center'));
+        
+        el.classList.remove('frame-none', 'frame-stripe', 'frame-dashed', 'frame-polaroid');
+        el.classList.add('frame-' + (doc.frameStyle || 'none'));
+        
         el.classList.toggle('alt-lines', !!doc.altLines);
         el.classList.toggle('ink-saver', !!doc.inkSaver);
         el.classList.toggle('has-watermark', !!doc.watermark);
@@ -946,6 +990,32 @@ function applyCustomFont() {
         styleTag.innerHTML = `@font-face { font-family: '${doc.customFontName}'; src: url(${doc.customFont}) format('truetype'); }`;
     } else {
         styleTag.innerHTML = '';
+    }
+}
+
+function getContrastRatio(hex1, hex2) {
+    const lum = (hex) => {
+        const rgb = parseInt(hex.slice(1), 16);
+        const r = (rgb >> 16) & 0xff, g = (rgb >> 8) & 0xff, b = rgb & 0xff;
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const l1 = lum(hex1), l2 = lum(hex2);
+    return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+}
+
+function updateContrastIndicator() {
+    const ind = $('#contrastInd');
+    const bg = doc.hc ? '#000000' : (THEME_STYLES[doc.theme] || THEME_STYLES.default).bg;
+    const ratio = getContrastRatio(doc.titleColor || '#1A1D21', bg);
+    if (ratio >= 7) {
+        ind.textContent = 'AAA';
+        ind.className = 'contrast-ind aa';
+    } else if (ratio >= 4.5) {
+        ind.textContent = 'AA';
+        ind.className = 'contrast-ind aa';
+    } else {
+        ind.textContent = 'Fail';
+        ind.className = 'contrast-ind fail';
     }
 }
 
@@ -979,6 +1049,7 @@ function renderAll(){
   renderLines(); 
   syncStyleControls(); 
   applyQR();
+  updateContrastIndicator();
 }
 
 function renderLines(){
@@ -1090,7 +1161,7 @@ function lineHTML(l,i){
   else if (doc.listStyle === 'numbers') marker = `<span class="line-marker">${i+1}.</span>`;
   const audioHtml = l.audio ? `<div class="line-audio"><audio controls src="${l.audio}"></audio></div>` : '';
   const warnCls = l.accessibilityWarning ? ' accessibility-warning' : '';
-  return '<div class="line'+warnCls+'" '+dragAttr+'>'
+  return '<div class="line'+warnCls+'" data-line="'+i+'" '+dragAttr+'>'
     +'<div class="line-cards">'+marker+l.items.map((it,j)=>cardHTML(it,j)).join('')+'</div>'
     +audioHtml
     +'<div class="line-tools">'
@@ -1111,8 +1182,10 @@ function cardHTML(item,j){
     cls.push(item.state||'loading');
     if(item.state==='ok' && (item.id!=null || item.customImg)){
       const src = item.customImg ? item.customImg : imgUrl(item.id);
-      const style = doc.grammarColors && item.grammar ? `style="border-color:${item.grammar};"` : '';
-      sym=`<span class="sym" ${style}><img alt="${esc(item.word)}" src="${src}"></span>`;
+      const grammarStyle = doc.grammarColors && item.grammar ? `border-color:${item.grammar};` : '';
+      const bgStyle = item.bgColor && item.bgColor !== '#FFFFFF' ? `background-color:${item.bgColor};` : '';
+      const styleStr = (grammarStyle || bgStyle) ? `style="${grammarStyle}${bgStyle}"` : '';
+      sym=`<span class="sym" ${styleStr}><img alt="${esc(item.word)}" src="${src}"></span>`;
     }else if(item.state==='error'){ sym='<span class="sym none"><i data-lucide="circle-alert"></i></span>'; }
     else if(item.state==='nosym'){ sym='<span class="sym none"><i data-lucide="image-off"></i></span>'; }
     else{ sym='<span class="sym load"></span>'; }
@@ -1144,6 +1217,9 @@ function syncStyleControls(){
   $('#titleColor').value = doc.titleColor || '#1A1D21';
   $('#subColor').value = doc.subColor || '#50545C';
   $('#lblColor').value = doc.lblColor || '#1A1D21';
+  $('#frameSel').value = doc.frameStyle || 'none';
+  
+  $$('#alignSeg button').forEach(b=>b.classList.toggle('on',b.dataset.align===(doc.textAlign||'center')));
   
   // Handle custom font dropdown option
   const customOpt = $('#fontSel option[value="custom"]');
@@ -1282,7 +1358,6 @@ function renderQuickAccess() {
     if(favs.length) {
         html += '<h4>Favorites</h4><div class="lib-grid" style="max-height:120px; margin-bottom:16px;">';
         html += favs.map(f => {
-            const isFav = true;
             return `<div class="lib-item" draggable="true" data-id="${f.id||''}" data-src="${f.src}" data-word="${esc(f.word)}" data-is-arasaac="${f.isArasaac}">
                 <div class="lib-fav-star active" data-id="${f.id||f.src}" data-is-arasaac="${f.isArasaac}"><i data-lucide="star"></i></div>
                 <img src="${f.src}" alt="${esc(f.word)}">
@@ -1381,7 +1456,7 @@ document.addEventListener('click', e => {
             uid: uid(), word: libItem.dataset.word, query: libItem.dataset.word,
             id: libItem.dataset.id ? Number(libItem.dataset.id) : null,
             customImg: libItem.dataset.id ? null : libItem.dataset.src,
-            grammar: null, meaning: null, hidden: false, textOnly: false, state: 'ok'
+            grammar: null, meaning: null, bgColor: '#FFFFFF', hidden: false, textOnly: false, state: 'ok'
         };
         
         if (doc.lines.length === 0) {
@@ -1457,7 +1532,7 @@ if(!isTouchDevice) {
               uid: uid(), word: libDragData.word, query: libDragData.word, 
               id: libDragData.id, 
               customImg: libDragData.id ? null : libDragData.src,
-              grammar: null, meaning: null, hidden: false, textOnly: false, state: 'ok' 
+              grammar: null, meaning: null, bgColor: '#FFFFFF', hidden: false, textOnly: false, state: 'ok' 
           };
           
           if (targetCard) {
@@ -1563,6 +1638,60 @@ function doLineAct(act,i){
   else if(act==='edit'){const l=doc.lines[i];composeInput.value=l.src;pushHistory();doc.lines.splice(i,1);renderLines();save();buildPreview();composeInput.focus();}
 }
 
+/* ============ Text-to-Speech Logic ============ */
+let isSpeaking = false;
+let speakIndex = 0;
+const speakBtn = $('#speakBtn');
+
+speakBtn.onclick = () => {
+    if (!window.speechSynthesis) return toast('Text-to-speech not supported in this browser.');
+    if (isSpeaking) {
+        stopSpeaking();
+    } else {
+        startSpeaking();
+    }
+};
+
+function startSpeaking() {
+    isSpeaking = true;
+    speakBtn.classList.add('recording');
+    speakBtn.innerHTML = '<i data-lucide="square"></i><span>Stop</span>';
+    refreshIcons();
+    speakIndex = 0;
+    speakNext();
+}
+
+function speakNext() {
+    if (!isSpeaking) return;
+    if (speakIndex >= doc.lines.length) {
+        stopSpeaking();
+        return;
+    }
+    const line = doc.lines[speakIndex];
+    const lineEl = $(`.line[data-line="${speakIndex}"]`);
+    $$('.line.speaking').forEach(el => el.classList.remove('speaking'));
+    if (lineEl) lineEl.classList.add('speaking');
+    
+    const text = line.items.map(it => it.word).join(' ') || line.src;
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = doc.lang;
+    utter.onend = () => {
+        speakIndex++;
+        speakNext();
+    };
+    utter.onerror = () => { stopSpeaking(); };
+    window.speechSynthesis.speak(utter);
+}
+
+function stopSpeaking() {
+    isSpeaking = false;
+    window.speechSynthesis.cancel();
+    speakBtn.classList.remove('recording');
+    speakBtn.innerHTML = '<i data-lucide="volume-2"></i><span>Read</span>';
+    refreshIcons();
+    $$('.line.speaking').forEach(el => el.classList.remove('speaking'));
+}
+
 /* ============ Audio Recording Logic ============ */
 let mediaRecorder; let audioChunks = []; let recordingLineIndex = -1;
 async function toggleAudioRecord(lineIndex) {
@@ -1627,7 +1756,7 @@ function applyLock(isLocked) {
             const toks = tokenize(newSrc, doc.lang);
             line.items = toks.filter(t => !t.skip).map(t => {
                 const isStop = (STOP[doc.lang] || new Set()).has(t.query) || t.query === '';
-                return { uid: uid(), word: t.display, query: t.query||null, id:null, customImg:null, grammar:null, meaning:null, hidden:false, textOnly: !doc.skipSmall && isStop, state: (!doc.skipSmall && isStop) ? 'ok' : 'loading' };
+                return { uid: uid(), word: t.display, query: t.query||null, id:null, customImg:null, grammar:null, meaning:null, bgColor:'#FFFFFF', hidden:false, textOnly: !doc.skipSmall && isStop, state: (!doc.skipSmall && isStop) ? 'ok' : 'loading' };
             });
             line.items.forEach(resolveItem); count++;
         }
@@ -1694,15 +1823,32 @@ function renderPopBody(item){
   else if(item.state==='error'){html='<p class="pop-note">Couldn’t reach the ARASAAC server. Check your connection and try again.</p><div class="pop-actions"><button type="button" class="btn small" id="popRetry"><i data-lucide="refresh-cw"></i>Try again</button><button type="button" class="btn small" id="popUpload"><i data-lucide="upload"></i>Upload Image</button></div>';}
   else if(item.state==='nosym'){html='<p class="pop-note">No symbol found for “'+esc(item.word)+'”. Keep it as text, upload your own, or search below.</p>'+'<div class="pop-search"><input type="text" id="popSearchInput" placeholder="Search for a different image..." value="'+esc(item.query||item.word)+'"><button class="ibtn" id="popSearchBtn" aria-label="Search images"><i data-lucide="search"></i></button></div><div class="alts" id="popAlts"></div>'+popActions('Text only','type');}
   else{
+      const bgColors = ['#FFFFFF', '#FEF3C7', '#DBEAFE', '#D1FAE5', '#FCE7F3', '#E5E7EB'];
+      const swatchHtml = bgColors.map(c => `<div class="swatch ${item.bgColor === c ? 'active' : ''}" data-color="${c}" style="background-color:${c};"></div>`).join('');
       html = `
         <div class="pop-search">
           <input type="text" id="popSearchInput" placeholder="Search for a different image..." value="${esc(item.query || item.word)}">
           <button class="ibtn" id="popSearchBtn" aria-label="Search images"><i data-lucide="search"></i></button>
         </div>
+        <div class="pop-colors">
+          <span>Background:</span> ${swatchHtml}
+        </div>
         <div class="alts" id="popAlts"><div class="pthumb load" style="width:76px;height:76px"></div></div>
         ${popActions('Text only','type')}`;
   }
   body.innerHTML=html;refreshIcons();
+  
+  // Swatch click handler
+  $$('.pop-colors .swatch').forEach(sw => {
+      sw.onclick = () => {
+          pushHistory();
+          item.bgColor = sw.dataset.color;
+          updateCard(item); save();
+          $$('.pop-colors .swatch').forEach(s => s.classList.remove('active'));
+          sw.classList.add('active');
+      };
+  });
+
   const t=$('#popToggle');if(t)t.onclick=()=>{pushHistory();item.textOnly=!item.textOnly;if(!item.textOnly&&item.state==='ok'&&item.id==null&&!item.customImg)item.state='loading';resolveItem(item);closePopover();};
   const rm=$('#popRemove');if(rm)rm.onclick=()=>{removeWord(item);closePopover();};
   const rt=$('#popRetry');if(rt)rt.onclick=()=>{item.state='loading';updateCard(item);resolveItem(item);renderPopBody(item);};
@@ -1786,7 +1932,6 @@ async function fetchAlts(item, query) {
             }
             item.textOnly = false; 
             item.state = 'ok';
-            // We DO NOT change item.word here! This solves the John problem.
             updateCard(item); save(); closePopover();
         };
         positionPop();
@@ -1870,7 +2015,7 @@ document.addEventListener('click',e=>{
 });
 function applyTpl(k){
   const t=TEMPLATES[k];
-  const keep={lang:doc.lang,symSize:doc.symSize,symStyle:doc.symStyle,titleColor:doc.titleColor,subColor:doc.subColor,lblColor:doc.lblColor,font:doc.font,customFont:doc.customFont,customFontName:doc.customFontName,format:doc.format,theme:doc.theme,listStyle:doc.listStyle,logo:doc.logo,watermark:doc.watermark,showText:doc.showText,skipSmall:doc.skipSmall,grammarColors:doc.grammarColors,showMeanings:doc.showMeanings,strictGrid:doc.strictGrid,altLines:doc.altLines,inkSaver:doc.inkSaver,lineSpacing:doc.lineSpacing,cardSpacing:doc.cardSpacing,hc:doc.hc,useQR:doc.useQR,qrUrl:doc.qrUrl};
+  const keep={lang:doc.lang,symSize:doc.symSize,symStyle:doc.symStyle,titleColor:doc.titleColor,subColor:doc.subColor,lblColor:doc.lblColor,textAlign:doc.textAlign,frameStyle:doc.frameStyle,font:doc.font,customFont:doc.customFont,customFontName:doc.customFontName,format:doc.format,theme:doc.theme,listStyle:doc.listStyle,logo:doc.logo,watermark:doc.watermark,showText:doc.showText,skipSmall:doc.skipSmall,grammarColors:doc.grammarColors,showMeanings:doc.showMeanings,strictGrid:doc.strictGrid,altLines:doc.altLines,inkSaver:doc.inkSaver,lineSpacing:doc.lineSpacing,cardSpacing:doc.cardSpacing,hc:doc.hc,useQR:doc.useQR,qrUrl:doc.qrUrl};
   pushHistory();
   doc=Object.assign(newDoc(),keep,{title:t.title,subtitle:t.subtitle,lines:[]});
   renderAll();save();
@@ -1897,9 +2042,20 @@ function applyTpl(k){
   pushHistory(); doc.symStyle = $('#symStyleSel').value;
   applyLineClasses(); save();
 };
- $('#titleColor').oninput = e => { pushHistory(); doc.titleColor = e.target.value; applyLineClasses(); save(); };
- $('#subColor').oninput = e => { pushHistory(); doc.subColor = e.target.value; applyLineClasses(); save(); };
+ $('#titleColor').oninput = e => { pushHistory(); doc.titleColor = e.target.value; applyLineClasses(); updateContrastIndicator(); save(); };
+ $('#subColor').oninput = e => { pushHistory(); doc.subColor = e.target.value; applyLineClasses(); updateContrastIndicator(); save(); };
  $('#lblColor').oninput = e => { pushHistory(); doc.lblColor = e.target.value; applyLineClasses(); save(); };
+
+ $('#alignSeg').addEventListener('click', e => {
+    const b = e.target.closest('button'); if(!b) return;
+    pushHistory(); doc.textAlign = b.dataset.align;
+    applyLineClasses(); syncStyleControls(); save();
+});
+
+ $('#frameSel').onchange = () => {
+    pushHistory(); doc.frameStyle = $('#frameSel').value;
+    applyLineClasses(); save();
+};
 
  $('#logoUploadBtn').onclick = () => {
     const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*';
@@ -2005,8 +2161,8 @@ langSel.onchange=()=>{
 const tourSteps = [
   { el: '#composeInput', title: 'Step 1: Write a Line', text: 'Type a sentence here. The app will automatically find symbols for the key words.' },
   { el: '#addBtn', title: 'Step 2: Add to Poster', text: 'Click here to add your line to the poster. You can also just press Enter.' },
-  { el: '.panel:nth-child(4)', title: 'Step 3: Customize', text: 'Change the symbol size, shape, spacing, colors, themes, and even upload custom fonts here to make your poster perfect.' },
-  { el: '.actions', title: 'Step 4: Export', text: 'When you\'re done, export your poster as a PDF, Word document, PowerPoint, or ZIP file!' }
+  { el: '.panel:nth-child(4)', title: 'Step 3: Customize', text: 'Change the symbol size, shape, spacing, colors, alignment, frames, and even upload custom fonts here to make your poster perfect.' },
+  { el: '.actions', title: 'Step 4: Export & Read', text: 'When you\'re done, export your poster as a PDF, Word document, PowerPoint, or click "Read" to hear it spoken aloud!' }
 ];
 let currentStep = 0;
 const tourOverlay = $('#tourOverlay');
@@ -2111,6 +2267,8 @@ function sanitize(o){
   d.titleColor = o.titleColor || '#1A1D21';
   d.subColor = o.subColor || '#50545C';
   d.lblColor = o.lblColor || '#1A1D21';
+  d.textAlign = ['left','center','right'].indexOf(o.textAlign) > -1 ? o.textAlign : 'center';
+  d.frameStyle = ['none','stripe','dashed','polaroid'].indexOf(o.frameStyle) > -1 ? o.frameStyle : 'none';
   d.font=['lexend','atkinson','custom'].indexOf(o.font)>-1?o.font:'lexend';
   d.customFont = typeof o.customFont === 'string' ? o.customFont.slice(0, 500000) : ''; 
   d.customFontName = typeof o.customFontName === 'string' ? o.customFontName.slice(0, 50) : '';
@@ -2133,6 +2291,7 @@ function sanitize(o){
       query:(it&&it.query)?String(it.query).slice(0,50):null,
       id:(it&&Number(it.id))||null, customImg:(it&&it.customImg)||null, 
       grammar:(it&&it.grammar)||null, meaning:(it&&it.meaning)||null,
+      bgColor:(it&&it.bgColor)||'#FFFFFF',
       hidden:!!(it&&it.hidden), textOnly:!!(it&&it.textOnly),
       state:(it&&(it.id!=null||it.customImg))?'ok':((it&&it.textOnly)?'ok':'loading')
     })),
@@ -2221,7 +2380,8 @@ function generateHtmlContent(d) {
             if(it.textOnly || !src) {
                 cardsHtml += `<div class="ex-card text"><span>${esc(it.word)}</span></div>`;
             } else {
-                cardsHtml += `<div class="ex-card"><img src="${src}" alt="${esc(it.word)}">${d.showText ? `<span>${esc(it.word)}</span>` : ''}</div>`;
+                const styleAttr = it.bgColor && it.bgColor !== '#FFFFFF' ? ` style="background-color:${it.bgColor};"` : '';
+                cardsHtml += `<div class="ex-card"><div class="img-wrap"${styleAttr}><img src="${src}" alt="${esc(it.word)}"></div>${d.showText ? `<span>${esc(it.word)}</span>` : ''}</div>`;
             }
         });
         cardsHtml += `</div></div>`;
@@ -2230,6 +2390,7 @@ function generateHtmlContent(d) {
     let wmHtml = d.watermark ? `<img src="${d.watermark}" class="watermark" alt="">` : '';
     let fontFace = d.customFont ? `@font-face { font-family: '${d.customFontName}'; src: url(${d.customFont}) format('truetype'); }` : '';
     let fontFamily = d.font === 'custom' && d.customFont ? `'${d.customFontName}', sans-serif` : (d.font === 'atkinson' ? `'Atkinson Hyperlegible', sans-serif` : `'Lexend', sans-serif`);
+    let alignCls = `text-${d.textAlign || 'center'}`;
     
     return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(d.title||'Poster')}</title><style>
     ${fontFace}
@@ -2240,12 +2401,15 @@ function generateHtmlContent(d) {
     .ex-marker{font-weight:bold;font-size:18px;width:20px;text-align:left}
     .ex-cards{display:flex;flex-wrap:wrap;gap:15px;justify-content:center;flex:1}
     .ex-card{display:flex;flex-direction:column;align-items:center;gap:8px;width:100px}
-    .ex-card img{width:80px;height:80px;object-fit:contain}
+    .ex-card .img-wrap{width:80px;height:80px;display:grid;place-items:center;border-radius:8px;}
+    .ex-card img{width:100%;height:100%;object-fit:contain}
     .ex-card span{font-weight:bold;font-size:14px;color:${lblC}}
     .ex-card.text span{border:1px solid currentColor;padding:10px;border-radius:8px;min-height:60px;display:flex;align-items:center}
     .watermark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:60%;max-width:400px;opacity:0.08;pointer-events:none;z-index:0;}
     .attr{margin-top:40px;font-size:11px;color:#888}
-    </style></head><body>${wmHtml}<div class="container"><h1>${esc(d.title||'')}</h1><h3>${esc(d.subtitle||'')}</h3>${cardsHtml}<div class="attr">Pictograms: ARASAAC · Sergio Palao · CC BY-NC-SA 4.0<br>PosterA11y by Lee Williams</div></div></body></html>`;
+    .text-left .ex-line, .text-left h1, .text-left h3 { text-align: left; justify-content: flex-start; }
+    .text-right .ex-line, .text-right h1, .text-right h3 { text-align: right; justify-content: flex-end; }
+    </style></head><body class="${alignCls}">${wmHtml}<div class="container"><h1>${esc(d.title||'')}</h1><h3>${esc(d.subtitle||'')}</h3>${cardsHtml}<div class="attr">Pictograms: ARASAAC · Sergio Palao · CC BY-NC-SA 4.0<br>PosterA11y by Lee Williams</div></div></body></html>`;
 }
 
  $('#wordBtn').onclick = async () => {
@@ -2333,14 +2497,14 @@ function generateHtmlContent(d) {
   const slide1 = pptx.addSlide({ masterName: doc.watermark ? 'WATERMARK_MASTER' : undefined });
   if (!doc.watermark) slide1.background = { color: bg };
   if (doc.logo) { try { slide1.addImage({ data: doc.logo, x: 10.5, y: 0.5, w: 2, h: 1 }); } catch(e){} }
-  slide1.addText(doc.title || 'Poster', { x: 0, y: 2.5, w: '100%', h: 1.5, align: 'center', fontSize: 44, bold: true, color: titleColor });
-  if (doc.subtitle) { slide1.addText(doc.subtitle, { x: 0, y: 4, w: '100%', h: 1, align: 'center', fontSize: 24, color: subColor }); }
+  slide1.addText(doc.title || 'Poster', { x: 0, y: 2.5, w: '100%', h: 1.5, align: doc.textAlign || 'center', fontSize: 44, bold: true, color: titleColor });
+  if (doc.subtitle) { slide1.addText(doc.subtitle, { x: 0, y: 4, w: '100%', h: 1, align: doc.textAlign || 'center', fontSize: 24, color: subColor }); }
   
   doc.lines.forEach((line, i) => {
     const slide = pptx.addSlide({ masterName: doc.watermark ? 'WATERMARK_MASTER' : undefined });
     if (!doc.watermark) slide.background = { color: bg };
     let marker = ''; if (doc.listStyle === 'bullets') marker = '• '; else if (doc.listStyle === 'numbers') marker = `${i+1}. `;
-    slide.addText(marker + line.src, { x: 0.5, y: 0.5, w: 12.33, h: 1, align: 'center', fontSize: 24, bold: true, color: titleColor });
+    slide.addText(marker + line.src, { x: 0.5, y: 0.5, w: 12.33, h: 1, align: doc.textAlign || 'center', fontSize: 24, bold: true, color: titleColor });
     const validItems = line.items.filter(it => !it.hidden && !it.textOnly && (it.id || it.customImg));
     const cols = Math.min(validItems.length, 4); const colW = 12.33 / cols;
     validItems.forEach((it, idx) => {
@@ -2439,6 +2603,7 @@ document.addEventListener('keydown',e=>{
     if(!pop.hidden)closePopover();
     else if(!$('#overlay').hidden){$('#overlay').hidden=true;$('#confirmModal').hidden=true;$('#searchModal').hidden=true;}
     else if(!tourTooltip.hidden) endTour();
+    else if(isSpeaking) stopSpeaking();
   }
   const isTyping = e.target.matches('input, [contenteditable="true"], select');
   if ((e.ctrlKey || e.metaKey) && !isTyping) {
