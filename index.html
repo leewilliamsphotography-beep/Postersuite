@@ -571,7 +571,34 @@
             }
         }
 
-        auth.onAuthStateChanged((user) => {
+                // --- 2. Authentication Logic ---
+        const authBtn = document.getElementById('authBtn');
+        const footerLinks = document.getElementById('footerLinks');
+
+        function handleAuth() {
+            const user = auth.currentUser;
+            if (user) {
+                auth.signOut().then(() => {
+                    showToast('Signed out successfully.');
+                }).catch((error) => {
+                    console.error('Sign out error:', error);
+                });
+            } else {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                auth.signInWithPopup(provider).then((result) => {
+                    showToast(`Welcome, ${result.user.displayName}!`);
+                }).catch((error) => {
+                    console.error('Sign in error:', error);
+                    if (error.code === 'auth/popup-blocked') {
+                        alert('Please allow popups to sign in.');
+                    } else {
+                        alert('Sign in failed: ' + error.message);
+                    }
+                });
+            }
+        }
+
+        auth.onAuthStateChanged(async (user) => {
             if (user) {
                 // User is signed in
                 authBtn.innerHTML = `<img src="${user.photoURL}" alt="Profile">${user.displayName.split(' ')[0]}`;
@@ -587,9 +614,16 @@
                     </span>
                 `;
 
-                // Send user ID to the open app iframe so it can sync its data
+                // Get the Firebase ID Token to pass to the iframe
+                const idToken = await user.getIdToken();
+                
+                // Send user ID and Token to the open app iframe
                 if (appFrame.contentWindow) {
-                    appFrame.contentWindow.postMessage({ type: 'auth-state', uid: user.uid }, '*');
+                    appFrame.contentWindow.postMessage({ 
+                        type: 'auth-state', 
+                        uid: user.uid, 
+                        token: idToken 
+                    }, '*');
                 }
             } else {
                 // User is signed out
