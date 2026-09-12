@@ -13,7 +13,7 @@
             --paper: #F8F9FA; --surface: #FFFFFF; --ink: #1A1D21; --ink2: #50545C;
             --line: #E3E5E8; --line2: #F0F1F3;
             --accent-a11y: #D14C1E; --accent-design: #2563EB; --accent-quick: #10B981;
-            --accent-sync: #8B5CF6; --accent-cell: #059669; --accent-pr3s: #F59E0B;
+            --accent-sync: #8B5CF6; --accent-graphite: #4B5563; --accent-pr3s: #F59E0B;
             --accent-c4l: #06B6D4; --accent-f0rm: #E11D48; --accent-qr: #475569;
             --accent-m1nd: #4F46E5;
             --focus: #2563EB; --hero-glow: rgba(139, 92, 246, 0.05);
@@ -21,13 +21,13 @@
         body.dark-mode {
             --paper: #121212; --surface: #1E1E1E; --ink: #E8E8E8; --ink2: #A0A0A0;
             --line: #333333; --line2: #262626; --hero-glow: rgba(139, 92, 246, 0.15);
-            --accent-m1nd: #818CF8;
+            --accent-m1nd: #818CF8; --accent-graphite: #9CA3AF;
         }
         body.calm-mode {
             --paper: #F7F7F2; --surface: #FFFFFF; --ink: #595959; --ink2: #8c8c8c;
             --line: #ECECE6; --line2: #F4F4F0;
             --accent-a11y: #C8825E; --accent-design: #7C9CB8; --accent-quick: #6BAE8E;
-            --accent-sync: #A98BE0; --accent-cell: #6BAE8E; --accent-pr3s: #D3A76A;
+            --accent-sync: #A98BE0; --accent-graphite: #8A8F98; --accent-pr3s: #D3A76A;
             --accent-c4l: #6CBFCB; --accent-f0rm: #C97B89; --accent-qr: #7A8896;
             --accent-m1nd: #8A86C4;
             --hero-glow: transparent;
@@ -72,15 +72,15 @@
         .resume-badge svg { width: 12px; height: 12px; }
         .card-header { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; margin-top: 20px; }
         .card-icon { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center; flex-shrink: 0; overflow: hidden; }
-        .icon-a11y, .icon-design, .icon-quick, .icon-sync, .icon-cell, .icon-pr3s, .icon-c4l, .icon-f0rm, .icon-qr, .icon-m1nd { background: transparent; padding: 0; }
+        .icon-a11y, .icon-design, .icon-quick, .icon-sync, .icon-graphite, .icon-pr3s, .icon-c4l, .icon-f0rm, .icon-qr, .icon-m1nd { background: transparent; padding: 0; }
         .title-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .card h2 { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.6rem; color: var(--ink); }
         .version-badge { font-size: 0.7rem; font-weight: 700; color: var(--ink2); background: var(--line2); padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line); line-height: 1; }
         .tag { display: inline-block; font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; margin-bottom: 16px; width: fit-content; }
-        .tag-a11y { background: rgba(209, 76, 30, 0.15); color: var(--accent-a11y); } .tag-design { background: rgba(37, 99, 235, 0.15); color: var(--accent-design); } .tag-quick { background: rgba(16, 185, 129, 0.15); color: var(--accent-quick); } .tag-sync { background: rgba(139, 92, 246, 0.15); color: var(--accent-sync); } .tag-cell { background: rgba(5, 150, 105, 0.15); color: var(--accent-cell); } .tag-pr3s { background: rgba(245, 158, 11, 0.15); color: var(--accent-pr3s); } .tag-c4l { background: rgba(6, 182, 212, 0.15); color: var(--accent-c4l); } .tag-f0rm { background: rgba(225, 29, 72, 0.15); color: var(--accent-f0rm); } .tag-qr { background: rgba(71, 85, 105, 0.15); color: var(--accent-qr); } .tag-m1nd { background: rgba(79, 70, 229, 0.15); color: var(--accent-m1nd); }
+        .tag-a11y { background: rgba(209, 76, 30, 0.15); color: var(--accent-a11y); } .tag-design { background: rgba(37, 99, 235, 0.15); color: var(--accent-design); } .tag-quick { background: rgba(16, 185, 129, 0.15); color: var(--accent-quick); } .tag-sync { background: rgba(139, 92, 246, 0.15); color: var(--accent-sync); } .tag-graphite { background: rgba(75, 85, 99, 0.15); color: var(--accent-graphite); } .tag-pr3s { background: rgba(245, 158, 11, 0.15); color: var(--accent-pr3s); } .tag-c4l { background: rgba(6, 182, 212, 0.15); color: var(--accent-c4l); } .tag-f0rm { background: rgba(225, 29, 72, 0.15); color: var(--accent-f0rm); } .tag-qr { background: rgba(71, 85, 105, 0.15); color: var(--accent-qr); } .tag-m1nd { background: rgba(79, 70, 229, 0.15); color: var(--accent-m1nd); }
         .card p { color: var(--ink2); line-height: 1.6; margin-bottom: 24px; flex-grow: 1; font-size: 0.95rem; }
         .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 1.1rem; padding: 16px 24px; border-radius: 12px; text-decoration: none; transition: background 0.2s; cursor: pointer; border: none; width: 100%; }
-        .btn-a11y { background: var(--accent-a11y); color: #fff; } .card:hover .btn-a11y { background: #B23E17; } .btn-design { background: var(--accent-design); color: #fff; } .card:hover .btn-design { background: #1d4ed8; } .btn-quick { background: var(--accent-quick); color: #fff; } .card:hover .btn-quick { background: #0e9c6b; } .btn-sync { background: var(--accent-sync); color: #fff; } .card:hover .btn-sync { background: #7C3AED; } .btn-cell { background: var(--accent-cell); color: #fff; } .card:hover .btn-cell { background: #047857; } .btn-pr3s { background: var(--accent-pr3s); color: #fff; } .card:hover .btn-pr3s { background: #D97706; } .btn-c4l { background: var(--accent-c4l); color: #fff; } .card:hover .btn-c4l { background: #0891B2; } .btn-f0rm { background: var(--accent-f0rm); color: #fff; } .card:hover .btn-f0rm { background: #BE123C; } .btn-qr { background: var(--accent-qr); color: #fff; } .card:hover .btn-qr { background: #334155; } .btn-m1nd { background: var(--accent-m1nd); color: #fff; } .card:hover .btn-m1nd { background: #4338CA; }
+        .btn-a11y { background: var(--accent-a11y); color: #fff; } .card:hover .btn-a11y { background: #B23E17; } .btn-design { background: var(--accent-design); color: #fff; } .card:hover .btn-design { background: #1d4ed8; } .btn-quick { background: var(--accent-quick); color: #fff; } .card:hover .btn-quick { background: #0e9c6b; } .btn-sync { background: var(--accent-sync); color: #fff; } .card:hover .btn-sync { background: #7C3AED; } .btn-graphite { background: var(--accent-graphite); color: #fff; } .card:hover .btn-graphite { background: #374151; } .btn-pr3s { background: var(--accent-pr3s); color: #fff; } .card:hover .btn-pr3s { background: #D97706; } .btn-c4l { background: var(--accent-c4l); color: #fff; } .card:hover .btn-c4l { background: #0891B2; } .btn-f0rm { background: var(--accent-f0rm); color: #fff; } .card:hover .btn-f0rm { background: #BE123C; } .btn-qr { background: var(--accent-qr); color: #fff; } .card:hover .btn-qr { background: #334155; } .btn-m1nd { background: var(--accent-m1nd); color: #fff; } .card:hover .btn-m1nd { background: #4338CA; }
         .kb-hint { text-align: center; color: var(--ink2); font-size: 0.85rem; margin-bottom: 40px; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
         kbd { background: var(--surface); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; padding: 2px 8px; font-family: monospace; font-size: 0.9rem; color: var(--ink); }
         footer { text-align: center; padding: 24px; background: var(--surface); border-top: 1px solid var(--line); color: var(--ink2); font-size: 0.9rem; }
@@ -202,7 +202,7 @@
 
     <div class="hero">
         <h1>Which tool do you need today?</h1>
-        <p>An offline-first, accessible alternative to mainstream office software. From accessible posters and rapid notices to documents, logos, mind maps, and presentations—no accounts, no tracking, ever.</p>
+        <p>An offline-first, accessible alternative to mainstream office software. From accessible posters and rapid notices to documents, vector graphics, mind maps, and presentations—no accounts, no tracking, ever.</p>
     </div>
 
     <div class="container">
@@ -245,17 +245,52 @@
             <button class="btn btn-sync" onclick="event.stopPropagation(); openApp('poster5ync.html', 'sync');">Launch Text Editor</button>
         </div>
 
-        <!-- 4. PosterC3ll -->
-        <div class="card" tabindex="0" role="button" onclick="openApp('posterc3ll.html', 'cell')" onkeydown="if(event.key==='Enter')openApp('posterc3ll.html', 'cell')">
-            <span id="resumeBadge_cell" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
+        <!-- 4. Graphite Editor (Powered by Graphite) -->
+        <div class="card" tabindex="0" role="button" onclick="openApp('posterc3ll.html', 'graphite')" onkeydown="if(event.key==='Enter')openApp('posterc3ll.html', 'graphite')">
+            <span id="resumeBadge_graphite" class="resume-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Currently Open</span>
             <button class="popout-btn" title="Open in new tab" onclick="event.stopPropagation(); popOutApp('posterc3ll.html');"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button>
             <div class="card-header">
-                <div class="card-icon icon-cell"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="PosterC3ll Logo Maker"><defs><linearGradient id="cbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F0FDF4"/><stop offset="1" stop-color="#DCFCE7"/></linearGradient><radialGradient id="cpinGrad" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#6EE7B7"/><stop offset="1" stop-color="#10B981"/></radialGradient><filter id="cshadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/></filter></defs><rect width="120" height="120" rx="28" fill="url(#cbgGrad)"/><rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/><path d="M38 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/><circle cx="38" cy="42" r="2.5" fill="#10B981"/><circle cx="82" cy="42" r="2.5" fill="#10B981"/><rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#cshadow)"/><circle cx="60" cy="62" r="16" fill="#ECFDF5"/><circle cx="56" cy="60" r="8" fill="#10B981" /><rect x="58" y="58" width="14" height="14" rx="3" fill="#047857" opacity="0.9"/><rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#10B981"/><circle cx="60" cy="20" r="7" fill="url(#cpinGrad)" filter="url(#cshadow)"/><circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/></svg></div>
-                <div class="title-group"><h2>PosterC3ll</h2><span id="versionCell" class="version-badge">v1.0</span></div>
+                <div class="card-icon icon-graphite">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" role="img" aria-label="Graphite Editor Logo">
+                      <defs>
+                        <linearGradient id="gbgGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
+                          <stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#F1F5F9"/><stop offset="1" stop-color="#E2E8F0"/>
+                        </linearGradient>
+                        <radialGradient id="gpinGrad" cx="0.35" cy="0.3" r="0.8">
+                          <stop offset="0" stop-color="#9CA3AF"/><stop offset="1" stop-color="#4B5563"/>
+                        </radialGradient>
+                        <filter id="gshadow" x="-20%" y="-20%" width="140%" height="140%">
+                          <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1A1D21" flood-opacity="0.2"/>
+                        </filter>
+                      </defs>
+                      <rect width="120" height="120" rx="28" fill="url(#gbgGrad)"/>
+                      <rect x="1.5" y="1.5" width="117" height="117" rx="26.5" fill="none" stroke="#1A1D21" stroke-opacity="0.05"/>
+                      <path d="M38 42 L60 24" fill="none" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
+                      <path d="M82 42 L60 24" fill="none" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
+                      <circle cx="38" cy="42" r="2.5" fill="#4B5563"/><circle cx="82" cy="42" r="2.5" fill="#4B5563"/>
+                      <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#gshadow)"/>
+                      <circle cx="60" cy="62" r="16" fill="#F8FAFC"/>
+                      <!-- Hexagonal Vector Node Icon -->
+                      <g fill="none" stroke="#374151" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="60,52 68,57 68,67 60,72 52,67 52,57"/>
+                        <circle cx="60" cy="52" r="2" fill="#374151"/>
+                        <circle cx="68" cy="57" r="2" fill="#374151"/>
+                        <circle cx="68" cy="67" r="2" fill="#374151"/>
+                        <circle cx="60" cy="72" r="2" fill="#374151"/>
+                        <circle cx="52" cy="67" r="2" fill="#374151"/>
+                        <circle cx="52" cy="57" r="2" fill="#374151"/>
+                      </g>
+                      <rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/>
+                      <rect x="48" y="94" width="24" height="5" rx="2.5" fill="#4B5563"/>
+                      <circle cx="60" cy="20" r="7" fill="url(#gpinGrad)" filter="url(#gshadow)"/>
+                      <circle cx="57.5" cy="17.5" r="1.8" fill="#FFFFFF" opacity="0.7"/>
+                    </svg>
+                </div>
+                <div class="title-group"><h2>Graphite</h2><span id="versionGraphite" class="version-badge">v1.0</span></div>
             </div>
-            <span class="tag tag-cell">Best for: Branding & Logos</span>
-            <p>An offline-first logo maker. Design clean vector logos, icons, and brand assets locally—no accounts, no cloud servers, and no internet connection required.</p>
-            <button class="btn btn-cell" onclick="event.stopPropagation(); openApp('posterc3ll.html', 'cell');">Launch Logo Maker</button>
+            <span class="tag tag-graphite">Best for: Vector & Node Editing</span>
+            <p>A powerful, node-based vector graphics editor. Design clean logos, intricate illustrations, and UI assets locally. Powered by the open-source Graphite Editor.</p>
+            <button class="btn btn-graphite" onclick="event.stopPropagation(); openApp('posterc3ll.html', 'graphite');">Launch Vector Editor</button>
         </div>
 
         <!-- 5. PosterPr3s -->
@@ -329,7 +364,7 @@
         <span><kbd>1</kbd> A11y</span>
         <span><kbd>2</kbd> D45h</span>
         <span><kbd>3</kbd> 5ync</span>
-        <span><kbd>4</kbd> C3ll</span>
+        <span><kbd>4</kbd> Graphite</span>
         <span><kbd>5</kbd> Pr3s</span>
         <span><kbd>6</kbd> C4l</span>
         <span><kbd>7</kbd> F0rm</span>
@@ -339,7 +374,7 @@
     </div>
 
     <footer>
-        <p>PosterSuite by <b>Lee Williams</b></p>
+        <p>PosterSuite by <b>Lee Williams</b> · Graphite Editor powered by the open-source <b>Graphite</b> project</p>
         <div class="footer-links">
             <a onclick="openModal('accessibilityOverlay')">Accessibility Statement</a>
             <a href="mailto:leewilliamswork2029@gmail.com?subject=Poster%20Suite%20Feedback&body=Hi%20Lee%2C%0A%0AI%27ve%20been%20using%20Poster%20Suite%20and%20I%20wanted%20to%20share%20some%20feedback%3A%0A%0A">Contact & Feedback</a>
@@ -382,7 +417,7 @@
         <div class="modal-box" style="text-align: center;" onclick="event.stopPropagation()">
             <button class="modal-close" onclick="closeModal(false, 'welcomeOverlay')">&times;</button>
             <h2 style="justify-content: center;">Welcome to Poster Suite! 👋</h2>
-            <p>Your offline-first, accessible alternative to mainstream office software. Whether you need accessible posters, rapid notices, text documents, logos, mind maps, or presentations, we have a tool tailored for you.</p>
+            <p>Your offline-first, accessible alternative to mainstream office software. Whether you need accessible posters, rapid notices, text documents, vector graphics, mind maps, or presentations, we have a tool tailored for you.</p>
             <p style="font-size: 0.9rem; color: var(--ink2);">Tip: Press <kbd>Ctrl + K</kbd> to quickly find tools, or try our Sensory-Friendly "Calm Mode" in the top right corner!</p>
             <button class="btn btn-sync" style="margin-top: 10px;" onclick="closeModal(false, 'welcomeOverlay')">Get Started</button>
         </div>
@@ -440,12 +475,12 @@
             <h2>What's New? 🚀</h2>
             <p>Here are the latest updates and improvements to Poster Suite:</p>
             <ul>
+                <li><b>Graphite Integration:</b> The suite now includes the powerful, open-source Graphite vector editor for advanced node-based design!</li>
                 <li><b>Command Palette:</b> Press <kbd>Ctrl + K</kbd> to instantly search and launch tools.</li>
                 <li><b>App Switcher:</b> A floating grid button in the app overlay lets you jump between tools instantly.</li>
                 <li><b>Master Backup & Restore:</b> Safely back up all your offline documents and restore them on any computer.</li>
                 <li><b>Live Theme Sync:</b> Dark Mode and Calm Mode now sync to apps instantly via PostMessage.</li>
                 <li><b>PosterM1nd (v1.0):</b> A brand new tool for offline mind maps and flowcharts!</li>
-                <li><b>PosterC3ll Update:</b> Transformed into a fully-fledged Logo Maker!</li>
             </ul>
             <button class="btn btn-sync" style="margin-top: 10px;" onclick="closeModal(false, 'whatsNewOverlay')">Close</button>
         </div>
@@ -464,7 +499,7 @@
             { name: 'PosterA11y', url: 'postera11y.html', id: 'a11y', color: 'var(--accent-a11y)' },
             { name: 'PosterD45h', url: 'posterd45h.html', id: 'd45h', color: 'var(--accent-design)' },
             { name: 'Poster5ync', url: 'poster5ync.html', id: 'sync', color: 'var(--accent-sync)' },
-            { name: 'PosterC3ll', url: 'posterc3ll.html', id: 'cell', color: 'var(--accent-cell)' },
+            { name: 'Graphite Editor', url: 'posterc3ll.html', id: 'graphite', color: 'var(--accent-graphite)' },
             { name: 'PosterPr3s', url: 'posterpr3s.html', id: 'pr3s', color: 'var(--accent-pr3s)' },
             { name: 'PosterC4l', url: 'posterc4l.html', id: 'c4l', color: 'var(--accent-c4l)' },
             { name: 'PosterF0rm', url: 'posterf0rm.html', id: 'f0rm', color: 'var(--accent-f0rm)' },
@@ -613,7 +648,7 @@
             if (e.key === '1') openApp('postera11y.html', 'a11y');
             if (e.key === '2') openApp('posterd45h.html', 'd45h');
             if (e.key === '3') openApp('poster5ync.html', 'sync');
-            if (e.key === '4') openApp('posterc3ll.html', 'cell');
+            if (e.key === '4') openApp('posterc3ll.html', 'graphite');
             if (e.key === '5') openApp('posterpr3s.html', 'pr3s');
             if (e.key === '6') openApp('posterc4l.html', 'c4l');
             if (e.key === '7') openApp('posterf0rm.html', 'f0rm');
@@ -622,7 +657,7 @@
         });
 
         // Versioning & What's New
-        const CURRENT_VERSION = '3.0'; // Major update for UX features
+        const CURRENT_VERSION = '3.1'; 
         function openWhatsNew() {
             openModal('whatsNewOverlay');
             localStorage.setItem('postersuite-seen-version', CURRENT_VERSION);
@@ -730,7 +765,7 @@
                     { url: 'postera11y.html', id: 'versionA11y' },
                     { url: 'posterd45h.html', id: 'versionD45h' },
                     { url: 'poster5ync.html', id: 'versionSync' },
-                    { url: 'posterc3ll.html', id: 'versionCell' },
+                    { url: 'posterc3ll.html', id: 'versionGraphite' },
                     { url: 'posterpr3s.html', id: 'versionPr3s' },
                     { url: 'posterc4l.html', id: 'versionC4l' },
                     { url: 'posterf0rm.html', id: 'versionF0rm' },

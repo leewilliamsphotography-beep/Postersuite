@@ -3,148 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="2.0">
-    <title>PosterC3ll - Pro Logo Studio</title>
+    <title>Graphite Cloud Studio</title>
     <style>
         :root {
-            --bg: #f8f9fa; --surface: #ffffff; --primary: #10b981; --primary-dark: #047857;
-            --border: #e5e7eb; --text: #1f2937; --text-muted: #6b7280;
-            --highlight: #ecfdf5; --canvas-bg: #ffffff;
-            --canvas-area-bg: #f3f4f6;
+            --bg: #1e1e1e; 
+            --surface: #252526; 
+            --primary: #6366f1; 
+            --primary-dark: #4f46e5;
+            --border: #3e3e42; 
+            --text: #d4d4d4; 
+            --text-muted: #808080;
         }
-
-        /* --- Dark & Calm Mode Overrides --- */
-        html.dark-mode {
-            --bg: #0f172a; --surface: #1e293b; --primary: #10b981; --primary-dark: #34d399;
-            --border: #334155; --text: #f1f5f9; --text-muted: #94a3b8;
-            --highlight: #134e4a; --canvas-bg: #1e293b; --canvas-area-bg: #020617;
-        }
-        html.dark-mode #canvasWrapper { background: #1e293b; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-        html.dark-mode #svgCanvas {
-            background-image: linear-gradient(45deg, #1e293b 25%, transparent 25%), linear-gradient(-45deg, #1e293b 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1e293b 75%), linear-gradient(-45deg, transparent 75%, #1e293b 75%);
-            background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-        }
-        html.dark-mode .delete-btn { background: #7f1d1d; color: #f87171; border-color: #991b1b; }
-        html.dark-mode .delete-btn:hover { background: #991b1b; color: #fca5a5; border-color: #b91c1c; }
-        html.calm-mode { filter: sepia(0.3) saturate(1.2) brightness(0.95); transition: filter 0.3s ease; }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
-        body { background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* Fixed flex layout to prevent iframe cutoff */
+        html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); }
+        body { display: flex; flex-direction: column; }
 
         /* Navbar */
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; background: var(--surface); border-bottom: 1px solid var(--border); z-index: 10; }
-        .nav-left { display: flex; align-items: center; gap: 10px; }
-        .logo-icon { width: 28px; height: 28px; }
-        .brand-name { font-size: 18px; font-weight: 700; color: var(--primary-dark); }
-        .nav-badge { font-size: 12px; color: var(--text-muted); background: var(--highlight); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--primary); }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; background: var(--surface); border-bottom: 1px solid var(--border); z-index: 10; gap: 15px; flex-shrink: 0; }
+        .nav-left { display: flex; align-items: center; gap: 15px; }
+        .logo-icon { width: 28px; height: 28px; background: var(--primary); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px; flex-shrink: 0; }
+        .brand-name { font-size: 16px; font-weight: 700; color: #ffffff; }
+        .attribution { font-size: 11px; color: var(--text-muted); background: #333; padding: 4px 8px; border-radius: 4px; }
+        .attribution a { color: #818cf8; text-decoration: none; }
+        
         .btn { background: var(--surface); color: var(--text); border: 1px solid var(--border); padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
-        .btn:hover { background: var(--highlight); border-color: var(--primary); color: var(--primary-dark); }
+        .btn:hover { border-color: var(--primary); color: #ffffff; }
         .btn-primary { background: var(--primary); color: white; border: none; }
         .btn-primary:hover { background: var(--primary-dark); }
-        .btn-group { display: flex; gap: 4px; }
-        #cloudStatus { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+        
+        #cloudStatus { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
 
         /* Main Layout */
-        .workspace { display: flex; flex: 1; overflow: hidden; }
-        .left-panel { width: 220px; background: var(--surface); border-right: 1px solid var(--border); padding: 16px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
-        .panel-title { font-size: 12px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; font-weight: 700; }
-        .element-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px; border: 1px solid var(--border); background: var(--surface); border-radius: 4px; cursor: pointer; font-size: 14px; text-align: left; }
-        .element-btn:hover { background: var(--highlight); border-color: var(--primary); color: var(--primary-dark); }
+        .editor-wrapper { flex: 1; display: flex; overflow: hidden; min-height: 0; /* Crucial for flex children to prevent overflow */ }
+        .graphite-iframe { flex: 1; border: none; width: 100%; height: 100%; display: block; }
 
-        /* Canvas Area */
-        .canvas-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--canvas-area-bg); position: relative; overflow: auto; padding: 40px; }
-        #canvasWrapper { background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border: 1px solid var(--border); position: relative; }
-        #svgCanvas { width: 500px; height: 500px; display: block; background-image: linear-gradient(45deg, #f9fafb 25%, transparent 25%), linear-gradient(-45deg, #f9fafb 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f9fafb 75%), linear-gradient(-45deg, transparent 75%, #f9fafb 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px; }
-        #boundingBox { fill: none; stroke: var(--primary); stroke-width: 1.5; stroke-dasharray: 4 4; pointer-events: none; display: none; }
-
-        /* Right Panel */
-        .right-panel { width: 280px; background: var(--surface); border-left: 1px solid var(--border); padding: 16px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
-        .prop-group { display: flex; flex-direction: column; gap: 8px; }
-        label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
-        input[type="text"], input[type="number"], select { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 14px; outline: none; background: var(--surface); color: var(--text); }
-        input[type="text"]:focus, input[type="number"]:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); }
-        input[type="color"] { width: 100%; height: 36px; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; padding: 2px; background: var(--surface); }
-        input[type="range"] { width: 100%; cursor: pointer; }
-        .row { display: flex; gap: 8px; }
-        .row > div { flex: 1; }
-        .btn-icon { flex: 1; padding: 8px; border: 1px solid var(--border); background: var(--surface); border-radius: 4px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
-        .btn-icon:hover { background: var(--highlight); border-color: var(--primary); color: var(--primary-dark); }
-        .btn-icon.active { background: var(--highlight); border-color: var(--primary); color: var(--primary-dark); }
-        .delete-btn { background: #fee2e2; color: #ef4444; border-color: #fecaca; }
-        .delete-btn:hover { background: #fecaca; color: #dc2626; border-color: #fca5a5; }
+        /* Cloud Bridge Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; display: none; align-items: center; justify-content: center; }
+        .modal-overlay.open { display: flex; }
+        .modal-box { background: var(--surface); padding: 24px; border-radius: 8px; width: 500px; max-width: 90%; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; color: white; }
+        .modal-step { background: var(--bg); padding: 12px; border-radius: 6px; margin-bottom: 12px; font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+        .modal-step b { color: #818cf8; }
+        textarea { width: 100%; height: 120px; padding: 10px; border: 1px solid var(--border); border-radius: 4px; font-family: monospace; font-size: 12px; background: var(--bg); color: var(--text); margin-bottom: 16px; resize: vertical; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
     </style>
 </head>
 <body>
 
     <nav class="navbar">
         <div class="nav-left">
-            <svg class="logo-icon" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="28" fill="#F0FDF4"/><path d="M38 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/><path d="M82 42 L60 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/><circle cx="60" cy="20" r="7" fill="#10B981"/><rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" stroke="#e5e7eb"/><rect x="42" y="86" width="36" height="5" rx="2.5" fill="#1A1D21"/><rect x="48" y="94" width="24" height="5" rx="2.5" fill="#10B981"/></svg>
-            <span class="brand-name">PosterC3ll</span>
-            <div class="nav-badge">Pro Studio</div>
-            <span id="cloudStatus">Initializing Cloud...</span>
+            <div class="logo-icon">G</div>
+            <span class="brand-name">Graphite Cloud Studio</span>
+            <span class="attribution">Powered by <a href="https://graphite.art" target="_blank">Graphite</a></span>
         </div>
-        <div style="display: flex; gap: 8px; align-items: center;">
-            <button class="btn" id="darkModeToggle" data-action="toggleDark">🌙 Dark Mode</button>
-            <div class="btn-group">
-                <button class="btn" data-action="undo" title="Undo (Ctrl+Z)">↶</button>
-                <button class="btn" data-action="redo" title="Redo (Ctrl+Y)">↷</button>
-            </div>
-            <button class="btn" data-action="importSVG">📁 Import SVG</button>
-            <button class="btn" data-action="clear">Clear All</button>
-            <button class="btn" data-action="exportPNG">Export PNG</button>
-            <button class="btn btn-primary" data-action="exportSVG">Export SVG</button>
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <span id="cloudStatus">Initializing Cloud...</span>
+            <button class="btn" id="loadCloudBtn">📂 Load Cloud</button>
+            <button class="btn btn-primary" id="saveCloudBtn">☁️ Save to Cloud</button>
         </div>
     </nav>
 
-    <input type="file" id="svgFileInput" accept=".svg, image/svg+xml" style="display: none;">
+    <div class="editor-wrapper">
+        <!-- Graphite Web Editor Iframe -->
+        <iframe class="graphite-iframe" src="https://editor.graphite.art/" allow="clipboard-read; clipboard-write; fullscreen"></iframe>
+    </div>
 
-    <div class="workspace">
-        <!-- Left Panel -->
-        <div class="left-panel">
-            <div class="panel-title">Shapes</div>
-            <button class="element-btn" data-action="addRect">⬛ Square</button>
-            <button class="element-btn" data-action="addCircle">⭕ Circle</button>
-            <button class="element-btn" data-action="addTriangle">🔺 Triangle</button>
-            <button class="element-btn" data-action="addStar">⭐ Star</button>
-            <button class="element-btn" data-action="addLine">➖ Line</button>
+    <!-- Cloud Bridge Modal -->
+    <div class="modal-overlay" id="bridgeModal">
+        <div class="modal-box">
+            <h2 class="modal-title" id="modalTitle">Sync to Cloud</h2>
             
-            <div class="panel-title" style="margin-top: 20px;">Text & Actions</div>
-            <button class="element-btn" data-action="addText">📝 Add Text</button>
-            <button class="element-btn" data-action="duplicate">📃 Duplicate (Ctrl+D)</button>
-
-            <div class="panel-title" style="margin-top: 20px;">Artboard</div>
-            <div class="prop-group">
-                <label>Canvas BG</label>
-                <input type="color" id="canvasBgPicker" value="#ffffff" data-action="canvasBg">
+            <div id="saveFlow">
+                <div class="modal-step">
+                    <b>Step 1:</b> Click inside the Graphite editor below.<br>
+                    <b>Step 2:</b> Press <b>Ctrl+A</b> (or Cmd+A) to select all your artwork.<br>
+                    <b>Step 3:</b> Press <b>Ctrl+C</b> (or Cmd+C) to copy it.<br>
+                    <b>Step 4:</b> Click the box below and press <b>Ctrl+V</b> (or Cmd+V) to paste the data.
+                </div>
+                <textarea id="svgPasteArea" placeholder="Paste your copied Graphite data here..."></textarea>
+                <div class="modal-actions">
+                    <button class="btn" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveToCloud()">Save to Firebase</button>
+                </div>
             </div>
 
-            <div class="panel-title" style="margin-top: 20px;">Templates</div>
-            <button class="element-btn" data-action="loadTemplate">✨ Load Demo Logo</button>
-        </div>
-
-        <!-- Center Canvas -->
-        <div class="canvas-area">
-            <div id="canvasWrapper">
-                <svg id="svgCanvas" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
-                    <rect id="boundingBox" x="0" y="0" width="0" height="0"></rect>
-                </svg>
-            </div>
-        </div>
-
-        <!-- Right Panel -->
-        <div class="right-panel" id="rightPanel">
-            <div class="panel-title">Properties</div>
-            <div id="propertiesContent" style="display:flex; flex-direction:column; gap:16px; height:100%;">
-                <p style="color: var(--text-muted); font-size: 14px; text-align: center; margin-top: 20px;">Select an element to edit it.<br><br>Hold <b>Alt</b> + Drag to duplicate.</p>
+            <div id="loadFlow" style="display: none;">
+                <div class="modal-step">
+                    Your cloud save has been copied to your clipboard!<br><br>
+                    <b>Step 1:</b> Click inside the Graphite editor.<br>
+                    <b>Step 2:</b> Press <b>Ctrl+V</b> (or Cmd+V) to paste your artwork onto the canvas.
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="closeModal()">Done</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script type="module">
-        // --- Firebase Initialization ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
+        // Your Firebase configuration
         const firebaseConfig = {
           apiKey: "AIzaSyDVwdkzHa1nVzWnF9Fln7AGExbMponZJuI",
           authDomain: "postersuite.firebaseapp.com",
@@ -156,718 +119,92 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        
-        // We use a hardcoded ID for now. Later, this will be the logged-in user's UID.
-        const PROJECT_ID = "main_project"; 
+        const PROJECT_ID = "graphite_main_project"; 
         const cloudStatusEl = document.getElementById('cloudStatus');
 
-        // --- App State ---
-        var svgCanvas = document.getElementById('svgCanvas');
-        var boundingBox = document.getElementById('boundingBox');
-        var svgNS = "http://www.w3.org/2000/svg";
-        var elements = [];
-        var selectedId = null;
-        var isDragging = false;
-        var isDuplicating = false; 
-        var dragOffset = { x: 0, y: 0 };
-
-        var history = [];
-        var historyIndex = -1;
-
-        function genId() { return 'el-' + Math.random().toString(36).substr(2, 9); }
-
-        // --- Theme Functions ---
-        function applyTheme(dark) {
-            var toggleBtn = document.getElementById('darkModeToggle');
-            if (dark) {
-                document.documentElement.classList.add('dark-mode');
-                if(toggleBtn) toggleBtn.textContent = '☀️ Light Mode';
-                localStorage.setItem('posterC3llDarkMode', 'true');
-            } else {
-                document.documentElement.classList.remove('dark-mode');
-                if(toggleBtn) toggleBtn.textContent = '🌙 Dark Mode';
-                localStorage.setItem('posterC3llDarkMode', 'false');
-            }
-        }
-
-        function toggleDarkMode() {
-            var isDark = document.documentElement.classList.contains('dark-mode');
-            applyTheme(!isDark);
-        }
-
-        // --- Initialization & Cloud Load ---
-        async function init() {
-            if (localStorage.getItem('posterC3llDarkMode') === 'true') {
-                applyTheme(true);
-            }
-
-            cloudStatusEl.textContent = "Loading Cloud...";
+        // Check cloud status on load
+        async function checkCloud() {
+            cloudStatusEl.textContent = "Checking Cloud...";
             try {
                 const docRef = doc(db, "projects", PROJECT_ID);
                 const docSnap = await getDoc(docRef);
-
                 if (docSnap.exists()) {
-                    var data = JSON.parse(docSnap.data().canvasData);
-                    elements = data;
-                    renderAllElements();
-                    if (data.canvasBg) setCanvasBg(data.canvasBg);
-                    saveHistory();
-                    cloudStatusEl.textContent = "☁️ Saved to Cloud";
-                    return;
+                    cloudStatusEl.textContent = "☁️ Cloud Save Found";
+                    cloudStatusEl.style.color = "#10b981";
                 } else {
-                    cloudStatusEl.textContent = "☁️ New Cloud Project";
-                    loadTemplate();
+                    cloudStatusEl.textContent = "☁️ No Cloud Save Yet";
+                    cloudStatusEl.style.color = "#808080";
                 }
-            } catch (e) { 
-                console.error("Firebase load error. Falling back to local.", e); 
-                cloudStatusEl.textContent = "⚠️ Offline (Local Mode)";
+            } catch (e) {
+                cloudStatusEl.textContent = "⚠️ Offline";
+                cloudStatusEl.style.color = "#ef4444";
+            }
+        }
+
+        // Open Save Modal
+        document.getElementById('saveCloudBtn').addEventListener('click', () => {
+            document.getElementById('modalTitle').textContent = "Sync to Cloud";
+            document.getElementById('saveFlow').style.display = 'block';
+            document.getElementById('loadFlow').style.display = 'none';
+            document.getElementById('svgPasteArea').value = '';
+            document.getElementById('bridgeModal').classList.add('open');
+        });
+
+        // Open Load Modal
+        document.getElementById('loadCloudBtn').addEventListener('click', async () => {
+            cloudStatusEl.textContent = "Loading from Cloud...";
+            try {
+                const docRef = doc(db, "projects", PROJECT_ID);
+                const docSnap = await getDoc(docRef);
                 
-                // Fallback to local storage if offline
-                try {
-                    var saved = localStorage.getItem('posterC3llLogoPro');
-                    if (saved) {
-                        var data = JSON.parse(saved);
-                        if (data && Array.isArray(data)) {
-                            elements = data;
-                            renderAllElements();
-                            if (data.canvasBg) setCanvasBg(data.canvasBg);
-                            saveHistory();
-                            return;
-                        }
-                    }
-                } catch (err) {}
-                loadTemplate(); 
+                if (docSnap.exists()) {
+                    const data = docSnap.data().canvasData;
+                    await navigator.clipboard.writeText(data);
+                    
+                    cloudStatusEl.textContent = "☁️ Cloud Save Found";
+                    document.getElementById('modalTitle').textContent = "Load from Cloud";
+                    document.getElementById('saveFlow').style.display = 'none';
+                    document.getElementById('loadFlow').style.display = 'block';
+                    document.getElementById('bridgeModal').classList.add('open');
+                } else {
+                    alert("No cloud save found yet. Create something and save it first!");
+                    cloudStatusEl.textContent = "☁️ No Cloud Save Yet";
+                }
+            } catch (e) {
+                alert("Failed to load from cloud. Are you offline?");
+                cloudStatusEl.textContent = "⚠️ Offline";
             }
-        }
+        });
 
-        function renderAllElements() {
-            while (svgCanvas.firstChild && svgCanvas.firstChild !== boundingBox) {
-                svgCanvas.removeChild(svgCanvas.firstChild);
-            }
-            elements.forEach(function(el) {
-                createSvgNode(el);
-            });
-            selectElement(null);
-        }
-
-        function createSvgNode(el) {
-            var node;
-            if (el.type === 'rect') node = document.createElementNS(svgNS, 'rect');
-            else if (el.type === 'circle') node = document.createElementNS(svgNS, 'ellipse');
-            else if (el.type === 'text') node = document.createElementNS(svgNS, 'text');
-            else if (el.type === 'imported') node = document.createElementNS(svgNS, 'g');
-            else node = document.createElementNS(svgNS, 'polygon');
-            
-            svgCanvas.insertBefore(node, boundingBox);
-            el.node = node;
-
-            if (el.type === 'imported' && el.data.rawSvg) {
-                node.innerHTML = el.data.rawSvg;
-            }
-
-            attachEvents(node, el.id);
-            renderElement(el);
-        }
-
-        function renderElement(el) {
-            var d = el.data;
-            var node = el.node;
-            if (!node) return;
-
-            if (el.type === 'imported') {
-                var transform = 'translate(' + d.x + ',' + d.y + ') rotate(' + (d.rotation || 0) + ') scale(' + (d.flipX ? -1 : 1) + ',' + (d.flipY ? -1 : 1) + ')';
-                node.setAttribute('transform', transform);
-                node.setAttribute('opacity', d.opacity !== undefined ? d.opacity : 1);
-                if (d.hidden) node.style.display = 'none';
-                if (d.locked) node.style.pointerEvents = 'none';
+        // Save to Firebase
+        window.saveToCloud = async function() {
+            const svgData = document.getElementById('svgPasteArea').value.trim();
+            if (!svgData) {
+                alert("Please paste your Graphite data first.");
                 return;
             }
 
-            var cx = d.x + d.w / 2;
-            var cy = d.y + d.h / 2;
-            
-            var flipX = d.flipX ? -1 : 1;
-            var flipY = d.flipY ? -1 : 1;
-            var transform = 'translate(' + cx + ',' + cy + ') rotate(' + (d.rotation || 0) + ') scale(' + flipX + ',' + flipY + ') translate(' + (-cx) + ',' + (-cy) + ')';
-            node.setAttribute('transform', transform);
-            node.setAttribute('opacity', d.opacity !== undefined ? d.opacity : 1);
-
-            if (el.type === 'rect') {
-                node.setAttribute('x', d.x); node.setAttribute('y', d.y);
-                node.setAttribute('width', d.w); node.setAttribute('height', d.h);
-                node.setAttribute('rx', d.radius || 0);
-                node.setAttribute('fill', d.color);
-            } else if (el.type === 'circle') {
-                node.setAttribute('cx', cx); node.setAttribute('cy', cy);
-                node.setAttribute('rx', Math.max(1, d.w / 2)); node.setAttribute('ry', Math.max(1, d.h / 2));
-                node.setAttribute('fill', d.color);
-            } else if (el.type === 'text') {
-                node.setAttribute('x', cx); node.setAttribute('y', cy);
-                node.setAttribute('fill', d.color);
-                node.setAttribute('font-size', Math.max(8, d.h * 0.8));
-                node.setAttribute('font-family', 'Arial, sans-serif');
-                node.setAttribute('font-weight', 'bold');
-                node.setAttribute('font-style', d.italic ? 'italic' : 'normal');
-                node.setAttribute('text-anchor', 'middle');
-                node.setAttribute('dominant-baseline', 'central');
-                node.textContent = d.text;
-            } else if (el.type === 'triangle') {
-                node.setAttribute('points', cx + ',' + d.y + ' ' + d.x + ',' + (d.y + d.h) + ' ' + (d.x + d.w) + ',' + (d.y + d.h));
-                node.setAttribute('fill', d.color);
-            } else if (el.type === 'star') {
-                node.setAttribute('points', getStarPoints(cx, cy, Math.max(1, d.w/2), Math.max(1, d.w/4)));
-                node.setAttribute('fill', d.color);
-            } else if (el.type === 'line') {
-                node.setAttribute('points', d.x + ',' + cy + ' ' + (d.x + d.w) + ',' + cy);
-                node.setAttribute('stroke', d.color);
-                node.setAttribute('stroke-width', Math.max(1, d.h));
-                node.setAttribute('fill', 'none');
-                node.setAttribute('stroke-linecap', 'round');
-            }
-
-            if (el.type !== 'line' && el.type !== 'text') {
-                if (d.strokeWidth > 0) {
-                    node.setAttribute('stroke', d.strokeColor || '#000000');
-                    node.setAttribute('stroke-width', d.strokeWidth);
-                } else {
-                    node.removeAttribute('stroke');
-                }
-            }
-
-            if (d.hidden) node.style.display = 'none';
-            if (d.locked) node.style.pointerEvents = 'none';
-        }
-
-        function getStarPoints(cx, cy, outerR, innerR) {
-            var points = '';
-            for (var i = 0; i < 10; i++) {
-                var r = i % 2 === 0 ? outerR : innerR;
-                var angle = (Math.PI / 5) * i - Math.PI / 2;
-                points += (cx + r * Math.cos(angle)) + ',' + (cy + r * Math.sin(angle)) + ' ';
-            }
-            return points.trim();
-        }
-
-        // --- Add Elements ---
-        function addShape(type) {
-            var id = genId();
-            var data = { x: 200, y: 200, w: 100, h: 100, color: '#10b981', rotation: 0, opacity: 1, radius: 8, strokeWidth: 0, strokeColor: '#000000', flipX: false, flipY: false, locked: false, hidden: false };
-            if (type === 'line') data.h = 10;
-            if (type === 'circle') data.radius = 0;
-            
-            var el = { id: id, type: type, data: data };
-            elements.push(el);
-            createSvgNode(el);
-            selectElement(id);
-            saveLocal(); saveHistory();
-        }
-
-        function addText() {
-            var id = genId();
-            var data = { x: 150, y: 230, w: 200, h: 40, color: '#1f2937', text: 'Your Text', rotation: 0, opacity: 1, strokeWidth: 0, strokeColor: '#000000', italic: false, flipX: false, flipY: false, locked: false, hidden: false };
-            var el = { id: id, type: 'text', data: data };
-            elements.push(el);
-            createSvgNode(el);
-            selectElement(id);
-            saveLocal(); saveHistory();
-        }
-
-        function duplicateElement(el) {
-            if (!el) return;
-            var newData = JSON.parse(JSON.stringify(el.data));
-            newData.x += 20; newData.y += 20;
-            newData.locked = false; newData.hidden = false; 
-            var newEl = { id: genId(), type: el.type, data: newData };
-            elements.push(newEl);
-            createSvgNode(newEl);
-            selectElement(newEl.id);
-            saveLocal(); saveHistory();
-            return newEl;
-        }
-
-        // --- Import SVG ---
-        function handleSVGImport(file) {
-            var reader = new FileReader();
-            reader.onload = function(event) {
-                var svgString = event.target.result;
-                var parser = new DOMParser();
-                var doc = parser.parseFromString(svgString, "image/svg+xml");
-                var importedSvg = doc.documentElement;
-
-                var nodes = Array.from(importedSvg.children);
-                nodes.forEach(function(node) {
-                    if (node.tagName.toLowerCase() === 'rect' && node.id === 'boundingBox') return;
-
-                    var el = {
-                        id: genId(),
-                        type: 'imported',
-                        data: { x: 0, y: 0, w: 100, h: 100, rotation: 0, opacity: 1, flipX: false, flipY: false, locked: false, hidden: false, rawSvg: node.outerHTML }
-                    };
-                    elements.push(el);
-                    createSvgNode(el);
+            cloudStatusEl.textContent = "Saving to Cloud...";
+            try {
+                await setDoc(doc(db, "projects", PROJECT_ID), {
+                    canvasData: svgData,
+                    lastUpdated: new Date()
                 });
-
-                selectElement(null);
-                saveLocal(); saveHistory();
-            };
-            reader.readAsText(file);
-        }
-
-        // --- Dragging ---
-        function attachEvents(node, id) {
-            node.addEventListener('mousedown', function(e) {
-                e.stopPropagation();
-                var el = getElById(id);
-                if (!el || el.data.locked || el.data.hidden) return;
-
-                var targetEl = el;
-                if (e.altKey) {
-                    isDuplicating = true;
-                    targetEl = duplicateElement(el);
-                } else {
-                    selectElement(id);
-                }
-
-                isDragging = true;
-
-                var pt = svgCanvas.createSVGPoint();
-                pt.x = e.clientX; pt.y = e.clientY;
-                var svgP = pt.matrixTransform(svgCanvas.getScreenCTM().inverse());
-
-                dragOffset.x = svgP.x - targetEl.data.x;
-                dragOffset.y = svgP.y - targetEl.data.y;
-            });
-        }
-
-        svgCanvas.addEventListener('mousedown', function(e) {
-            if (e.target === svgCanvas || e.target === boundingBox) {
-                selectElement(null);
-            }
-        });
-
-        window.addEventListener('mousemove', function(e) {
-            if (!isDragging || !selectedId) return;
-
-            var pt = svgCanvas.createSVGPoint();
-            pt.x = e.clientX; pt.y = e.clientY;
-            var svgP = pt.matrixTransform(svgCanvas.getScreenCTM().inverse());
-
-            var el = getElById(selectedId);
-            if (!el) return;
-
-            el.data.x = svgP.x - dragOffset.x;
-            el.data.y = svgP.y - dragOffset.y;
-            renderElement(el);
-            updateBoundingBox(el);
-            updatePropertiesUI(); 
-        });
-
-        window.addEventListener('mouseup', function() {
-            if (isDragging) { 
-                isDragging = false; 
-                isDuplicating = false;
-                saveLocal(); saveHistory(); 
-            }
-        });
-
-        // --- Selection & Properties ---
-        function getElById(id) { return elements.find(function(e) { return e.id === id; }); }
-
-        function selectElement(id) {
-            var el = id ? getElById(id) : null;
-            if (el && (el.data.locked || el.data.hidden)) {
-                selectedId = null;
-                boundingBox.style.display = 'none';
-                updatePropertiesUI();
-                return;
-            }
-
-            selectedId = id;
-            if (selectedId) {
-                updateBoundingBox(el);
-            } else {
-                boundingBox.style.display = 'none';
-            }
-            updatePropertiesUI();
-        }
-
-        function updateBoundingBox(el) {
-            if (!el) return;
-            boundingBox.style.display = 'block';
-            var d = el.data;
-            var w = el.type === 'imported' ? 200 : d.w; 
-            var h = el.type === 'imported' ? 200 : d.h;
-
-            boundingBox.setAttribute('x', d.x - 2);
-            boundingBox.setAttribute('y', d.y - 2);
-            boundingBox.setAttribute('width', w + 4);
-            boundingBox.setAttribute('height', h + 4);
-            
-            var transform = 'translate(' + d.x + ',' + d.y + ') rotate(' + (d.rotation || 0) + ') scale(' + (d.flipX ? -1 : 1) + ',' + (d.flipY ? -1 : 1) + ') translate(' + (-d.x) + ',' + (-d.y) + ')';
-            boundingBox.setAttribute('transform', transform);
-        }
-
-        function updatePropertiesUI() {
-            var panel = document.getElementById('propertiesContent');
-            if (!selectedId) {
-                panel.innerHTML = '<p style="color: var(--text-muted); font-size: 14px; text-align: center; margin-top: 20px;">Select an element to edit it.<br><br>Hold <b>Alt</b> + Drag to duplicate.</p>';
-                return;
-            }
-
-            var el = getElById(selectedId);
-            var d = el.data;
-            var html = '';
-
-            if (el.type === 'imported') {
-                html += '<div class="prop-group" style="background: var(--highlight); padding: 10px; border-radius: 4px; border: 1px solid var(--primary);"><p style="font-size: 13px; text-align: center; color: var(--primary-dark);">Imported SVG Group<br><span style="font-size: 11px; color: var(--text-muted);">Editing internal paths is limited to transforms.</span></p></div>';
-                html += '<div class="prop-group"><label>Rotation (' + Math.round(d.rotation || 0) + '°)</label><input type="range" min="0" max="360" class="prop-input" data-prop="rotation" value="' + (d.rotation || 0) + '"></div>';
-                html += '<div class="prop-group"><label>Opacity (' + Math.round((d.opacity !== undefined ? d.opacity : 1) * 100) + '%)</label><input type="range" min="0" max="1" step="0.1" class="prop-input" data-prop="opacity" value="' + (d.opacity !== undefined ? d.opacity : 1) + '"></div>';
-                html += '<div class="prop-group"><label>Transform</label><div class="row">';
-                html += '<button class="btn-icon ' + (d.flipX ? 'active' : '') + '" data-toggle="flipX" title="Flip Horizontal">⇋</button>';
-                html += '<button class="btn-icon ' + (d.flipY ? 'active' : '') + '" data-toggle="flipY" title="Flip Vertical">⇵</button>';
-                html += '</div></div>';
-                html += '<div class="row"><button class="btn-icon" data-action="forward">Forwards</button><button class="btn-icon" data-action="backward">Backwards</button></div>';
-                html += '<button class="btn delete-btn" data-action="delete">Delete Element</button>';
-                panel.innerHTML = html;
-                return;
-            }
-
-            if (el.type === 'text') {
-                html += '<div class="prop-group"><label>Text</label><input type="text" class="prop-input" data-prop="text" value="' + d.text + '"></div>';
-                html += '<div class="row"><button class="btn-icon ' + (d.italic ? 'active' : '') + '" data-toggle="italic">𝐼 Italic</button></div>';
-            }
-
-            html += '<div class="prop-group"><label>Color</label><input type="color" class="prop-input" data-prop="color" value="' + d.color + '"></div>';
-            html += '<div class="row"><div class="prop-group"><label>X</label><input type="number" class="prop-input" data-prop="x" value="' + Math.round(d.x) + '"></div><div class="prop-group"><label>Y</label><input type="number" class="prop-input" data-prop="y" value="' + Math.round(d.y) + '"></div></div>';
-            html += '<div class="row"><div class="prop-group"><label>Width</label><input type="number" class="prop-input" data-prop="w" value="' + Math.round(d.w) + '"></div><div class="prop-group"><label>Height</label><input type="number" class="prop-input" data-prop="h" value="' + Math.round(d.h) + '"></div></div>';
-
-            if (el.type === 'rect') {
-                html += '<div class="prop-group"><label>Corner Radius (' + (d.radius || 0) + 'px)</label><input type="range" min="0" max="50" class="prop-input" data-prop="radius" value="' + (d.radius || 0) + '"></div>';
-            }
-
-            html += '<div class="prop-group"><label>Rotation (' + Math.round(d.rotation || 0) + '°)</label><input type="range" min="0" max="360" class="prop-input" data-prop="rotation" value="' + (d.rotation || 0) + '"></div>';
-            html += '<div class="prop-group"><label>Opacity (' + Math.round((d.opacity !== undefined ? d.opacity : 1) * 100) + '%)</label><input type="range" min="0" max="1" step="0.1" class="prop-input" data-prop="opacity" value="' + (d.opacity !== undefined ? d.opacity : 1) + '"></div>';
-
-            if (el.type !== 'text' && el.type !== 'line') {
-                html += '<div class="row"><div class="prop-group"><label>Border Color</label><input type="color" class="prop-input" data-prop="strokeColor" value="' + (d.strokeColor || '#000000') + '"></div><div class="prop-group"><label>Border Width</label><input type="number" class="prop-input" data-prop="strokeWidth" value="' + (d.strokeWidth || 0) + '"></div></div>';
-            }
-
-            html += '<div class="prop-group"><label>Transform</label><div class="row"><button class="btn-icon" data-action="rotate90" title="Rotate 90°">⟳</button><button class="btn-icon ' + (d.flipX ? 'active' : '') + '" data-toggle="flipX" title="Flip Horizontal">⇋</button><button class="btn-icon ' + (d.flipY ? 'active' : '') + '" data-toggle="flipY" title="Flip Vertical">⇵</button></div></div>';
-            html += '<div class="prop-group"><label>Align to Canvas</label><div class="row"><button class="btn-icon" data-align="left" title="Align Left">⬅</button><button class="btn-icon" data-align="center_h" title="Center Horizontally">↔</button><button class="btn-icon" data-align="right" title="Align Right">➡</button></div></div>';
-            html += '<div class="prop-group"><label>Layers & Visibility</label><div class="row"><button class="btn-icon ' + (d.hidden ? 'active' : '') + '" data-toggle="hidden" title="Hide Element">👁</button><button class="btn-icon ' + (d.locked ? 'active' : '') + '" data-toggle="locked" title="Lock Element">🔒</button></div></div>';
-            html += '<div class="row"><button class="btn-icon" data-action="forward">Forwards</button><button class="btn-icon" data-action="backward">Backwards</button></div>';
-            html += '<button class="btn delete-btn" data-action="delete">Delete Element</button>';
-            
-            panel.innerHTML = html;
-        }
-
-        function updateProp(prop, val) {
-            var el = getElById(selectedId);
-            if (!el) return;
-            el.data[prop] = val;
-            renderElement(el);
-            updateBoundingBox(el);
-            if (prop === 'rotation' || prop === 'opacity' || prop === 'radius') updatePropertiesUI(); 
-            saveLocal();
-        }
-
-        function toggleBoolProp(prop) {
-            var el = getElById(selectedId);
-            if (!el) return;
-            el.data[prop] = !el.data[prop];
-            renderElement(el);
-            updateBoundingBox(el);
-            updatePropertiesUI();
-            saveLocal(); saveHistory();
-        }
-
-        function rotate90() {
-            var el = getElById(selectedId);
-            if (!el) return;
-            el.data.rotation = (el.data.rotation + 90) % 360;
-            renderElement(el);
-            updateBoundingBox(el);
-            updatePropertiesUI();
-            saveLocal(); saveHistory();
-        }
-
-        function alignElement(type) {
-            var el = getElById(selectedId);
-            if (!el) return;
-            if (type === 'left') el.data.x = 0;
-            else if (type === 'right') el.data.x = 500 - el.data.w;
-            else if (type === 'center_h') el.data.x = (500 - el.data.w) / 2;
-            renderElement(el);
-            updateBoundingBox(el);
-            updatePropertiesUI();
-            saveLocal(); saveHistory();
-        }
-
-        function moveLayer(dir) {
-            var index = elements.findIndex(function(e) { return e.id === selectedId; });
-            if (index === -1) return;
-            var el = elements[index];
-            elements.splice(index, 1);
-            var newIndex = index + dir;
-            if (newIndex < 0) newIndex = 0;
-            if (newIndex > elements.length) newIndex = elements.length;
-            elements.splice(newIndex, 0, el);
-            renderAllElements();
-            selectElement(el.id);
-            saveLocal(); saveHistory();
-        }
-
-        function deleteElement() {
-            if (!selectedId) return;
-            var index = elements.findIndex(function(e) { return e.id === selectedId; });
-            if (index !== -1) {
-                var el = elements[index];
-                if (el.node) svgCanvas.removeChild(el.node);
-                elements.splice(index, 1);
-                selectElement(null);
-                saveLocal(); saveHistory();
+                cloudStatusEl.textContent = "☁️ Saved to Cloud";
+                cloudStatusEl.style.color = "#10b981";
+                closeModal();
+            } catch (e) {
+                alert("Failed to save to cloud.");
+                cloudStatusEl.textContent = "⚠️ Save Failed";
             }
         }
 
-        // --- Canvas Actions ---
-        function setCanvasBg(color) {
-            document.getElementById('canvasWrapper').style.background = color;
-            document.getElementById('svgCanvas').style.backgroundImage = 'none';
-            document.getElementById('canvasBgPicker').value = color;
-            saveLocal();
+        window.closeModal = function() {
+            document.getElementById('bridgeModal').classList.remove('open');
         }
 
-        function clearCanvas() {
-            if (confirm("Clear all elements from the canvas?")) {
-                elements = [];
-                while (svgCanvas.firstChild && svgCanvas.firstChild !== boundingBox) {
-                    svgCanvas.removeChild(svgCanvas.firstChild);
-                }
-                selectElement(null);
-                saveLocal(); saveHistory();
-            }
-        }
-
-        function loadTemplate() {
-            elements = [
-                { id: genId(), type: 'circle', data: { x: 170, y: 100, w: 160, h: 160, color: '#10b981', rotation: 0, opacity: 1, strokeWidth: 0, flipX: false, flipY: false, locked: false, hidden: false } },
-                { id: genId(), type: 'text', data: { x: 100, y: 300, w: 300, h: 60, color: '#1f2937', text: 'POSTER', rotation: 0, opacity: 1, strokeWidth: 0, italic: false, flipX: false, flipY: false, locked: false, hidden: false } },
-                { id: genId(), type: 'text', data: { x: 100, y: 360, w: 300, h: 60, color: '#047857', text: 'C3LL', rotation: 0, opacity: 1, strokeWidth: 0, italic: false, flipX: false, flipY: false, locked: false, hidden: false } },
-                { id: genId(), type: 'rect', data: { x: 100, y: 430, w: 300, h: 4, color: '#10b981', rotation: 0, opacity: 1, radius: 2, strokeWidth: 0, flipX: false, flipY: false, locked: false, hidden: false } }
-            ];
-            renderAllElements();
-            saveLocal(); saveHistory();
-        }
-
-        // --- Exports ---
-        function getCleanSVGString() {
-            selectElement(null);
-            var clone = svgCanvas.cloneNode(true);
-            var bb = clone.querySelector('#boundingBox');
-            if (bb) clone.removeChild(bb);
-            var bg = document.getElementById('canvasWrapper').style.background;
-            if (bg && bg !== '#ffffff' && bg !== 'white') {
-                var bgRect = document.createElementNS(svgNS, 'rect');
-                bgRect.setAttribute('width', 500); bgRect.setAttribute('height', 500);
-                bgRect.setAttribute('fill', bg);
-                clone.insertBefore(bgRect, clone.firstChild);
-            }
-            var serializer = new XMLSerializer();
-            var svgString = serializer.serializeToString(clone);
-            if (!svgString.startsWith('<?xml')) {
-                svgString = '<?xml version="1.0" encoding="UTF-8"?>\n' + svgString;
-            }
-            return svgString;
-        }
-
-        function exportSVG() {
-            var svgString = getCleanSVGString();
-            var blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
-            var url = URL.createObjectURL(blob);
-            var a = document.createElement('a');
-            a.href = url; a.download = "PosterC3ll_Logo.svg";
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        function exportPNG() {
-            var svgString = getCleanSVGString();
-            var blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
-            var url = URL.createObjectURL(blob);
-            var img = new Image();
-            img.onload = function() {
-                var canvas = document.createElement('canvas');
-                canvas.width = 1000; canvas.height = 1000;
-                var ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, 1000, 1000);
-                canvas.toBlob(function(pngBlob) {
-                    var pngUrl = URL.createObjectURL(pngBlob);
-                    var a = document.createElement('a');
-                    a.href = pngUrl; a.download = "PosterC3ll_Logo.png";
-                    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-                    URL.revokeObjectURL(pngUrl);
-                    URL.revokeObjectURL(url);
-                }, 'image/png');
-            };
-            img.src = url;
-        }
-
-        // --- Undo / Redo ---
-        function saveHistory() {
-            history = history.slice(0, historyIndex + 1);
-            var cleanData = elements.map(function(el) { return { id: el.id, type: el.type, data: el.data }; });
-            cleanData.canvasBg = document.getElementById('canvasBgPicker').value;
-            history.push(JSON.stringify(cleanData));
-            if (history.length > 50) history.shift();
-            historyIndex = history.length - 1;
-        }
-
-        function undo() {
-            if (historyIndex > 0) {
-                historyIndex--;
-                var data = JSON.parse(history[historyIndex]);
-                elements = data;
-                if (data.canvasBg) setCanvasBg(data.canvasBg);
-                renderAllElements();
-                saveLocal();
-            }
-        }
-
-        function redo() {
-            if (historyIndex < history.length - 1) {
-                historyIndex++;
-                var data = JSON.parse(history[historyIndex]);
-                elements = data;
-                if (data.canvasBg) setCanvasBg(data.canvasBg);
-                renderAllElements();
-                saveLocal();
-            }
-        }
-
-        // --- Save to Cloud (Debounced) ---
-        let saveTimeout;
-        function saveLocal() {
-            clearTimeout(saveTimeout);
-            cloudStatusEl.textContent = "☁️ Saving to Cloud...";
-            cloudStatusEl.style.color = "#f59e0b"; // Amber
-            
-            // 1-second debounce to prevent spamming Firebase on continuous drags
-            saveTimeout = setTimeout(async () => {
-                var cleanData = elements.map(function(el) { return { id: el.id, type: el.type, data: el.data }; });
-                cleanData.canvasBg = document.getElementById('canvasBgPicker').value;
-                var stringData = JSON.stringify(cleanData);
-                
-                // Also save to local storage as a fallback
-                localStorage.setItem('posterC3llLogoPro', stringData);
-
-                try {
-                    await setDoc(doc(db, "projects", PROJECT_ID), {
-                        canvasData: stringData,
-                        lastUpdated: new Date()
-                    });
-                    cloudStatusEl.textContent = "☁️ Saved to Cloud";
-                    cloudStatusEl.style.color = "#10b981"; // Green
-                } catch (e) {
-                    console.error("Cloud save failed: ", e);
-                    cloudStatusEl.textContent = "⚠️ Offline (Saved Locally)";
-                    cloudStatusEl.style.color = "#ef4444"; // Red
-                }
-            }, 1000); 
-        }
-
-        // --- Event Delegation ---
-        document.addEventListener('click', function(e) {
-            var actionEl = e.target.closest('[data-action]');
-            if (actionEl) {
-                var action = actionEl.dataset.action;
-                if (action === 'addRect') addShape('rect');
-                else if (action === 'addCircle') addShape('circle');
-                else if (action === 'addTriangle') addShape('triangle');
-                else if (action === 'addStar') addShape('star');
-                else if (action === 'addLine') addShape('line');
-                else if (action === 'addText') addText();
-                else if (action === 'duplicate') { if (selectedId) duplicateElement(getElById(selectedId)); }
-                else if (action === 'loadTemplate') loadTemplate();
-                else if (action === 'undo') undo();
-                else if (action === 'redo') redo();
-                else if (action === 'clear') clearCanvas();
-                else if (action === 'exportPNG') exportPNG();
-                else if (action === 'exportSVG') exportSVG();
-                else if (action === 'importSVG') document.getElementById('svgFileInput').click();
-                else if (action === 'delete') deleteElement();
-                else if (action === 'rotate90') rotate90();
-                else if (action === 'forward') moveLayer(1);
-                else if (action === 'backward') moveLayer(-1);
-                else if (action === 'toggleDark') toggleDarkMode();
-            }
-
-            var toggleEl = e.target.closest('[data-toggle]');
-            if (toggleEl) {
-                toggleBoolProp(toggleEl.dataset.toggle);
-            }
-
-            var alignEl = e.target.closest('[data-align]');
-            if (alignEl) {
-                alignElement(alignEl.dataset.align);
-            }
-        });
-
-        document.getElementById('svgFileInput').addEventListener('change', function(e) {
-            var file = e.target.files[0];
-            if (file) {
-                handleSVGImport(file);
-                e.target.value = ''; 
-            }
-        });
-
-        document.addEventListener('input', function(e) {
-            if (e.target.classList.contains('prop-input')) {
-                var prop = e.target.dataset.prop;
-                var val = e.target.value;
-                if (e.target.type === 'number' || e.target.type === 'range') {
-                    if (prop === 'w' || prop === 'h') val = Math.max(10, parseFloat(val));
-                    else if (prop === 'strokeWidth') val = Math.max(0, parseFloat(val));
-                    else val = parseFloat(val);
-                }
-                updateProp(prop, val);
-            }
-            if (e.target.dataset.action === 'canvasBg') {
-                setCanvasBg(e.target.value);
-            }
-        });
-
-        // --- Keyboard Shortcuts ---
-        document.addEventListener('keydown', function(e) {
-            if (document.activeElement.tagName === 'INPUT') return;
-            var isCtrl = e.ctrlKey || e.metaKey;
-
-            if (isCtrl && e.key === 'z') { e.preventDefault(); undo(); return; }
-            if (isCtrl && e.key === 'y') { e.preventDefault(); redo(); return; }
-            if (isCtrl && e.key === 'd') { e.preventDefault(); if(selectedId) duplicateElement(getElById(selectedId)); return; }
-            if (isCtrl && e.key === ']') { e.preventDefault(); moveLayer(1); return; }
-            if (isCtrl && e.key === '[') { e.preventDefault(); moveLayer(-1); return; }
-
-            if (!selectedId) return;
-
-            if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); deleteElement(); }
-            else if (e.key === 'ArrowUp') { e.preventDefault(); updateProp('y', getElById(selectedId).data.y - (e.shiftKey ? 10 : 1)); }
-            else if (e.key === 'ArrowDown') { e.preventDefault(); updateProp('y', getElById(selectedId).data.y + (e.shiftKey ? 10 : 1)); }
-            else if (e.key === 'ArrowLeft') { e.preventDefault(); updateProp('x', getElById(selectedId).data.x - (e.shiftKey ? 10 : 1)); }
-            else if (e.key === 'ArrowRight') { e.preventDefault(); updateProp('x', getElById(selectedId).data.x + (e.shiftKey ? 10 : 1)); }
-        });
-
-        // --- Cross-Window Messaging ---
-        window.addEventListener('message', function(event) {
-            if (!event.data) return; 
-            if (event.data.type === 'theme-update') applyTheme(event.data.dark);
-            if (event.data.type === 'calm-update') {
-                if (event.data.calm) document.documentElement.classList.add('calm-mode');
-                else document.documentElement.classList.remove('calm-mode');
-            }
-        });
-
-        // Start the app
-        init();
+        // Initialize
+        checkCloud();
     </script>
 </body>
 </html>
