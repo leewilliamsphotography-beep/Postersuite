@@ -8,6 +8,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Lexend:wght@400;500;600;700&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK (v10 Compat for easy global access) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
     <style>
         :root {
             --paper: #F8F9FA; --surface: #FFFFFF; --ink: #1A1D21; --ink2: #50545C;
@@ -52,6 +58,11 @@
         nav svg { width: 16px; height: 16px; }
         .new-dot { position: absolute; top: -2px; right: -6px; width: 8px; height: 8px; background: var(--accent-sync); border-radius: 50%; box-shadow: 0 0 8px var(--accent-sync); animation: pulse 2s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.5); } 70% { box-shadow: 0 0 0 6px rgba(139, 92, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); } }
+        
+        .auth-btn { background: var(--accent-sync); color: #fff; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-family: 'Bricolage Grotesque'; font-size: 0.9rem; transition: opacity 0.2s; display: flex; align-items: center; gap: 8px; }
+        .auth-btn:hover { opacity: 0.9; }
+        .auth-btn img { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #fff; }
+        
         .theme-toggle { background: transparent; border: 1px solid var(--line); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; color: var(--ink2); display: grid; place-items: center; transition: background 0.2s, color 0.2s, border-color 0.2s; }
         .theme-toggle:hover { background: var(--line2); color: var(--ink); border-color: var(--ink2); }
         .theme-toggle.active { background: var(--line2); color: var(--ink); border-color: var(--ink); }
@@ -88,6 +99,7 @@
         .footer-links { margin-top: 8px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
         .footer-links a { color: var(--ink2); text-decoration: underline; cursor: pointer; }
         .footer-links a:hover { color: var(--ink); }
+        .sync-status { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(16, 185, 129, 0.1); color: var(--accent-quick); border-radius: 999px; font-weight: 600; font-size: 0.8rem; }
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 200; justify-content: center; align-items: center; padding: 20px; }
         .modal-overlay.active { display: flex; }
@@ -186,6 +198,13 @@
                 </a>
                 <button onclick="openModal('aboutOverlay')"><span class="nav-text">About</span></button>
             </nav>
+            
+            <!-- Auth Button -->
+            <button id="authBtn" class="auth-btn" onclick="handleAuth()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+                Sign In
+            </button>
+
             <div style="display: flex; gap: 8px;">
                 <button id="calmToggle" class="theme-toggle" aria-label="Toggle sensory-friendly calm mode" onclick="toggleCalmMode()">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -378,7 +397,7 @@
 
     <footer>
         <p>PosterSuite by <b>Lee Williams</b> · Graphite Editor powered by the open-source <b>Graphite</b> project</p>
-        <div class="footer-links">
+        <div class="footer-links" id="footerLinks">
             <a onclick="openModal('accessibilityOverlay')">Accessibility Statement</a>
             <a href="mailto:leewilliamswork2029@gmail.com?subject=Poster%20Suite%20Feedback&body=Hi%20Lee%2C%0A%0AI%27ve%20been%20using%20Poster%20Suite%20and%20I%20wanted%20to%20share%20some%20feedback%3A%0A%0A">Contact & Feedback</a>
             <a onclick="backupData()">Backup Data</a>
@@ -482,12 +501,11 @@
             <h2>What's New? 🚀</h2>
             <p>Here are the latest updates and improvements to Poster Suite:</p>
             <ul>
+                <li><b>Cloud Sync (Beta):</b> Sign in with your account to automatically sync your documents and posters securely across devices!</li>
                 <li><b>Graphite Integration:</b> The suite now includes the powerful, open-source Graphite vector editor for advanced node-based design!</li>
                 <li><b>Command Palette:</b> Press <kbd>Ctrl + K</kbd> to instantly search and launch tools.</li>
                 <li><b>App Switcher:</b> A floating grid button in the app overlay lets you jump between tools instantly.</li>
-                <li><b>Master Backup & Restore:</b> Safely back up all your offline documents and restore them on any computer.</li>
                 <li><b>Live Theme Sync:</b> Dark Mode and Calm Mode now sync to apps instantly via PostMessage.</li>
-                <li><b>PosterM1nd (v1.0):</b> A brand new tool for offline mind maps and flowcharts!</li>
             </ul>
             <button class="btn btn-sync" style="margin-top: 10px;" onclick="closeModal(false, 'whatsNewOverlay')">Close</button>
         </div>
@@ -497,13 +515,105 @@
     <div id="toast" class="toast">Link copied to clipboard!</div>
 
     <script>
+        // --- 1. Initialize Firebase ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDVwdkzHa1nVzWnF9Fln7AGExbMponZJuI",
+            authDomain: "postersuite.firebaseapp.com",
+            projectId: "postersuite",
+            storageBucket: "postersuite.firebasestorage.app",
+            messagingSenderId: "633538055074",
+            appId: "1:633538055074:web:d7acb018d140b20d55c0fb",
+            measurementId: "G-NTK9PW6EE8"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        // Enable Offline Persistence (Offline-First Magic)
+        try {
+            db.enablePersistence({ synchronizeTabs: true })
+              .catch((err) => {
+                  if (err.code == 'failed-precondition') {
+                      console.warn('Firebase Persistence: Multiple tabs open, persistence can only be enabled in one tab at a time.');
+                  } else if (err.code == 'unimplemented') {
+                      console.info('Firebase Persistence: The current browser does not support all of the features required.');
+                  }
+              });
+        } catch (e) {
+            console.warn("Persistence already enabled or failed:", e);
+        }
+
+        // --- 2. Authentication Logic ---
+        const authBtn = document.getElementById('authBtn');
+        const footerLinks = document.getElementById('footerLinks');
+
+        function handleAuth() {
+            const user = auth.currentUser;
+            if (user) {
+                auth.signOut().then(() => {
+                    showToast('Signed out successfully.');
+                }).catch((error) => {
+                    console.error('Sign out error:', error);
+                });
+            } else {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                auth.signInWithPopup(provider).then((result) => {
+                    showToast(`Welcome, ${result.user.displayName}!`);
+                }).catch((error) => {
+                    console.error('Sign in error:', error);
+                    if (error.code === 'auth/popup-blocked') {
+                        alert('Please allow popups to sign in.');
+                    } else {
+                        alert('Sign in failed: ' + error.message);
+                    }
+                });
+            }
+        }
+
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in
+                authBtn.innerHTML = `<img src="${user.photoURL}" alt="Profile">${user.displayName.split(' ')[0]}`;
+                authBtn.title = `Signed in as ${user.email}. Click to sign out.`;
+                
+                // Update footer to show Cloud Sync status
+                footerLinks.innerHTML = `
+                    <a onclick="openModal('accessibilityOverlay')">Accessibility Statement</a>
+                    <a href="mailto:leewilliamswork2029@gmail.com?subject=Poster%20Suite%20Feedback&body=Hi%20Lee%2C%0A%0AI%27ve%20been%20using%20Poster%20Suite%20and%20I%20wanted%20to%20share%20some%20feedback%3A%0A%0A">Contact & Feedback</a>
+                    <span class="sync-status">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
+                        Cloud Synced
+                    </span>
+                `;
+
+                // Send user ID to the open app iframe so it can sync its data
+                if (appFrame.contentWindow) {
+                    appFrame.contentWindow.postMessage({ type: 'auth-state', uid: user.uid }, '*');
+                }
+            } else {
+                // User is signed out
+                authBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg> Sign In`;
+                authBtn.title = 'Sign in to sync your data';
+
+                // Restore manual backup links
+                footerLinks.innerHTML = `
+                    <a onclick="openModal('accessibilityOverlay')">Accessibility Statement</a>
+                    <a href="mailto:leewilliamswork2029@gmail.com?subject=Poster%20Suite%20Feedback&body=Hi%20Lee%2C%0A%0AI%27ve%20been%20using%20Poster%20Suite%20and%20I%20wanted%20to%20share%20some%20feedback%3A%0A%0A">Contact & Feedback</a>
+                    <a onclick="backupData()">Backup Data</a>
+                    <a onclick="document.getElementById('restoreFile').click()">Restore Data</a>
+                    <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="restoreData(event)">
+                `;
+            }
+        });
+
+        // --- 3. Hub App Logic ---
         let currentApp = null;
         const appFrame = document.getElementById('appFrame');
         const loader = document.getElementById('loader');
         const appTopBar = document.getElementById('appTopBar');
         const hoverTrigger = document.getElementById('hoverTrigger');
 
-        // App definitions for Switcher & Command Palette
         const apps = [
             { name: 'PosterA11y', url: 'postera11y.html', id: 'a11y', color: 'var(--accent-a11y)' },
             { name: 'PosterD45h', url: 'posterd45h.html', id: 'd45h', color: 'var(--accent-design)' },
@@ -516,7 +626,6 @@
             { name: 'PosterM1nd', url: 'posterm1nd.html', id: 'm1nd', color: 'var(--accent-m1nd)' }
         ];
 
-        // Populate App Switcher Dropdown
         const switcherDropdown = document.getElementById('switcherDropdown');
         apps.forEach(app => {
             const item = document.createElement('a');
@@ -531,14 +640,12 @@
             switcherDropdown.classList.toggle('active');
         }
         
-        // Hide switcher if clicked outside
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.top-bar-btn') && !e.target.closest('.switcher-dropdown')) {
                 switcherDropdown.classList.remove('active');
             }
         });
 
-        // Open App Logic
         function getAppUrl(url) {
             const params = new URLSearchParams();
             if (document.body.classList.contains('dark-mode')) params.append('theme', 'dark');
@@ -559,11 +666,20 @@
             }
             document.getElementById('appOverlay').style.display = 'block';
             document.body.style.overflow = 'hidden';
-            showTopBar(); // Show controls immediately on load
+            showTopBar();
         }
 
         function popOutApp(url) { window.open(getAppUrl(url), '_blank'); }
-        appFrame.onload = function() { loader.style.display = 'none'; };
+        
+        appFrame.onload = function() { 
+            loader.style.display = 'none';
+            // Pass auth state to the app as soon as it loads
+            const user = auth.currentUser;
+            if (user) {
+                appFrame.contentWindow.postMessage({ type: 'auth-state', uid: user.uid }, '*');
+            }
+        };
+        
         function closeApp() {
             document.getElementById('appOverlay').style.display = 'none';
             document.body.style.overflow = 'auto';
@@ -571,7 +687,6 @@
             appTopBar.classList.remove('visible');
         }
         
-        // Modals
         function openModal(id) {
             document.getElementById(id).classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -588,8 +703,7 @@
             ...apps.map(app => ({ name: `Launch ${app.name}`, type: 'app', action: () => openApp(app.url, app.id) })),
             { name: 'Toggle Dark Mode', type: 'action', action: () => toggleTheme() },
             { name: 'Toggle Calm Mode', type: 'action', action: () => toggleCalmMode() },
-            { name: 'Backup Data', type: 'action', action: () => backupData() },
-            { name: 'Restore Data', type: 'action', action: () => document.getElementById('restoreFile').click() },
+            { name: 'Sign In / Sign Out', type: 'action', action: () => handleAuth() },
             { name: 'Open About', type: 'action', action: () => openModal('aboutOverlay') },
             { name: 'Open Tips', type: 'action', action: () => openModal('tipsOverlay') },
             { name: 'Open What\'s New', type: 'action', action: () => openWhatsNew() },
@@ -631,7 +745,6 @@
 
         // Keyboard Shortcuts
         document.addEventListener('keydown', function(e) {
-            // Command Palette (Ctrl+K or Cmd+K)
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();
                 if (document.getElementById('commandPalette').classList.contains('active')) {
@@ -667,8 +780,7 @@
             if (e.key === '9') openApp('posterm1nd.html', 'm1nd');
         });
 
-        // Versioning & What's New
-        const CURRENT_VERSION = '3.1'; 
+        const CURRENT_VERSION = '4.0'; // Bumped for Cloud Sync
         function openWhatsNew() {
             openModal('whatsNewOverlay');
             localStorage.setItem('postersuite-seen-version', CURRENT_VERSION);
@@ -678,7 +790,6 @@
             document.getElementById('newDot').style.display = 'block';
         }
 
-        // Share Suite
         async function shareSuite() {
             const shareData = { title: 'Poster Suite', text: 'Check out these free, accessible poster making tools!', url: window.location.href };
             try {
@@ -693,7 +804,6 @@
             setTimeout(() => { toast.classList.remove("show"); }, 3000);
         }
 
-        // Backup & Restore
         function backupData() {
             const data = {};
             for (let i = 0; i < localStorage.length; i++) {
@@ -753,7 +863,6 @@
         }
         function toggleCalmMode() { applyCalmMode(!document.body.classList.contains('calm-mode')); }
 
-        // Init
         const savedTheme = localStorage.getItem('postersuite-theme');
         const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         applyTheme(savedTheme ? savedTheme === 'dark' : prefersDark);
@@ -766,7 +875,6 @@
             localStorage.setItem('postersuite-welcomed', 'true');
         }
 
-        // Auto-Fetch App Versions
         async function fetchAppVersions() {
             try {
                 const fetchMap = [
@@ -802,20 +910,15 @@
             if (!switcherDropdown.classList.contains('active')) {
                 hideTimeout = setTimeout(() => {
                     appTopBar.classList.remove('visible');
-                }, 2500); // Hide after 2.5 seconds of inactivity
+                }, 2500); 
             }
         }
 
-        // Show top bar when mouse touches the very top of the screen
         hoverTrigger.addEventListener('mouseenter', showTopBar);
-        
-        // Keep open when hovering the bar
         appTopBar.addEventListener('mouseenter', () => {
             clearTimeout(hideTimeout);
             appTopBar.classList.add('visible');
         });
-        
-        // Start hide timer when leaving the bar
         appTopBar.addEventListener('mouseleave', showTopBar);
 
     </script>

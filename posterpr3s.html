@@ -765,6 +765,21 @@ window.addEventListener('message', function(event) {
 });
 
 init();
+// Listen for auth state from the Hub
+window.addEventListener('message', function(event) {
+    if (event.data.type === 'auth-state') {
+        const uid = event.data.uid;
+        console.log("App received UID:", uid);
+        
+        // Initialize Firebase inside the app
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig); // Make sure config is available here too
+            const appDb = firebase.firestore();
+            // Now you can read/write data to Firestore using the UID!
+            // Example: appDb.collection('users').doc(uid).collection('poster5ync').get()...
+        }
+    }
+});
 </script>
 </body>
 </html>
