@@ -60,46 +60,44 @@ const firebaseConfig = {
 };
 
 let appDb = null;
+let appAuth = null;
 let currentUid = null;
 let saveTimeout = null;
 
 // 1. Load local data first (Offline-first)
 editor.value = localStorage.getItem('poster5ync-doc') || '';
 
-// 2. Initialize Firebase immediately so it's ready
+// 2. Initialize Firebase
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
     appDb = firebase.firestore();
+    appAuth = firebase.auth();
+    
+    // Enable Offline Persistence (Works seamlessly with the Hub)
+    try {
+        appDb.enablePersistence({ synchronizeTabs: true }).catch(() => {});
+    } catch (e) {}
 }
 
-// 3. Function to request UID from Hub
-function requestUidFromHub() {
-    if (window.parent && window.parent !== window) {
-        window.parent.postMessage({ type: 'request-auth-state' }, '*');
-    }
-}
-
-// 4. Listen for Auth messages from the Hub
-window.addEventListener('message', function(event) {
-    // If the Hub sends the UID proactively
-    if (event.data.type === 'auth-state' && event.data.uid) {
-        currentUid = event.data.uid;
-        cloudStatus.textContent = "☁️ Cloud Sync Connected (UID: " + currentUid.substring(0,6) + "...)";
+// 3. Listen to Firebase's Native Auth State
+// Because the Hub and this app are on the same domain, logging into the Hub 
+// automatically logs this app into Firebase too!
+appAuth.onAuthStateChanged((user) => {
+    if (user) {
+        currentUid = user.uid;
+        cloudStatus.textContent = "☁️ Cloud Sync Connected (" + user.displayName + ")";
         cloudStatus.classList.add('connected');
         cloudStatus.classList.remove('offline');
         loadCloudDoc();
-    } 
-    // If the Hub requests the UID, we reply (handled by the app asking)
-    else if (event.data.type === 'auth-state' && event.data.uid === null) {
+    } else {
+        currentUid = null;
         cloudStatus.textContent = "⚠️ Offline Mode (Sign in via Hub to Sync)";
         cloudStatus.classList.add('offline');
+        cloudStatus.classList.remove('connected');
     }
 });
 
-// Ask the Hub for the UID as soon as the app loads
-requestUidFromHub();
-
-// 5. Load from Cloud
+// 4. Load from Cloud
 async function loadCloudDoc() {
     if (!appDb || !currentUid) return;
     const docRef = appDb.collection('users').doc(currentUid).collection('poster5ync').doc('document1');
@@ -109,7 +107,7 @@ async function loadCloudDoc() {
     }
 }
 
-// 6. Save (Local + Cloud Auto-Sync)
+// 5. Save (Local + Cloud Auto-Sync)
 function saveDoc() {
     const content = editor.value;
     
@@ -125,7 +123,7 @@ function saveDoc() {
                 content: content,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
-                cloudStatus.textContent = "☁️ Cloud Sync Connected (UID: " + currentUid.substring(0,6) + "...)";
+                cloudStatus.textContent = "☁️ Cloud Sync Connected";
                 cloudStatus.classList.add('connected');
             }).catch((error) => {
                 console.error("Firestore Error:", error);
