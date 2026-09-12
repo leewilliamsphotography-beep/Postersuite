@@ -105,16 +105,18 @@
         .loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; border: 5px solid var(--line); border-bottom-color: var(--accent-sync); border-radius: 50%; animation: spin 1s linear infinite; display: none; }
         @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
         
+        /* Invisible Top Hover Trigger */
+        .hover-trigger { position: fixed; top: 0; left: 0; width: 100%; height: 4px; z-index: 101; }
+
         /* Auto-Hiding Top Bar */
-        .app-top-bar { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 101; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 4px; padding: 4px; opacity: 0; transition: opacity 0.3s ease, transform 0.3s ease; pointer-events: none; }
-        .app-top-bar.visible { opacity: 1; pointer-events: auto; }
-        .app-top-bar.hidden-up { transform: translateX(-50%) translateY(-20px); }
+        .app-top-bar { position: fixed; top: 16px; left: 50%; transform: translateX(-50%) translateY(-40px); z-index: 102; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 4px; padding: 4px; opacity: 0; transition: opacity 0.3s ease, transform 0.3s ease; pointer-events: none; }
+        .app-top-bar.visible { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
         .top-bar-btn { background: transparent; border: none; color: var(--ink); cursor: pointer; padding: 8px 16px; border-radius: 999px; display: flex; align-items: center; gap: 8px; font-family: 'Bricolage Grotesque'; font-weight: 600; font-size: 0.9rem; transition: background 0.2s; }
         .top-bar-btn:hover { background: var(--line2); }
         .top-bar-btn svg { width: 16px; height: 16px; }
         .top-bar-divider { width: 1px; height: 20px; background: var(--line); }
 
-        /* App Switcher Dropdown (Updated to drop from top) */
+        /* App Switcher Dropdown */
         .switcher-dropdown { position: fixed; top: 60px; left: 50%; transform: translateX(-50%); z-index: 102; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); padding: 8px; display: none; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 300px; }
         .switcher-dropdown.active { display: grid; }
         .switcher-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; color: var(--ink); text-decoration: none; font-size: 0.9rem; }
@@ -389,8 +391,11 @@
     <div id="appOverlay" class="app-overlay">
         <div id="loader" class="loader"></div>
         
+        <!-- Invisible top edge hover trigger -->
+        <div id="hoverTrigger" class="hover-trigger"></div>
+
         <!-- Auto-Hiding Top Center Pill -->
-        <div id="appTopBar" class="app-top-bar hidden-up">
+        <div id="appTopBar" class="app-top-bar">
             <button class="top-bar-btn" onclick="toggleSwitcher(event)">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                 Suite
@@ -496,6 +501,7 @@
         const appFrame = document.getElementById('appFrame');
         const loader = document.getElementById('loader');
         const appTopBar = document.getElementById('appTopBar');
+        const hoverTrigger = document.getElementById('hoverTrigger');
 
         // App definitions for Switcher & Command Palette
         const apps = [
@@ -562,6 +568,7 @@
             document.getElementById('appOverlay').style.display = 'none';
             document.body.style.overflow = 'auto';
             switcherDropdown.classList.remove('active');
+            appTopBar.classList.remove('visible');
         }
         
         // Modals
@@ -691,7 +698,6 @@
             const data = {};
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
-                // Ignore Hub UI states, capture everything else (app data)
                 if (!key.startsWith('postersuite-')) {
                     data[key] = localStorage.getItem(key);
                 }
@@ -723,7 +729,7 @@
                 }
             };
             reader.readAsText(file);
-            event.target.value = ''; // Reset input
+            event.target.value = '';
         }
 
         // Theme Management & Live Syncing
@@ -735,7 +741,6 @@
         function applyTheme(isDark) {
             if(isDark) { document.body.classList.add('dark-mode'); themeIcon.innerHTML = sunIcon; themeToggleBtn.classList.add('active'); localStorage.setItem('postersuite-theme', 'dark'); }
             else { document.body.classList.remove('dark-mode'); themeIcon.innerHTML = moonIcon; themeToggleBtn.classList.remove('active'); localStorage.setItem('postersuite-theme', 'light'); }
-            // Live sync to iframe
             appFrame.contentWindow.postMessage({ type: 'theme-update', dark: isDark }, '*');
         }
         function toggleTheme() { applyTheme(!document.body.classList.contains('dark-mode')); }
@@ -744,7 +749,6 @@
         function applyCalmMode(isCalm) {
             if(isCalm) { document.body.classList.add('calm-mode'); calmToggleBtn.classList.add('active'); localStorage.setItem('postersuite-calm', 'true'); }
             else { document.body.classList.remove('calm-mode'); calmToggleBtn.classList.remove('active'); localStorage.setItem('postersuite-calm', 'false'); }
-            // Live sync to iframe
             appFrame.contentWindow.postMessage({ type: 'calm-update', calm: isCalm }, '*');
         }
         function toggleCalmMode() { applyCalmMode(!document.body.classList.contains('calm-mode')); }
@@ -792,28 +796,26 @@
         // Auto-Hide Top Bar Logic
         let hideTimeout;
         function showTopBar() {
-            appTopBar.classList.remove('hidden-up');
             appTopBar.classList.add('visible');
             clearTimeout(hideTimeout);
             
-            // Don't hide if the switcher dropdown is open
             if (!switcherDropdown.classList.contains('active')) {
                 hideTimeout = setTimeout(() => {
                     appTopBar.classList.remove('visible');
-                    appTopBar.classList.add('hidden-up');
                 }, 2500); // Hide after 2.5 seconds of inactivity
             }
         }
 
-        // Show top bar on mouse movement anywhere in the overlay
-        document.getElementById('appOverlay').addEventListener('mousemove', showTopBar);
-        document.getElementById('appOverlay').addEventListener('touchstart', showTopBar);
-        // Also keep it visible if hovering over it directly
+        // Show top bar when mouse touches the very top of the screen
+        hoverTrigger.addEventListener('mouseenter', showTopBar);
+        
+        // Keep open when hovering the bar
         appTopBar.addEventListener('mouseenter', () => {
             clearTimeout(hideTimeout);
-            appTopBar.classList.remove('hidden-up');
             appTopBar.classList.add('visible');
         });
+        
+        // Start hide timer when leaving the bar
         appTopBar.addEventListener('mouseleave', showTopBar);
 
     </script>
