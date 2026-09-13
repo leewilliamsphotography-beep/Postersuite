@@ -3,14 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="version" content="1.1">
+<meta name="version" content="1.2">
 <title>Poster5ync — Offline Text Editor</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
-
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <style>
 :root { --paper:#F8F9FA; --surface:#FFFFFF; --ink:#1A1D21; --ink2:#50545C; --line:#E3E5E8; --accent:#8B5CF6; }
@@ -49,65 +44,63 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
 const editor = document.getElementById('docEditor');
 const cloudStatus = document.getElementById('cloudStatus');
 
-const firebaseConfig = {
-    apiKey: "AIzaSyDVwdkzHa1nVzWnF9Fln7AGExbMponZJuI",
-    authDomain: "postersuite.firebaseapp.com",
-    projectId: "postersuite",
-    storageBucket: "postersuite.firebasestorage.app",
-    messagingSenderId: "633538055074",
-    appId: "1:633538055074:web:d7acb018d140b20d55c0fb",
-    measurementId: "G-NTK9PW6EE8"
-};
-
-let appDb = null;
-let appAuth = null;
+const PROJECT_ID = "postersuite";
 let currentUid = null;
+let idToken = null;
 let saveTimeout = null;
 
 // 1. Load local data first (Offline-first)
 editor.value = localStorage.getItem('poster5ync-doc') || '';
 
-// 2. Initialize Firebase
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-    appDb = firebase.firestore();
-    appAuth = firebase.auth();
-    
-    // Enable Offline Persistence (Works seamlessly with the Hub)
-    try {
-        appDb.enablePersistence({ synchronizeTabs: true }).catch(() => {});
-    } catch (e) {}
+// 2. Request Auth State from Hub immediately on load
+if (window.parent && window.parent !== window) {
+    window.parent.postMessage({ type: 'request-auth-state' }, '*');
 }
 
-// 3. Listen to Firebase's Native Auth State
-// Because the Hub and this app are on the same domain, logging into the Hub 
-// automatically logs this app into Firebase too!
-appAuth.onAuthStateChanged((user) => {
-    if (user) {
-        currentUid = user.uid;
-        cloudStatus.textContent = "☁️ Cloud Sync Connected (" + user.displayName + ")";
+// 3. Listen for Auth messages from the Hub
+window.addEventListener('message', function(event) {
+    if (event.data.type === 'auth-state' && event.data.uid) {
+        currentUid = event.data.uid;
+        idToken = event.data.token;
+        
+        cloudStatus.textContent = "☁️ Cloud Sync Connected (" + currentUid.substring(0,6) + "...)";
         cloudStatus.classList.add('connected');
         cloudStatus.classList.remove('offline');
+        
         loadCloudDoc();
-    } else {
-        currentUid = null;
+    } else if (event.data.type === 'auth-state' && !event.data.uid) {
         cloudStatus.textContent = "⚠️ Offline Mode (Sign in via Hub to Sync)";
         cloudStatus.classList.add('offline');
-        cloudStatus.classList.remove('connected');
     }
 });
 
-// 4. Load from Cloud
+// 4. Firestore REST API URLs
+function getDocUrl() {
+    return `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/users/${currentUid}/poster5ync/document1`;
+}
+
+// 5. Load from Cloud using REST API
 async function loadCloudDoc() {
-    if (!appDb || !currentUid) return;
-    const docRef = appDb.collection('users').doc(currentUid).collection('poster5ync').doc('document1');
-    const docSnap = await docRef.get();
-    if (docSnap.exists) {
-        editor.value = docSnap.data().content;
+    if (!idToken || !currentUid) return;
+    
+    try {
+        const response = await fetch(getDocUrl(), {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${idToken}` }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            if (data.fields && data.fields.content) {
+                editor.value = data.fields.content.stringValue;
+            }
+        }
+    } catch (error) {
+        console.error("Error loading cloud doc:", error);
     }
 }
 
-// 5. Save (Local + Cloud Auto-Sync)
+// 6. Save (Local + Cloud Auto-Sync using REST API)
 function saveDoc() {
     const content = editor.value;
     
@@ -115,21 +108,40 @@ function saveDoc() {
     localStorage.setItem('poster5ync-doc', content);
     
     // If logged in, save to Cloud (Debounced)
-    if (appDb && currentUid) {
+    if (idToken && currentUid) {
         cloudStatus.textContent = "Syncing to Cloud...";
         clearTimeout(saveTimeout);
-        saveTimeout = setTimeout(() => {
-            appDb.collection('users').doc(currentUid).collection('poster5ync').doc('document1').set({
-                content: content,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            }).then(() => {
-                cloudStatus.textContent = "☁️ Cloud Sync Connected";
-                cloudStatus.classList.add('connected');
-            }).catch((error) => {
-                console.error("Firestore Error:", error);
-                cloudStatus.textContent = "❌ Sync Failed: " + error.code;
+        
+        saveTimeout = setTimeout(async () => {
+            try {
+                const response = await fetch(getDocUrl() + '?updateMask.fieldPaths=content&updateMask.fieldPaths=updatedAt', {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${idToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        fields: {
+                            content: { stringValue: content },
+                            updatedAt: { timestampValue: new Date().toISOString() }
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    cloudStatus.textContent = "☁️ Cloud Sync Connected";
+                    cloudStatus.classList.add('connected');
+                } else {
+                    const errData = await response.json();
+                    console.error("Firestore REST Error:", errData);
+                    cloudStatus.textContent = "❌ Sync Failed: " + errData.error.message;
+                    cloudStatus.classList.add('offline');
+                }
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                cloudStatus.textContent = "❌ Network Error";
                 cloudStatus.classList.add('offline');
-            });
+            }
         }, 1000);
     } else {
         alert('Document saved locally! (Sign into the Hub to sync to cloud)');

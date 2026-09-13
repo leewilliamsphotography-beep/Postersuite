@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Lexend:wght@400;500;600;700&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
     
-    <!-- Firebase SDK (v10 Compat for easy global access) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -292,7 +292,6 @@
                       <circle cx="38" cy="42" r="2.5" fill="#4B5563"/><circle cx="82" cy="42" r="2.5" fill="#4B5563"/>
                       <rect x="32" y="38" width="56" height="64" rx="10" fill="#FFFFFF" filter="url(#gshadow)"/>
                       <circle cx="60" cy="62" r="16" fill="#F8FAFC"/>
-                      <!-- Hexagonal Vector Node Icon -->
                       <g fill="none" stroke="#374151" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <polygon points="60,52 68,57 68,67 60,72 52,67 52,57"/>
                         <circle cx="60" cy="52" r="2" fill="#374151"/>
@@ -410,10 +409,8 @@
     <div id="appOverlay" class="app-overlay">
         <div id="loader" class="loader"></div>
         
-        <!-- Invisible top edge hover trigger -->
         <div id="hoverTrigger" class="hover-trigger"></div>
 
-        <!-- Auto-Hiding Top Center Pill -->
         <div id="appTopBar" class="app-top-bar">
             <button class="top-bar-btn" onclick="toggleSwitcher(event)">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
@@ -530,7 +527,6 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
         
-        // Enable Offline Persistence (Offline-First Magic)
         try {
             db.enablePersistence({ synchronizeTabs: true })
               .catch((err) => {
@@ -571,40 +567,27 @@
             }
         }
 
-                // --- 2. Authentication Logic ---
-        const authBtn = document.getElementById('authBtn');
-        const footerLinks = document.getElementById('footerLinks');
-
-        function handleAuth() {
+        // Helper function to securely pass the Auth Token to the open App iframe
+        async function sendAuthToApp() {
             const user = auth.currentUser;
-            if (user) {
-                auth.signOut().then(() => {
-                    showToast('Signed out successfully.');
-                }).catch((error) => {
-                    console.error('Sign out error:', error);
-                });
-            } else {
-                const provider = new firebase.auth.GoogleAuthProvider();
-                auth.signInWithPopup(provider).then((result) => {
-                    showToast(`Welcome, ${result.user.displayName}!`);
-                }).catch((error) => {
-                    console.error('Sign in error:', error);
-                    if (error.code === 'auth/popup-blocked') {
-                        alert('Please allow popups to sign in.');
-                    } else {
-                        alert('Sign in failed: ' + error.message);
-                    }
-                });
+            if (user && appFrame.contentWindow) {
+                const idToken = await user.getIdToken();
+                appFrame.contentWindow.postMessage({ 
+                    type: 'auth-state', 
+                    uid: user.uid, 
+                    token: idToken 
+                }, '*');
+            } else if (appFrame.contentWindow) {
+                // If logged out, tell the app to go into offline mode
+                appFrame.contentWindow.postMessage({ type: 'auth-state', uid: null, token: null }, '*');
             }
         }
 
         auth.onAuthStateChanged(async (user) => {
             if (user) {
-                // User is signed in
                 authBtn.innerHTML = `<img src="${user.photoURL}" alt="Profile">${user.displayName.split(' ')[0]}`;
                 authBtn.title = `Signed in as ${user.email}. Click to sign out.`;
                 
-                // Update footer to show Cloud Sync status
                 footerLinks.innerHTML = `
                     <a onclick="openModal('accessibilityOverlay')">Accessibility Statement</a>
                     <a href="mailto:leewilliamswork2029@gmail.com?subject=Poster%20Suite%20Feedback&body=Hi%20Lee%2C%0A%0AI%27ve%20been%20using%20Poster%20Suite%20and%20I%20wanted%20to%20share%20some%20feedback%3A%0A%0A">Contact & Feedback</a>
@@ -614,23 +597,11 @@
                     </span>
                 `;
 
-                // Get the Firebase ID Token to pass to the iframe
-                const idToken = await user.getIdToken();
-                
-                // Send user ID and Token to the open app iframe
-                if (appFrame.contentWindow) {
-                    appFrame.contentWindow.postMessage({ 
-                        type: 'auth-state', 
-                        uid: user.uid, 
-                        token: idToken 
-                    }, '*');
-                }
+                sendAuthToApp(); // Send token to app if it's currently open
             } else {
-                // User is signed out
                 authBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg> Sign In`;
                 authBtn.title = 'Sign in to sync your data';
 
-                // Restore manual backup links
                 footerLinks.innerHTML = `
                     <a onclick="openModal('accessibilityOverlay')">Accessibility Statement</a>
                     <a href="mailto:leewilliamswork2029@gmail.com?subject=Poster%20Suite%20Feedback&body=Hi%20Lee%2C%0A%0AI%27ve%20been%20using%20Poster%20Suite%20and%20I%20wanted%20to%20share%20some%20feedback%3A%0A%0A">Contact & Feedback</a>
@@ -638,6 +609,15 @@
                     <a onclick="document.getElementById('restoreFile').click()">Restore Data</a>
                     <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="restoreData(event)">
                 `;
+                
+                sendAuthToApp(); // Tell app to go offline
+            }
+        });
+
+        // Listen for the app requesting the auth state (in case it missed the initial load)
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'request-auth-state') {
+                sendAuthToApp();
             }
         });
 
@@ -705,13 +685,10 @@
 
         function popOutApp(url) { window.open(getAppUrl(url), '_blank'); }
         
+        // As soon as the app finishes loading, send the Firebase token to it
         appFrame.onload = function() { 
             loader.style.display = 'none';
-            // Pass auth state to the app as soon as it loads
-            const user = auth.currentUser;
-            if (user) {
-                appFrame.contentWindow.postMessage({ type: 'auth-state', uid: user.uid }, '*');
-            }
+            sendAuthToApp();
         };
         
         function closeApp() {
@@ -814,7 +791,7 @@
             if (e.key === '9') openApp('posterm1nd.html', 'm1nd');
         });
 
-        const CURRENT_VERSION = '4.0'; // Bumped for Cloud Sync
+        const CURRENT_VERSION = '4.0'; 
         function openWhatsNew() {
             openModal('whatsNewOverlay');
             localStorage.setItem('postersuite-seen-version', CURRENT_VERSION);
