@@ -1084,19 +1084,41 @@ function scheduleRepaginate() {
     repaginateTimer = setTimeout(repaginate, 50);
 }
 
+// NON-DESTRUCTIVE PAGINATION (Prevents layout jumping)
 function repaginate() {
     const p1 = $('#sheet1');
     if (!p1) return;
     const p1Lines = $('#lines');
-    $$('.paginated-sheet:not(#sheet1) .line').forEach(line => p1Lines.appendChild(line));
-    p1.appendChild($('#bottomAttr'));
-    $$('.paginated-sheet:not(#sheet1)').forEach(p => p.remove());
+    if (!p1Lines) return;
+
+    const prevScrollY = window.scrollY;
+
+    const allLines = $$('.paginated-sheet .line');
     
-    if (doc.lines.length === 0) {
+    if (allLines.length === 0) {
+        $$('.paginated-sheet:not(#sheet1)').forEach(p => p.remove());
         $('#pageNav').style.display = 'none';
         p1.classList.add('active');
         return;
     }
+
+    const isLandscape = doc.format === 'landscape';
+    const sheetHeight = isLandscape ? 721 : 1020;
+    const padding = 54 + 38;
+    const logo = $('#brandLogo');
+    const headerHeight = (doc.logo && logo.style.display !== 'none' ? logo.offsetHeight + 15 : 0) + titleEl.offsetHeight + subEl.offsetHeight + 18;
+    const footer = $('#bottomAttr');
+    const footerStyles = getComputedStyle(footer);
+    const footerHeight = footer.offsetHeight + parseInt(footerStyles.marginTop || 0) + parseInt(footerStyles.marginBottom || 0);
+    
+    const p1Avail = sheetHeight - padding - headerHeight - footerHeight;
+    const pNAvail = sheetHeight - padding - footerHeight;
+
+    let currentHeight = 0;
+    let currentPageIndex = 0;
+    let pages = $$('.paginated-sheet');
+    let currentPage = pages[0] || p1;
+    let currentAvail = p1Avail;
     
     p1.style.setProperty('--line-gap', (doc.lineSpacing||22) + 'px');
     p1.style.setProperty('--card-gap', (doc.cardSpacing||16) + 'px');
@@ -1105,59 +1127,65 @@ function repaginate() {
     p1.style.setProperty('--t-color', doc.titleColor || '#1A1D21');
     p1.style.setProperty('--s-color', doc.subColor || '#50545C');
     p1.style.setProperty('--l-color', doc.lblColor || '#1A1D21');
-    
-    const isLandscape = doc.format === 'landscape';
-    const sheetHeight = isLandscape ? 721 : 1020;
-    const padding = 54 + 38;
-    const logo = $('#brandLogo');
-    const headerHeight = (doc.logo && logo.style.display !== 'none' ? logo.offsetHeight + 15 : 0) + titleEl.offsetHeight + subEl.offsetHeight + 18;
-    const footer = $('#bottomAttr');
-    const footerStyles = getComputedStyle(footer);
-    const footerHeight = footer.offsetHeight + parseInt(footerStyles.marginTop) + parseInt(footerStyles.marginBottom);
-    
-    const p1Avail = sheetHeight - padding - headerHeight - footerHeight;
-    const pNAvail = sheetHeight - padding - footerHeight;
-    
-    let currentHeight = 0;
-    let currentPage = p1;
-    let currentAvail = p1Avail;
-    
-    const lines = [...p1Lines.children];
-    lines.forEach(line => {
-        if (line.id === 'empty') return; 
-        const h = line.offsetHeight + (doc.lineSpacing || 22); 
-        if (currentHeight + h > currentAvail) {
-            const newPage = document.createElement('div');
-            newPage.className = p1.className;
-            newPage.classList.add('paginated-sheet');
-            newPage.style.setProperty('--line-gap', (doc.lineSpacing||22) + 'px');
-            newPage.style.setProperty('--card-gap', (doc.cardSpacing||16) + 'px');
-            newPage.style.setProperty('--sym-size', (doc.symSize||80) + 'px');
-            newPage.style.setProperty('--sym-radius', doc.symStyle || '8px');
-            newPage.style.setProperty('--t-color', doc.titleColor || '#1A1D21');
-            newPage.style.setProperty('--s-color', doc.subColor || '#50545C');
-            newPage.style.setProperty('--l-color', doc.lblColor || '#1A1D21');
-            newPage.innerHTML = `<div class="lines ${doc.showText?'':'hideLbl'} ${doc.strictGrid?'strict-grid':''} ${doc.altLines?'alt-lines':''} ${doc.inkSaver?'ink-saver':''}"></div>`;
-            pagesContainer.appendChild(newPage);
-            newPage.appendChild(footer);
-            currentPage = newPage;
+
+    for (let i = 0; i < allLines.length; i++) {
+        const line = allLines[i];
+        const h = line.offsetHeight + (doc.lineSpacing || 22);
+
+        if (currentHeight + h > currentAvail && currentPageIndex < 100) {
+            currentPageIndex++;
+            let nextPg = pages[currentPageIndex];
+            if (!nextPg) {
+                nextPg = document.createElement('div');
+                nextPg.className = p1.className;
+                nextPg.classList.add('paginated-sheet');
+                nextPg.style.setProperty('--line-gap', (doc.lineSpacing||22) + 'px');
+                nextPg.style.setProperty('--card-gap', (doc.cardSpacing||16) + 'px');
+                nextPg.style.setProperty('--sym-size', (doc.symSize||80) + 'px');
+                nextPg.style.setProperty('--sym-radius', doc.symStyle || '8px');
+                nextPg.style.setProperty('--t-color', doc.titleColor || '#1A1D21');
+                nextPg.style.setProperty('--s-color', doc.subColor || '#50545C');
+                nextPg.style.setProperty('--l-color', doc.lblColor || '#1A1D21');
+                nextPg.innerHTML = `<div class="lines ${doc.showText?'':'hideLbl'} ${doc.strictGrid?'strict-grid':''} ${doc.altLines?'alt-lines':''} ${doc.inkSaver?'ink-saver':''}"></div>`;
+                pagesContainer.appendChild(nextPg);
+                pages = $$('.paginated-sheet');
+            }
+            currentPage = nextPg;
             currentAvail = pNAvail;
             currentHeight = 0;
         }
-        currentPage.querySelector('.lines').appendChild(line);
+
+        const targetLines = currentPage.querySelector('.lines');
+        if (targetLines && line.parentNode !== targetLines) {
+            targetLines.appendChild(line);
+        }
         currentHeight += h;
-    });
-    
-    const pages = $$('.paginated-sheet');
-    if (pages.length > 1) {
+    }
+
+    // Remove unused extra pages
+    for (let i = currentPageIndex + 1; i < pages.length; i++) {
+        pages[i].remove();
+    }
+
+    // Move footer to the very last page
+    const lastPage = pages[currentPageIndex] || p1;
+    if (footer.parentNode !== lastPage) {
+        lastPage.appendChild(footer);
+    }
+
+    // Show/Hide Page Nav
+    const finalPages = $$('.paginated-sheet');
+    if (finalPages.length > 1) {
         $('#pageNav').style.display = 'flex';
-        if (currentPageIndex >= pages.length) currentPageIndex = pages.length - 1;
+        if (currentPageIndex >= finalPages.length) currentPageIndex = finalPages.length - 1;
         showPage(currentPageIndex);
     } else {
         $('#pageNav').style.display = 'none';
         currentPageIndex = 0;
         p1.classList.add('active');
     }
+    
+    window.scrollTo(0, prevScrollY);
 }
 
 function showPage(index) {
@@ -1241,7 +1269,6 @@ function syncStyleControls(){
   
   $$('#alignSeg button').forEach(b=>b.classList.toggle('on',b.dataset.align===(doc.textAlign||'center')));
   
-  // Handle custom font dropdown option
   const customOpt = $('#fontSel option[value="custom"]');
   if (customOpt) customOpt.remove();
   if (doc.customFont) {
@@ -1353,7 +1380,6 @@ function toggleFavorite(libItemData) {
     }
     saveFavorites(favs);
     renderQuickAccess();
-    // Update star state in grid
     const starBtn = document.querySelector(`.lib-fav-star[data-id="${id}"]`);
     if(starBtn) {
         starBtn.classList.toggle('active', !exists);
@@ -1451,7 +1477,6 @@ async function doLibrarySearch() {
     if(e.key === 'Enter') doLibrarySearch();
 });
 
-// Click to add (for touch devices & quick adding) or Toggle Favorite
 document.addEventListener('click', e => {
     const starBtn = e.target.closest('.lib-fav-star');
     if(starBtn) {
@@ -1462,7 +1487,7 @@ document.addEventListener('click', e => {
             id: libItem.dataset.id || null,
             src: libItem.dataset.src,
             word: libItem.dataset.word,
-            isArasaac: libItem.dataset.is-arasaac === 'true'
+            isArasaac: libItem.dataset.isArasaac === 'true'
         };
         toggleFavorite(data);
         return;
@@ -1858,7 +1883,6 @@ function renderPopBody(item){
   }
   body.innerHTML=html;refreshIcons();
   
-  // Swatch click handler
   $$('.pop-colors .swatch').forEach(sw => {
       sw.onclick = () => {
           pushHistory();
@@ -1957,7 +1981,7 @@ async function fetchAlts(item, query) {
         positionPop();
     } catch(err) {
         console.error("Error fetching alternatives:", err);
-        if(grid.isConnected && popUid === item.uid) {
+        if(grid.isConnected && popUid !== item.uid) {
             grid.innerHTML = '<p class="pop-note">Error loading images. Check connection.</p>';
         }
     }
@@ -2211,12 +2235,10 @@ function showTourStep(index) {
 
   const rect = targetEl.getBoundingClientRect();
   
-  // Position tooltip
   const ttRect = tourTooltip.getBoundingClientRect();
   let top = rect.bottom + 10;
   let left = rect.left + (rect.width / 2) - (ttRect.width / 2);
 
-  // Keep it on screen
   if (left < 10) left = 10;
   if (left + ttRect.width > window.innerWidth - 10) left = window.innerWidth - ttRect.width - 10;
   
@@ -2228,12 +2250,10 @@ function showTourStep(index) {
   tourTooltip.style.left = `${left}px`;
   tourTooltip.style.transform = 'none';
 
-  // Highlight element
   targetEl.style.position = 'relative';
   targetEl.style.zIndex = '1001';
   targetEl.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
   
-  // Clear previous highlights
   if (index > 0) {
     const prevEl = $(tourSteps[index-1].el);
     if(prevEl) {
@@ -2503,7 +2523,6 @@ function generateHtmlContent(d) {
   const subColor = doc.hc ? 'E8CF4F' : (doc.subColor || ts.sub).replace('#','');
   const lblColor = doc.hc ? 'FFE14D' : (doc.lblColor || '#1A1D21').replace('#','');
   
-  // Add watermark to Master Slide
   if(doc.watermark) {
      pptx.defineSlideMaster({
        title: 'WATERMARK_MASTER',
@@ -2662,7 +2681,7 @@ function boot(){
     try{ const raw=localStorage.getItem(LS_KEY); if(raw){const o=sanitize(JSON.parse(raw));if(o)doc=o;} }catch(e){}
   }
   history = [JSON.stringify(doc)]; hIndex = 0; updateUndoRedoBtns();
-  applyCustomFont(); // Ensure custom font is injected before render
+  applyCustomFont();
   renderAll(); renderDrafts(); renderQuickAccess();
   const pending=[];
   doc.lines.forEach(l=>l.items.forEach(it=>{if(!it.textOnly&&it.state!=='ok'&&it.id==null&&!it.customImg)pending.push(it);}));
@@ -2672,21 +2691,6 @@ function boot(){
 }
 boot();
 })();
-// Listen for auth state from the Hub
-window.addEventListener('message', function(event) {
-    if (event.data.type === 'auth-state') {
-        const uid = event.data.uid;
-        console.log("App received UID:", uid);
-        
-        // Initialize Firebase inside the app
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig); // Make sure config is available here too
-            const appDb = firebase.firestore();
-            // Now you can read/write data to Firestore using the UID!
-            // Example: appDb.collection('users').doc(uid).collection('poster5ync').get()...
-        }
-    }
-});
 </script>
 </body>
 </html>
